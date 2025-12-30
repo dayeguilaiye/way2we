@@ -25,7 +25,7 @@ workflow_status:
   brainstorm-project: skipped
   research: skipped
   product-brief: _bmad-output/project-planning-artifacts/product-brief-way2we-2025-12-26.md
-  prd: required
+  prd: _bmad-output/prd.md
   create-ux-design: conditional
   create-architecture: required
   create-epics-and-stories: required
@@ -37,6 +37,9 @@ workflow_metadata:
   product-brief:
     completed_at: "2025-12-29T09:08:11Z"
     output_file: "_bmad-output/project-planning-artifacts/product-brief-way2we-2025-12-26.md"
+  prd:
+    completed_at: "2025-12-29T10:08:28Z"
+    output_file: "_bmad-output/prd.md"
 brainstorm_requested: false
 research_requested: false
 product_brief_requested: true
