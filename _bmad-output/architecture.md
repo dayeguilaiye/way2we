@@ -127,17 +127,31 @@ very_good create flutter_app way2we --org com.way2we --desc "Way2We - Relationsh
 
 ### 认证与安全 (Authentication & Security)
 
-*   **决策**: **自建 JWT 认证中心 + 多供应商适配 (SMS/Social)**
-    *   **核心逻辑**: Go 后端实现 JWT 签发、验证、黑名单逻辑，不强依赖特定云厂商的 Auth 服务。
-    *   **短信验证码**: 设计 `SmsProvider` 接口。
-        *   **MVP/国内**: 实现阿里云/腾讯云适配器。
-        *   **出海/未来**: 实现 Twilio/Firebase Adapter。
-    *   **社交登录**: 设计 `OAuthProvider` 接口。
-        *   **MVP**: 预留微信登录接口。
-        *   **出海/未来**: 增加 Google/Apple Sign-in 实现。
-    *   **理由**: 保证国内用户体验（手机号+验证码是主流），同时通过适配器模式为未来出海留出灵活切换空间，避免被单一厂商锁定。
+*   **决策**: **自建 JWT 认证中心 + 多供应商适配 (Mock/Real)**
+    *   **核心逻辑**: Go 后端实现 JWT 签发、验证、黑名单逻辑。认证系统解耦发送网关，通过接口适配不同通道。
+    *   **Provider 接口**: 
+        *   `SmsProvider`: 定义 `Send(ctx, phone, code)` 接口。
+        *   `EmailProvider`: 定义 `Send(ctx, email, code)` 接口。
+    *   **MVP 策略 (Mocking)**: 
+        *   实现 `LogSmsProvider` 和 `LogEmailProvider`，将验证码直接打印至系统日志（DEBUG 级别）。
+        *   **魔法验证码 (Magic Code)**: 在 `AuthService` 校验层引入全局校验过滤器，匹配特定代码（由环境变量 `AUTH_MAGIC_CODE` 配置）直接放行。
+    *   **未来扩展**:
+        *   国内：实现阿里云/腾讯云 `SmsProvider`。
+        *   国际：实现 Twilio 或 SMTP `EmailProvider`。
+    *   **理由**: 降低 MVP 阶段集成成本与外部依赖风险，同时通过接口隔离为未来真实切换提供无感迁移能力。
 
 ### 数据架构 (Data Architecture)
+
+*   **多身份认证模型 (Multi-Identity Model)**: 
+    *   **User 表**: 存储用户核心信息 (`id`, `nickname`, `avatar`, `password_hash`, `created_at`)。
+    *   **UserIdentity 表**: 存储多种登录身份标识。
+        *   `user_id`: 关联用户
+        *   `type`: 身份类型 (phone, email, wechat, facebook, apple)
+        *   `identifier`: 对应标识符 (手机号/邮箱/OpenID)
+        *   `verified`: 是否已验证
+    *   **登录逻辑**: 根据输入格式智能识别类型 → 查 UserIdentity → 获取 User → 校验密码。
+    *   **社交登录扩展**: 新增 OAuth Provider 只需往 UserIdentity 插入记录，User 表结构无需变动。
+    *   **理由**: 实现"一个账号，多种登录方式"，支持未来用户绑定多个身份。
 
 *   **积分一致性**: **TCC 思想 + 数据库本地事务**
     *   **实现**: 所有的积分变更操作（加/减）必须在同一个数据库事务中完成：
@@ -163,10 +177,10 @@ very_good create flutter_app way2we --org com.way2we --desc "Way2We - Relationsh
 
 **实施顺序:**
 1.  **基础**: 搭建 Echo + Ent 后端骨架，集成 JWT 中间件。
-2.  **核心**: 实现 Group/User 实体及关联关系（Ent Schema）。
-3.  **业务**: 实现积分流水记录与事务更新逻辑。
-4.  **适配器**: 实现阿里云短信接口与极光推送接口。
-5.  **客户端**: 初始化 Very Good Core 项目，对接 API。
+2.  **验证器**: 定义 `SmsProvider` 和 `EmailProvider` 接口，实现 `LogMock` 版本及 `MagicCode` 校验逻辑。
+3.  **核心**: 实现 Group/User 实体及关联关系（Ent Schema）。
+4.  **业务**: 实现积分流水记录与事务更新逻辑。
+5.  **客户端**: 初始化 Very Good Core 项目，对接登录注册 API。
 
 ## 实施模式与一致性规则
 

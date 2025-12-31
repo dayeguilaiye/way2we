@@ -43,7 +43,7 @@ development_status:
   # Epic 1: 项目基础与用户认证
   epic-1: in-progress
   1-1-initialize-project-infrastructure: done
-  1-2-send-sms-verification-code: ready-for-dev
+  1-2-verification-code-sending-mock: ready-for-dev
   1-3-user-registration-first-login: backlog
   1-4-user-login: backlog
   1-5-profile-management: backlog

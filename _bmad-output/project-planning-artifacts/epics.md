@@ -216,10 +216,10 @@ This document provides the complete epic and story breakdown for way2we, decompo
 
 ## Epic 1: 项目基础与用户认证
 
-用户可以注册账户、登录系统并管理个人资料（头像、昵称），建立系统基础架构。
+用户可以注册账户、登录系统并管理个人资料（头像、昵称），建立系统基础架构。支持手机号和邮箱两种验证方式。
 
 **FRs 覆盖:** FR1, FR2  
-**技术要求:** Very Good Core (Flutter), Standard Go Project Layout, JWT 认证 + 手机验证码
+**技术要求:** Very Good Core (Flutter), Standard Go Project Layout, JWT 认证 + Mock 验证码 (Log/Magic)
 
 ### Story 1.1: 初始化项目基础设施
 
@@ -239,77 +239,65 @@ So that **我们有一个符合最佳实践的代码库基础来开始开发**.
 
 ---
 
-### Story 1.2: 手机号验证码发送
+### Story 1.2: 多模式身份验证码发送 (Mock 模式)
 
 As a **用户**,
-I want **输入手机号并收到验证码**,
+I want **输入手机号或邮箱并获取验证码**,
 So that **我可以验证我的身份来注册或登录**.
 
 **Acceptance Criteria:**
 
-**Given** 用户在登录页面  
-**When** 输入有效的手机号并点击"获取验证码"  
-**Then** 系统调用短信服务发送 6 位数字验证码  
-**And** 按钮显示 60 秒倒计时，期间不可重复点击  
-**And** 验证码 5 分钟内有效  
+**Given** 用户在登录/注册页面  
+**When** 输入有效的手机号或邮箱地址并点击"获取验证码"  
+**Then** 系统根据后端配置生成 6 位验证码  
+**And** 将验证码输出至后端系统日志（DEBUG 模式可见）  
+**And** 前端按钮显示 60 秒倒计时  
+**And** 只要输入日志中的代码或预设的魔法代码（如 123456），校验即通过  
 
-**Given** 用户输入无效的手机号格式  
-**When** 点击"获取验证码"  
-**Then** 显示错误提示"请输入正确的手机号"  
-**And** 不发送验证码
-
-**Given** 用户在 60 秒内重复请求验证码  
-**When** 点击"获取验证码"  
-**Then** 按钮保持禁用状态直到倒计时结束
+**Given** 后端配置为真实模式（未来扩展）  
+**When** 请求验证码  
+**Then** 通过 SmsProvider 或 EmailProvider 调用真实网关发送
 
 ---
 
-### Story 1.3: 用户注册与首次登录
+### Story 1.3: 用户注册与设置密码
 
 As a **新用户**,
-I want **使用手机号和验证码注册账户**,
-So that **我可以创建账户并开始使用应用**.
+I want **使用手机号或邮箱注册账户并设置密码**,
+So that **我可以创建账户并使用密码登录**.
 
 **Acceptance Criteria:**
 
-**Given** 用户已收到验证码且手机号未注册  
-**When** 输入正确的验证码并提交  
-**Then** 系统创建新用户账户  
-**And** 生成 JWT access token 和 refresh token  
+**Given** 用户输入了手机号/邮箱且未注册  
+**When** 输入正确的验证码（日志可见或魔法码）并提交  
+**Then** 系统提示用户设置登录密码（6-20 位）  
+
+**Given** 用户设置密码成功  
+**When** 点击“完成注册”  
+**Then** 系统创建 User + UserIdentity 记录  
+**And** 密码经过 bcrypt 哈希后存储  
 **And** 用户自动登录并跳转到设置昵称页面  
-
-**Given** 用户输入错误的验证码  
-**When** 提交验证码  
-**Then** 显示错误提示"验证码错误，请重新输入"  
-**And** 允许重试
-
-**Given** 验证码已过期（超过 5 分钟）  
-**When** 提交验证码  
-**Then** 显示错误提示"验证码已过期，请重新获取"
 
 ---
 
-### Story 1.4: 用户登录
+### Story 1.4: 用户密码登录
 
 As a **已注册用户**,
-I want **使用手机号和验证码登录**,
+I want **使用账号和密码登录**,
 So that **我可以访问我的账户和数据**.
 
 **Acceptance Criteria:**
 
-**Given** 用户已收到验证码且手机号已注册  
-**When** 输入正确的验证码并提交  
-**Then** 系统验证成功并生成新的 JWT token  
-**And** 用户跳转到首页  
+**Given** 用户已注册  
+**When** 输入账号（手机号/邮箱/用户名）+ 密码  
+**Then** 系统根据输入格式智能识别账号类型  
+**And** 查询 UserIdentity 并校验密码  
+**And** 验证成功后签发 JWT Token  
+**And** 跳转到首页  
 
-**Given** JWT token 过期  
-**When** 发起 API 请求  
-**Then** 使用 refresh token 自动刷新 access token  
-**And** 用户无感知继续操作
-
-**Given** refresh token 也过期  
-**When** 发起 API 请求  
-**Then** 跳转到登录页面要求重新登录
+**Given** 密码错误  
+**When** 提交登录  
+**Then** 显示“账号或密码错误”  
 
 ---
 
