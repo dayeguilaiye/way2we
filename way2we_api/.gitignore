@@ -1,0 +1,6 @@
+bin/
+*.env
+configs/config.local.yaml
+.idea/
+.vscode/
+vendor/

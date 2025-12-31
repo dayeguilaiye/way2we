@@ -1,0 +1,126 @@
+# generated: 2025-12-30T17:33:12+08:00
+# project: way2we
+# project_key: way2we
+# tracking_system: file-system
+# story_location: /Users/ziyuanhe/code/way2we/_bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2025-12-30T17:33:12+08:00
+project: way2we
+project_key: way2we
+tracking_system: file-system
+story_location: "/Users/ziyuanhe/code/way2we/_bmad-output/implementation-artifacts"
+
+development_status:
+  # Epic 1: 项目基础与用户认证
+  epic-1: in-progress
+  1-1-initialize-project-infrastructure: done
+  1-2-send-sms-verification-code: ready-for-dev
+  1-3-user-registration-first-login: backlog
+  1-4-user-login: backlog
+  1-5-profile-management: backlog
+  1-6-logout-session-management: backlog
+  epic-1-retrospective: optional
+
+  # Epic 2: 群组创建与成员管理
+  epic-2: backlog
+  2-1-create-group: backlog
+  2-2-generate-share-invite-link: backlog
+  2-3-join-group: backlog
+  2-4-view-group-list-switch-group: backlog
+  2-5-member-list-role-management: backlog
+  2-6-group-default-configuration: backlog
+  2-7-member-permission-allocation: backlog
+  epic-2-retrospective: optional
+
+  # Epic 3: 约定规则管理
+  epic-3: backlog
+  3-1-view-agreement-list: backlog
+  3-2-create-agreement-rule: backlog
+  3-3-edit-agreement-rule: backlog
+  3-4-disable-enable-agreement: backlog
+  3-5-pin-agreement: backlog
+  epic-3-retrospective: optional
+
+  # Epic 4: 商品/兑换项管理
+  epic-4: backlog
+  4-1-view-reward-list: backlog
+  4-2-create-reward: backlog
+  4-3-edit-reward: backlog
+  4-4-disable-enable-reward: backlog
+  4-5-pin-reward: backlog
+  epic-4-retrospective: optional
+
+  # Epic 5: 完成约定与积分获取
+  epic-5: backlog
+  5-1-quick-record-agreement-completion: backlog
+  5-2-view-points-balance: backlog
+  5-3-confirm-reject-agreement-completion: backlog
+  5-4-record-agreement-for-others: backlog
+  epic-5-retrospective: optional
+
+  # Epic 6: 兑换与履约流程
+  epic-6: backlog
+  6-1-request-redemption: backlog
+  6-2-view-order-list: backlog
+  6-3-provider-fulfillment: backlog
+  6-4-consumer-confirmation: backlog
+  6-5-order-status-tracking: backlog
+  epic-6-retrospective: optional
+
+  # Epic 7: 特殊事件与积分调整
+  epic-7: backlog
+  7-1-create-special-event: backlog
+  7-2-view-special-event-history: backlog
+  epic-7-retrospective: optional
+
+  # Epic 8: 撤销与回退机制
+  epic-8: backlog
+  8-1-revoke-confirmed-agreement-completion: backlog
+  8-2-revoke-completed-order: backlog
+  8-3-revoke-special-event: backlog
+  epic-8-retrospective: optional
+
+  # Epic 9: 通知与提醒系统
+  epic-9: backlog
+  9-1-push-notification-integration: backlog
+  9-2-todo-task-notifications: backlog
+  9-3-points-change-notifications: backlog
+  9-4-group-points-activity-notifications: backlog
+  9-5-notification-settings-history: backlog
+  epic-9-retrospective: optional
+
+  # Epic 10: 活动记录与审计
+  epic-10: backlog
+  10-1-home-group-activity-feed: backlog
+  10-2-view-member-points-detail: backlog
+  10-3-admin-operation-logs: backlog
+  epic-10-retrospective: optional

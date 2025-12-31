@@ -26,8 +26,8 @@ workflow_status:
   research: skipped
   product-brief: _bmad-output/project-planning-artifacts/product-brief-way2we-2025-12-26.md
   prd: _bmad-output/prd.md
-  create-ux-design: conditional
-  create-architecture: required
+  create-ux-design: _bmad-output/project-planning-artifacts/ux-design-specification.md
+  create-architecture: _bmad-output/architecture.md
   create-epics-and-stories: required
   test-design: recommended
   validate-architecture: optional
@@ -40,6 +40,13 @@ workflow_metadata:
   prd:
     completed_at: "2025-12-29T10:08:28Z"
     output_file: "_bmad-output/prd.md"
+  create-ux-design:
+    completed_at: "2025-12-30T06:00:19Z"
+    output_file: "_bmad-output/project-planning-artifacts/ux-design-specification.md"
+  create-architecture:
+    completed_at: "2025-12-30T15:10:17Z"
+    output_file: "_bmad-output/architecture.md"
 brainstorm_requested: false
 research_requested: false
 product_brief_requested: true
+
