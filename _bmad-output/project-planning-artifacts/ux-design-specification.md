@@ -206,29 +206,44 @@ way2we 的核心体验围绕高频“完成约定”展开：用户日常完成�
 
 | Token | 色值 | 用途 |
 |-------|------|------|
-| `primary` | `#f07c42` | 主操作、品牌色、强调元素 |
-| `primary-dark` | `#d6632f` | 按钮 hover/pressed 状态 |
+| `primary` | `#ec8451` | 主操作、品牌色、强调元素 |
+| `primary-dark` | `#d97544` | 按钮 hover/pressed 状态 |
+| `primary-tint` | `rgba(236, 132, 81, 0.1)` | 次要按钮背景、选中态背景 |
+| `primary-shadow` | `rgba(236, 132, 81, 0.3)` | 主按钮阴影 |
 
 #### Background & Surface
 
-| Token | 浅色模式 | 深色模式 |
-|-------|----------|----------|
-| `background` | `#f8f6f6` | `#221610` |
-| `card` | `#ffffff` | `#2c1e18` |
+| Token | 浅色模式 | 深色模式 | 用途 |
+|-------|----------|----------|------|
+| `background` | `#f8f6f6` | `#211611` | 页面背景 |
+| `card` | `#ffffff` | `#2a201c` | 卡片背景 |
+| `card-hover` | `#fafafa` | `#352924` | 卡片悬停/聚焦态 |
+| `surface-muted` | `#ebe8e6` | `#2a201c` | 分段控件背景、次要表面 |
 
 #### Text Colors
 
 | Token | 浅色模式 | 深色模式 | 用途 |
 |-------|----------|----------|------|
 | `text-main` | `#181311` | `#ffffff` | 标题、主要内容 |
-| `text-muted` | `#896f61` | `gray-400` | 辅助信息、次要文字 |
+| `text-muted` | `#886f63` | `#9ca3af` | 辅助信息、标签、占位符 |
+| `text-placeholder` | `#9ca3af` | `#6b7280` | 输入框占位符 |
 
 #### Semantic Colors
 
 | Token | 色值 | 用途 |
 |-------|------|------|
 | `success` | `#22c55e` | 积分增加、完成确认 |
-| `primary-tint` | `rgba(240, 124, 66, 0.1)` | 次要按钮背景 |
+| `error` | `#ef4444` | 错误状态 |
+| `warning` | `#f59e0b` | 警告状态 |
+| `info` | `#3b82f6` | 信息提示 |
+
+#### Border Colors
+
+| Token | 浅色模式 | 深色模式 | 用途 |
+|-------|----------|----------|------|
+| `border-default` | `transparent` | `transparent` | 默认边框（无边框设计） |
+| `border-focus` | `rgba(236, 132, 81, 0.5)` | `rgba(236, 132, 81, 0.5)` | 聚焦边框 |
+| `border-subtle` | `#e5e7eb` | `#3d2e28` | 分隔线、微弱边框 |
 
 ### Typography System
 
@@ -274,21 +289,81 @@ way2we 的核心体验围绕高频“完成约定”展开：用户日常完成�
 
 | Token | 值 | 用途 |
 |-------|-----|------|
-| `rounded` | 16px | 卡片 |
-| `rounded-lg` | 8px | 小卡片 |
-| `rounded-full` | 9999px | 按钮、头像 |
+| `rounded-full` | 9999px | **主要样式**：按钮、输入框、头像、Pill 形组件 |
+| `rounded-xl` | 24px | 大型卡片、Hero 区域 |
+| `rounded` | 16px | 标准卡片 |
+| `rounded-lg` | 8px | 小卡片、图标容器 |
+
+> **设计决策**：way2we 采用全圆角（pill-shaped）设计风格，传达温暖、友好的视觉感受。主要交互元素（按钮、输入框）一律使用 `rounded-full`。
 
 ### Shadow
 
-| Token | 值 |
-|-------|-----|
-| `shadow-soft` | `0 4px 20px -2px rgba(240, 124, 66, 0.15)` |
-| `shadow-card` | `0 2px 8px rgba(0, 0, 0, 0.05)` |
+| Token | 值 | 用途 |
+|-------|-----|------|
+| `shadow-primary` | `0 8px 24px rgba(236, 132, 81, 0.3)` | 主按钮阴影 |
+| `shadow-soft` | `0 4px 20px -2px rgba(236, 132, 81, 0.15)` | 品牌色柔和阴影 |
+| `shadow-card` | `0 2px 8px rgba(0, 0, 0, 0.05)` | 卡片阴影 |
+| `shadow-sm` | `0 1px 3px rgba(0, 0, 0, 0.1)` | 小型组件阴影 |
 
 ### Iconography
 
 - **图标库**: Material Symbols Outlined
-- **标准尺寸**: 18px / 24px / 26px
+- **标准尺寸**: 20px (输入框图标) / 24px (导航图标) / 32px (装饰图标)
+
+## Internationalization (i18n)
+
+### 多语言支持策略
+
+way2we 支持中英双语，所有用户可见文本必须通过国际化系统管理，**禁止硬编码**。
+
+#### 支持的语言
+
+| 语言 | 代码 | 优先级 |
+|------|------|--------|
+| 简体中文 | `zh` | 主要语言 |
+| English | `en` | 次要语言 |
+
+#### 实现规范
+
+1. **Flutter ARB 文件**: 使用 `l10n.yaml` 配置的 Flutter 国际化方案
+   - 英文文件: `lib/l10n/arb/app_en.arb`（作为模板文件）
+   - 中文文件: `lib/l10n/arb/app_zh.arb`
+
+2. **命名规范**: 使用 camelCase，按功能模块分组
+   ```
+   auth_pageTitle          → 页面标题
+   auth_registerTab        → 注册标签
+   auth_loginTab           → 登录标签
+   auth_emailPlaceholder   → 邮箱占位符
+   ```
+
+3. **动态文本**: 支持参数插值
+   ```json
+   "auth_stepIndicator": "Step {current} of {total}"
+   ```
+
+4. **语言切换**: 跟随系统语言设置，无需用户手动选择
+
+#### 关键文本清单（示例）
+
+| Key | English | 中文 |
+|-----|---------|------|
+| `auth_pageTitle` | Create your shared space | 创建你们的共享空间 |
+| `auth_pageSubtitle` | Start tracking moments that matter together. | 开始记录你们的重要时刻 |
+| `auth_registerTab` | Register | 注册 |
+| `auth_loginTab` | Log In | 登录 |
+| `auth_nicknameLabel` | Nickname | 昵称 |
+| `auth_nicknamePlaceholder` | What should we call you? | 你想叫什么名字？ |
+| `auth_emailOrPhoneLabel` | Email or Phone | 邮箱或手机号 |
+| `auth_emailPlaceholder` | name@example.com | name@example.com |
+| `auth_phonePlaceholder` | 13800138000 | 13800138000 |
+| `auth_createAccountButton` | Create Account | 创建账号 |
+| `auth_getVerificationCodeButton` | Get Verification Code | 获取验证码 |
+| `auth_orContinueWith` | Or continue with | 或者通过以下方式继续 |
+| `auth_joinWithInviteCode` | Join with Invite Code | 使用邀请码加入 |
+| `auth_termsAgreement` | By continuing, you agree to our {terms} and {privacy}. | 继续即表示同意我们的{terms}和{privacy}。 |
+| `auth_termsOfService` | Terms of Service | 服务条款 |
+| `auth_privacyPolicy` | Privacy Policy | 隐私政策 |
 
 ## Design Direction Decision
 
@@ -312,8 +387,13 @@ way2we 的核心体验围绕高频“完成约定”展开：用户日常完成�
 - 支持浅色模式与深色模式
 
 **首套主题色：Warm Orange（温暖橙）**
-- 主色 `#f07c42`，传达积极、温暖的情感
+- 主色 `#ec8451`，传达积极、温暖的情感
 - 后续将提供更多主题色供用户切换
+
+**输入框与按钮设计**
+- 全圆角（pill-shaped）风格，视觉柔和友好
+- 输入框使用白色背景、无边框设计，聚焦时显示品牌色边框
+- 主按钮带品牌色阴影，增强点击感
 
 ### Design Rationale
 

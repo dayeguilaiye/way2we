@@ -1,7 +1,178 @@
 {
     "@@locale": "en",
+
     "counterAppBarTitle": "Counter",
     "@counterAppBarTitle": {
         "description": "Text shown in the AppBar of the Counter Page"
+    },
+
+    "authPageTitle": "Create your shared space",
+    "@authPageTitle": {
+        "description": "Main headline on auth page"
+    },
+    "authPageSubtitle": "Start tracking moments that matter together.",
+    "@authPageSubtitle": {
+        "description": "Subtitle on auth page"
+    },
+    "authStepIndicator": "Step {current} of {total}",
+    "@authStepIndicator": {
+        "description": "Step indicator text",
+        "placeholders": {
+            "current": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "authRegisterTab": "Register",
+    "@authRegisterTab": {
+        "description": "Register tab label"
+    },
+    "authLoginTab": "Log In",
+    "@authLoginTab": {
+        "description": "Login tab label"
+    },
+    "authNicknameLabel": "NICKNAME",
+    "@authNicknameLabel": {
+        "description": "Nickname field label"
+    },
+    "authNicknamePlaceholder": "What should we call you?",
+    "@authNicknamePlaceholder": {
+        "description": "Nickname field placeholder"
+    },
+    "authEmailOrPhoneLabel": "EMAIL OR PHONE",
+    "@authEmailOrPhoneLabel": {
+        "description": "Email or phone field label"
+    },
+    "authEmailPlaceholder": "name@example.com",
+    "@authEmailPlaceholder": {
+        "description": "Email placeholder"
+    },
+    "authPhonePlaceholder": "13800138000",
+    "@authPhonePlaceholder": {
+        "description": "Phone placeholder"
+    },
+    "authPhoneLabel": "PHONE NUMBER",
+    "@authPhoneLabel": {
+        "description": "Phone field label"
+    },
+    "authVerificationCodeLabel": "VERIFICATION CODE",
+    "@authVerificationCodeLabel": {
+        "description": "Verification code field label"
+    },
+    "authVerificationCodePlaceholder": "Enter code",
+    "@authVerificationCodePlaceholder": {
+        "description": "Verification code placeholder"
+    },
+    "authCreateAccountButton": "Create Account",
+    "@authCreateAccountButton": {
+        "description": "Create account button text"
+    },
+    "authGetVerificationCodeButton": "Get",
+    "@authGetVerificationCodeButton": {
+        "description": "Get verification code button text"
+    },
+    "authSendingButton": "Sending...",
+    "@authSendingButton": {
+        "description": "Sending state button text"
+    },
+    "authResendButton": "Resend ({seconds}s)",
+    "@authResendButton": {
+        "description": "Resend countdown button text",
+        "placeholders": {
+            "seconds": {
+                "type": "int"
+            }
+        }
+    },
+    "authOrContinueWith": "OR CONTINUE WITH",
+    "@authOrContinueWith": {
+        "description": "Separator text for alternative login methods"
+    },
+    "authJoinWithInviteCode": "Join with Invite Code",
+    "@authJoinWithInviteCode": {
+        "description": "Join with invite code button text"
+    },
+    "authTermsAgreement": "By continuing, you agree to our",
+    "@authTermsAgreement": {
+        "description": "Terms agreement prefix"
+    },
+    "authTermsOfService": "Terms of Service",
+    "@authTermsOfService": {
+        "description": "Terms of Service link text"
+    },
+    "authPrivacyPolicy": "Privacy Policy",
+    "@authPrivacyPolicy": {
+        "description": "Privacy Policy link text"
+    },
+    "authAnd": "and",
+    "@authAnd": {
+        "description": "Conjunction between terms and privacy"
+    },
+    "authCodeSentSuccess": "Verification code sent!",
+    "@authCodeSentSuccess": {
+        "description": "Code sent success message"
+    },
+    "authValidationPhoneRequired": "Please enter your phone number",
+    "@authValidationPhoneRequired": {
+        "description": "Phone required validation message"
+    },
+    "authValidationPhoneInvalid": "Please enter a valid phone number",
+    "@authValidationPhoneInvalid": {
+        "description": "Invalid phone validation message"
+    },
+    "authValidationEmailRequired": "Please enter your email",
+    "@authValidationEmailRequired": {
+        "description": "Email required validation message"
+    },
+    "authValidationEmailInvalid": "Please enter a valid email address",
+    "@authValidationEmailInvalid": {
+        "description": "Invalid email validation message"
+    },
+    "authErrorGeneric": "Failed to send code. Please try again.",
+    "@authErrorGeneric": {
+        "description": "Generic error message"
+    },
+    "authPasswordLabel": "Password",
+    "@authPasswordLabel": {
+        "description": "Password field label"
+    },
+    "authPasswordPlaceholder": "Enter 8-20 characters",
+    "@authPasswordPlaceholder": {
+        "description": "Password field placeholder"
+    },
+    "authPasswordConfirmLabel": "Confirm Password",
+    "@authPasswordConfirmLabel": {
+        "description": "Confirm Password field label"
+    },
+    "authPasswordConfirmPlaceholder": "Re-enter password",
+    "@authPasswordConfirmPlaceholder": {
+        "description": "Confirm Password field placeholder"
+    },
+    "authPasswordLogin": "Password Login",
+    "@authPasswordLogin": {
+        "description": "Password login mode chip text"
+    },
+    "authCodeLogin": "Code Login",
+    "@authCodeLogin": {
+        "description": "Code login mode chip text"
+    },
+    "authValidationPasswordTooShort": "Password too short",
+    "@authValidationPasswordTooShort": {
+        "description": "Password length validation error"
+    },
+    "authValidationPasswordsDoNotMatch": "Passwords do not match",
+    "@authValidationPasswordsDoNotMatch": {
+        "description": "Passwords mismatch validation error"
+    },
+    "authRegistrationSuccess": "Registration Successful! Please login.",
+    "@authRegistrationSuccess": {
+        "description": "Registration success snackbar message"
+    },
+    "authLoginSuccess": "Login Successful!",
+    "@authLoginSuccess": {
+        "description": "Login success snackbar message"
     }
 }

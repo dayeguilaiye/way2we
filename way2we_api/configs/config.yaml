@@ -2,4 +2,4 @@ server:
   port: 8080
 database:
   driver: postgres
-  source: "host=localhost port=5432 user=postgres password=postgres dbname=way2we sslmode=disable"
+  source: "host=localhost port=5432 user=postgres password=password dbname=way2we sslmode=disable"

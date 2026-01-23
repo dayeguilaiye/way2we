@@ -1,7 +1,8 @@
 package config
 
 import (
-	"log"
+	"log/slog"
+	"os"
 
 	"github.com/spf13/viper"
 )
@@ -42,7 +43,8 @@ func LoadConfig() (*Config, error) {
 func MustLoadConfig() *Config {
 	cfg, err := LoadConfig()
 	if err != nil {
-		log.Fatalf("failed to load config: %v", err)
+		slog.Error("failed to load config", "error", err)
+		os.Exit(1)
 	}
 	return cfg
 }
