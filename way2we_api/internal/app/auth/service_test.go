@@ -8,7 +8,10 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/way2we/way2we_api/ent/enttest"
 	"github.com/way2we/way2we_api/internal/app/auth"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // mockSmsProvider is a test double for SmsProvider
@@ -176,4 +179,175 @@ func TestService_GeneratedCodeFormat(t *testing.T) {
 			assert.True(t, c >= '0' && c <= '9', "Code should only contain digits")
 		}
 	}
+}
+
+// --- Integration Tests using enttest (SQLite) ---
+
+func TestService_Register_Success(t *testing.T) {
+	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+	defer client.Close()
+
+	smsProvider := &mockSmsProvider{}
+	emailProvider := &mockEmailProvider{}
+	service := auth.NewService(client, smsProvider, emailProvider, auth.WithJWT("secret", 24))
+
+	ctx := context.Background()
+	target := "13888888888"
+	code := "123456"
+	password := "password123"
+
+	// Mock verification code (or use magic code)
+	os.Setenv("AUTH_MAGIC_CODE", code)
+	defer os.Unsetenv("AUTH_MAGIC_CODE")
+
+	// Execute
+	result, err := service.Register(ctx, auth.VerificationTypePhone, target, code, password)
+	require.NoError(t, err)
+	assert.NotNil(t, result)
+	assert.NotEmpty(t, result.Token)
+	assert.Equal(t, target, result.User.Nickname)
+}
+
+func TestService_Register_Duplicate(t *testing.T) {
+	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+	defer client.Close()
+
+	smsProvider := &mockSmsProvider{}
+	emailProvider := &mockEmailProvider{}
+	service := auth.NewService(client, smsProvider, emailProvider, auth.WithJWT("secret", 24))
+
+	ctx := context.Background()
+	target := "13888888888"
+	code := "123456"
+	password := "password123"
+
+	os.Setenv("AUTH_MAGIC_CODE", code)
+	defer os.Unsetenv("AUTH_MAGIC_CODE")
+
+	// Register once
+	_, err := service.Register(ctx, auth.VerificationTypePhone, target, code, password)
+	require.NoError(t, err)
+
+	// Register again should fail
+	_, err = service.Register(ctx, auth.VerificationTypePhone, target, code, password)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "该账号已注册")
+}
+
+func TestService_LoginByPassword_Success(t *testing.T) {
+	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+	defer client.Close()
+
+	smsProvider := &mockSmsProvider{}
+	emailProvider := &mockEmailProvider{}
+	service := auth.NewService(client, smsProvider, emailProvider, auth.WithJWT("secret", 24))
+
+	ctx := context.Background()
+	target := "13999999999"
+	code := "123456"
+	password := "securePass"
+
+	os.Setenv("AUTH_MAGIC_CODE", code)
+	defer os.Unsetenv("AUTH_MAGIC_CODE")
+
+	// Register first
+	_, err := service.Register(ctx, auth.VerificationTypePhone, target, code, password)
+	require.NoError(t, err)
+
+	// Login with correct password
+	result, err := service.LoginByPassword(ctx, auth.VerificationTypePhone, target, password)
+	require.NoError(t, err)
+	assert.NotNil(t, result)
+	assert.NotEmpty(t, result.Token)
+	assert.Equal(t, target, result.User.Nickname)
+}
+
+func TestService_LoginByPassword_WrongPassword(t *testing.T) {
+	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+	defer client.Close()
+
+	smsProvider := &mockSmsProvider{}
+	emailProvider := &mockEmailProvider{}
+	service := auth.NewService(client, smsProvider, emailProvider, auth.WithJWT("secret", 24))
+
+	ctx := context.Background()
+	target := "13999999999"
+	code := "123456"
+	password := "securePass"
+
+	os.Setenv("AUTH_MAGIC_CODE", code)
+	defer os.Unsetenv("AUTH_MAGIC_CODE")
+
+	// Register
+	_, err := service.Register(ctx, auth.VerificationTypePhone, target, code, password)
+	require.NoError(t, err)
+
+	// Login with wrong password
+	_, err = service.LoginByPassword(ctx, auth.VerificationTypePhone, target, "wrongPass")
+	require.Error(t, err)
+	assert.Equal(t, "密码错误", err.Error())
+}
+
+func TestService_LoginByPassword_UserNotFound(t *testing.T) {
+	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+	defer client.Close()
+
+	smsProvider := &mockSmsProvider{}
+	emailProvider := &mockEmailProvider{}
+	service := auth.NewService(client, smsProvider, emailProvider, auth.WithJWT("secret", 24))
+
+	ctx := context.Background()
+
+	// Login with non-existent user
+	_, err := service.LoginByPassword(ctx, auth.VerificationTypePhone, "13000000000", "pass")
+	require.Error(t, err)
+	assert.Equal(t, "用户不存在", err.Error())
+}
+
+func TestService_LoginByCode_Success(t *testing.T) {
+	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+	defer client.Close()
+
+	smsProvider := &mockSmsProvider{}
+	emailProvider := &mockEmailProvider{}
+	service := auth.NewService(client, smsProvider, emailProvider, auth.WithJWT("secret", 24))
+
+	ctx := context.Background()
+	target := "13777777777"
+	code := "123456"
+	password := "password"
+
+	os.Setenv("AUTH_MAGIC_CODE", code)
+	defer os.Unsetenv("AUTH_MAGIC_CODE")
+
+	// Register first
+	_, err := service.Register(ctx, auth.VerificationTypePhone, target, code, password)
+	require.NoError(t, err)
+
+	// Login with code (magic code)
+	result, err := service.LoginByCode(ctx, auth.VerificationTypePhone, target, code)
+	require.NoError(t, err)
+	assert.NotNil(t, result)
+	assert.NotEmpty(t, result.Token)
+}
+
+func TestService_LoginByCode_UserNotFound(t *testing.T) {
+	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+	defer client.Close()
+
+	smsProvider := &mockSmsProvider{}
+	emailProvider := &mockEmailProvider{}
+	service := auth.NewService(client, smsProvider, emailProvider, auth.WithJWT("secret", 24))
+
+	ctx := context.Background()
+	target := "13666666666"
+	code := "123456"
+
+	os.Setenv("AUTH_MAGIC_CODE", code)
+	defer os.Unsetenv("AUTH_MAGIC_CODE")
+
+	// Login unregistered user
+	_, err := service.LoginByCode(ctx, auth.VerificationTypePhone, target, code)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "用户不存在")
 }

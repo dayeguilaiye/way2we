@@ -37,20 +37,20 @@ class LoginPage extends StatelessWidget {
         create: (context) => VerificationCodeBloc(
           authProvider: context.read<AuthProvider>(),
         ),
-        child: const _AuthView(),
+        child: const AuthView(),
       ),
     );
   }
 }
 
-class _AuthView extends StatefulWidget {
-  const _AuthView();
+class AuthView extends StatefulWidget {
+  const AuthView({super.key});
 
   @override
-  State<_AuthView> createState() => _AuthViewState();
+  State<AuthView> createState() => _AuthViewState();
 }
 
-class _AuthViewState extends State<_AuthView> {
+class _AuthViewState extends State<AuthView> {
   final _formKey = GlobalKey<FormState>();
   final _emailOrPhoneController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -294,6 +294,7 @@ class _AuthViewState extends State<_AuthView> {
       children: [
         // 1. Email/Phone Input (Always valid)
         _buildLabeledInput(
+          key: const Key('auth_email_input'),
           label: l10n.authEmailOrPhoneLabel,
           icon: Icons.mail_outline,
           placeholder: l10n.authEmailPlaceholder,
@@ -312,6 +313,7 @@ class _AuthViewState extends State<_AuthView> {
 
           const SizedBox(height: AppSpacing.space4),
           _buildLabeledInput(
+            key: const Key('auth_register_password_input'),
             label: l10n.authPasswordLabel,
             icon: Icons.lock_outline,
             placeholder: l10n.authPasswordPlaceholder,
@@ -332,6 +334,7 @@ class _AuthViewState extends State<_AuthView> {
 
           const SizedBox(height: AppSpacing.space4),
           _buildLabeledInput(
+            key: const Key('auth_register_confirm_password_input'),
             label: l10n.authPasswordConfirmLabel,
             icon: Icons.lock_outline,
             placeholder: l10n.authPasswordConfirmPlaceholder,
@@ -351,6 +354,7 @@ class _AuthViewState extends State<_AuthView> {
           const SizedBox(height: AppSpacing.space4),
           if (_isPasswordLogin)
             _buildLabeledInput(
+              key: const Key('auth_login_password_input'),
               label: l10n.authPasswordLabel,
               icon: Icons.lock_outline,
               placeholder: l10n.authPasswordPlaceholder,
@@ -372,6 +376,7 @@ class _AuthViewState extends State<_AuthView> {
       children: [
         Expanded(
           child: _buildLabeledInput(
+            key: const Key('auth_code_input'),
             label: l10n.authVerificationCodeLabel,
             icon: Icons.numbers,
             placeholder: l10n.authVerificationCodePlaceholder,
@@ -485,6 +490,7 @@ class _AuthViewState extends State<_AuthView> {
   }
 
   Widget _buildLabeledInput({
+    Key? key,
     required String label,
     required IconData icon,
     required String placeholder,
@@ -496,6 +502,7 @@ class _AuthViewState extends State<_AuthView> {
     bool showVisibilityToggle = false,
   }) {
     return Column(
+      key: key,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(

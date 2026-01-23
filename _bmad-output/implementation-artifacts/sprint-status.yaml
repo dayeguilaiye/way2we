@@ -45,8 +45,8 @@ development_status:
   1-1-initialize-project-infrastructure: done
   1-2-verification-code-sending-mock: done
   1-3-user-registration-first-login: done
-  1-4-user-login: backlog
-  1-5-profile-management: backlog
+  1-4-user-login: done
+  1-5-profile-management: ready-for-dev
   1-6-logout-session-management: backlog
   epic-1-retrospective: optional
 
