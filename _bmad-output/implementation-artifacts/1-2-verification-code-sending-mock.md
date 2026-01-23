@@ -1,6 +1,6 @@
 # Story 1.2: 多模式身份验证码发送 (Mock 模式)
 
-状态: review
+状态: done
 
 ## 用户故事
 
@@ -116,3 +116,4 @@
 | Date | Change | Author |
 |------|--------|--------|
 | 2025-12-31 | Story implementation complete - all tasks done, tests passing | Dev Agent |
+| 2026-01-23 | Code review completed - fixed CORS issue for Flutter Web | Antigravity |

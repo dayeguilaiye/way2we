@@ -13,7 +13,8 @@ type Config struct {
 }
 
 type ServerConfig struct {
-	Port int
+	Port         int
+	AllowOrigins []string `mapstructure:"allow_origins"`
 }
 
 type DatabaseConfig struct {
@@ -27,6 +28,8 @@ func LoadConfig() (*Config, error) {
 	viper.AddConfigPath("./configs")
 	viper.AddConfigPath("../configs")
 	viper.AddConfigPath("../../configs")
+	viper.SetEnvPrefix("W2W") // e.g. W2W_SERVER_PORT
+	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
 		return nil, err
