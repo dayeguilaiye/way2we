@@ -10,6 +10,12 @@ import (
 type Config struct {
 	Server   ServerConfig
 	Database DatabaseConfig
+	JWT      JWTConfig
+}
+
+type JWTConfig struct {
+	Secret          string `mapstructure:"secret"`
+	ExpirationHours int    `mapstructure:"expiration_hours"`
 }
 
 type ServerConfig struct {

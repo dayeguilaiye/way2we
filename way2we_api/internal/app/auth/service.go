@@ -11,7 +11,8 @@ import (
 	"time"
 
 	"github.com/way2we/way2we_api/ent"
-	"github.com/way2we/way2we_api/ent/user"
+	"github.com/way2we/way2we_api/ent/useridentity"
+	pkgjwt "github.com/way2we/way2we_api/internal/pkg/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -32,19 +33,23 @@ type verificationEntry struct {
 }
 
 // Service handles authentication-related operations.
+// Service handles authentication-related operations.
 type Service struct {
 	client        *ent.Client // Database client
 	smsProvider   SmsProvider
 	emailProvider EmailProvider
 
 	// In-memory storage for verification codes (MVP only)
-	// In production, this should be replaced with Redis or similar
 	codes map[string]verificationEntry
 	mu    sync.RWMutex
 
 	// Configuration
 	codeLength     int
 	codeExpiration time.Duration
+
+	// JWT Config
+	jwtSecret string
+	jwtExpiry time.Duration
 }
 
 // ServiceOption allows optional configuration of the Service.
@@ -64,6 +69,14 @@ func WithCodeExpiration(duration time.Duration) ServiceOption {
 	}
 }
 
+// WithJWT sets the JWT secret and expiration.
+func WithJWT(secret string, expiryHours int) ServiceOption {
+	return func(s *Service) {
+		s.jwtSecret = secret
+		s.jwtExpiry = time.Duration(expiryHours) * time.Hour
+	}
+}
+
 // NewService creates a new authentication service.
 func NewService(client *ent.Client, smsProvider SmsProvider, emailProvider EmailProvider, opts ...ServiceOption) *Service {
 	s := &Service{
@@ -73,6 +86,7 @@ func NewService(client *ent.Client, smsProvider SmsProvider, emailProvider Email
 		codes:          make(map[string]verificationEntry),
 		codeLength:     6,               // Default: 6-digit code
 		codeExpiration: 5 * time.Minute, // Default: 5 minutes
+		jwtExpiry:      24 * time.Hour,  // Default: 24 hours
 	}
 
 	for _, opt := range opts {
@@ -151,8 +165,14 @@ func (s *Service) VerifyCode(ctx context.Context, target string, code string) bo
 	return false
 }
 
-// Register creates a new user with password.
-func (s *Service) Register(ctx context.Context, verifyType VerificationType, target string, code string, password string) (*ent.User, error) {
+// AuthResult contains the authentication result.
+type AuthResult struct {
+	Token string    `json:"token"`
+	User  *ent.User `json:"user"`
+}
+
+// Register creates a new user with password using a transaction.
+func (s *Service) Register(ctx context.Context, verifyType VerificationType, target string, code string, password string) (*AuthResult, error) {
 	// 1. Verify code
 	if !s.VerifyCode(ctx, target, code) {
 		return nil, errors.New("验证码无效或已过期")
@@ -164,44 +184,89 @@ func (s *Service) Register(ctx context.Context, verifyType VerificationType, tar
 		return nil, fmt.Errorf("密码加密失败: %w", err)
 	}
 
-	// 3. Check if user exists (optional, database unique constraint handles it but better err msg here)
-	// We rely on DB constraint for now to keep it simple or check explicitly
-	// For MVP, letting DB error is fine, or we can check:
-	// exists, _ := s.client.User.Query().Where(user.Email(target)).Exist(ctx)
-
-	// 4. Create user
-	builder := s.client.User.Create().
-		SetPasswordHash(string(hashed)).
-		SetNickname(target) // Set default nickname as target
-
-	if verifyType == VerificationTypeEmail {
-		builder.SetEmail(target)
-	} else {
-		builder.SetPhone(target)
-	}
-
-	user, err := builder.Save(ctx)
+	// 3. Start Transaction
+	tx, err := s.client.Tx(ctx)
 	if err != nil {
-		if ent.IsConstraintError(err) {
-			return nil, errors.New("用户已存在")
-		}
-		return nil, fmt.Errorf("创建用户失败: %w", err)
+		return nil, fmt.Errorf("starting transaction: %w", err)
 	}
 
-	return user, nil
+	// Determine identity type
+	idType := useridentity.TypePhone
+	if verifyType == VerificationTypeEmail {
+		idType = useridentity.TypeEmail
+	}
+
+	// 4. Check if identity exists
+	exists, err := tx.UserIdentity.Query().
+		Where(
+			useridentity.TypeEQ(idType),
+			useridentity.IdentifierEQ(target),
+		).
+		Exist(ctx)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+	if exists {
+		tx.Rollback()
+		return nil, errors.New("该账号已注册")
+	}
+
+	// 5. Create User
+	u, err := tx.User.Create().
+		SetPasswordHash(string(hashed)).
+		SetNickname(target). // Set default nickname as target (masked in real logic usually)
+		Save(ctx)
+	if err != nil {
+		tx.Rollback()
+		return nil, fmt.Errorf("creating user: %w", err)
+	}
+
+	// 6. Create UserIdentity
+	_, err = tx.UserIdentity.Create().
+		SetType(idType).
+		SetIdentifier(target).
+		SetVerified(true). // Verified via code
+		SetUser(u).
+		Save(ctx)
+	if err != nil {
+		tx.Rollback()
+		return nil, fmt.Errorf("creating identity: %w", err)
+	}
+
+	// 7. Commit Transaction
+	if err := tx.Commit(); err != nil {
+		return nil, fmt.Errorf("committing transaction: %w", err)
+	}
+
+	// 8. Generate Token
+	token, err := pkgjwt.GenerateToken(u.ID, s.jwtSecret, s.jwtExpiry)
+	if err != nil {
+		return nil, fmt.Errorf("generating token: %w", err)
+	}
+
+	return &AuthResult{
+		Token: token,
+		User:  u,
+	}, nil
 }
 
 // LoginByPassword authenticates a user using password.
-func (s *Service) LoginByPassword(ctx context.Context, verifyType VerificationType, target string, password string) (*ent.User, error) {
-	// 1. Find user
-	q := s.client.User.Query()
+func (s *Service) LoginByPassword(ctx context.Context, verifyType VerificationType, target string, password string) (*AuthResult, error) {
+	// 1. Determine identity type
+	idType := useridentity.TypePhone
 	if verifyType == VerificationTypeEmail {
-		q.Where(user.Email(target))
-	} else {
-		q.Where(user.Phone(target))
+		idType = useridentity.TypeEmail
 	}
 
-	u, err := q.Only(ctx)
+	// 2. Find Identity
+	identity, err := s.client.UserIdentity.Query().
+		Where(
+			useridentity.TypeEQ(idType),
+			useridentity.IdentifierEQ(target),
+		).
+		WithUser(). // Eager load user
+		Only(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return nil, errors.New("用户不存在")
@@ -209,33 +274,50 @@ func (s *Service) LoginByPassword(ctx context.Context, verifyType VerificationTy
 		return nil, err
 	}
 
-	// 2. Verify password
+	// 3. Get User
+	u := identity.Edges.User
+	if u == nil {
+		return nil, errors.New("用户数据异常")
+	}
+
+	// 4. Verify Password
 	if err := bcrypt.CompareHashAndPassword([]byte(u.PasswordHash), []byte(password)); err != nil {
 		return nil, errors.New("密码错误")
 	}
 
-	return u, nil
+	// 5. Generate Token
+	token, err := pkgjwt.GenerateToken(u.ID, s.jwtSecret, s.jwtExpiry)
+	if err != nil {
+		return nil, fmt.Errorf("generating token: %w", err)
+	}
+
+	return &AuthResult{
+		Token: token,
+		User:  u,
+	}, nil
 }
 
 // LoginByCode authenticates a user using verification code.
-// For MVP, this might just login user if exists, or do we allow auto-register?
-// PRD said "Register: set password". "Login: code or password".
-// So LoginByCode implies checking if user exists, if so, login.
-func (s *Service) LoginByCode(ctx context.Context, verifyType VerificationType, target string, code string) (*ent.User, error) {
+func (s *Service) LoginByCode(ctx context.Context, verifyType VerificationType, target string, code string) (*AuthResult, error) {
 	// 1. Verify Code
 	if !s.VerifyCode(ctx, target, code) {
 		return nil, errors.New("验证码无效或已过期")
 	}
 
-	// 2. Find User
-	q := s.client.User.Query()
+	// 2. Determine identity type
+	idType := useridentity.TypePhone
 	if verifyType == VerificationTypeEmail {
-		q.Where(user.Email(target))
-	} else {
-		q.Where(user.Phone(target))
+		idType = useridentity.TypeEmail
 	}
 
-	u, err := q.Only(ctx)
+	// 3. Find Identity
+	identity, err := s.client.UserIdentity.Query().
+		Where(
+			useridentity.TypeEQ(idType),
+			useridentity.IdentifierEQ(target),
+		).
+		WithUser().
+		Only(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return nil, errors.New("用户不存在，请先注册")
@@ -243,7 +325,22 @@ func (s *Service) LoginByCode(ctx context.Context, verifyType VerificationType, 
 		return nil, err
 	}
 
-	return u, nil
+	// 4. Get User
+	u := identity.Edges.User
+	if u == nil {
+		return nil, errors.New("用户数据异常")
+	}
+
+	// 5. Generate Token
+	token, err := pkgjwt.GenerateToken(u.ID, s.jwtSecret, s.jwtExpiry)
+	if err != nil {
+		return nil, fmt.Errorf("generating token: %w", err)
+	}
+
+	return &AuthResult{
+		Token: token,
+		User:  u,
+	}, nil
 }
 
 // generateCode generates a cryptographically secure random n-digit code.

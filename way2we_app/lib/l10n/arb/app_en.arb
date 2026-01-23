@@ -139,7 +139,7 @@
     "@authPasswordLabel": {
         "description": "Password field label"
     },
-    "authPasswordPlaceholder": "Enter 8-20 characters",
+    "authPasswordPlaceholder": "Enter 6-20 characters",
     "@authPasswordPlaceholder": {
         "description": "Password field placeholder"
     },
@@ -174,5 +174,33 @@
     "authLoginSuccess": "Login Successful!",
     "@authLoginSuccess": {
         "description": "Login success snackbar message"
+    },
+    "authValidationPasswordTooLong": "Password too long (max 20)",
+    "@authValidationPasswordTooLong": {
+        "description": "Password max length validation error"
+    },
+    "onboardingWelcomeTitle": "Welcome aboard!",
+    "@onboardingWelcomeTitle": {
+        "description": "Welcome title on onboarding profile setup page"
+    },
+    "onboardingWelcomeSubtitle": "Let's set up your profile so others can recognize you.",
+    "@onboardingWelcomeSubtitle": {
+        "description": "Welcome subtitle on onboarding profile setup page"
+    },
+    "onboardingNicknameRequired": "Please enter a nickname",
+    "@onboardingNicknameRequired": {
+        "description": "Nickname required validation message"
+    },
+    "onboardingNicknameTooLong": "Nickname too long (max 20)",
+    "@onboardingNicknameTooLong": {
+        "description": "Nickname max length validation message"
+    },
+    "onboardingContinueButton": "Let's Go",
+    "@onboardingContinueButton": {
+        "description": "Continue button text on onboarding page"
+    },
+    "onboardingSkipButton": "Skip for now",
+    "@onboardingSkipButton": {
+        "description": "Skip button text on onboarding page"
     }
 }

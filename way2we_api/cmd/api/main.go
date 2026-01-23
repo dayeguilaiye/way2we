@@ -48,7 +48,12 @@ func main() {
 	emailProvider := adapterAuth.NewLogEmailProvider()
 
 	// Initialize auth service
-	authService := auth.NewService(client, smsProvider, emailProvider)
+	authService := auth.NewService(
+		client,
+		smsProvider,
+		emailProvider,
+		auth.WithJWT(cfg.JWT.Secret, cfg.JWT.ExpirationHours),
+	)
 
 	// Initialize Echo
 	e := echo.New()

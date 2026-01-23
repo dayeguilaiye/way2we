@@ -3,8 +3,11 @@
 package ent
 
 import (
+	"time"
+
 	"github.com/way2we/way2we_api/ent/schema"
 	"github.com/way2we/way2we_api/ent/user"
+	"github.com/way2we/way2we_api/ent/useridentity"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -13,8 +16,42 @@ import (
 func init() {
 	userFields := schema.User{}.Fields()
 	_ = userFields
+	// userDescNickname is the schema descriptor for nickname field.
+	userDescNickname := userFields[0].Descriptor()
+	// user.NicknameValidator is a validator for the "nickname" field. It is called by the builders before save.
+	user.NicknameValidator = userDescNickname.Validators[0].(func(string) error)
 	// userDescPasswordHash is the schema descriptor for password_hash field.
 	userDescPasswordHash := userFields[2].Descriptor()
 	// user.PasswordHashValidator is a validator for the "password_hash" field. It is called by the builders before save.
 	user.PasswordHashValidator = userDescPasswordHash.Validators[0].(func(string) error)
+	// userDescCreatedAt is the schema descriptor for created_at field.
+	userDescCreatedAt := userFields[3].Descriptor()
+	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
+	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
+	// userDescUpdatedAt is the schema descriptor for updated_at field.
+	userDescUpdatedAt := userFields[4].Descriptor()
+	// user.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(func() time.Time)
+	// user.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	user.UpdateDefaultUpdatedAt = userDescUpdatedAt.UpdateDefault.(func() time.Time)
+	useridentityFields := schema.UserIdentity{}.Fields()
+	_ = useridentityFields
+	// useridentityDescIdentifier is the schema descriptor for identifier field.
+	useridentityDescIdentifier := useridentityFields[1].Descriptor()
+	// useridentity.IdentifierValidator is a validator for the "identifier" field. It is called by the builders before save.
+	useridentity.IdentifierValidator = useridentityDescIdentifier.Validators[0].(func(string) error)
+	// useridentityDescVerified is the schema descriptor for verified field.
+	useridentityDescVerified := useridentityFields[2].Descriptor()
+	// useridentity.DefaultVerified holds the default value on creation for the verified field.
+	useridentity.DefaultVerified = useridentityDescVerified.Default.(bool)
+	// useridentityDescCreatedAt is the schema descriptor for created_at field.
+	useridentityDescCreatedAt := useridentityFields[3].Descriptor()
+	// useridentity.DefaultCreatedAt holds the default value on creation for the created_at field.
+	useridentity.DefaultCreatedAt = useridentityDescCreatedAt.Default.(func() time.Time)
+	// useridentityDescUpdatedAt is the schema descriptor for updated_at field.
+	useridentityDescUpdatedAt := useridentityFields[4].Descriptor()
+	// useridentity.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	useridentity.DefaultUpdatedAt = useridentityDescUpdatedAt.Default.(func() time.Time)
+	// useridentity.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	useridentity.UpdateDefaultUpdatedAt = useridentityDescUpdatedAt.UpdateDefault.(func() time.Time)
 }

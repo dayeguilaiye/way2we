@@ -4,3 +4,6 @@ server:
 database:
   driver: postgres
   source: "host=localhost port=5432 user=postgres password=password dbname=way2we sslmode=disable"
+jwt:
+  secret: "way2we-dev-secret-change-in-production"
+  expiration_hours: 168  # 7 days

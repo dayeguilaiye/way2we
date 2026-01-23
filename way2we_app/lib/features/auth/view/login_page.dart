@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:way2we_app/features/auth/bloc/verification_code_bloc.dart';
 import 'package:way2we_app/features/auth/data/providers/auth_provider.dart';
+import 'package:way2we_app/features/auth/view/onboarding_profile_setup_page.dart';
+import 'package:way2we_app/features/home/view/home_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
 import 'package:way2we_app/theme/theme.dart';
 
@@ -316,9 +318,16 @@ class _AuthViewState extends State<_AuthView> {
             controller: _passwordController,
             theme: theme,
             obscureText: true,
-            validator: (val) => (val == null || val.length < 6)
-                ? l10n.authValidationPasswordTooShort
-                : null,
+            showVisibilityToggle: true,
+            validator: (val) {
+              if (val == null || val.length < 6) {
+                return l10n.authValidationPasswordTooShort;
+              }
+              if (val.length > 20) {
+                return l10n.authValidationPasswordTooLong;
+              }
+              return null;
+            },
           ),
 
           const SizedBox(height: AppSpacing.space4),
@@ -329,6 +338,7 @@ class _AuthViewState extends State<_AuthView> {
             controller: _confirmPasswordController,
             theme: theme,
             obscureText: true,
+            showVisibilityToggle: true,
             validator: (val) => val != _passwordController.text
                 ? l10n.authValidationPasswordsDoNotMatch
                 : null,
@@ -347,6 +357,7 @@ class _AuthViewState extends State<_AuthView> {
               controller: _passwordController,
               theme: theme,
               obscureText: true,
+              showVisibilityToggle: true,
             )
           else
             _buildCodeInputRow(theme, l10n),
@@ -482,6 +493,7 @@ class _AuthViewState extends State<_AuthView> {
     TextInputType keyboardType = TextInputType.text,
     bool obscureText = false,
     String? Function(String?)? validator,
+    bool showVisibilityToggle = false,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -508,6 +520,7 @@ class _AuthViewState extends State<_AuthView> {
           keyboardType: keyboardType,
           obscureText: obscureText,
           validator: validator,
+          showVisibilityToggle: showVisibilityToggle,
         ),
       ],
     );
@@ -687,7 +700,9 @@ class _AuthViewState extends State<_AuthView> {
               content: Text(l10n.authRegistrationSuccess),
             ),
           );
-          setState(() => _isRegisterMode = false);
+          await Navigator.of(context).pushReplacement(
+            OnboardingProfileSetupPage.route(),
+          );
         }
       } else {
         await auth.login(
@@ -702,8 +717,7 @@ class _AuthViewState extends State<_AuthView> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(l10n.authLoginSuccess)),
           );
-          // TODO(ziyuanhe): Navigate to home
-          // Navigator.of(context).pushReplacementNamed('/home');
+          await Navigator.of(context).pushReplacement(HomePage.route());
         }
       }
     } on Exception catch (e) {
@@ -737,6 +751,7 @@ class _AuthInputField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.obscureText = false,
     this.validator,
+    this.showVisibilityToggle = false,
   });
 
   final TextEditingController controller;
@@ -746,6 +761,7 @@ class _AuthInputField extends StatefulWidget {
   final TextInputType keyboardType;
   final bool obscureText;
   final String? Function(String?)? validator;
+  final bool showVisibilityToggle;
 
   @override
   State<_AuthInputField> createState() => _AuthInputFieldState();
@@ -754,6 +770,7 @@ class _AuthInputField extends StatefulWidget {
 class _AuthInputFieldState extends State<_AuthInputField> {
   final FocusNode _focusNode = FocusNode();
   bool _isFocused = false;
+  bool _isObscured = true;
 
   @override
   void initState() {
@@ -814,7 +831,7 @@ class _AuthInputFieldState extends State<_AuthInputField> {
                     controller: widget.controller,
                     focusNode: _focusNode,
                     keyboardType: widget.keyboardType,
-                    obscureText: widget.obscureText,
+                    obscureText: widget.obscureText && _isObscured,
                     style: widget.theme.textTheme.bodyLarge,
                     // Sync TextField changes to FormField state
                     onChanged: (value) {
@@ -837,6 +854,25 @@ class _AuthInputFieldState extends State<_AuthInputField> {
                         ),
                       ),
                       prefixIconConstraints: const BoxConstraints(
+                        minWidth: 32,
+                      ),
+                      suffixIcon: widget.showVisibilityToggle
+                          ? GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isObscured = !_isObscured;
+                                });
+                              },
+                              child: Icon(
+                                _isObscured
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                                color: AppColors.textMutedLight,
+                                size: 20,
+                              ),
+                            )
+                          : null,
+                      suffixIconConstraints: const BoxConstraints(
                         minWidth: 32,
                       ),
                       border: InputBorder.none,

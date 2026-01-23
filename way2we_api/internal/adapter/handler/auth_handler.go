@@ -6,6 +6,7 @@ import (
 	"regexp"
 
 	"github.com/labstack/echo/v4"
+	"github.com/way2we/way2we_api/ent"
 	"github.com/way2we/way2we_api/internal/app/auth"
 )
 
@@ -40,10 +41,21 @@ type RegisterRequest struct {
 	Password string `json:"password"` // password
 }
 
+// UserDTO represents user info returned in auth responses.
+// Note: password_hash is never exposed in API responses.
+type UserDTO struct {
+	ID        int    `json:"id"`
+	Nickname  string `json:"nickname,omitempty"`
+	Avatar    string `json:"avatar,omitempty"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}
+
 type RegisterResponse struct {
-	Success bool        `json:"success"`
-	Message string      `json:"message"`
-	User    interface{} `json:"user,omitempty"`
+	Success bool     `json:"success"`
+	Message string   `json:"message"`
+	Token   string   `json:"token,omitempty"`
+	User    *UserDTO `json:"user,omitempty"`
 }
 
 // LoginRequest represents the request body for login.
@@ -55,9 +67,10 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
-	Success bool        `json:"success"`
-	Message string      `json:"message"`
-	User    interface{} `json:"user,omitempty"`
+	Success bool     `json:"success"`
+	Message string   `json:"message"`
+	Token   string   `json:"token,omitempty"`
+	User    *UserDTO `json:"user,omitempty"`
 }
 
 // ErrorResponse represents an error response.
@@ -154,7 +167,7 @@ func (h *AuthHandler) Register(c echo.Context) error {
 		})
 	}
 
-	user, err := h.authService.Register(c.Request().Context(), verifyType, req.Target, req.Code, req.Password)
+	authResult, err := h.authService.Register(c.Request().Context(), verifyType, req.Target, req.Code, req.Password)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, ErrorResponse{
 			Code:    "ERR_REGISTER_FAILED",
@@ -165,7 +178,8 @@ func (h *AuthHandler) Register(c echo.Context) error {
 	return c.JSON(http.StatusOK, RegisterResponse{
 		Success: true,
 		Message: "注册成功",
-		User:    user,
+		Token:   authResult.Token,
+		User:    toUserDTO(authResult.User),
 	})
 }
 
@@ -194,13 +208,13 @@ func (h *AuthHandler) Login(c echo.Context) error {
 		})
 	}
 
-	var user interface{}
+	var authResult *auth.AuthResult
 	// var loginErr error
 
 	if req.Mode == "password" {
-		user, err = h.authService.LoginByPassword(c.Request().Context(), verifyType, req.Target, req.Credential)
+		authResult, err = h.authService.LoginByPassword(c.Request().Context(), verifyType, req.Target, req.Credential)
 	} else if req.Mode == "code" {
-		user, err = h.authService.LoginByCode(c.Request().Context(), verifyType, req.Target, req.Credential)
+		authResult, err = h.authService.LoginByCode(c.Request().Context(), verifyType, req.Target, req.Credential)
 	} else {
 		return c.JSON(http.StatusBadRequest, ErrorResponse{
 			Code:    "ERR_INVALID_MODE",
@@ -218,7 +232,8 @@ func (h *AuthHandler) Login(c echo.Context) error {
 	return c.JSON(http.StatusOK, LoginResponse{
 		Success: true,
 		Message: "登录成功",
-		User:    user,
+		Token:   authResult.Token,
+		User:    toUserDTO(authResult.User),
 	})
 }
 
@@ -231,6 +246,20 @@ func (h *AuthHandler) validateType(t string) (auth.VerificationType, error) {
 		return auth.VerificationTypeEmail, nil
 	default:
 		return "", echo.NewHTTPError(http.StatusBadRequest, "invalid verification type")
+	}
+}
+
+// toUserDTO converts ent.User to UserDTO for API responses.
+func toUserDTO(u *ent.User) *UserDTO {
+	if u == nil {
+		return nil
+	}
+	return &UserDTO{
+		ID:        u.ID,
+		Nickname:  u.Nickname,
+		Avatar:    u.Avatar,
+		CreatedAt: u.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		UpdatedAt: u.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
 	}
 }
 

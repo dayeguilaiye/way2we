@@ -1,7 +1,10 @@
 package schema
 
 import (
+	"time"
+
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -13,21 +16,32 @@ type User struct {
 // Fields of the User.
 func (User) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("email").
+		field.String("nickname").
 			Optional().
-			Unique(),
-		field.String("phone").
+			MaxLen(20).
+			Comment("Display name, 1-20 characters"),
+		field.String("avatar").
 			Optional().
-			Unique(),
+			Comment("Avatar image URL"),
 		field.String("password_hash").
 			NotEmpty().
-			Sensitive(), // Sensitive prevents it from being printed in logs
-		field.String("nickname").
-			Optional(),
+			Sensitive(). // Prevents it from being printed in logs
+			Comment("bcrypt hashed password"),
+		field.Time("created_at").
+			Default(time.Now).
+			Immutable().
+			Comment("Account creation timestamp"),
+		field.Time("updated_at").
+			Default(time.Now).
+			UpdateDefault(time.Now).
+			Comment("Last profile update timestamp"),
 	}
 }
 
 // Edges of the User.
 func (User) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.To("identities", UserIdentity.Type).
+			Comment("Login identities (phone, email, social)"),
+	}
 }
