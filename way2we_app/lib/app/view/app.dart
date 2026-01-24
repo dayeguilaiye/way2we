@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:way2we_app/features/auth/auth.dart';
+import 'package:way2we_app/features/splash/view/splash_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
 import 'package:way2we_app/theme/app_theme.dart';
 
@@ -13,7 +13,7 @@ class App extends StatelessWidget {
       darkTheme: AppTheme.dark,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const LoginPage(),
+      home: const SplashPage(),
     );
   }
 }

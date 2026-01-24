@@ -11,6 +11,11 @@ type Config struct {
 	Server   ServerConfig
 	Database DatabaseConfig
 	JWT      JWTConfig
+	App      AppConfig
+}
+
+type AppConfig struct {
+	PublicURL string `mapstructure:"public_url"`
 }
 
 type JWTConfig struct {

@@ -1,10 +1,12 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:way2we_app/app/di.dart';
 import 'package:way2we_app/features/home/view/home_page.dart';
+import 'package:way2we_app/features/profile/bloc/profile_bloc.dart';
+import 'package:way2we_app/features/profile/data/providers/profile_provider.dart';
 import 'package:way2we_app/l10n/l10n.dart';
+import 'package:way2we_app/shared/widgets/avatar_picker.dart';
 import 'package:way2we_app/theme/theme.dart';
 
 /// Onboarding-specific profile setup page shown after registration.
@@ -17,7 +19,20 @@ class OnboardingProfileSetupPage extends StatefulWidget {
 
   static Route<void> route() {
     return MaterialPageRoute<void>(
-      builder: (_) => const OnboardingProfileSetupPage(),
+      builder: (_) {
+        // Use global Dio instance from ServiceLocator
+        final dio = ServiceLocator.instance.dio;
+
+        return RepositoryProvider(
+          create: (_) => ProfileProvider(dio: dio),
+          child: BlocProvider(
+            create: (context) => ProfileBloc(
+              profileProvider: context.read<ProfileProvider>(),
+            ),
+            child: const OnboardingProfileSetupPage(),
+          ),
+        );
+      },
     );
   }
 
@@ -31,7 +46,6 @@ class _OnboardingProfileSetupPageState
   final _nicknameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   XFile? _selectedImage;
-  bool _isSubmitting = false;
 
   @override
   void dispose() {
@@ -54,18 +68,15 @@ class _OnboardingProfileSetupPageState
     }
   }
 
-  Future<void> _onSubmit() async {
+  void _onSubmit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    setState(() => _isSubmitting = true);
-
-    // TODO(profile): Call backend API to update profile when available
-    // For now, just simulate a delay and navigate to home
-    await Future<void>.delayed(const Duration(milliseconds: 500));
-
-    if (mounted) {
-      await Navigator.of(context).pushReplacement(HomePage.route());
-    }
+    context.read<ProfileBloc>().add(
+      ProfileUpdateRequested(
+        nickname: _nicknameController.text.trim(),
+        avatarFile: _selectedImage,
+      ),
+    );
   }
 
   @override
@@ -73,38 +84,52 @@ class _OnboardingProfileSetupPageState
     final theme = Theme.of(context);
     final l10n = context.l10n;
 
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.pagePaddingH,
-          ),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                const SizedBox(height: AppSpacing.space10),
+    return BlocListener<ProfileBloc, ProfileState>(
+      listener: (context, state) {
+        if (state is ProfileUpdateSuccess) {
+          Navigator.of(context).pushReplacement(HomePage.route());
+        } else if (state is ProfileFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMessage),
+              backgroundColor: theme.colorScheme.error,
+            ),
+          );
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.pagePaddingH,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  const SizedBox(height: AppSpacing.space10),
 
-                // Welcome illustration / icon
-                _buildWelcomeHeader(theme, l10n),
-                const SizedBox(height: AppSpacing.space8),
+                  // Welcome illustration / icon
+                  _buildWelcomeHeader(theme, l10n),
+                  const SizedBox(height: AppSpacing.space8),
 
-                // Avatar picker
-                _buildAvatarPicker(theme),
-                const SizedBox(height: AppSpacing.space6),
+                  // Avatar picker
+                  _buildAvatarPicker(theme),
+                  const SizedBox(height: AppSpacing.space6),
 
-                // Nickname input
-                _buildNicknameInput(theme, l10n),
-                const SizedBox(height: AppSpacing.space8),
+                  // Nickname input
+                  _buildNicknameInput(theme, l10n),
+                  const SizedBox(height: AppSpacing.space8),
 
-                // Submit button
-                _buildSubmitButton(theme, l10n),
-                const SizedBox(height: AppSpacing.space4),
+                  // Submit button
+                  _buildSubmitButton(theme, l10n),
+                  const SizedBox(height: AppSpacing.space4),
 
-                // Skip button
-                _buildSkipButton(theme, l10n),
-                const SizedBox(height: AppSpacing.space8),
-              ],
+                  // Skip button
+                  _buildSkipButton(theme, l10n),
+                  const SizedBox(height: AppSpacing.space8),
+                ],
+              ),
             ),
           ),
         ),
@@ -156,62 +181,9 @@ class _OnboardingProfileSetupPageState
   }
 
   Widget _buildAvatarPicker(ThemeData theme) {
-    return GestureDetector(
+    return AvatarPicker(
+      imageFile: _selectedImage,
       onTap: _pickImage,
-      child: Stack(
-        children: [
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.surfaceMutedLight,
-              border: Border.all(
-                color: AppColors.borderSubtleLight,
-                width: 2,
-              ),
-              boxShadow: AppShadows.card,
-              image: _selectedImage != null
-                  ? DecorationImage(
-                      image: kIsWeb
-                          ? NetworkImage(_selectedImage!.path)
-                          : FileImage(File(_selectedImage!.path))
-                                as ImageProvider,
-                      fit: BoxFit.cover,
-                    )
-                  : null,
-            ),
-            child: _selectedImage == null
-                ? const Icon(
-                    Icons.person_outline,
-                    size: 48,
-                    color: AppColors.textMutedLight,
-                  )
-                : null,
-          ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.primary,
-                border: Border.all(
-                  color: Colors.white,
-                  width: 2,
-                ),
-              ),
-              child: const Icon(
-                Icons.camera_alt_outlined,
-                size: 18,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -260,8 +232,8 @@ class _OnboardingProfileSetupPageState
                 hintStyle: theme.textTheme.bodyLarge?.copyWith(
                   color: AppColors.textPlaceholderLight,
                 ),
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.only(right: AppSpacing.space2),
+                prefixIcon: const Padding(
+                  padding: EdgeInsets.only(right: AppSpacing.space2),
                   child: Icon(
                     Icons.edit_outlined,
                     color: AppColors.textMutedLight,
@@ -280,44 +252,52 @@ class _OnboardingProfileSetupPageState
   }
 
   Widget _buildSubmitButton(ThemeData theme, AppLocalizations l10n) {
-    return Container(
-      width: double.infinity,
-      height: AppSpacing.inputHeight,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
-        boxShadow: !_isSubmitting
-            ? const [
-                BoxShadow(
-                  color: AppColors.primaryShadow,
-                  blurRadius: 24,
-                  offset: Offset(0, 8),
-                ),
-              ]
-            : null,
-      ),
-      child: FilledButton(
-        onPressed: _isSubmitting ? null : _onSubmit,
-        style: FilledButton.styleFrom(
-          minimumSize: const Size(double.infinity, AppSpacing.inputHeight),
-        ),
-        child: _isSubmitting
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                  strokeWidth: 2,
-                ),
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(l10n.onboardingContinueButton),
-                  const SizedBox(width: AppSpacing.space2),
-                  const Icon(Icons.arrow_forward, size: 20),
-                ],
-              ),
-      ),
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      buildWhen: (previous, current) =>
+          (previous is ProfileLoading) != (current is ProfileLoading),
+      builder: (context, state) {
+        final isLoading = state is ProfileLoading;
+
+        return Container(
+          width: double.infinity,
+          height: AppSpacing.inputHeight,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+            boxShadow: !isLoading
+                ? const [
+                    BoxShadow(
+                      color: AppColors.primaryShadow,
+                      blurRadius: 24,
+                      offset: Offset(0, 8),
+                    ),
+                  ]
+                : null,
+          ),
+          child: FilledButton(
+            onPressed: isLoading ? null : _onSubmit,
+            style: FilledButton.styleFrom(
+              minimumSize: const Size(double.infinity, AppSpacing.inputHeight),
+            ),
+            child: isLoading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(l10n.onboardingContinueButton),
+                      const SizedBox(width: AppSpacing.space2),
+                      const Icon(Icons.arrow_forward, size: 20),
+                    ],
+                  ),
+          ),
+        );
+      },
     );
   }
 

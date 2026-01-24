@@ -33,7 +33,7 @@
     "authValidationEmailInvalid": "请输入有效的邮箱地址",
     "authErrorGeneric": "发送验证码失败，请稍后重试",
     "authPasswordLabel": "密码",
-    "authPasswordPlaceholder": "请输入8-20位字符",
+    "authPasswordPlaceholder": "请输入6-20位字符",
     "authPasswordConfirmLabel": "确认密码",
     "authPasswordConfirmPlaceholder": "请再次输入密码",
     "authPasswordLogin": "密码登录",
@@ -41,5 +41,16 @@
     "authValidationPasswordTooShort": "密码太短",
     "authValidationPasswordsDoNotMatch": "两次输入的密码不一致",
     "authRegistrationSuccess": "注册成功！请登录。",
-    "authLoginSuccess": "登录成功！"
+    "authLoginSuccess": "登录成功！",
+    "authValidationPasswordTooLong": "密码太长（最多20个字符）",
+    "onboardingWelcomeTitle": "欢迎加入！",
+    "onboardingWelcomeSubtitle": "让我们设置您的个人资料，以便他人识别您。",
+    "onboardingNicknameRequired": "请输入昵称",
+    "onboardingNicknameTooLong": "昵称太长（最长20个字符）",
+    "onboardingContinueButton": "开启旅程",
+    "onboardingSkipButton": "稍后再说",
+    "profilePageTitle": "个人资料设置",
+    "profileSaveButton": "保存修改",
+    "profileUpdateSuccess": "个人资料更新成功！",
+    "profileUpdateError": "个人资料更新失败，请重试。"
 }

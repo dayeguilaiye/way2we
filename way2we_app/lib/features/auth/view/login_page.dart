@@ -1,7 +1,7 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:way2we_app/app/di.dart';
 import 'package:way2we_app/features/auth/bloc/verification_code_bloc.dart';
 import 'package:way2we_app/features/auth/data/providers/auth_provider.dart';
 import 'package:way2we_app/features/auth/view/onboarding_profile_setup_page.dart';
@@ -23,13 +23,8 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO(auth): Get Dio from DI container
-    final dio = Dio(
-      BaseOptions(
-        baseUrl: 'http://localhost:8080',
-        contentType: 'application/json',
-      ),
-    );
+    // Use global Dio instance from ServiceLocator
+    final dio = ServiceLocator.instance.dio;
 
     return RepositoryProvider(
       create: (_) => AuthProvider(dio: dio),
@@ -58,7 +53,7 @@ class _AuthViewState extends State<AuthView> {
   final _codeController = TextEditingController();
 
   /// Current auth mode: true = register, false = login
-  bool _isRegisterMode = true;
+  bool _isRegisterMode = false;
 
   /// Login mode: true = password, false = code
   bool _isPasswordLogin = true;
@@ -238,17 +233,17 @@ class _AuthViewState extends State<AuthView> {
         children: [
           Expanded(
             child: _buildToggleButton(
-              label: l10n.authRegisterTab,
-              isSelected: _isRegisterMode,
-              onTap: () => setState(() => _isRegisterMode = true),
+              label: l10n.authLoginTab,
+              isSelected: !_isRegisterMode,
+              onTap: () => setState(() => _isRegisterMode = false),
               theme: theme,
             ),
           ),
           Expanded(
             child: _buildToggleButton(
-              label: l10n.authLoginTab,
-              isSelected: !_isRegisterMode,
-              onTap: () => setState(() => _isRegisterMode = false),
+              label: l10n.authRegisterTab,
+              isSelected: _isRegisterMode,
+              onTap: () => setState(() => _isRegisterMode = true),
               theme: theme,
             ),
           ),

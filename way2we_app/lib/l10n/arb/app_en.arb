@@ -202,5 +202,21 @@
     "onboardingSkipButton": "Skip for now",
     "@onboardingSkipButton": {
         "description": "Skip button text on onboarding page"
+    },
+    "profilePageTitle": "Profile Settings",
+    "@profilePageTitle": {
+        "description": "Profile page title"
+    },
+    "profileSaveButton": "Save Changes",
+    "@profileSaveButton": {
+        "description": "Save button text on profile page"
+    },
+    "profileUpdateSuccess": "Profile updated successfully!",
+    "@profileUpdateSuccess": {
+        "description": "Profile update success message"
+    },
+    "profileUpdateError": "Failed to update profile. Please try again.",
+    "@profileUpdateError": {
+        "description": "Profile update error message"
     }
 }

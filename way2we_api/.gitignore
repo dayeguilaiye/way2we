@@ -4,3 +4,6 @@ configs/config.local.yaml
 .idea/
 .vscode/
 vendor/
+
+# Runtime directories - do not commit user uploads
+uploads/

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:way2we_app/features/auth/view/login_page.dart';
+import 'package:way2we_app/features/profile/view/profile_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -15,12 +17,23 @@ class HomePage extends StatelessWidget {
         title: const Text('Way2We Home'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: const Icon(Icons.person),
             onPressed: () {
-              // Simple logout navigation for MVP
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute<void>(builder: (_) => const LoginPage()),
-              );
+              Navigator.of(context).push(ProfilePage.route());
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              // Clear token for logout
+              const storage = FlutterSecureStorage();
+              await storage.delete(key: 'auth_token');
+
+              if (context.mounted) {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute<void>(builder: (_) => const LoginPage()),
+                );
+              }
             },
           ),
         ],

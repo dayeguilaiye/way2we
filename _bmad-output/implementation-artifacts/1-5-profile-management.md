@@ -1,6 +1,6 @@
 # Story 1.5: Profile Management
 
-Status: ready-for-dev
+Status: completed
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -28,35 +28,35 @@ so that **other group members can identify me**.
 
 ## Tasks / Subtasks
 
-- [ ] **Backend Implementation**
-  - [ ] **Storage Infrastructure**: 
+- [x] **Backend Implementation**
+  - [x] **Storage Infrastructure**: 
     - **Config**: Add `app.public_url` to `configs/config.yaml` (default: `http://localhost:8080`) and Go config struct.
     - Create `internal/adapter/storage` with `Provider` interface: `Upload(ctx, file) (key string, err)` and `GetPublicUrl(key string) string`.
     - Implement `LocalStorageProvider`: Save to `uploads/` dir. `GetPublicUrl` returns `{app.public_url}/uploads/{key}`.
     - Strategy: DB stores **Key** (`avatars/xyz.jpg`), API returns **Full URL**.
     - *Future Note*: When implementing S3, `GetPublicUrl` will simply return `{bucket_cdn_url}/{key}`.
-  - [ ] **Security Validation**:
+  - [x] **Security Validation**:
     - Implement middleware or helper to validate `Content-Type` allowed list (`image/jpeg`, `image/png`, `image/webp`).
     - Enforce `MaxFileSize` of **10MB**.
-  - [ ] **User Domain**: 
+  - [x] **User Domain**: 
     - Create `internal/app/user`.
     - Implement `UpdateProfile` to handle DB updates.
-  - [ ] **API Layer**: 
+  - [x] **API Layer**: 
     - `user_handler.go`: Endpoints for `PUT /me` and `POST /uploads/avatar`.
     - Router registry in `router.go`.
     - **Static Serving**: Configure Echo to serve `uploads/` dir when using LocalProvider.
 
-- [ ] **Frontend Implementation**
-  - [ ] **Configuration**:
+- [x] **Frontend Implementation**
+  - [x] **Configuration**:
     - **iOS**: Update `ios/Runner/Info.plist` with `NSPhotoLibraryUsageDescription` and `NSCameraUsageDescription`.
     - **Android**: Update `android/app/src/main/AndroidManifest.xml` with `<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>` (and `READ_MEDIA_IMAGES` for Android 13+).
-  - [ ] **Dependencies**: `image_picker` (already confirmed).
-  - [ ] **Refactoring (Code Reuse)**:
+  - [x] **Dependencies**: `image_picker` (already confirmed).
+  - [x] **Refactoring (Code Reuse)**:
     - Extract `AvatarPicker` and generic input widgets from `lib/features/auth/view/onboarding_profile_setup_page.dart`.
     - Move to `lib/shared/widgets/` to be shared by both Onboarding and Profile Settings.
-  - [ ] **Feature Development**:
+  - [x] **Feature Development**:
     - **Create Directory**: `way2we_app/lib/features/profile` (Strict separation).
-    - Implement `ProfileBloc` and `ProfileRepository`.
+    - Implement `ProfileBloc` and `ProfileRepository` (implemented via `ProfileProvider`).
     - Implement `ProfilePage` reusing the extracted widgets.
 
 
@@ -100,5 +100,49 @@ so that **other group members can identify me**.
 ### Debug Log References
 
 ### Completion Notes List
+- 2026-01-23: Implemented Storage Infrastructure (LocalStorageProvider) and Security Validation (Image Validator). Added Config support for PublicURL.
+- 2026-01-23: Completed Backend Implementation: UserService, UserHandler, router integration, and unit tests.
+- 2026-01-23: Completed Frontend Implementation: AvatarPicker widget, ProfileProvider, ProfileBloc, ProfilePage, L10n, and Onboarding refactoring.
+- 2026-01-23: Integrated navigation from HomePage to ProfilePage and hooked up real API calls to Onboarding.
+- 2026-01-24: **Code Review Fixes**:
+  - Added `uploads/` to `.gitignore` to prevent runtime files from being committed.
+  - Created `AppConfig` class for environment-based API URL configuration (using `--dart-define`).
+  - Implemented `ServiceLocator` for centralized Dio instance management and dependency injection.
+  - Refactored `ProfileState` to use sealed classes for robust success/failure detection (`ProfileLoadSuccess`, `ProfileUpdateSuccess`, `ProfileFailure`).
+  - Added `Delete` and `ExtractKeyFromUrl` methods to storage `Provider` interface for old avatar cleanup.
+  - Implemented old avatar deletion when uploading new avatar to prevent storage leaks.
+  - Updated `UserHandler` to return structured error codes instead of raw error messages.
+  - Added error code to localized message mapping in `ProfilePage`.
+  - Removed hardcoded URLs from `LoginPage`, `ProfilePage`, and `OnboardingProfileSetupPage`.
 
 ### File List
+- way2we_api/.gitignore
+- way2we_api/configs/config.yaml
+- way2we_api/internal/pkg/config/config.go
+- way2we_api/internal/pkg/config/config_test.go
+- way2we_api/internal/adapter/storage/storage.go
+- way2we_api/internal/adapter/storage/local_provider_test.go
+- way2we_api/internal/pkg/validator/image_validator.go
+- way2we_api/internal/pkg/validator/image_validator_test.go
+- way2we_api/internal/app/user/service.go
+- way2we_api/internal/app/user/service_test.go
+- way2we_api/internal/adapter/handler/user_handler.go
+- way2we_api/internal/adapter/handler/user_handler_test.go
+- way2we_api/internal/adapter/handler/router.go
+- way2we_api/cmd/api/main.go
+- way2we_app/lib/app/config.dart
+- way2we_app/lib/app/di.dart
+- way2we_app/lib/bootstrap.dart
+- way2we_app/ios/Runner/Info.plist
+- way2we_app/android/app/src/main/AndroidManifest.xml
+- way2we_app/lib/shared/widgets/avatar_picker.dart
+- way2we_app/lib/features/profile/data/providers/profile_provider.dart
+- way2we_app/lib/features/profile/bloc/profile_event.dart
+- way2we_app/lib/features/profile/bloc/profile_state.dart
+- way2we_app/lib/features/profile/bloc/profile_bloc.dart
+- way2we_app/lib/features/profile/view/profile_page.dart
+- way2we_app/lib/l10n/arb/app_en.arb
+- way2we_app/lib/features/auth/view/login_page.dart
+- way2we_app/lib/features/auth/view/onboarding_profile_setup_page.dart
+- way2we_app/lib/features/home/view/home_page.dart
+

@@ -13,7 +13,9 @@ import (
 	"github.com/way2we/way2we_api/ent"
 	adapterAuth "github.com/way2we/way2we_api/internal/adapter/auth"
 	"github.com/way2we/way2we_api/internal/adapter/handler"
+	"github.com/way2we/way2we_api/internal/adapter/storage"
 	"github.com/way2we/way2we_api/internal/app/auth"
+	"github.com/way2we/way2we_api/internal/app/user"
 	"github.com/way2we/way2we_api/internal/pkg/config"
 )
 
@@ -68,9 +70,17 @@ func main() {
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
 	}))
 
-	// Register auth routes
+	// Initialize storage provider
+	storageProvider := storage.NewLocalStorageProvider("uploads", cfg.App.PublicURL)
+
+	// Initialize user service
+	userService := user.NewService(client)
+
+	// Register routes
 	authHandler := handler.NewAuthHandler(authService)
-	authHandler.RegisterRoutes(e)
+	userHandler := handler.NewUserHandler(userService, storageProvider)
+
+	handler.RegisterRoutes(e, cfg, authHandler, userHandler)
 
 	// Routes
 	e.GET("/", func(c echo.Context) error {
