@@ -8,6 +8,19 @@ import (
 )
 
 var (
+	// TokenBlacklistsColumns holds the columns for the "token_blacklists" table.
+	TokenBlacklistsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "token_hash", Type: field.TypeString, Unique: true},
+		{Name: "expires_at", Type: field.TypeTime},
+		{Name: "created_at", Type: field.TypeTime},
+	}
+	// TokenBlacklistsTable holds the schema information for the "token_blacklists" table.
+	TokenBlacklistsTable = &schema.Table{
+		Name:       "token_blacklists",
+		Columns:    TokenBlacklistsColumns,
+		PrimaryKey: []*schema.Column{TokenBlacklistsColumns[0]},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -56,6 +69,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		TokenBlacklistsTable,
 		UsersTable,
 		UserIdentitiesTable,
 	}

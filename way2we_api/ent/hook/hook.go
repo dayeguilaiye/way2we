@@ -9,6 +9,18 @@ import (
 	"github.com/way2we/way2we_api/ent"
 )
 
+// The TokenBlacklistFunc type is an adapter to allow the use of ordinary
+// function as TokenBlacklist mutator.
+type TokenBlacklistFunc func(context.Context, *ent.TokenBlacklistMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TokenBlacklistFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.TokenBlacklistMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TokenBlacklistMutation", m)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary
 // function as User mutator.
 type UserFunc func(context.Context, *ent.UserMutation) (ent.Value, error)

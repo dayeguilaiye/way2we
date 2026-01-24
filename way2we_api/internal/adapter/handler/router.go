@@ -1,15 +1,14 @@
 package handler
 
 import (
-	"github.com/golang-jwt/jwt/v5"
-	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
+	"github.com/way2we/way2we_api/internal/app/auth"
 	"github.com/way2we/way2we_api/internal/pkg/config"
-	pkgjwt "github.com/way2we/way2we_api/internal/pkg/jwt"
+	"github.com/way2we/way2we_api/internal/pkg/middleware"
 )
 
 // RegisterRoutes registers all routes for the application.
-func RegisterRoutes(e *echo.Echo, cfg *config.Config, authHandler *AuthHandler, userHandler *UserHandler) {
+func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service, authHandler *AuthHandler, userHandler *UserHandler) {
 	v1 := e.Group("/v1")
 
 	// Auth Routes (Public)
@@ -17,18 +16,11 @@ func RegisterRoutes(e *echo.Echo, cfg *config.Config, authHandler *AuthHandler, 
 	authGroup.POST("/verification-code", authHandler.SendVerificationCode)
 	authGroup.POST("/register", authHandler.Register)
 	authGroup.POST("/login", authHandler.Login)
+	authGroup.POST("/logout", authHandler.Logout)
 
-	// Auth Middleware
-	jwtMiddleware := echojwt.WithConfig(echojwt.Config{
-		SigningKey: []byte(cfg.JWT.Secret),
-		NewClaimsFunc: func(c echo.Context) jwt.Claims {
-			return new(pkgjwt.Claims)
-		},
-		SuccessHandler: func(c echo.Context) {
-			token := c.Get("user").(*jwt.Token)
-			claims := token.Claims.(*pkgjwt.Claims)
-			c.Set("user_id", claims.UserID)
-		},
+	// Auth Middleware with blacklist support
+	jwtMiddleware := middleware.JWT(middleware.JWTConfig{
+		AuthService: authService,
 	})
 
 	// User Routes (Protected)

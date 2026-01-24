@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:way2we_app/app/di.dart';
+import 'package:way2we_app/features/auth/bloc/authentication_bloc.dart';
 import 'package:way2we_app/features/profile/bloc/profile_bloc.dart';
 import 'package:way2we_app/features/profile/data/providers/profile_provider.dart';
 import 'package:way2we_app/l10n/l10n.dart';
@@ -149,6 +150,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   // Save button
                   _buildSaveButton(theme, l10n, state),
                   const SizedBox(height: AppSpacing.space8),
+
+                  // Logout button
+                  _buildLogoutButton(theme, l10n),
+                  const SizedBox(height: AppSpacing.space8),
                 ],
               ),
             ),
@@ -283,5 +288,59 @@ class _ProfilePageState extends State<ProfilePage> {
             : Text(l10n.profileSaveButton),
       ),
     );
+  }
+
+  Widget _buildLogoutButton(ThemeData theme, AppLocalizations l10n) {
+    return Container(
+      width: double.infinity,
+      height: AppSpacing.inputHeight,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+        border: Border.all(color: Colors.red.shade300),
+      ),
+      child: OutlinedButton.icon(
+        onPressed: () => _showLogoutConfirmation(context, l10n),
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size(double.infinity, AppSpacing.inputHeight),
+          foregroundColor: Colors.red,
+          side: BorderSide.none,
+        ),
+        icon: const Icon(Icons.logout),
+        label: Text(l10n.profileLogoutButton),
+      ),
+    );
+  }
+
+  Future<void> _showLogoutConfirmation(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) async {
+    // Capture BLoC before async gap
+    final authBloc = context.read<AuthenticationBloc>();
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.profileLogoutConfirmTitle),
+        content: Text(l10n.profileLogoutConfirmMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.red,
+            ),
+            child: Text(l10n.confirm),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed ?? false) {
+      authBloc.add(const AppLogoutRequested());
+    }
   }
 }

@@ -6,7 +6,6 @@ require (
 	entgo.io/ent v0.14.5
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/google/uuid v1.3.0
-	github.com/labstack/echo-jwt/v4 v4.4.0
 	github.com/labstack/echo/v4 v4.14.0
 	github.com/lib/pq v1.10.9
 	github.com/mattn/go-sqlite3 v1.14.33

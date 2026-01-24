@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/way2we/way2we_api/ent/schema"
+	"github.com/way2we/way2we_api/ent/tokenblacklist"
 	"github.com/way2we/way2we_api/ent/user"
 	"github.com/way2we/way2we_api/ent/useridentity"
 )
@@ -14,6 +15,16 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	tokenblacklistFields := schema.TokenBlacklist{}.Fields()
+	_ = tokenblacklistFields
+	// tokenblacklistDescTokenHash is the schema descriptor for token_hash field.
+	tokenblacklistDescTokenHash := tokenblacklistFields[0].Descriptor()
+	// tokenblacklist.TokenHashValidator is a validator for the "token_hash" field. It is called by the builders before save.
+	tokenblacklist.TokenHashValidator = tokenblacklistDescTokenHash.Validators[0].(func(string) error)
+	// tokenblacklistDescCreatedAt is the schema descriptor for created_at field.
+	tokenblacklistDescCreatedAt := tokenblacklistFields[2].Descriptor()
+	// tokenblacklist.DefaultCreatedAt holds the default value on creation for the created_at field.
+	tokenblacklist.DefaultCreatedAt = tokenblacklistDescCreatedAt.Default.(func() time.Time)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescNickname is the schema descriptor for nickname field.

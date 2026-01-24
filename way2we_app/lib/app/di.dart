@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:way2we_app/app/config.dart';
+import 'package:way2we_app/features/auth/bloc/authentication_bloc.dart';
 
 /// Service locator for dependency injection.
 ///
@@ -13,11 +14,19 @@ class ServiceLocator {
 
   Dio? _dio;
   FlutterSecureStorage? _storage;
+  AuthenticationBloc? _authBloc;
 
   /// Initialize all dependencies. Call this once during app startup.
   void init() {
     _storage = const FlutterSecureStorage();
     _dio = _createDio();
+  }
+
+  /// Set the authentication bloc for 401 handling.
+  /// This should be called after the bloc is created.
+  // ignore: use_setters_to_change_properties
+  void setAuthBloc(AuthenticationBloc bloc) {
+    _authBloc = bloc;
   }
 
   /// Get the shared Dio instance.
@@ -56,7 +65,14 @@ class ServiceLocator {
           }
           return handler.next(options);
         },
-        onError: (error, handler) {
+        onError: (error, handler) async {
+          // Handle 401 Unauthorized - trigger logout
+          if (error.response?.statusCode == 401) {
+            // Clear token and trigger logout
+            await _storage!.delete(key: 'auth_token');
+            _authBloc?.add(const AppLogoutRequested());
+          }
+
           // Log errors in non-production mode
           if (!AppConfig.isProduction) {
             // ignore: avoid_print
@@ -75,5 +91,6 @@ class ServiceLocator {
     _dio?.close();
     _dio = null;
     _storage = null;
+    _authBloc = null;
   }
 }

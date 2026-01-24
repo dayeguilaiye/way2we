@@ -47,7 +47,7 @@ development_status:
   1-3-user-registration-first-login: done
   1-4-user-login: done
   1-5-profile-management: done
-  1-6-logout-session-management: backlog
+  1-6-logout-session-management: review
   epic-1-retrospective: optional
 
   # Epic 2: 群组创建与成员管理

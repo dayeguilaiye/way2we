@@ -80,6 +80,12 @@ type ErrorResponse struct {
 	Details interface{} `json:"details,omitempty"`
 }
 
+// LogoutResponse represents the response for logout.
+type LogoutResponse struct {
+	Success bool   `json:"success"`
+	Message string `json:"message"`
+}
+
 // Regular expressions for validation
 var (
 	phoneRegex = regexp.MustCompile(`^1[3-9]\d{9}$`)              // Chinese phone format
@@ -94,6 +100,7 @@ func (h *AuthHandler) RegisterRoutes(e *echo.Echo) {
 	v1Auth.POST("/verification-code", h.SendVerificationCode)
 	v1Auth.POST("/register", h.Register)
 	v1Auth.POST("/login", h.Login)
+	v1Auth.POST("/logout", h.Logout)
 }
 
 // SendVerificationCode handles POST /v1/auth/verification-code
@@ -281,4 +288,41 @@ func (h *AuthHandler) validateTarget(verifyType auth.VerificationType, target st
 	}
 
 	return nil
+}
+
+// Logout handles POST /v1/auth/logout
+func (h *AuthHandler) Logout(c echo.Context) error {
+	// Extract token from Authorization header
+	authHeader := c.Request().Header.Get("Authorization")
+	if authHeader == "" {
+		return c.JSON(http.StatusUnauthorized, ErrorResponse{
+			Code:    "ERR_NO_TOKEN",
+			Message: "未提供认证令牌",
+		})
+	}
+
+	// Parse "Bearer <token>" format
+	const prefix = "Bearer "
+	if len(authHeader) < len(prefix) || authHeader[:len(prefix)] != prefix {
+		return c.JSON(http.StatusUnauthorized, ErrorResponse{
+			Code:    "ERR_INVALID_TOKEN_FORMAT",
+			Message: "令牌格式无效",
+		})
+	}
+
+	token := authHeader[len(prefix):]
+
+	// Call service to blacklist token
+	if err := h.authService.Logout(c.Request().Context(), token); err != nil {
+		slog.Error("failed to logout", "error", err)
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Code:    "ERR_LOGOUT_FAILED",
+			Message: "登出失败，请稍后重试",
+		})
+	}
+
+	return c.JSON(http.StatusOK, LogoutResponse{
+		Success: true,
+		Message: "登出成功",
+	})
 }

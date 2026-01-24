@@ -218,5 +218,25 @@
     "profileUpdateError": "Failed to update profile. Please try again.",
     "@profileUpdateError": {
         "description": "Profile update error message"
+    },
+    "profileLogoutButton": "Log Out",
+    "@profileLogoutButton": {
+        "description": "Logout button text on profile page"
+    },
+    "profileLogoutConfirmTitle": "Log Out?",
+    "@profileLogoutConfirmTitle": {
+        "description": "Logout confirmation dialog title"
+    },
+    "profileLogoutConfirmMessage": "Are you sure you want to log out?",
+    "@profileLogoutConfirmMessage": {
+        "description": "Logout confirmation dialog message"
+    },
+    "cancel": "Cancel",
+    "@cancel": {
+        "description": "Cancel button text"
+    },
+    "confirm": "Confirm",
+    "@confirm": {
+        "description": "Confirm button text"
     }
 }

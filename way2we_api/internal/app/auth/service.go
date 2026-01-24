@@ -35,9 +35,10 @@ type verificationEntry struct {
 // Service handles authentication-related operations.
 // Service handles authentication-related operations.
 type Service struct {
-	client        *ent.Client // Database client
-	smsProvider   SmsProvider
-	emailProvider EmailProvider
+	client           *ent.Client // Database client
+	smsProvider      SmsProvider
+	emailProvider    EmailProvider
+	blacklistService BlacklistService
 
 	// In-memory storage for verification codes (MVP only)
 	codes map[string]verificationEntry
@@ -77,16 +78,24 @@ func WithJWT(secret string, expiryHours int) ServiceOption {
 	}
 }
 
+// WithBlacklistService sets the blacklist service.
+func WithBlacklistService(blacklistService BlacklistService) ServiceOption {
+	return func(s *Service) {
+		s.blacklistService = blacklistService
+	}
+}
+
 // NewService creates a new authentication service.
 func NewService(client *ent.Client, smsProvider SmsProvider, emailProvider EmailProvider, opts ...ServiceOption) *Service {
 	s := &Service{
-		client:         client,
-		smsProvider:    smsProvider,
-		emailProvider:  emailProvider,
-		codes:          make(map[string]verificationEntry),
-		codeLength:     6,               // Default: 6-digit code
-		codeExpiration: 5 * time.Minute, // Default: 5 minutes
-		jwtExpiry:      24 * time.Hour,  // Default: 24 hours
+		client:           client,
+		smsProvider:      smsProvider,
+		emailProvider:    emailProvider,
+		blacklistService: NewDBBlacklistService(client), // Default to DB blacklist
+		codes:            make(map[string]verificationEntry),
+		codeLength:       6,               // Default: 6-digit code
+		codeExpiration:   5 * time.Minute, // Default: 5 minutes
+		jwtExpiry:        24 * time.Hour,  // Default: 24 hours
 	}
 
 	for _, opt := range opts {
@@ -381,4 +390,29 @@ func (s *Service) CleanupExpiredCodes() {
 			delete(s.codes, target)
 		}
 	}
+}
+
+// Logout invalidates the given token by adding it to the blacklist.
+func (s *Service) Logout(ctx context.Context, token string) error {
+	// Parse the token to get expiration time
+	claims, err := pkgjwt.ParseToken(token, s.jwtSecret)
+	if err != nil {
+		// Even if token is invalid/expired, we don't return error
+		// (user is effectively logged out)
+		return nil
+	}
+
+	// Add to blacklist with token's expiration time
+	expiresAt := claims.ExpiresAt.Time
+	return s.blacklistService.AddToBlacklist(ctx, token, expiresAt)
+}
+
+// IsTokenBlacklisted checks if a token is in the blacklist.
+func (s *Service) IsTokenBlacklisted(ctx context.Context, token string) (bool, error) {
+	return s.blacklistService.IsBlacklisted(ctx, token)
+}
+
+// GetJWTSecret returns the JWT secret for middleware use.
+func (s *Service) GetJWTSecret() string {
+	return s.jwtSecret
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:way2we_app/features/auth/view/login_page.dart';
-import 'package:way2we_app/features/home/view/home_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:way2we_app/features/auth/bloc/authentication_bloc.dart';
 
+/// Splash page that dispatches AppStarted event to check authentication.
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 
@@ -14,27 +14,17 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    _checkAuth();
+    _startAuthCheck();
   }
 
-  Future<void> _checkAuth() async {
+  Future<void> _startAuthCheck() async {
     // Artificial delay for splash effect
     await Future<void>.delayed(const Duration(milliseconds: 1000));
 
-    // Check for token
-    const storage = FlutterSecureStorage();
-    final token = await storage.read(key: 'auth_token');
-
     if (mounted) {
-      if (token != null) {
-        // Logged in -> Home
-        await Navigator.of(context).pushReplacement(HomePage.route());
-      } else {
-        // Not logged in -> Login
-        await Navigator.of(context).pushReplacement(
-          MaterialPageRoute<void>(builder: (_) => const LoginPage()),
-        );
-      }
+      // Dispatch AppStarted event to check authentication status
+      // The AuthenticationBloc listener in App will handle navigation
+      context.read<AuthenticationBloc>().add(const AppStarted());
     }
   }
 

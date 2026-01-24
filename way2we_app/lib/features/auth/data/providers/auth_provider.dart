@@ -109,6 +109,28 @@ class AuthProvider {
     return data['user'];
   }
 
+  /// Logs out the current user.
+  /// Calls backend to invalidate token and clears local storage.
+  Future<void> logout() async {
+    try {
+      await _dio.post<void>('/v1/auth/logout');
+    } on DioException {
+      // Ignore errors during logout - we'll clear local data anyway
+    } finally {
+      await clearToken();
+    }
+  }
+
+  /// Gets the current auth token.
+  Future<String?> getToken() async {
+    return _storage.read(key: _tokenKey);
+  }
+
+  /// Clears the auth token from storage.
+  Future<void> clearToken() async {
+    await _storage.delete(key: _tokenKey);
+  }
+
   Never _handleDioError(DioException e) {
     if (e.response?.data is Map<String, dynamic>) {
       final data = e.response!.data as Map<String, dynamic>;

@@ -52,5 +52,11 @@
     "profilePageTitle": "个人资料设置",
     "profileSaveButton": "保存修改",
     "profileUpdateSuccess": "个人资料更新成功！",
-    "profileUpdateError": "个人资料更新失败，请重试。"
+    "profileUpdateError": "个人资料更新失败，请重试。",
+    "profileLogoutButton": "退出登录",
+    "profileLogoutConfirmTitle": "退出登录？",
+    "profileLogoutConfirmMessage": "确定要退出登录吗？",
+    "cancel": "取消",
+    "confirm": "确认"
 }
+

@@ -2,10 +2,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:way2we_app/app/di.dart';
+import 'package:way2we_app/features/auth/bloc/authentication_bloc.dart';
 import 'package:way2we_app/features/auth/bloc/verification_code_bloc.dart';
 import 'package:way2we_app/features/auth/data/providers/auth_provider.dart';
-import 'package:way2we_app/features/auth/view/onboarding_profile_setup_page.dart';
-import 'package:way2we_app/features/home/view/home_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
 import 'package:way2we_app/theme/theme.dart';
 
@@ -702,9 +701,11 @@ class _AuthViewState extends State<AuthView> {
               content: Text(l10n.authRegistrationSuccess),
             ),
           );
-          await Navigator.of(context).pushReplacement(
-            OnboardingProfileSetupPage.route(),
+          // Notify AuthenticationBloc of successful login
+          context.read<AuthenticationBloc>().add(
+            const AppLoginSucceeded(needsOnboarding: true),
           );
+          // Navigation is handled by App's BlocListener
         }
       } else {
         await auth.login(
@@ -719,7 +720,9 @@ class _AuthViewState extends State<AuthView> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(l10n.authLoginSuccess)),
           );
-          await Navigator.of(context).pushReplacement(HomePage.route());
+          // Notify AuthenticationBloc of successful login
+          context.read<AuthenticationBloc>().add(const AppLoginSucceeded());
+          // Navigation is handled by App's BlocListener
         }
       }
     } on Exception catch (e) {
