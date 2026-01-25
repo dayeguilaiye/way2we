@@ -5,6 +5,8 @@ package ent
 import (
 	"time"
 
+	"github.com/way2we/way2we_api/ent/group"
+	"github.com/way2we/way2we_api/ent/groupmember"
 	"github.com/way2we/way2we_api/ent/schema"
 	"github.com/way2we/way2we_api/ent/tokenblacklist"
 	"github.com/way2we/way2we_api/ent/user"
@@ -15,6 +17,46 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	groupFields := schema.Group{}.Fields()
+	_ = groupFields
+	// groupDescName is the schema descriptor for name field.
+	groupDescName := groupFields[0].Descriptor()
+	// group.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	group.NameValidator = func() func(string) error {
+		validators := groupDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// groupDescDescription is the schema descriptor for description field.
+	groupDescDescription := groupFields[1].Descriptor()
+	// group.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	group.DescriptionValidator = groupDescDescription.Validators[0].(func(string) error)
+	// groupDescCreatedAt is the schema descriptor for created_at field.
+	groupDescCreatedAt := groupFields[2].Descriptor()
+	// group.DefaultCreatedAt holds the default value on creation for the created_at field.
+	group.DefaultCreatedAt = groupDescCreatedAt.Default.(func() time.Time)
+	// groupDescUpdatedAt is the schema descriptor for updated_at field.
+	groupDescUpdatedAt := groupFields[3].Descriptor()
+	// group.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	group.DefaultUpdatedAt = groupDescUpdatedAt.Default.(func() time.Time)
+	// group.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	group.UpdateDefaultUpdatedAt = groupDescUpdatedAt.UpdateDefault.(func() time.Time)
+	groupmemberFields := schema.GroupMember{}.Fields()
+	_ = groupmemberFields
+	// groupmemberDescJoinedAt is the schema descriptor for joined_at field.
+	groupmemberDescJoinedAt := groupmemberFields[3].Descriptor()
+	// groupmember.DefaultJoinedAt holds the default value on creation for the joined_at field.
+	groupmember.DefaultJoinedAt = groupmemberDescJoinedAt.Default.(func() time.Time)
 	tokenblacklistFields := schema.TokenBlacklist{}.Fields()
 	_ = tokenblacklistFields
 	// tokenblacklistDescTokenHash is the schema descriptor for token_hash field.

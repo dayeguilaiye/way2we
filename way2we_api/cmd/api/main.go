@@ -15,6 +15,7 @@ import (
 	"github.com/way2we/way2we_api/internal/adapter/handler"
 	"github.com/way2we/way2we_api/internal/adapter/storage"
 	"github.com/way2we/way2we_api/internal/app/auth"
+	"github.com/way2we/way2we_api/internal/app/group"
 	"github.com/way2we/way2we_api/internal/app/user"
 	"github.com/way2we/way2we_api/internal/pkg/config"
 )
@@ -76,11 +77,15 @@ func main() {
 	// Initialize user service
 	userService := user.NewService(client)
 
+	// Initialize group service
+	groupService := group.NewService(client)
+
 	// Register routes
 	authHandler := handler.NewAuthHandler(authService)
 	userHandler := handler.NewUserHandler(userService, storageProvider)
+	groupHandler := handler.NewGroupHandler(groupService)
 
-	handler.RegisterRoutes(e, cfg, authService, authHandler, userHandler)
+	handler.RegisterRoutes(e, cfg, authService, authHandler, userHandler, groupHandler)
 
 	// Routes
 	e.GET("/", func(c echo.Context) error {

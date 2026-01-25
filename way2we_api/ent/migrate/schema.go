@@ -8,6 +8,55 @@ import (
 )
 
 var (
+	// GroupsColumns holds the columns for the "groups" table.
+	GroupsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString, Size: 30},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 200},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+	}
+	// GroupsTable holds the schema information for the "groups" table.
+	GroupsTable = &schema.Table{
+		Name:       "groups",
+		Columns:    GroupsColumns,
+		PrimaryKey: []*schema.Column{GroupsColumns[0]},
+	}
+	// GroupMembersColumns holds the columns for the "group_members" table.
+	GroupMembersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"admin", "member"}, Default: "member"},
+		{Name: "joined_at", Type: field.TypeTime},
+		{Name: "group_id", Type: field.TypeInt},
+		{Name: "user_id", Type: field.TypeInt},
+	}
+	// GroupMembersTable holds the schema information for the "group_members" table.
+	GroupMembersTable = &schema.Table{
+		Name:       "group_members",
+		Columns:    GroupMembersColumns,
+		PrimaryKey: []*schema.Column{GroupMembersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "group_members_groups_members",
+				Columns:    []*schema.Column{GroupMembersColumns[3]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "group_members_users_user",
+				Columns:    []*schema.Column{GroupMembersColumns[4]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "groupmember_user_id_group_id",
+				Unique:  true,
+				Columns: []*schema.Column{GroupMembersColumns[4], GroupMembersColumns[3]},
+			},
+		},
+	}
 	// TokenBlacklistsColumns holds the columns for the "token_blacklists" table.
 	TokenBlacklistsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -69,6 +118,8 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		GroupsTable,
+		GroupMembersTable,
 		TokenBlacklistsTable,
 		UsersTable,
 		UserIdentitiesTable,
@@ -76,5 +127,7 @@ var (
 )
 
 func init() {
+	GroupMembersTable.ForeignKeys[0].RefTable = GroupsTable
+	GroupMembersTable.ForeignKeys[1].RefTable = UsersTable
 	UserIdentitiesTable.ForeignKeys[0].RefTable = UsersTable
 }

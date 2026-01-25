@@ -9,6 +9,30 @@ import (
 	"github.com/way2we/way2we_api/ent"
 )
 
+// The GroupFunc type is an adapter to allow the use of ordinary
+// function as Group mutator.
+type GroupFunc func(context.Context, *ent.GroupMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f GroupFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.GroupMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.GroupMutation", m)
+}
+
+// The GroupMemberFunc type is an adapter to allow the use of ordinary
+// function as GroupMember mutator.
+type GroupMemberFunc func(context.Context, *ent.GroupMemberMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f GroupMemberFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.GroupMemberMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.GroupMemberMutation", m)
+}
+
 // The TokenBlacklistFunc type is an adapter to allow the use of ordinary
 // function as TokenBlacklist mutator.
 type TokenBlacklistFunc func(context.Context, *ent.TokenBlacklistMutation) (ent.Value, error)

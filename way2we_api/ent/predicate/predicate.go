@@ -6,6 +6,12 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// Group is the predicate function for group builders.
+type Group func(*sql.Selector)
+
+// GroupMember is the predicate function for groupmember builders.
+type GroupMember func(*sql.Selector)
+
 // TokenBlacklist is the predicate function for tokenblacklist builders.
 type TokenBlacklist func(*sql.Selector)
 

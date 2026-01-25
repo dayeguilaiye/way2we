@@ -238,5 +238,37 @@
     "confirm": "Confirm",
     "@confirm": {
         "description": "Confirm button text"
+    },
+    "createGroupTitle": "Create Group",
+    "@createGroupTitle": {
+        "description": "Create group page title"
+    },
+    "createGroupHeadline": "Start your family space",
+    "@createGroupHeadline": {
+        "description": "Create group page headline"
+    },
+    "createGroupSubtitle": "Create a group to share points with your family or partner.",
+    "@createGroupSubtitle": {
+        "description": "Create group page subtitle"
+    },
+    "createGroupNameLabel": "GROUP NAME",
+    "@createGroupNameLabel": {
+        "description": "Group name field label"
+    },
+    "createGroupNamePlaceholder": "e.g., My Family",
+    "@createGroupNamePlaceholder": {
+        "description": "Group name field placeholder"
+    },
+    "createGroupSubmitButton": "Create Group",
+    "@createGroupSubmitButton": {
+        "description": "Create group submit button text"
+    },
+    "createGroupSuccess": "Group created successfully!",
+    "@createGroupSuccess": {
+        "description": "Group creation success message"
+    },
+    "createGroupError": "Failed to create group. Please try again.",
+    "@createGroupError": {
+        "description": "Group creation error message"
     }
 }

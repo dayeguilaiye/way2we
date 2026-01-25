@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:way2we_app/app/config.dart';
+import 'package:way2we_app/core/config/app_config.dart';
 import 'package:way2we_app/features/auth/bloc/authentication_bloc.dart';
 
 /// Service locator for dependency injection.

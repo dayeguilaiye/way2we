@@ -12,6 +12,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/way2we/way2we_api/ent/group"
+	"github.com/way2we/way2we_api/ent/groupmember"
 	"github.com/way2we/way2we_api/ent/tokenblacklist"
 	"github.com/way2we/way2we_api/ent/user"
 	"github.com/way2we/way2we_api/ent/useridentity"
@@ -75,6 +77,8 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
+			group.Table:          group.ValidColumn,
+			groupmember.Table:    groupmember.ValidColumn,
 			tokenblacklist.Table: tokenblacklist.ValidColumn,
 			user.Table:           user.ValidColumn,
 			useridentity.Table:   useridentity.ValidColumn,

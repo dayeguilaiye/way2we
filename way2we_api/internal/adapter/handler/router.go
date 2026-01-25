@@ -8,7 +8,7 @@ import (
 )
 
 // RegisterRoutes registers all routes for the application.
-func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service, authHandler *AuthHandler, userHandler *UserHandler) {
+func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service, authHandler *AuthHandler, userHandler *UserHandler, groupHandler *GroupHandler) {
 	v1 := e.Group("/v1")
 
 	// Auth Routes (Public)
@@ -33,6 +33,11 @@ func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service,
 	uploadGroup := v1.Group("/uploads")
 	uploadGroup.Use(jwtMiddleware)
 	uploadGroup.POST("/avatar", userHandler.UploadAvatar)
+
+	// Group Routes (Protected)
+	groupRoutes := v1.Group("/groups")
+	groupRoutes.Use(jwtMiddleware)
+	groupRoutes.POST("", groupHandler.CreateGroup)
 
 	// Static Files
 	// Serve uploads directory under /uploads path

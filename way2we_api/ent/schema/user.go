@@ -43,5 +43,8 @@ func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("identities", UserIdentity.Type).
 			Comment("Login identities (phone, email, social)"),
+		edge.From("group_memberships", GroupMember.Type).
+			Ref("user").
+			Comment("Groups this user is a member of"),
 	}
 }

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -73,7 +74,13 @@ func (h *UserHandler) UpdateProfile(c echo.Context) error {
 
 	updatedUser, err := h.userService.UpdateProfile(c.Request().Context(), userID, req.Nickname, req.Avatar)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, ErrorResponse{
+		if errors.Is(err, user.ErrNicknameTooLong) {
+			return c.JSON(http.StatusBadRequest, ErrorResponse{
+				Code:    "ERR_NICKNAME_TOO_LONG",
+				Message: "Nickname cannot exceed 20 characters",
+			})
+		}
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{
 			Code:    "ERR_UPDATE_FAILED",
 			Message: "Failed to update profile",
 		})

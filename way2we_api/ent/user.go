@@ -37,9 +37,11 @@ type User struct {
 type UserEdges struct {
 	// Login identities (phone, email, social)
 	Identities []*UserIdentity `json:"identities,omitempty"`
+	// Groups this user is a member of
+	GroupMemberships []*GroupMember `json:"group_memberships,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // IdentitiesOrErr returns the Identities value or an error if the edge
@@ -49,6 +51,15 @@ func (e UserEdges) IdentitiesOrErr() ([]*UserIdentity, error) {
 		return e.Identities, nil
 	}
 	return nil, &NotLoadedError{edge: "identities"}
+}
+
+// GroupMembershipsOrErr returns the GroupMemberships value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) GroupMembershipsOrErr() ([]*GroupMember, error) {
+	if e.loadedTypes[1] {
+		return e.GroupMemberships, nil
+	}
+	return nil, &NotLoadedError{edge: "group_memberships"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -129,6 +140,11 @@ func (_m *User) Value(name string) (ent.Value, error) {
 // QueryIdentities queries the "identities" edge of the User entity.
 func (_m *User) QueryIdentities() *UserIdentityQuery {
 	return NewUserClient(_m.config).QueryIdentities(_m)
+}
+
+// QueryGroupMemberships queries the "group_memberships" edge of the User entity.
+func (_m *User) QueryGroupMemberships() *GroupMemberQuery {
+	return NewUserClient(_m.config).QueryGroupMemberships(_m)
 }
 
 // Update returns a builder for updating this User.

@@ -26,6 +26,8 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// EdgeIdentities holds the string denoting the identities edge name in mutations.
 	EdgeIdentities = "identities"
+	// EdgeGroupMemberships holds the string denoting the group_memberships edge name in mutations.
+	EdgeGroupMemberships = "group_memberships"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// IdentitiesTable is the table that holds the identities relation/edge.
@@ -35,6 +37,13 @@ const (
 	IdentitiesInverseTable = "user_identities"
 	// IdentitiesColumn is the table column denoting the identities relation/edge.
 	IdentitiesColumn = "user_identities"
+	// GroupMembershipsTable is the table that holds the group_memberships relation/edge.
+	GroupMembershipsTable = "group_members"
+	// GroupMembershipsInverseTable is the table name for the GroupMember entity.
+	// It exists in this package in order to avoid circular dependency with the "groupmember" package.
+	GroupMembershipsInverseTable = "group_members"
+	// GroupMembershipsColumn is the table column denoting the group_memberships relation/edge.
+	GroupMembershipsColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -116,10 +125,31 @@ func ByIdentities(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newIdentitiesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByGroupMembershipsCount orders the results by group_memberships count.
+func ByGroupMembershipsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newGroupMembershipsStep(), opts...)
+	}
+}
+
+// ByGroupMemberships orders the results by group_memberships terms.
+func ByGroupMemberships(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newGroupMembershipsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newIdentitiesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(IdentitiesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, IdentitiesTable, IdentitiesColumn),
+	)
+}
+func newGroupMembershipsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(GroupMembershipsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, GroupMembershipsTable, GroupMembershipsColumn),
 	)
 }

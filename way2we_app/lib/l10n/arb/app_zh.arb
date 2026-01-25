@@ -57,6 +57,14 @@
     "profileLogoutConfirmTitle": "退出登录？",
     "profileLogoutConfirmMessage": "确定要退出登录吗？",
     "cancel": "取消",
-    "confirm": "确认"
+    "confirm": "确认",
+    "createGroupTitle": "创建群组",
+    "createGroupHeadline": "开启你们的家庭空间",
+    "createGroupSubtitle": "创建一个群组，与家人或伴侣共享积分。",
+    "createGroupNameLabel": "群组名称",
+    "createGroupNamePlaceholder": "例如：我的家庭",
+    "createGroupSubmitButton": "创建群组",
+    "createGroupSuccess": "群组创建成功！",
+    "createGroupError": "群组创建失败，请重试。"
 }
 
