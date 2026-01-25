@@ -422,5 +422,18 @@
     "homeInviteMembers": "Invite Members",
     "@homeInviteMembers": {
         "description": "Invite members button text"
+    },
+
+    "groupSelectTitle": "Switch Group",
+    "@groupSelectTitle": {
+        "description": "Title for group switcher sheet"
+    },
+    "groupCreateAction": "Create New Group",
+    "@groupCreateAction": {
+        "description": "Action to create a new group"
+    },
+    "groupJoinAction": "Join Existing Group",
+    "@groupJoinAction": {
+        "description": "Action to join an existing group"
     }
 }

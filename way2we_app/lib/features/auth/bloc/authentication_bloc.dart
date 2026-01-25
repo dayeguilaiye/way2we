@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:way2we_app/features/auth/data/providers/auth_provider.dart';
 import 'package:way2we_app/features/group/data/providers/group_provider.dart';
 
@@ -18,9 +19,9 @@ class AuthenticationBloc
   AuthenticationBloc({
     required AuthProvider authProvider,
     required GroupProvider groupProvider,
-  })  : _authProvider = authProvider,
-        _groupProvider = groupProvider,
-        super(const AuthenticationInitial()) {
+  }) : _authProvider = authProvider,
+       _groupProvider = groupProvider,
+       super(const AuthenticationInitial()) {
     on<AppStarted>(_onAppStarted);
     on<AppLogoutRequested>(_onLogoutRequested);
     on<AppLoginSucceeded>(_onLoginSucceeded);
@@ -58,9 +59,11 @@ class AuthenticationBloc
     Emitter<AuthenticationState> emit,
   ) {
     // New users won't have a group yet
-    emit(AuthenticationAuthenticated(
-      needsOnboarding: event.needsOnboarding,
-    ));
+    emit(
+      AuthenticationAuthenticated(
+        needsOnboarding: event.needsOnboarding,
+      ),
+    );
   }
 
   /// Check if the current user has any groups.

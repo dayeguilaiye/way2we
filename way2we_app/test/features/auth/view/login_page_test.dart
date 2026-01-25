@@ -33,37 +33,36 @@ void main() {
   }
 
   group('LoginPage (AuthView) UI Tests', () {
-    testWidgets('renders register mode by default', (tester) async {
+    testWidgets('renders login mode by default', (tester) async {
       await tester.pumpApp(buildTestWidget());
       await tester.pumpAndSettle();
 
-      // Verify register mode elements
-      expect(find.text('Create Account'), findsOneWidget);
-      expect(find.text('Confirm Password'), findsOneWidget);
-      expect(find.text('Register'), findsOneWidget);
-      expect(find.text('Log In'), findsOneWidget);
+      // Verify login mode elements
+      expect(find.text('Create Account'), findsNothing);
+      expect(find.text('Confirm Password'), findsNothing);
+      expect(find.text('Log In'), findsWidgets); // Tab + Button
+
+      // Password field should be visible (lock icon) - default is Password Login
+      expect(find.byIcon(Icons.lock_outline), findsOneWidget);
     });
 
-    testWidgets('switches to login mode when Login tab is tapped', (
+    testWidgets('switches to register mode when Register tab is tapped', (
       tester,
     ) async {
       await tester.pumpApp(buildTestWidget());
       await tester.pumpAndSettle();
 
-      // Tap "Log In" toggle
-      await tester.tap(find.text('Log In'));
+      // Tap "Register" toggle
+      await tester.tap(find.byKey(const Key('auth_register_tab')));
       await tester.pumpAndSettle();
 
-      // Should show Login button and NO Confirm Password (register-only field)
-      expect(find.text('Create Account'), findsNothing);
-      expect(find.text('Confirm Password'), findsNothing);
+      // Should show Register button and Confirm Password
+      expect(find.text('Create Account'), findsOneWidget);
+      expect(find.text('Confirm Password'), findsOneWidget);
 
-      // Should show password/code login mode toggles
-      expect(find.text('Password Login'), findsOneWidget);
-      expect(find.text('Code Login'), findsOneWidget);
-
-      // Password field should be visible (lock icon)
-      expect(find.byIcon(Icons.lock_outline), findsOneWidget);
+      // Should NOT show login mode toggles
+      expect(find.text('Password Login'), findsNothing);
+      expect(find.text('Code Login'), findsNothing);
     });
 
     testWidgets('shows verification code input in code login mode', (
@@ -72,9 +71,7 @@ void main() {
       await tester.pumpApp(buildTestWidget());
       await tester.pumpAndSettle();
 
-      // Switch to Login mode
-      await tester.tap(find.text('Log In'));
-      await tester.pumpAndSettle();
+      // Already in Login mode
 
       // Switch to Code Login
       await tester.tap(find.text('Code Login'));
@@ -91,10 +88,6 @@ void main() {
       await tester.pumpApp(buildTestWidget());
       await tester.pumpAndSettle();
 
-      // Switch to Login mode
-      await tester.tap(find.text('Log In'));
-      await tester.pumpAndSettle();
-
       // Switch to Code Login first
       await tester.tap(find.text('Code Login'));
       await tester.pumpAndSettle();
@@ -109,23 +102,24 @@ void main() {
       expect(find.byIcon(Icons.numbers), findsNothing);
     });
 
-    testWidgets('switches back to register mode from login mode', (
+    testWidgets('switches back to login mode from register mode', (
       tester,
     ) async {
       await tester.pumpApp(buildTestWidget());
       await tester.pumpAndSettle();
 
-      // Switch to Login mode
-      await tester.tap(find.text('Log In'));
+      // Switch to Register mode
+      await tester.tap(find.byKey(const Key('auth_register_tab')));
       await tester.pumpAndSettle();
 
-      // Switch back to Register mode
-      await tester.tap(find.text('Register'));
+      // Switch back to Login mode
+      await tester.tap(find.byKey(const Key('auth_login_tab')));
       await tester.pumpAndSettle();
 
-      // Should show register-specific elements
-      expect(find.text('Create Account'), findsOneWidget);
-      expect(find.text('Confirm Password'), findsOneWidget);
+      // Should show login-specific elements
+      expect(find.text('Create Account'), findsNothing);
+      expect(find.text('Confirm Password'), findsNothing);
+      expect(find.text('Password Login'), findsOneWidget);
     });
 
     testWidgets('shows social login options', (tester) async {

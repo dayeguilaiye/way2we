@@ -1,8 +1,12 @@
 part of 'authentication_bloc.dart';
 
 /// Authentication states using sealed class for explicit state handling.
-sealed class AuthenticationState {
+/// Authentication states using sealed class for explicit state handling.
+sealed class AuthenticationState extends Equatable {
   const AuthenticationState();
+
+  @override
+  List<Object?> get props => [];
 }
 
 /// Initial state before authentication check.
@@ -19,6 +23,9 @@ final class AuthenticationAuthenticated extends AuthenticationState {
 
   final bool needsOnboarding;
   final bool hasGroup;
+
+  @override
+  List<Object?> get props => [needsOnboarding, hasGroup];
 }
 
 /// State when user is not authenticated.

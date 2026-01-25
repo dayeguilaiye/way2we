@@ -253,6 +253,7 @@ class _AuthViewState extends State<AuthView> {
         children: [
           Expanded(
             child: _buildToggleButton(
+              key: const Key('auth_login_tab'),
               label: l10n.authLoginTab,
               isSelected: !_isRegisterMode,
               onTap: () => setState(() => _isRegisterMode = false),
@@ -261,6 +262,7 @@ class _AuthViewState extends State<AuthView> {
           ),
           Expanded(
             child: _buildToggleButton(
+              key: const Key('auth_register_tab'),
               label: l10n.authRegisterTab,
               isSelected: _isRegisterMode,
               onTap: () => setState(() => _isRegisterMode = true),
@@ -273,12 +275,14 @@ class _AuthViewState extends State<AuthView> {
   }
 
   Widget _buildToggleButton({
+    Key? key,
     required String label,
     required bool isSelected,
     required VoidCallback onTap,
     required ThemeData theme,
   }) {
     return GestureDetector(
+      key: key,
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
