@@ -54,16 +54,18 @@ class AuthenticationBloc
     emit(const AuthenticationUnauthenticated());
   }
 
-  void _onLoginSucceeded(
+  Future<void> _onLoginSucceeded(
     AppLoginSucceeded event,
     Emitter<AuthenticationState> emit,
-  ) {
-    // New users won't have a group yet
-    emit(
-      AuthenticationAuthenticated(
-        needsOnboarding: event.needsOnboarding,
-      ),
-    );
+  ) async {
+    if (event.needsOnboarding) {
+      emit(const AuthenticationAuthenticated(needsOnboarding: true));
+      return;
+    }
+
+    // Check if user has any groups
+    final hasGroup = await _checkHasGroup();
+    emit(AuthenticationAuthenticated(hasGroup: hasGroup));
   }
 
   /// Check if the current user has any groups.

@@ -70,13 +70,57 @@ void main() {
     );
 
     blocTest<AuthenticationBloc, AuthenticationState>(
-      'emits [AuthenticationAuthenticated] when AppLoginSucceeded',
+      'emits [AuthenticationAuthenticated] when AppLoginSucceeded (no groups)',
+      setUp: () {
+        when(
+          () => mockGroupProvider.getUserGroups(),
+        ).thenAnswer((_) async => const GetUserGroupsResponse(groups: []));
+      },
       build: () => AuthenticationBloc(
         authProvider: mockAuthProvider,
         groupProvider: mockGroupProvider,
       ),
       act: (bloc) => bloc.add(const AppLoginSucceeded()),
-      expect: () => [const AuthenticationAuthenticated()],
+      expect: () => [const AuthenticationAuthenticated(hasGroup: false)],
+    );
+
+    blocTest<AuthenticationBloc, AuthenticationState>(
+      'emits [AuthenticationAuthenticated] when AppLoginSucceeded (has groups)',
+      setUp: () {
+        when(() => mockGroupProvider.getUserGroups()).thenAnswer(
+          (_) async => const GetUserGroupsResponse(
+            groups: [
+              UserGroup(
+                id: 1,
+                name: 'G',
+                role: 'admin',
+                joinedAt: '',
+                createdAt: '',
+                memberCount: 1,
+              ),
+            ],
+          ),
+        );
+      },
+      build: () => AuthenticationBloc(
+        authProvider: mockAuthProvider,
+        groupProvider: mockGroupProvider,
+      ),
+      act: (bloc) => bloc.add(const AppLoginSucceeded()),
+      expect: () => [const AuthenticationAuthenticated(hasGroup: true)],
+    );
+
+    blocTest<AuthenticationBloc, AuthenticationState>(
+      'emits [AuthenticationAuthenticated] when AppLoginSucceeded with needsOnboarding (skips group check)',
+      build: () => AuthenticationBloc(
+        authProvider: mockAuthProvider,
+        groupProvider: mockGroupProvider,
+      ),
+      act: (bloc) => bloc.add(const AppLoginSucceeded(needsOnboarding: true)),
+      expect: () => [const AuthenticationAuthenticated(needsOnboarding: true)],
+      verify: (_) {
+        verifyNever(() => mockGroupProvider.getUserGroups());
+      },
     );
   });
 }
