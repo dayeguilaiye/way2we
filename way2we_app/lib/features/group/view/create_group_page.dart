@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:way2we_app/app/di.dart';
 import 'package:way2we_app/features/group/bloc/create_group_bloc.dart';
 import 'package:way2we_app/features/group/data/providers/group_provider.dart';
-import 'package:way2we_app/features/group/view/invitation_page.dart';
+import 'package:way2we_app/features/home/view/home_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
 import 'package:way2we_app/theme/theme.dart';
 
@@ -68,12 +68,9 @@ class _CreateGroupViewState extends State<CreateGroupView> {
               backgroundColor: AppColors.success,
             ),
           );
-          // Navigate to invitation page to let user invite members
+          // Navigate to home page (UX improvement: landing first)
           Navigator.of(context).pushAndRemoveUntil(
-            InvitationPage.route(
-              groupId: state.groupId!,
-              groupName: state.name,
-            ),
+            HomePage.route(),
             (route) => false,
           );
         } else if (state.status == CreateGroupStatus.failure) {
@@ -215,8 +212,7 @@ class _CreateGroupViewState extends State<CreateGroupView> {
               previous.status != current.status ||
               previous.name != current.name,
           builder: (context, state) {
-            final hasError =
-                state.name.isNotEmpty && state.name.length > 30;
+            final hasError = state.name.isNotEmpty && state.name.length > 30;
 
             return Container(
               height: AppSpacing.inputHeight,
@@ -237,9 +233,9 @@ class _CreateGroupViewState extends State<CreateGroupView> {
                   controller: _nameController,
                   style: theme.textTheme.bodyLarge,
                   onChanged: (value) {
-                    context
-                        .read<CreateGroupBloc>()
-                        .add(CreateGroupNameChanged(value));
+                    context.read<CreateGroupBloc>().add(
+                      CreateGroupNameChanged(value),
+                    );
                   },
                   decoration: InputDecoration(
                     isCollapsed: true,
@@ -296,9 +292,9 @@ class _CreateGroupViewState extends State<CreateGroupView> {
           child: FilledButton(
             onPressed: state.canSubmit && !isSubmitting
                 ? () {
-                    context
-                        .read<CreateGroupBloc>()
-                        .add(const CreateGroupSubmitted());
+                    context.read<CreateGroupBloc>().add(
+                      const CreateGroupSubmitted(),
+                    );
                   }
                 : null,
             style: FilledButton.styleFrom(
