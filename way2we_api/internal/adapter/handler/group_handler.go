@@ -61,20 +61,6 @@ func (h *GroupHandler) CreateGroup(c echo.Context) error {
 		})
 	}
 
-	// Validate name length
-	if req.Name == "" {
-		return c.JSON(http.StatusBadRequest, ErrorResponse{
-			Code:    "ERR_NAME_REQUIRED",
-			Message: "群组名称不能为空",
-		})
-	}
-	if len(req.Name) > 30 {
-		return c.JSON(http.StatusBadRequest, ErrorResponse{
-			Code:    "ERR_NAME_TOO_LONG",
-			Message: "群组名称不能超过30个字符",
-		})
-	}
-
 	result, err := h.groupService.CreateGroup(c.Request().Context(), userID, req.Name)
 	if err != nil {
 		if errors.Is(err, group.ErrGroupNameEmpty) {
@@ -338,11 +324,13 @@ func (h *GroupHandler) JoinGroup(c echo.Context) error {
 
 // UserGroupDTO represents a group with user's membership info.
 type UserGroupDTO struct {
-	ID        int    `json:"id"`
-	Name      string `json:"name"`
-	Role      string `json:"role"`
-	JoinedAt  string `json:"joined_at"`
-	CreatedAt string `json:"created_at"`
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description,omitempty"`
+	MemberCount int    `json:"member_count"`
+	Role        string `json:"role"`
+	JoinedAt    string `json:"joined_at"`
+	CreatedAt   string `json:"created_at"`
 }
 
 // GetUserGroupsResponse represents the response for getting user's groups.
@@ -379,11 +367,13 @@ func (h *GroupHandler) GetUserGroups(c echo.Context) error {
 	}
 	for _, g := range groups {
 		resp.Groups = append(resp.Groups, UserGroupDTO{
-			ID:        g.Group.ID,
-			Name:      g.Group.Name,
-			Role:      string(g.Role),
-			JoinedAt:  g.JoinedAt,
-			CreatedAt: g.Group.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+			ID:          g.Group.ID,
+			Name:        g.Group.Name,
+			Description: g.Group.Description,
+			MemberCount: g.MemberCount,
+			Role:        string(g.Role),
+			JoinedAt:    g.JoinedAt,
+			CreatedAt:   g.Group.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
 		})
 	}
 

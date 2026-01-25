@@ -5,6 +5,7 @@ import 'package:way2we_app/features/auth/bloc/authentication_bloc.dart';
 import 'package:way2we_app/features/auth/data/providers/auth_provider.dart';
 import 'package:way2we_app/features/auth/view/login_page.dart';
 import 'package:way2we_app/features/auth/view/onboarding_profile_setup_page.dart';
+import 'package:way2we_app/features/group/bloc/group_control_bloc.dart';
 import 'package:way2we_app/features/group/data/providers/group_provider.dart';
 import 'package:way2we_app/features/group/view/group_selection_page.dart';
 import 'package:way2we_app/features/home/view/home_page.dart';
@@ -37,10 +38,19 @@ class App extends StatelessWidget {
     );
     ServiceLocator.instance.setAuthBloc(authBloc);
 
-    return RepositoryProvider<AuthProvider>.value(
-      value: authProvider,
-      child: BlocProvider<AuthenticationBloc>.value(
-        value: authBloc,
+    // Create GroupControlBloc
+    final groupControlBloc = GroupControlBloc(groupProvider: groupProvider);
+
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<AuthProvider>.value(value: authProvider),
+        RepositoryProvider<GroupProvider>.value(value: groupProvider),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<AuthenticationBloc>.value(value: authBloc),
+          BlocProvider<GroupControlBloc>.value(value: groupControlBloc),
+        ],
         child: const _AppView(),
       ),
     );
@@ -77,6 +87,11 @@ class _AppViewState extends State<_AppView> {
                 (route) => false,
               );
             } else if (state is AuthenticationAuthenticated) {
+              // Trigger group load
+              context.read<GroupControlBloc>().add(
+                const GroupControlGroupsLoaded(),
+              );
+
               if (state.needsOnboarding) {
                 // Navigate to onboarding
                 navigator.pushAndRemoveUntil(

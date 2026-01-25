@@ -107,6 +107,8 @@ class UserGroup {
   const UserGroup({
     required this.id,
     required this.name,
+    this.description,
+    required this.memberCount,
     required this.role,
     required this.joinedAt,
     required this.createdAt,
@@ -116,6 +118,8 @@ class UserGroup {
     return UserGroup(
       id: json['id'] as int,
       name: json['name'] as String,
+      description: json['description'] as String?,
+      memberCount: json['member_count'] as int? ?? 0,
       role: json['role'] as String,
       joinedAt: json['joined_at'] as String,
       createdAt: json['created_at'] as String,
@@ -124,6 +128,8 @@ class UserGroup {
 
   final int id;
   final String name;
+  final String? description;
+  final int memberCount;
   final String role;
   final String joinedAt;
   final String createdAt;

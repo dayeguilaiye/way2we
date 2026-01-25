@@ -128,6 +128,10 @@
             "groupName": {"type": "String"}
         }
     },
-    "homeInviteMembers": "邀请成员"
+    "homeInviteMembers": "邀请成员",
+    
+    "groupSelectTitle": "选择群组",
+    "groupCreateAction": "创建新群组",
+    "groupJoinAction": "加入群组"
 }
 

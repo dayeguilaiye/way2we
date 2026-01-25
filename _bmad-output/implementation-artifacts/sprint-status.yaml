@@ -53,7 +53,7 @@ development_status:
   # Epic 2: 群组创建与成员管理
   epic-2: in-progress
   2-1-group-creation-and-invitation: done  # 完整实现了创建群组、邀请码系统、加入群组和UX优化
-  2-2-view-group-list-switch-group: backlog
+  2-2-view-group-list-switch-group: done
   2-3-member-management-permissions: backlog  # 合并了成员列表角色管理、权限分配
   2-4-group-default-configuration: backlog
   epic-2-retrospective: optional

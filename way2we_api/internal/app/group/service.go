@@ -325,9 +325,10 @@ func (s *Service) JoinGroup(ctx context.Context, code string, userID int) (*Join
 
 // UserGroupInfo contains a user's group membership information.
 type UserGroupInfo struct {
-	Group    *ent.Group
-	Role     groupmember.Role
-	JoinedAt string
+	Group       *ent.Group
+	Role        groupmember.Role
+	MemberCount int
+	JoinedAt    string
 }
 
 // GetUserGroups retrieves all groups that a user belongs to.
@@ -350,12 +351,45 @@ func (s *Service) GetUserGroups(ctx context.Context, userID int) ([]*UserGroupIn
 		return nil, fmt.Errorf("failed to query user groups: %w", err)
 	}
 
+	if len(memberships) == 0 {
+		return []*UserGroupInfo{}, nil
+	}
+
+	// Collect group IDs
+	groupIDs := make([]int, len(memberships))
+	for i, m := range memberships {
+		groupIDs[i] = m.Edges.Group.ID
+	}
+
+	// Batch query member counts
+	// SELECT group_id, COUNT(*) FROM group_members WHERE group_id IN (...) GROUP BY group_id
+	var counts []struct {
+		GroupID int `json:"group_id"`
+		Count   int `json:"count"`
+	}
+	err = s.client.GroupMember.Query().
+		Where(groupmember.GroupIDIn(groupIDs...)).
+		GroupBy(groupmember.FieldGroupID).
+		Aggregate(ent.Count()).
+		Scan(ctx, &counts)
+	if err != nil {
+		return nil, fmt.Errorf("failed to batch count members: %w", err)
+	}
+
+	// Map counts for O(1) lookup
+	countMap := make(map[int]int)
+	for _, c := range counts {
+		countMap[c.GroupID] = c.Count
+	}
+
 	result := make([]*UserGroupInfo, 0, len(memberships))
 	for _, m := range memberships {
+		groupID := m.Edges.Group.ID
 		result = append(result, &UserGroupInfo{
-			Group:    m.Edges.Group,
-			Role:     m.Role,
-			JoinedAt: m.JoinedAt.Format("2006-01-02T15:04:05Z07:00"),
+			Group:       m.Edges.Group,
+			Role:        m.Role,
+			MemberCount: countMap[groupID],
+			JoinedAt:    m.JoinedAt.Format("2006-01-02T15:04:05Z07:00"),
 		})
 	}
 

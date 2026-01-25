@@ -444,3 +444,63 @@ func TestGroupHandler_JoinGroup(t *testing.T) {
 		}
 	})
 }
+
+func TestGroupHandler_GetUserGroups(t *testing.T) {
+	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+	defer client.Close()
+
+	// Create user
+	u, err := client.User.Create().SetNickname("User").SetPasswordHash("hash").Save(t.Context())
+	require.NoError(t, err)
+
+	groupService := group.NewService(client)
+	h := handler.NewGroupHandler(groupService)
+
+	// Create a group
+	result, err := groupService.CreateGroup(t.Context(), u.ID, "Family1")
+	require.NoError(t, err)
+
+	// Add description explicitly
+	_, err = client.Group.UpdateOneID(result.Group.ID).SetDescription("My Family Group").Save(t.Context())
+	require.NoError(t, err)
+
+	t.Run("get user groups", func(t *testing.T) {
+		e := echo.New()
+		req := httptest.NewRequest(http.MethodGet, "/v1/groups", nil)
+		rec := httptest.NewRecorder()
+		c := e.NewContext(req, rec)
+		c.Set("user_id", u.ID)
+
+		err := h.GetUserGroups(c)
+
+		if assert.NoError(t, err) {
+			assert.Equal(t, http.StatusOK, rec.Code)
+
+			var response map[string]interface{}
+			json.Unmarshal(rec.Body.Bytes(), &response)
+
+			groups := response["groups"].([]interface{})
+			require.Len(t, groups, 1)
+
+			group1 := groups[0].(map[string]interface{})
+			assert.Equal(t, "Family1", group1["name"])
+			assert.Equal(t, "admin", group1["role"])
+			assert.Equal(t, "My Family Group", group1["description"])
+			assert.Equal(t, float64(1), group1["member_count"])
+		}
+	})
+
+	t.Run("unauthorized", func(t *testing.T) {
+		e := echo.New()
+		req := httptest.NewRequest(http.MethodGet, "/v1/groups", nil)
+		rec := httptest.NewRecorder()
+		c := e.NewContext(req, rec)
+		// No user_id set
+
+		err := h.GetUserGroups(c)
+
+		if assert.NoError(t, err) {
+			assert.Equal(t, http.StatusUnauthorized, rec.Code)
+		}
+	})
+}
