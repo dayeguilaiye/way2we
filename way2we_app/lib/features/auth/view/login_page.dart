@@ -73,49 +73,70 @@ class _AuthViewState extends State<AuthView> {
     final theme = Theme.of(context);
     final l10n = context.l10n;
 
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.pagePaddingH,
-          ),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                const SizedBox(height: AppSpacing.space6),
+    return BlocListener<VerificationCodeBloc, VerificationCodeState>(
+      listenWhen: (previous, current) => previous.status != current.status,
+      listener: (context, state) {
+        if (state.status == VerificationCodeStatus.failure &&
+            state.errorMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMessage!),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+        if (state.status == VerificationCodeStatus.sent) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.authCodeSentSuccess),
+            ),
+          );
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.pagePaddingH,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  const SizedBox(height: AppSpacing.space6),
 
-                // Hero Illustration
-                _buildHeroIllustration(),
+                  // Hero Illustration
+                  _buildHeroIllustration(),
 
-                // Headline
-                _buildHeadline(theme, l10n),
-                const SizedBox(height: AppSpacing.space6),
+                  // Headline
+                  _buildHeadline(theme, l10n),
+                  const SizedBox(height: AppSpacing.space6),
 
-                // Register/Login Toggle
-                _buildAuthToggle(theme, l10n),
-                const SizedBox(height: AppSpacing.space8),
+                  // Register/Login Toggle
+                  _buildAuthToggle(theme, l10n),
+                  const SizedBox(height: AppSpacing.space8),
 
-                // Form Fields
-                _buildFormFields(theme, l10n),
-                const SizedBox(height: AppSpacing.space6),
+                  // Form Fields
+                  _buildFormFields(theme, l10n),
+                  const SizedBox(height: AppSpacing.space6),
 
-                // Primary Action Button
-                _buildPrimaryButton(theme, l10n),
-                const SizedBox(height: AppSpacing.space8),
+                  // Primary Action Button
+                  _buildPrimaryButton(theme, l10n),
+                  const SizedBox(height: AppSpacing.space8),
 
-                // Divider
-                _buildDivider(theme, l10n),
-                const SizedBox(height: AppSpacing.space6),
+                  // Divider
+                  _buildDivider(theme, l10n),
+                  const SizedBox(height: AppSpacing.space6),
 
-                // Social Login
-                _buildSocialLogins(theme),
-                const SizedBox(height: AppSpacing.space8),
+                  // Social Login
+                  _buildSocialLogins(theme),
+                  const SizedBox(height: AppSpacing.space8),
 
-                // Terms Agreement
-                _buildTermsAgreement(theme, l10n),
-                const SizedBox(height: AppSpacing.space8),
-              ],
+                  // Terms Agreement
+                  _buildTermsAgreement(theme, l10n),
+                  const SizedBox(height: AppSpacing.space8),
+                ],
+              ),
             ),
           ),
         ),

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"log/slog"
 	"net/http"
 	"regexp"
@@ -273,17 +274,17 @@ func toUserDTO(u *ent.User) *UserDTO {
 // validateTarget validates the target based on the verification type.
 func (h *AuthHandler) validateTarget(verifyType auth.VerificationType, target string) error {
 	if target == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "target is required")
+		return errors.New("target is required")
 	}
 
 	switch verifyType {
 	case auth.VerificationTypePhone:
 		if !phoneRegex.MatchString(target) {
-			return echo.NewHTTPError(http.StatusBadRequest, "手机号码格式无效")
+			return errors.New("手机号码格式无效")
 		}
 	case auth.VerificationTypeEmail:
 		if !emailRegex.MatchString(target) {
-			return echo.NewHTTPError(http.StatusBadRequest, "邮箱格式无效")
+			return errors.New("邮箱格式无效")
 		}
 	}
 
