@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:way2we_app/features/auth/data/providers/auth_provider.dart';
+import 'package:way2we_app/features/group/data/providers/group_provider.dart';
 
 part 'authentication_event.dart';
 part 'authentication_state.dart';
@@ -11,18 +12,22 @@ part 'authentication_state.dart';
 /// - Checking authentication on app startup
 /// - Logout requests
 /// - Login success notifications
+/// - Checking if user has a group
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   AuthenticationBloc({
     required AuthProvider authProvider,
-  }) : _authProvider = authProvider,
-       super(const AuthenticationInitial()) {
+    required GroupProvider groupProvider,
+  })  : _authProvider = authProvider,
+        _groupProvider = groupProvider,
+        super(const AuthenticationInitial()) {
     on<AppStarted>(_onAppStarted);
     on<AppLogoutRequested>(_onLogoutRequested);
     on<AppLoginSucceeded>(_onLoginSucceeded);
   }
 
   final AuthProvider _authProvider;
+  final GroupProvider _groupProvider;
 
   Future<void> _onAppStarted(
     AppStarted event,
@@ -32,7 +37,9 @@ class AuthenticationBloc
     final token = await _authProvider.getToken();
 
     if (token != null && token.isNotEmpty) {
-      emit(const AuthenticationAuthenticated());
+      // Check if user has any groups
+      final hasGroup = await _checkHasGroup();
+      emit(AuthenticationAuthenticated(hasGroup: hasGroup));
     } else {
       emit(const AuthenticationUnauthenticated());
     }
@@ -50,6 +57,20 @@ class AuthenticationBloc
     AppLoginSucceeded event,
     Emitter<AuthenticationState> emit,
   ) {
-    emit(AuthenticationAuthenticated(needsOnboarding: event.needsOnboarding));
+    // New users won't have a group yet
+    emit(AuthenticationAuthenticated(
+      needsOnboarding: event.needsOnboarding,
+    ));
+  }
+
+  /// Check if the current user has any groups.
+  Future<bool> _checkHasGroup() async {
+    try {
+      final response = await _groupProvider.getUserGroups();
+      return response.groups.isNotEmpty;
+    } on Exception {
+      // If we can't check, assume no groups
+      return false;
+    }
   }
 }

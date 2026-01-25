@@ -41,6 +41,20 @@ func (_c *GroupCreate) SetNillableDescription(v *string) *GroupCreate {
 	return _c
 }
 
+// SetInvitationCode sets the "invitation_code" field.
+func (_c *GroupCreate) SetInvitationCode(v string) *GroupCreate {
+	_c.mutation.SetInvitationCode(v)
+	return _c
+}
+
+// SetNillableInvitationCode sets the "invitation_code" field if the given value is not nil.
+func (_c *GroupCreate) SetNillableInvitationCode(v *string) *GroupCreate {
+	if v != nil {
+		_c.SetInvitationCode(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *GroupCreate) SetCreatedAt(v time.Time) *GroupCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -144,6 +158,11 @@ func (_c *GroupCreate) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Group.description": %w`, err)}
 		}
 	}
+	if v, ok := _c.mutation.InvitationCode(); ok {
+		if err := group.InvitationCodeValidator(v); err != nil {
+			return &ValidationError{Name: "invitation_code", err: fmt.Errorf(`ent: validator failed for field "Group.invitation_code": %w`, err)}
+		}
+	}
 	if _, ok := _c.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Group.created_at"`)}
 	}
@@ -183,6 +202,10 @@ func (_c *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Description(); ok {
 		_spec.SetField(group.FieldDescription, field.TypeString, value)
 		_node.Description = value
+	}
+	if value, ok := _c.mutation.InvitationCode(); ok {
+		_spec.SetField(group.FieldInvitationCode, field.TypeString, value)
+		_node.InvitationCode = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(group.FieldCreatedAt, field.TypeTime, value)

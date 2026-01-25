@@ -65,6 +65,11 @@ func Description(v string) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldDescription, v))
 }
 
+// InvitationCode applies equality check predicate on the "invitation_code" field. It's identical to InvitationCodeEQ.
+func InvitationCode(v string) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldInvitationCode, v))
+}
+
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldCreatedAt, v))
@@ -213,6 +218,81 @@ func DescriptionEqualFold(v string) predicate.Group {
 // DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
 func DescriptionContainsFold(v string) predicate.Group {
 	return predicate.Group(sql.FieldContainsFold(FieldDescription, v))
+}
+
+// InvitationCodeEQ applies the EQ predicate on the "invitation_code" field.
+func InvitationCodeEQ(v string) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldInvitationCode, v))
+}
+
+// InvitationCodeNEQ applies the NEQ predicate on the "invitation_code" field.
+func InvitationCodeNEQ(v string) predicate.Group {
+	return predicate.Group(sql.FieldNEQ(FieldInvitationCode, v))
+}
+
+// InvitationCodeIn applies the In predicate on the "invitation_code" field.
+func InvitationCodeIn(vs ...string) predicate.Group {
+	return predicate.Group(sql.FieldIn(FieldInvitationCode, vs...))
+}
+
+// InvitationCodeNotIn applies the NotIn predicate on the "invitation_code" field.
+func InvitationCodeNotIn(vs ...string) predicate.Group {
+	return predicate.Group(sql.FieldNotIn(FieldInvitationCode, vs...))
+}
+
+// InvitationCodeGT applies the GT predicate on the "invitation_code" field.
+func InvitationCodeGT(v string) predicate.Group {
+	return predicate.Group(sql.FieldGT(FieldInvitationCode, v))
+}
+
+// InvitationCodeGTE applies the GTE predicate on the "invitation_code" field.
+func InvitationCodeGTE(v string) predicate.Group {
+	return predicate.Group(sql.FieldGTE(FieldInvitationCode, v))
+}
+
+// InvitationCodeLT applies the LT predicate on the "invitation_code" field.
+func InvitationCodeLT(v string) predicate.Group {
+	return predicate.Group(sql.FieldLT(FieldInvitationCode, v))
+}
+
+// InvitationCodeLTE applies the LTE predicate on the "invitation_code" field.
+func InvitationCodeLTE(v string) predicate.Group {
+	return predicate.Group(sql.FieldLTE(FieldInvitationCode, v))
+}
+
+// InvitationCodeContains applies the Contains predicate on the "invitation_code" field.
+func InvitationCodeContains(v string) predicate.Group {
+	return predicate.Group(sql.FieldContains(FieldInvitationCode, v))
+}
+
+// InvitationCodeHasPrefix applies the HasPrefix predicate on the "invitation_code" field.
+func InvitationCodeHasPrefix(v string) predicate.Group {
+	return predicate.Group(sql.FieldHasPrefix(FieldInvitationCode, v))
+}
+
+// InvitationCodeHasSuffix applies the HasSuffix predicate on the "invitation_code" field.
+func InvitationCodeHasSuffix(v string) predicate.Group {
+	return predicate.Group(sql.FieldHasSuffix(FieldInvitationCode, v))
+}
+
+// InvitationCodeIsNil applies the IsNil predicate on the "invitation_code" field.
+func InvitationCodeIsNil() predicate.Group {
+	return predicate.Group(sql.FieldIsNull(FieldInvitationCode))
+}
+
+// InvitationCodeNotNil applies the NotNil predicate on the "invitation_code" field.
+func InvitationCodeNotNil() predicate.Group {
+	return predicate.Group(sql.FieldNotNull(FieldInvitationCode))
+}
+
+// InvitationCodeEqualFold applies the EqualFold predicate on the "invitation_code" field.
+func InvitationCodeEqualFold(v string) predicate.Group {
+	return predicate.Group(sql.FieldEqualFold(FieldInvitationCode, v))
+}
+
+// InvitationCodeContainsFold applies the ContainsFold predicate on the "invitation_code" field.
+func InvitationCodeContainsFold(v string) predicate.Group {
+	return predicate.Group(sql.FieldContainsFold(FieldInvitationCode, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.

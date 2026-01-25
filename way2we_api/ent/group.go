@@ -21,6 +21,8 @@ type Group struct {
 	Name string `json:"name,omitempty"`
 	// Group description, optional, max 200 characters
 	Description string `json:"description,omitempty"`
+	// 6-digit alphanumeric invitation code for joining the group
+	InvitationCode *string `json:"invitation_code,omitempty"`
 	// Group creation timestamp
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Last update timestamp
@@ -56,7 +58,7 @@ func (*Group) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case group.FieldID:
 			values[i] = new(sql.NullInt64)
-		case group.FieldName, group.FieldDescription:
+		case group.FieldName, group.FieldDescription, group.FieldInvitationCode:
 			values[i] = new(sql.NullString)
 		case group.FieldCreatedAt, group.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -92,6 +94,13 @@ func (_m *Group) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
 				_m.Description = value.String
+			}
+		case group.FieldInvitationCode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field invitation_code", values[i])
+			} else if value.Valid {
+				_m.InvitationCode = new(string)
+				*_m.InvitationCode = value.String
 			}
 		case group.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -151,6 +160,11 @@ func (_m *Group) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("description=")
 	builder.WriteString(_m.Description)
+	builder.WriteString(", ")
+	if v := _m.InvitationCode; v != nil {
+		builder.WriteString("invitation_code=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))

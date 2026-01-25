@@ -18,6 +18,8 @@ const (
 	FieldName = "name"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
+	// FieldInvitationCode holds the string denoting the invitation_code field in the database.
+	FieldInvitationCode = "invitation_code"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -40,6 +42,7 @@ var Columns = []string{
 	FieldID,
 	FieldName,
 	FieldDescription,
+	FieldInvitationCode,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
@@ -59,6 +62,8 @@ var (
 	NameValidator func(string) error
 	// DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	DescriptionValidator func(string) error
+	// InvitationCodeValidator is a validator for the "invitation_code" field. It is called by the builders before save.
+	InvitationCodeValidator func(string) error
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -83,6 +88,11 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 // ByDescription orders the results by the description field.
 func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDescription, opts...).ToFunc()
+}
+
+// ByInvitationCode orders the results by the invitation_code field.
+func ByInvitationCode(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldInvitationCode, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.

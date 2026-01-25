@@ -12,9 +12,13 @@ final class AuthenticationInitial extends AuthenticationState {
 
 /// State when user is authenticated.
 final class AuthenticationAuthenticated extends AuthenticationState {
-  const AuthenticationAuthenticated({this.needsOnboarding = false});
+  const AuthenticationAuthenticated({
+    this.needsOnboarding = false,
+    this.hasGroup = false,
+  });
 
   final bool needsOnboarding;
+  final bool hasGroup;
 }
 
 /// State when user is not authenticated.

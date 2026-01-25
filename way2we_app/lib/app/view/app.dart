@@ -5,6 +5,8 @@ import 'package:way2we_app/features/auth/bloc/authentication_bloc.dart';
 import 'package:way2we_app/features/auth/data/providers/auth_provider.dart';
 import 'package:way2we_app/features/auth/view/login_page.dart';
 import 'package:way2we_app/features/auth/view/onboarding_profile_setup_page.dart';
+import 'package:way2we_app/features/group/data/providers/group_provider.dart';
+import 'package:way2we_app/features/group/view/group_selection_page.dart';
 import 'package:way2we_app/features/home/view/home_page.dart';
 import 'package:way2we_app/features/splash/view/splash_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
@@ -18,15 +20,21 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Create global AuthProvider using ServiceLocator
+    final dio = ServiceLocator.instance.dio;
+
+    // Create global providers using ServiceLocator
     final authProvider = AuthProvider(
-      dio: ServiceLocator.instance.dio,
+      dio: dio,
       storage: ServiceLocator.instance.storage,
     );
+    final groupProvider = GroupProvider(dio: dio);
 
     // Create AuthenticationBloc and register with ServiceLocator
     // for 401 handling
-    final authBloc = AuthenticationBloc(authProvider: authProvider);
+    final authBloc = AuthenticationBloc(
+      authProvider: authProvider,
+      groupProvider: groupProvider,
+    );
     ServiceLocator.instance.setAuthBloc(authBloc);
 
     return RepositoryProvider<AuthProvider>.value(
@@ -73,6 +81,12 @@ class _AppViewState extends State<_AppView> {
                 // Navigate to onboarding
                 navigator.pushAndRemoveUntil(
                   OnboardingProfileSetupPage.route(),
+                  (route) => false,
+                );
+              } else if (!state.hasGroup) {
+                // Navigate to group selection
+                navigator.pushAndRemoveUntil(
+                  GroupSelectionPage.route(),
                   (route) => false,
                 );
               } else {

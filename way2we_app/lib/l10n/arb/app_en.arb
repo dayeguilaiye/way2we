@@ -270,5 +270,157 @@
     "createGroupError": "Failed to create group. Please try again.",
     "@createGroupError": {
         "description": "Group creation error message"
+    },
+
+    "invitationTitle": "Invite Members",
+    "@invitationTitle": {
+        "description": "Invitation page title"
+    },
+    "invitationHeadline": "Share Invitation Code",
+    "@invitationHeadline": {
+        "description": "Invitation page headline"
+    },
+    "invitationSubtitle": "Share the code with members to join {groupName}",
+    "@invitationSubtitle": {
+        "description": "Invitation page subtitle",
+        "placeholders": {
+            "groupName": {"type": "String"}
+        }
+    },
+    "invitationCodeLabel": "INVITATION CODE",
+    "@invitationCodeLabel": {
+        "description": "Invitation code label"
+    },
+    "invitationCopyButton": "Copy Link",
+    "@invitationCopyButton": {
+        "description": "Copy link button text"
+    },
+    "invitationShareButton": "Share",
+    "@invitationShareButton": {
+        "description": "Share button text"
+    },
+    "invitationRefreshButton": "Refresh Code",
+    "@invitationRefreshButton": {
+        "description": "Refresh code button text"
+    },
+    "invitationRefreshTitle": "Refresh Invitation Code?",
+    "@invitationRefreshTitle": {
+        "description": "Refresh confirmation dialog title"
+    },
+    "invitationRefreshMessage": "The old code will be invalidated. Are you sure?",
+    "@invitationRefreshMessage": {
+        "description": "Refresh confirmation dialog message"
+    },
+    "invitationCopied": "Invitation link copied!",
+    "@invitationCopied": {
+        "description": "Copy success message"
+    },
+    "invitationRefreshed": "Invitation code refreshed!",
+    "@invitationRefreshed": {
+        "description": "Refresh success message"
+    },
+    "invitationError": "Failed to get invitation code. Please try again.",
+    "@invitationError": {
+        "description": "Invitation error message"
+    },
+    "invitationShareMessage": "Join my group {groupName}!\nInvitation link: {shareUrl}",
+    "@invitationShareMessage": {
+        "description": "Share message content",
+        "placeholders": {
+            "groupName": {"type": "String"},
+            "shareUrl": {"type": "String"}
+        }
+    },
+
+    "joinGroupTitle": "Join Group",
+    "@joinGroupTitle": {
+        "description": "Join group page title"
+    },
+    "joinGroupHeadline": "Enter Invitation Code",
+    "@joinGroupHeadline": {
+        "description": "Join group page headline"
+    },
+    "joinGroupSubtitle": "Enter the code to join your family or partner's group",
+    "@joinGroupSubtitle": {
+        "description": "Join group page subtitle"
+    },
+    "joinGroupCodeLabel": "INVITATION CODE",
+    "@joinGroupCodeLabel": {
+        "description": "Invitation code input label"
+    },
+    "joinGroupCodePlaceholder": "ABC123",
+    "@joinGroupCodePlaceholder": {
+        "description": "Invitation code input placeholder"
+    },
+    "joinGroupPreviewButton": "Find Group",
+    "@joinGroupPreviewButton": {
+        "description": "Preview group button text"
+    },
+    "joinGroupConfirmButton": "Join Group",
+    "@joinGroupConfirmButton": {
+        "description": "Confirm join button text"
+    },
+    "joinGroupMemberCount": "{count} members",
+    "@joinGroupMemberCount": {
+        "description": "Member count text",
+        "placeholders": {
+            "count": {"type": "int"}
+        }
+    },
+    "joinGroupSuccess": "Successfully joined {groupName}!",
+    "@joinGroupSuccess": {
+        "description": "Join success message",
+        "placeholders": {
+            "groupName": {"type": "String"}
+        }
+    },
+    "joinGroupError": "Failed to join group. Please try again.",
+    "@joinGroupError": {
+        "description": "Join error message"
+    },
+    "joinGroupErrorInvalidCode": "Invalid or expired invitation code",
+    "@joinGroupErrorInvalidCode": {
+        "description": "Invalid code error message"
+    },
+    "joinGroupErrorAlreadyMember": "You are already a member of this group",
+    "@joinGroupErrorAlreadyMember": {
+        "description": "Already member error message"
+    },
+
+    "groupSelectionTitle": "Get Started",
+    "@groupSelectionTitle": {
+        "description": "Group selection page title"
+    },
+    "groupSelectionSubtitle": "Create a new group or join an existing one to start sharing moments together.",
+    "@groupSelectionSubtitle": {
+        "description": "Group selection page subtitle"
+    },
+    "groupSelectionCreateTitle": "Create New Group",
+    "@groupSelectionCreateTitle": {
+        "description": "Create group option title"
+    },
+    "groupSelectionCreateSubtitle": "Start a new space for your family or partner",
+    "@groupSelectionCreateSubtitle": {
+        "description": "Create group option subtitle"
+    },
+    "groupSelectionJoinTitle": "Join Existing Group",
+    "@groupSelectionJoinTitle": {
+        "description": "Join group option title"
+    },
+    "groupSelectionJoinSubtitle": "Enter an invitation code to join",
+    "@groupSelectionJoinSubtitle": {
+        "description": "Join group option subtitle"
+    },
+
+    "homeGroupName": "Group: {groupName}",
+    "@homeGroupName": {
+        "description": "Display group name on home page",
+        "placeholders": {
+            "groupName": {"type": "String"}
+        }
+    },
+    "homeInviteMembers": "Invite Members",
+    "@homeInviteMembers": {
+        "description": "Invite members button text"
     }
 }

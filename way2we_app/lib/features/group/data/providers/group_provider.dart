@@ -32,6 +32,121 @@ class CreateGroupResponse {
   final String role;
 }
 
+/// Response model for invitation code API.
+class InvitationResponse {
+  const InvitationResponse({
+    required this.groupId,
+    required this.invitationCode,
+    required this.shareUrl,
+  });
+
+  factory InvitationResponse.fromJson(Map<String, dynamic> json) {
+    return InvitationResponse(
+      groupId: json['group_id'] as int,
+      invitationCode: json['invitation_code'] as String,
+      shareUrl: json['share_url'] as String,
+    );
+  }
+
+  final int groupId;
+  final String invitationCode;
+  final String shareUrl;
+}
+
+/// Response model for group preview (by invitation code).
+class GroupPreviewResponse {
+  const GroupPreviewResponse({
+    required this.id,
+    required this.name,
+    required this.memberCount,
+    required this.createdAt,
+  });
+
+  factory GroupPreviewResponse.fromJson(Map<String, dynamic> json) {
+    return GroupPreviewResponse(
+      id: json['id'] as int,
+      name: json['name'] as String,
+      memberCount: json['member_count'] as int,
+      createdAt: json['created_at'] as String,
+    );
+  }
+
+  final int id;
+  final String name;
+  final int memberCount;
+  final String createdAt;
+}
+
+/// Response model for join group API.
+class JoinGroupResponse {
+  const JoinGroupResponse({
+    required this.groupId,
+    required this.groupName,
+    required this.memberCount,
+    required this.role,
+  });
+
+  factory JoinGroupResponse.fromJson(Map<String, dynamic> json) {
+    final group = json['group'] as Map<String, dynamic>;
+    return JoinGroupResponse(
+      groupId: group['id'] as int,
+      groupName: group['name'] as String,
+      memberCount: group['member_count'] as int,
+      role: group['role'] as String,
+    );
+  }
+
+  final int groupId;
+  final String groupName;
+  final int memberCount;
+  final String role;
+}
+
+/// Model for a user's group membership info.
+class UserGroup {
+  const UserGroup({
+    required this.id,
+    required this.name,
+    required this.role,
+    required this.joinedAt,
+    required this.createdAt,
+  });
+
+  factory UserGroup.fromJson(Map<String, dynamic> json) {
+    return UserGroup(
+      id: json['id'] as int,
+      name: json['name'] as String,
+      role: json['role'] as String,
+      joinedAt: json['joined_at'] as String,
+      createdAt: json['created_at'] as String,
+    );
+  }
+
+  final int id;
+  final String name;
+  final String role;
+  final String joinedAt;
+  final String createdAt;
+
+  bool get isAdmin => role == 'admin';
+}
+
+/// Response model for get user groups API.
+class GetUserGroupsResponse {
+  const GetUserGroupsResponse({required this.groups});
+
+  factory GetUserGroupsResponse.fromJson(Map<String, dynamic> json) {
+    final groupsList = json['groups'] as List<dynamic>;
+    return GetUserGroupsResponse(
+      groups: groupsList
+          .map((g) => UserGroup.fromJson(g as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+
+  final List<UserGroup> groups;
+}
+
 /// Provider for group-related API calls.
 class GroupProvider {
   GroupProvider({required Dio dio}) : _dio = dio;
@@ -52,6 +167,97 @@ class GroupProvider {
       }
 
       return CreateGroupResponse.fromJson(response.data!);
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
+  /// Gets the invitation code for a group.
+  /// Only admins can access this endpoint.
+  Future<InvitationResponse> getInvitationCode({required int groupId}) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '/v1/groups/$groupId/invitation',
+      );
+
+      if (response.data == null) {
+        throw const GroupApiException('Unexpected null response');
+      }
+
+      return InvitationResponse.fromJson(response.data!);
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
+  /// Refreshes the invitation code for a group.
+  /// Only admins can access this endpoint.
+  Future<InvitationResponse> refreshInvitationCode({
+    required int groupId,
+  }) async {
+    try {
+      final response = await _dio.post<Map<String, dynamic>>(
+        '/v1/groups/$groupId/invitation/refresh',
+      );
+
+      if (response.data == null) {
+        throw const GroupApiException('Unexpected null response');
+      }
+
+      return InvitationResponse.fromJson(response.data!);
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
+  /// Gets group preview by invitation code.
+  /// This is a public endpoint that doesn't require authentication.
+  Future<GroupPreviewResponse> getGroupByInvitation({
+    required String code,
+  }) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '/v1/groups/by-invitation/$code',
+      );
+
+      if (response.data == null) {
+        throw const GroupApiException('Unexpected null response');
+      }
+
+      return GroupPreviewResponse.fromJson(response.data!);
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
+  /// Joins a group using an invitation code.
+  Future<JoinGroupResponse> joinGroup({required String invitationCode}) async {
+    try {
+      final response = await _dio.post<Map<String, dynamic>>(
+        '/v1/groups/join',
+        data: {'invitation_code': invitationCode},
+      );
+
+      if (response.data == null) {
+        throw const GroupApiException('Unexpected null response');
+      }
+
+      return JoinGroupResponse.fromJson(response.data!);
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
+  /// Gets all groups the current user belongs to.
+  Future<GetUserGroupsResponse> getUserGroups() async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>('/v1/groups');
+
+      if (response.data == null) {
+        throw const GroupApiException('Unexpected null response');
+      }
+
+      return GetUserGroupsResponse.fromJson(response.data!);
     } on DioException catch (e) {
       _handleDioError(e);
     }

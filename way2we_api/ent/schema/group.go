@@ -24,6 +24,12 @@ func (Group) Fields() []ent.Field {
 			Optional().
 			MaxLen(200).
 			Comment("Group description, optional, max 200 characters"),
+		field.String("invitation_code").
+			Unique().
+			MaxLen(6).
+			Optional().
+			Nillable().
+			Comment("6-digit alphanumeric invitation code for joining the group"),
 		field.Time("created_at").
 			Default(time.Now).
 			Immutable().

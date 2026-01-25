@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:way2we_app/app/di.dart';
-import 'package:way2we_app/features/home/view/home_page.dart';
+import 'package:way2we_app/features/group/view/group_selection_page.dart';
 import 'package:way2we_app/features/profile/bloc/profile_bloc.dart';
 import 'package:way2we_app/features/profile/data/providers/profile_provider.dart';
 import 'package:way2we_app/l10n/l10n.dart';
@@ -87,7 +87,7 @@ class _OnboardingProfileSetupPageState
     return BlocListener<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state is ProfileUpdateSuccess) {
-          Navigator.of(context).pushReplacement(HomePage.route());
+          Navigator.of(context).pushReplacement(GroupSelectionPage.route());
         } else if (state is ProfileFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -304,7 +304,8 @@ class _OnboardingProfileSetupPageState
   Widget _buildSkipButton(ThemeData theme, AppLocalizations l10n) {
     return TextButton(
       onPressed: () async {
-        await Navigator.of(context).pushReplacement(HomePage.route());
+        await Navigator.of(context)
+            .pushReplacement(GroupSelectionPage.route());
       },
       child: Text(
         l10n.onboardingSkipButton,

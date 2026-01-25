@@ -13,6 +13,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString, Size: 30},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 200},
+		{Name: "invitation_code", Type: field.TypeString, Unique: true, Nullable: true, Size: 6},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 	}

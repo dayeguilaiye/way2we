@@ -63,6 +63,26 @@ func (_u *GroupUpdate) ClearDescription() *GroupUpdate {
 	return _u
 }
 
+// SetInvitationCode sets the "invitation_code" field.
+func (_u *GroupUpdate) SetInvitationCode(v string) *GroupUpdate {
+	_u.mutation.SetInvitationCode(v)
+	return _u
+}
+
+// SetNillableInvitationCode sets the "invitation_code" field if the given value is not nil.
+func (_u *GroupUpdate) SetNillableInvitationCode(v *string) *GroupUpdate {
+	if v != nil {
+		_u.SetInvitationCode(*v)
+	}
+	return _u
+}
+
+// ClearInvitationCode clears the value of the "invitation_code" field.
+func (_u *GroupUpdate) ClearInvitationCode() *GroupUpdate {
+	_u.mutation.ClearInvitationCode()
+	return _u
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *GroupUpdate) SetUpdatedAt(v time.Time) *GroupUpdate {
 	_u.mutation.SetUpdatedAt(v)
@@ -158,6 +178,11 @@ func (_u *GroupUpdate) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Group.description": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.InvitationCode(); ok {
+		if err := group.InvitationCodeValidator(v); err != nil {
+			return &ValidationError{Name: "invitation_code", err: fmt.Errorf(`ent: validator failed for field "Group.invitation_code": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -181,6 +206,12 @@ func (_u *GroupUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(group.FieldDescription, field.TypeString)
+	}
+	if value, ok := _u.mutation.InvitationCode(); ok {
+		_spec.SetField(group.FieldInvitationCode, field.TypeString, value)
+	}
+	if _u.mutation.InvitationCodeCleared() {
+		_spec.ClearField(group.FieldInvitationCode, field.TypeString)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(group.FieldUpdatedAt, field.TypeTime, value)
@@ -281,6 +312,26 @@ func (_u *GroupUpdateOne) SetNillableDescription(v *string) *GroupUpdateOne {
 // ClearDescription clears the value of the "description" field.
 func (_u *GroupUpdateOne) ClearDescription() *GroupUpdateOne {
 	_u.mutation.ClearDescription()
+	return _u
+}
+
+// SetInvitationCode sets the "invitation_code" field.
+func (_u *GroupUpdateOne) SetInvitationCode(v string) *GroupUpdateOne {
+	_u.mutation.SetInvitationCode(v)
+	return _u
+}
+
+// SetNillableInvitationCode sets the "invitation_code" field if the given value is not nil.
+func (_u *GroupUpdateOne) SetNillableInvitationCode(v *string) *GroupUpdateOne {
+	if v != nil {
+		_u.SetInvitationCode(*v)
+	}
+	return _u
+}
+
+// ClearInvitationCode clears the value of the "invitation_code" field.
+func (_u *GroupUpdateOne) ClearInvitationCode() *GroupUpdateOne {
+	_u.mutation.ClearInvitationCode()
 	return _u
 }
 
@@ -392,6 +443,11 @@ func (_u *GroupUpdateOne) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Group.description": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.InvitationCode(); ok {
+		if err := group.InvitationCodeValidator(v); err != nil {
+			return &ValidationError{Name: "invitation_code", err: fmt.Errorf(`ent: validator failed for field "Group.invitation_code": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -432,6 +488,12 @@ func (_u *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error)
 	}
 	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(group.FieldDescription, field.TypeString)
+	}
+	if value, ok := _u.mutation.InvitationCode(); ok {
+		_spec.SetField(group.FieldInvitationCode, field.TypeString, value)
+	}
+	if _u.mutation.InvitationCodeCleared() {
+		_spec.ClearField(group.FieldInvitationCode, field.TypeString)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(group.FieldUpdatedAt, field.TypeTime, value)

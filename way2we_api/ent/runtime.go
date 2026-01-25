@@ -41,12 +41,16 @@ func init() {
 	groupDescDescription := groupFields[1].Descriptor()
 	// group.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	group.DescriptionValidator = groupDescDescription.Validators[0].(func(string) error)
+	// groupDescInvitationCode is the schema descriptor for invitation_code field.
+	groupDescInvitationCode := groupFields[2].Descriptor()
+	// group.InvitationCodeValidator is a validator for the "invitation_code" field. It is called by the builders before save.
+	group.InvitationCodeValidator = groupDescInvitationCode.Validators[0].(func(string) error)
 	// groupDescCreatedAt is the schema descriptor for created_at field.
-	groupDescCreatedAt := groupFields[2].Descriptor()
+	groupDescCreatedAt := groupFields[3].Descriptor()
 	// group.DefaultCreatedAt holds the default value on creation for the created_at field.
 	group.DefaultCreatedAt = groupDescCreatedAt.Default.(func() time.Time)
 	// groupDescUpdatedAt is the schema descriptor for updated_at field.
-	groupDescUpdatedAt := groupFields[3].Descriptor()
+	groupDescUpdatedAt := groupFields[4].Descriptor()
 	// group.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	group.DefaultUpdatedAt = groupDescUpdatedAt.Default.(func() time.Time)
 	// group.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.

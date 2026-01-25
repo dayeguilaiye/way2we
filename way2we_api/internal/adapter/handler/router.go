@@ -37,7 +37,14 @@ func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service,
 	// Group Routes (Protected)
 	groupRoutes := v1.Group("/groups")
 	groupRoutes.Use(jwtMiddleware)
+	groupRoutes.GET("", groupHandler.GetUserGroups)
 	groupRoutes.POST("", groupHandler.CreateGroup)
+	groupRoutes.GET("/:id/invitation", groupHandler.GetInvitation)
+	groupRoutes.POST("/:id/invitation/refresh", groupHandler.RefreshInvitation)
+	groupRoutes.POST("/join", groupHandler.JoinGroup)
+
+	// Group Routes (Public - for invitation preview)
+	v1.GET("/groups/by-invitation/:code", groupHandler.GetGroupByInvitation)
 
 	// Static Files
 	// Serve uploads directory under /uploads path

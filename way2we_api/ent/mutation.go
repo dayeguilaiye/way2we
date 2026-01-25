@@ -38,20 +38,21 @@ const (
 // GroupMutation represents an operation that mutates the Group nodes in the graph.
 type GroupMutation struct {
 	config
-	op             Op
-	typ            string
-	id             *int
-	name           *string
-	description    *string
-	created_at     *time.Time
-	updated_at     *time.Time
-	clearedFields  map[string]struct{}
-	members        map[int]struct{}
-	removedmembers map[int]struct{}
-	clearedmembers bool
-	done           bool
-	oldValue       func(context.Context) (*Group, error)
-	predicates     []predicate.Group
+	op              Op
+	typ             string
+	id              *int
+	name            *string
+	description     *string
+	invitation_code *string
+	created_at      *time.Time
+	updated_at      *time.Time
+	clearedFields   map[string]struct{}
+	members         map[int]struct{}
+	removedmembers  map[int]struct{}
+	clearedmembers  bool
+	done            bool
+	oldValue        func(context.Context) (*Group, error)
+	predicates      []predicate.Group
 }
 
 var _ ent.Mutation = (*GroupMutation)(nil)
@@ -237,6 +238,55 @@ func (m *GroupMutation) ResetDescription() {
 	delete(m.clearedFields, group.FieldDescription)
 }
 
+// SetInvitationCode sets the "invitation_code" field.
+func (m *GroupMutation) SetInvitationCode(s string) {
+	m.invitation_code = &s
+}
+
+// InvitationCode returns the value of the "invitation_code" field in the mutation.
+func (m *GroupMutation) InvitationCode() (r string, exists bool) {
+	v := m.invitation_code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInvitationCode returns the old "invitation_code" field's value of the Group entity.
+// If the Group object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMutation) OldInvitationCode(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldInvitationCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldInvitationCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInvitationCode: %w", err)
+	}
+	return oldValue.InvitationCode, nil
+}
+
+// ClearInvitationCode clears the value of the "invitation_code" field.
+func (m *GroupMutation) ClearInvitationCode() {
+	m.invitation_code = nil
+	m.clearedFields[group.FieldInvitationCode] = struct{}{}
+}
+
+// InvitationCodeCleared returns if the "invitation_code" field was cleared in this mutation.
+func (m *GroupMutation) InvitationCodeCleared() bool {
+	_, ok := m.clearedFields[group.FieldInvitationCode]
+	return ok
+}
+
+// ResetInvitationCode resets all changes to the "invitation_code" field.
+func (m *GroupMutation) ResetInvitationCode() {
+	m.invitation_code = nil
+	delete(m.clearedFields, group.FieldInvitationCode)
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (m *GroupMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -397,12 +447,15 @@ func (m *GroupMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.name != nil {
 		fields = append(fields, group.FieldName)
 	}
 	if m.description != nil {
 		fields = append(fields, group.FieldDescription)
+	}
+	if m.invitation_code != nil {
+		fields = append(fields, group.FieldInvitationCode)
 	}
 	if m.created_at != nil {
 		fields = append(fields, group.FieldCreatedAt)
@@ -422,6 +475,8 @@ func (m *GroupMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case group.FieldDescription:
 		return m.Description()
+	case group.FieldInvitationCode:
+		return m.InvitationCode()
 	case group.FieldCreatedAt:
 		return m.CreatedAt()
 	case group.FieldUpdatedAt:
@@ -439,6 +494,8 @@ func (m *GroupMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldName(ctx)
 	case group.FieldDescription:
 		return m.OldDescription(ctx)
+	case group.FieldInvitationCode:
+		return m.OldInvitationCode(ctx)
 	case group.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case group.FieldUpdatedAt:
@@ -465,6 +522,13 @@ func (m *GroupMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDescription(v)
+		return nil
+	case group.FieldInvitationCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInvitationCode(v)
 		return nil
 	case group.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -513,6 +577,9 @@ func (m *GroupMutation) ClearedFields() []string {
 	if m.FieldCleared(group.FieldDescription) {
 		fields = append(fields, group.FieldDescription)
 	}
+	if m.FieldCleared(group.FieldInvitationCode) {
+		fields = append(fields, group.FieldInvitationCode)
+	}
 	return fields
 }
 
@@ -530,6 +597,9 @@ func (m *GroupMutation) ClearField(name string) error {
 	case group.FieldDescription:
 		m.ClearDescription()
 		return nil
+	case group.FieldInvitationCode:
+		m.ClearInvitationCode()
+		return nil
 	}
 	return fmt.Errorf("unknown Group nullable field %s", name)
 }
@@ -543,6 +613,9 @@ func (m *GroupMutation) ResetField(name string) error {
 		return nil
 	case group.FieldDescription:
 		m.ResetDescription()
+		return nil
+	case group.FieldInvitationCode:
+		m.ResetInvitationCode()
 		return nil
 	case group.FieldCreatedAt:
 		m.ResetCreatedAt()

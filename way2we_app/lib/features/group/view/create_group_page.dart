@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:way2we_app/app/di.dart';
 import 'package:way2we_app/features/group/bloc/create_group_bloc.dart';
 import 'package:way2we_app/features/group/data/providers/group_provider.dart';
-import 'package:way2we_app/features/home/view/home_page.dart';
+import 'package:way2we_app/features/group/view/invitation_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
 import 'package:way2we_app/theme/theme.dart';
 
@@ -68,9 +68,12 @@ class _CreateGroupViewState extends State<CreateGroupView> {
               backgroundColor: AppColors.success,
             ),
           );
-          // Navigate to home page
+          // Navigate to invitation page to let user invite members
           Navigator.of(context).pushAndRemoveUntil(
-            HomePage.route(),
+            InvitationPage.route(
+              groupId: state.groupId!,
+              groupName: state.name,
+            ),
             (route) => false,
           );
         } else if (state.status == CreateGroupStatus.failure) {

@@ -65,6 +65,69 @@
     "createGroupNamePlaceholder": "例如：我的家庭",
     "createGroupSubmitButton": "创建群组",
     "createGroupSuccess": "群组创建成功！",
-    "createGroupError": "群组创建失败，请重试。"
+    "createGroupError": "群组创建失败，请重试。",
+
+    "invitationTitle": "邀请成员",
+    "invitationHeadline": "分享邀请码",
+    "invitationSubtitle": "将邀请码分享给 {groupName} 的成员",
+    "@invitationSubtitle": {
+        "placeholders": {
+            "groupName": {"type": "String"}
+        }
+    },
+    "invitationCodeLabel": "邀请码",
+    "invitationCopyButton": "复制链接",
+    "invitationShareButton": "分享",
+    "invitationRefreshButton": "刷新邀请码",
+    "invitationRefreshTitle": "刷新邀请码？",
+    "invitationRefreshMessage": "刷新后，旧的邀请码将失效。确定要刷新吗？",
+    "invitationCopied": "邀请链接已复制！",
+    "invitationRefreshed": "邀请码已刷新！",
+    "invitationError": "获取邀请码失败，请重试。",
+    "invitationShareMessage": "加入我的群组 {groupName}！\n邀请链接：{shareUrl}",
+    "@invitationShareMessage": {
+        "placeholders": {
+            "groupName": {"type": "String"},
+            "shareUrl": {"type": "String"}
+        }
+    },
+
+    "joinGroupTitle": "加入群组",
+    "joinGroupHeadline": "输入邀请码",
+    "joinGroupSubtitle": "输入邀请码加入家人或伴侣的群组",
+    "joinGroupCodeLabel": "邀请码",
+    "joinGroupCodePlaceholder": "ABC123",
+    "joinGroupPreviewButton": "查找群组",
+    "joinGroupConfirmButton": "确认加入",
+    "joinGroupMemberCount": "{count} 位成员",
+    "@joinGroupMemberCount": {
+        "placeholders": {
+            "count": {"type": "int"}
+        }
+    },
+    "joinGroupSuccess": "成功加入 {groupName}！",
+    "@joinGroupSuccess": {
+        "placeholders": {
+            "groupName": {"type": "String"}
+        }
+    },
+    "joinGroupError": "加入群组失败，请重试。",
+    "joinGroupErrorInvalidCode": "邀请码无效或已过期",
+    "joinGroupErrorAlreadyMember": "您已经是该群组成员",
+
+    "groupSelectionTitle": "开始使用",
+    "groupSelectionSubtitle": "创建新群组或加入现有群组，开始一起分享美好时刻。",
+    "groupSelectionCreateTitle": "创建新群组",
+    "groupSelectionCreateSubtitle": "为家人或伴侣创建新的共享空间",
+    "groupSelectionJoinTitle": "加入现有群组",
+    "groupSelectionJoinSubtitle": "输入邀请码加入群组",
+
+    "homeGroupName": "群组：{groupName}",
+    "@homeGroupName": {
+        "placeholders": {
+            "groupName": {"type": "String"}
+        }
+    },
+    "homeInviteMembers": "邀请成员"
 }
 

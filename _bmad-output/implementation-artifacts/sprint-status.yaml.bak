@@ -52,22 +52,31 @@ development_status:
 
   # Epic 2: 群组创建与成员管理
   epic-2: in-progress
-  2-1-group-creation-and-invitation: in-progress  # 合并了创建群组、生成邀请链接、加入群组 (Phase 1: 群组创建已完成, Phase 2: 邀请与加入待实现)
-  2-2-view-group-list-switch-group: backlog
-  2-3-member-management-permissions: backlog  # 合并了成员列表角色管理、权限分配
-  2-4-group-default-configuration: backlog
+  2-1-create-group: done
+  2-2-generate-share-invite-link: backlog
+  2-3-join-group: backlog
+  2-4-view-group-list-switch-group: backlog
+  2-5-member-list-role-management: backlog
+  2-6-group-default-configuration: backlog
+  2-7-member-permission-allocation: backlog
   epic-2-retrospective: optional
 
   # Epic 3: 约定规则管理
   epic-3: backlog
-  3-1-agreement-management: backlog  # 合并了查看约定列表、创建、编辑、停用与启用约定
-  3-2-pin-agreement: backlog
+  3-1-view-agreement-list: backlog
+  3-2-create-agreement-rule: backlog
+  3-3-edit-agreement-rule: backlog
+  3-4-disable-enable-agreement: backlog
+  3-5-pin-agreement: backlog
   epic-3-retrospective: optional
 
   # Epic 4: 商品/兑换项管理
   epic-4: backlog
-  4-1-reward-management: backlog  # 合并了查看商品列表、创建、编辑、停用与启用商品
-  4-2-pin-reward: backlog
+  4-1-view-reward-list: backlog
+  4-2-create-reward: backlog
+  4-3-edit-reward: backlog
+  4-4-disable-enable-reward: backlog
+  4-5-pin-reward: backlog
   epic-4-retrospective: optional
 
   # Epic 5: 完成约定与积分获取
@@ -82,25 +91,31 @@ development_status:
   epic-6: backlog
   6-1-request-redemption: backlog
   6-2-view-order-list: backlog
-  6-3-fulfillment-confirmation: backlog  # 合并了提供方履约、消费方确认满意
-  6-4-order-status-tracking: backlog
+  6-3-provider-fulfillment: backlog
+  6-4-consumer-confirmation: backlog
+  6-5-order-status-tracking: backlog
   epic-6-retrospective: optional
 
   # Epic 7: 特殊事件与积分调整
   epic-7: backlog
-  7-1-special-event-management: backlog  # 合并了创建特殊事件、查看特殊事件历史
+  7-1-create-special-event: backlog
+  7-2-view-special-event-history: backlog
   epic-7-retrospective: optional
 
   # Epic 8: 撤销与回退机制
   epic-8: backlog
-  8-1-revoke-operations: backlog  # 合并了撤销约定完成、撤销订单、撤销特殊事件
+  8-1-revoke-confirmed-agreement-completion: backlog
+  8-2-revoke-completed-order: backlog
+  8-3-revoke-special-event: backlog
   epic-8-retrospective: optional
 
   # Epic 9: 通知与提醒系统
   epic-9: backlog
   9-1-push-notification-integration: backlog
-  9-2-notification-types: backlog  # 合并了待办事项通知、积分变化通知、群组积分动态通知
-  9-3-notification-settings-history: backlog
+  9-2-todo-task-notifications: backlog
+  9-3-points-change-notifications: backlog
+  9-4-group-points-activity-notifications: backlog
+  9-5-notification-settings-history: backlog
   epic-9-retrospective: optional
 
   # Epic 10: 活动记录与审计
