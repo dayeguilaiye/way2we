@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:way2we_app/features/auth/bloc/authentication_bloc.dart';
 import 'package:way2we_app/features/group/bloc/group_control_bloc.dart';
+import 'package:way2we_app/features/group/view/group_default_settings_page.dart';
 import 'package:way2we_app/features/group/view/invitation_page.dart';
 import 'package:way2we_app/features/group/view/member_management_page.dart';
 import 'package:way2we_app/features/group/view/widgets/group_switcher_sheet.dart';
@@ -164,6 +165,31 @@ class HomePage extends StatelessWidget {
                           context,
                           icon: Icons.stars_outlined,
                           label: 'Rewards (Coming Soon)',
+                        ),
+                        const SizedBox(height: AppSpacing.space4),
+                        // Group Settings Entry
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              GroupDefaultSettingsPage.route(
+                                groupId: selectedGroup.id,
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.tune,
+                                size: 32,
+                                color: theme.colorScheme.primary,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                l10n.defaultSettingsTitle,
+                                style: theme.textTheme.labelMedium,
+                              ),
+                            ],
+                          ),
                         ),
                         const SizedBox(height: AppSpacing.space4),
                         // Member Management Entry

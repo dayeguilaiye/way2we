@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/way2we/way2we_api/ent/enttest"
+	"github.com/way2we/way2we_api/ent/groupmember"
 	"github.com/way2we/way2we_api/internal/adapter/handler"
 	"github.com/way2we/way2we_api/internal/app/group"
 
@@ -501,6 +502,128 @@ func TestGroupHandler_GetUserGroups(t *testing.T) {
 
 		if assert.NoError(t, err) {
 			assert.Equal(t, http.StatusUnauthorized, rec.Code)
+		}
+	})
+}
+
+func TestGroupHandler_GroupSettings(t *testing.T) {
+	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+	defer client.Close()
+
+	// Create admin and regular user
+	admin, err := client.User.Create().SetNickname("Admin").SetPasswordHash("hash").Save(t.Context())
+	require.NoError(t, err)
+	member, err := client.User.Create().SetNickname("Member").SetPasswordHash("hash").Save(t.Context())
+	require.NoError(t, err)
+
+	groupService := group.NewService(client)
+	h := handler.NewGroupHandler(groupService)
+
+	// Create group
+	gResult, err := groupService.CreateGroup(t.Context(), admin.ID, "SettingsGroup")
+	require.NoError(t, err)
+	groupID := gResult.Group.ID
+
+	// Add member manually
+	_, err = client.GroupMember.Create().SetUserID(member.ID).SetGroupID(groupID).SetRole(groupmember.RoleMember).Save(t.Context())
+	require.NoError(t, err)
+
+	t.Run("get settings", func(t *testing.T) {
+		e := echo.New()
+		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		rec := httptest.NewRecorder()
+		c := e.NewContext(req, rec)
+		c.SetPath("/v1/groups/:id/settings")
+		c.SetParamNames("id")
+		c.SetParamValues(fmt.Sprintf("%d", groupID))
+		c.Set("user_id", member.ID) // Member can view
+
+		err := h.GetGroupSettings(c)
+
+		if assert.NoError(t, err) {
+			assert.Equal(t, http.StatusOK, rec.Code)
+
+			var response map[string]interface{}
+			json.Unmarshal(rec.Body.Bytes(), &response)
+
+			// Check defaults
+			assert.Equal(t, true, response["require_confirmation_default"])
+			assert.Equal(t, float64(0), response["provider_incentive_ratio"])
+		}
+	})
+
+	t.Run("update settings - admin success", func(t *testing.T) {
+		e := echo.New()
+		reqBody := map[string]interface{}{
+			"require_confirmation_default": false,
+			"provider_incentive_ratio":     15,
+		}
+		body, _ := json.Marshal(reqBody)
+		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewReader(body))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		c := e.NewContext(req, rec)
+		c.SetPath("/v1/groups/:id/settings")
+		c.SetParamNames("id")
+		c.SetParamValues(fmt.Sprintf("%d", groupID))
+		c.Set("user_id", admin.ID)
+
+		err := h.UpdateGroupSettings(c)
+
+		if assert.NoError(t, err) {
+			assert.Equal(t, http.StatusOK, rec.Code)
+
+			var response map[string]interface{}
+			json.Unmarshal(rec.Body.Bytes(), &response)
+
+			assert.Equal(t, false, response["require_confirmation_default"])
+			assert.Equal(t, float64(15), response["provider_incentive_ratio"])
+		}
+	})
+
+	t.Run("update settings - member forbidden", func(t *testing.T) {
+		e := echo.New()
+		reqBody := map[string]interface{}{
+			"require_confirmation_default": true,
+		}
+		body, _ := json.Marshal(reqBody)
+		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewReader(body))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		c := e.NewContext(req, rec)
+		c.SetPath("/v1/groups/:id/settings")
+		c.SetParamNames("id")
+		c.SetParamValues(fmt.Sprintf("%d", groupID))
+		c.Set("user_id", member.ID)
+
+		err := h.UpdateGroupSettings(c)
+
+		if assert.NoError(t, err) {
+			assert.Equal(t, http.StatusForbidden, rec.Code)
+			assert.Contains(t, rec.Body.String(), "ERR_FORBIDDEN")
+		}
+	})
+
+	t.Run("update settings - invalid ratio", func(t *testing.T) {
+		e := echo.New()
+		reqBody := map[string]interface{}{
+			"provider_incentive_ratio": 150,
+		}
+		body, _ := json.Marshal(reqBody)
+		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewReader(body))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		c := e.NewContext(req, rec)
+		c.SetPath("/v1/groups/:id/settings")
+		c.SetParamNames("id")
+		c.SetParamValues(fmt.Sprintf("%d", groupID))
+		c.Set("user_id", admin.ID)
+
+		err := h.UpdateGroupSettings(c)
+
+		if assert.NoError(t, err) {
+			assert.Equal(t, http.StatusBadRequest, rec.Code)
+			assert.Contains(t, rec.Body.String(), "ERR_INVALID_INCENTIVE_RATIO")
 		}
 	})
 }

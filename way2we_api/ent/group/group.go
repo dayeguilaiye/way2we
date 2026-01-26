@@ -20,6 +20,14 @@ const (
 	FieldDescription = "description"
 	// FieldInvitationCode holds the string denoting the invitation_code field in the database.
 	FieldInvitationCode = "invitation_code"
+	// FieldRequireConfirmationDefault holds the string denoting the require_confirmation_default field in the database.
+	FieldRequireConfirmationDefault = "require_confirmation_default"
+	// FieldAutoCompleteRedemptionDefault holds the string denoting the auto_complete_redemption_default field in the database.
+	FieldAutoCompleteRedemptionDefault = "auto_complete_redemption_default"
+	// FieldAutoFulfillRedemptionDefault holds the string denoting the auto_fulfill_redemption_default field in the database.
+	FieldAutoFulfillRedemptionDefault = "auto_fulfill_redemption_default"
+	// FieldProviderIncentiveRatio holds the string denoting the provider_incentive_ratio field in the database.
+	FieldProviderIncentiveRatio = "provider_incentive_ratio"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -43,6 +51,10 @@ var Columns = []string{
 	FieldName,
 	FieldDescription,
 	FieldInvitationCode,
+	FieldRequireConfirmationDefault,
+	FieldAutoCompleteRedemptionDefault,
+	FieldAutoFulfillRedemptionDefault,
+	FieldProviderIncentiveRatio,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
@@ -64,6 +76,16 @@ var (
 	DescriptionValidator func(string) error
 	// InvitationCodeValidator is a validator for the "invitation_code" field. It is called by the builders before save.
 	InvitationCodeValidator func(string) error
+	// DefaultRequireConfirmationDefault holds the default value on creation for the "require_confirmation_default" field.
+	DefaultRequireConfirmationDefault bool
+	// DefaultAutoCompleteRedemptionDefault holds the default value on creation for the "auto_complete_redemption_default" field.
+	DefaultAutoCompleteRedemptionDefault bool
+	// DefaultAutoFulfillRedemptionDefault holds the default value on creation for the "auto_fulfill_redemption_default" field.
+	DefaultAutoFulfillRedemptionDefault bool
+	// DefaultProviderIncentiveRatio holds the default value on creation for the "provider_incentive_ratio" field.
+	DefaultProviderIncentiveRatio int
+	// ProviderIncentiveRatioValidator is a validator for the "provider_incentive_ratio" field. It is called by the builders before save.
+	ProviderIncentiveRatioValidator func(int) error
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -93,6 +115,26 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 // ByInvitationCode orders the results by the invitation_code field.
 func ByInvitationCode(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldInvitationCode, opts...).ToFunc()
+}
+
+// ByRequireConfirmationDefault orders the results by the require_confirmation_default field.
+func ByRequireConfirmationDefault(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRequireConfirmationDefault, opts...).ToFunc()
+}
+
+// ByAutoCompleteRedemptionDefault orders the results by the auto_complete_redemption_default field.
+func ByAutoCompleteRedemptionDefault(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAutoCompleteRedemptionDefault, opts...).ToFunc()
+}
+
+// ByAutoFulfillRedemptionDefault orders the results by the auto_fulfill_redemption_default field.
+func ByAutoFulfillRedemptionDefault(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAutoFulfillRedemptionDefault, opts...).ToFunc()
+}
+
+// ByProviderIncentiveRatio orders the results by the provider_incentive_ratio field.
+func ByProviderIncentiveRatio(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldProviderIncentiveRatio, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.

@@ -55,6 +55,62 @@ func (_c *GroupCreate) SetNillableInvitationCode(v *string) *GroupCreate {
 	return _c
 }
 
+// SetRequireConfirmationDefault sets the "require_confirmation_default" field.
+func (_c *GroupCreate) SetRequireConfirmationDefault(v bool) *GroupCreate {
+	_c.mutation.SetRequireConfirmationDefault(v)
+	return _c
+}
+
+// SetNillableRequireConfirmationDefault sets the "require_confirmation_default" field if the given value is not nil.
+func (_c *GroupCreate) SetNillableRequireConfirmationDefault(v *bool) *GroupCreate {
+	if v != nil {
+		_c.SetRequireConfirmationDefault(*v)
+	}
+	return _c
+}
+
+// SetAutoCompleteRedemptionDefault sets the "auto_complete_redemption_default" field.
+func (_c *GroupCreate) SetAutoCompleteRedemptionDefault(v bool) *GroupCreate {
+	_c.mutation.SetAutoCompleteRedemptionDefault(v)
+	return _c
+}
+
+// SetNillableAutoCompleteRedemptionDefault sets the "auto_complete_redemption_default" field if the given value is not nil.
+func (_c *GroupCreate) SetNillableAutoCompleteRedemptionDefault(v *bool) *GroupCreate {
+	if v != nil {
+		_c.SetAutoCompleteRedemptionDefault(*v)
+	}
+	return _c
+}
+
+// SetAutoFulfillRedemptionDefault sets the "auto_fulfill_redemption_default" field.
+func (_c *GroupCreate) SetAutoFulfillRedemptionDefault(v bool) *GroupCreate {
+	_c.mutation.SetAutoFulfillRedemptionDefault(v)
+	return _c
+}
+
+// SetNillableAutoFulfillRedemptionDefault sets the "auto_fulfill_redemption_default" field if the given value is not nil.
+func (_c *GroupCreate) SetNillableAutoFulfillRedemptionDefault(v *bool) *GroupCreate {
+	if v != nil {
+		_c.SetAutoFulfillRedemptionDefault(*v)
+	}
+	return _c
+}
+
+// SetProviderIncentiveRatio sets the "provider_incentive_ratio" field.
+func (_c *GroupCreate) SetProviderIncentiveRatio(v int) *GroupCreate {
+	_c.mutation.SetProviderIncentiveRatio(v)
+	return _c
+}
+
+// SetNillableProviderIncentiveRatio sets the "provider_incentive_ratio" field if the given value is not nil.
+func (_c *GroupCreate) SetNillableProviderIncentiveRatio(v *int) *GroupCreate {
+	if v != nil {
+		_c.SetProviderIncentiveRatio(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *GroupCreate) SetCreatedAt(v time.Time) *GroupCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -133,6 +189,22 @@ func (_c *GroupCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *GroupCreate) defaults() {
+	if _, ok := _c.mutation.RequireConfirmationDefault(); !ok {
+		v := group.DefaultRequireConfirmationDefault
+		_c.mutation.SetRequireConfirmationDefault(v)
+	}
+	if _, ok := _c.mutation.AutoCompleteRedemptionDefault(); !ok {
+		v := group.DefaultAutoCompleteRedemptionDefault
+		_c.mutation.SetAutoCompleteRedemptionDefault(v)
+	}
+	if _, ok := _c.mutation.AutoFulfillRedemptionDefault(); !ok {
+		v := group.DefaultAutoFulfillRedemptionDefault
+		_c.mutation.SetAutoFulfillRedemptionDefault(v)
+	}
+	if _, ok := _c.mutation.ProviderIncentiveRatio(); !ok {
+		v := group.DefaultProviderIncentiveRatio
+		_c.mutation.SetProviderIncentiveRatio(v)
+	}
 	if _, ok := _c.mutation.CreatedAt(); !ok {
 		v := group.DefaultCreatedAt()
 		_c.mutation.SetCreatedAt(v)
@@ -161,6 +233,23 @@ func (_c *GroupCreate) check() error {
 	if v, ok := _c.mutation.InvitationCode(); ok {
 		if err := group.InvitationCodeValidator(v); err != nil {
 			return &ValidationError{Name: "invitation_code", err: fmt.Errorf(`ent: validator failed for field "Group.invitation_code": %w`, err)}
+		}
+	}
+	if _, ok := _c.mutation.RequireConfirmationDefault(); !ok {
+		return &ValidationError{Name: "require_confirmation_default", err: errors.New(`ent: missing required field "Group.require_confirmation_default"`)}
+	}
+	if _, ok := _c.mutation.AutoCompleteRedemptionDefault(); !ok {
+		return &ValidationError{Name: "auto_complete_redemption_default", err: errors.New(`ent: missing required field "Group.auto_complete_redemption_default"`)}
+	}
+	if _, ok := _c.mutation.AutoFulfillRedemptionDefault(); !ok {
+		return &ValidationError{Name: "auto_fulfill_redemption_default", err: errors.New(`ent: missing required field "Group.auto_fulfill_redemption_default"`)}
+	}
+	if _, ok := _c.mutation.ProviderIncentiveRatio(); !ok {
+		return &ValidationError{Name: "provider_incentive_ratio", err: errors.New(`ent: missing required field "Group.provider_incentive_ratio"`)}
+	}
+	if v, ok := _c.mutation.ProviderIncentiveRatio(); ok {
+		if err := group.ProviderIncentiveRatioValidator(v); err != nil {
+			return &ValidationError{Name: "provider_incentive_ratio", err: fmt.Errorf(`ent: validator failed for field "Group.provider_incentive_ratio": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.CreatedAt(); !ok {
@@ -206,6 +295,22 @@ func (_c *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.InvitationCode(); ok {
 		_spec.SetField(group.FieldInvitationCode, field.TypeString, value)
 		_node.InvitationCode = &value
+	}
+	if value, ok := _c.mutation.RequireConfirmationDefault(); ok {
+		_spec.SetField(group.FieldRequireConfirmationDefault, field.TypeBool, value)
+		_node.RequireConfirmationDefault = value
+	}
+	if value, ok := _c.mutation.AutoCompleteRedemptionDefault(); ok {
+		_spec.SetField(group.FieldAutoCompleteRedemptionDefault, field.TypeBool, value)
+		_node.AutoCompleteRedemptionDefault = value
+	}
+	if value, ok := _c.mutation.AutoFulfillRedemptionDefault(); ok {
+		_spec.SetField(group.FieldAutoFulfillRedemptionDefault, field.TypeBool, value)
+		_node.AutoFulfillRedemptionDefault = value
+	}
+	if value, ok := _c.mutation.ProviderIncentiveRatio(); ok {
+		_spec.SetField(group.FieldProviderIncentiveRatio, field.TypeInt, value)
+		_node.ProviderIncentiveRatio = value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(group.FieldCreatedAt, field.TypeTime, value)

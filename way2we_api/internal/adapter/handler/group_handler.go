@@ -563,3 +563,126 @@ func (h *GroupHandler) UpdateMemberPermissions(c echo.Context) error {
 
 	return c.NoContent(http.StatusOK)
 }
+
+// GroupSettingsResponse represents the response for group settings.
+type GroupSettingsResponse struct {
+	RequireConfirmationDefault    bool `json:"require_confirmation_default"`
+	AutoCompleteRedemptionDefault bool `json:"auto_complete_redemption_default"`
+	AutoFulfillRedemptionDefault  bool `json:"auto_fulfill_redemption_default"`
+	ProviderIncentiveRatio        int  `json:"provider_incentive_ratio"`
+}
+
+// GetGroupSettings handles GET /v1/groups/:id/settings
+func (h *GroupHandler) GetGroupSettings(c echo.Context) error {
+	_, ok := c.Get("user_id").(int)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, ErrorResponse{
+			Code:    "ERR_UNAUTHORIZED",
+			Message: "未授权",
+		})
+	}
+
+	groupID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "ERR_INVALID_GROUP_ID",
+			Message: "无效的群组ID",
+		})
+	}
+
+	g, err := h.groupService.GetGroup(c.Request().Context(), groupID)
+	if err != nil {
+		if errors.Is(err, group.ErrGroupNotFound) {
+			return c.JSON(http.StatusNotFound, ErrorResponse{
+				Code:    "ERR_GROUP_NOT_FOUND",
+				Message: "群组不存在",
+			})
+		}
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Code:    "ERR_GET_SETTINGS_FAILED",
+			Message: "获取配置失败",
+		})
+	}
+
+	return c.JSON(http.StatusOK, GroupSettingsResponse{
+		RequireConfirmationDefault:    g.RequireConfirmationDefault,
+		AutoCompleteRedemptionDefault: g.AutoCompleteRedemptionDefault,
+		AutoFulfillRedemptionDefault:  g.AutoFulfillRedemptionDefault,
+		ProviderIncentiveRatio:        g.ProviderIncentiveRatio,
+	})
+}
+
+// UpdateGroupSettingsRequest represents request to update group settings.
+type UpdateGroupSettingsRequest struct {
+	RequireConfirmationDefault    bool `json:"require_confirmation_default"`
+	AutoCompleteRedemptionDefault bool `json:"auto_complete_redemption_default"`
+	AutoFulfillRedemptionDefault  bool `json:"auto_fulfill_redemption_default"`
+	ProviderIncentiveRatio        int  `json:"provider_incentive_ratio"`
+}
+
+// UpdateGroupSettings handles PUT /v1/groups/:id/settings
+func (h *GroupHandler) UpdateGroupSettings(c echo.Context) error {
+	userID, ok := c.Get("user_id").(int)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, ErrorResponse{
+			Code:    "ERR_UNAUTHORIZED",
+			Message: "未授权",
+		})
+	}
+
+	groupID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "ERR_INVALID_GROUP_ID",
+			Message: "无效的群组ID",
+		})
+	}
+
+	var req UpdateGroupSettingsRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "ERR_INVALID_REQUEST",
+			Message: "请求格式无效",
+		})
+	}
+
+	updates := group.SettingsUpdate{
+		RequireConfirmationDefault:    req.RequireConfirmationDefault,
+		AutoCompleteRedemptionDefault: req.AutoCompleteRedemptionDefault,
+		AutoFulfillRedemptionDefault:  req.AutoFulfillRedemptionDefault,
+		ProviderIncentiveRatio:        req.ProviderIncentiveRatio,
+	}
+
+	updated, err := h.groupService.UpdateGroupSettings(c.Request().Context(), userID, groupID, updates)
+	if err != nil {
+		if errors.Is(err, group.ErrNotAdmin) {
+			return c.JSON(http.StatusForbidden, ErrorResponse{
+				Code:    "ERR_FORBIDDEN",
+				Message: "您无权修改群组配置",
+			})
+		}
+		if errors.Is(err, group.ErrInvalidIncentiveRatio) {
+			return c.JSON(http.StatusBadRequest, ErrorResponse{
+				Code:    "ERR_INVALID_INCENTIVE_RATIO",
+				Message: "提供者激励比例必须在 0-100 之间",
+			})
+		}
+		if errors.Is(err, group.ErrGroupNotFound) {
+			return c.JSON(http.StatusNotFound, ErrorResponse{
+				Code:    "ERR_GROUP_NOT_FOUND",
+				Message: "群组不存在",
+			})
+		}
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Code:    "ERR_UPDATE_SETTINGS_FAILED",
+			Message: "更新配置失败",
+		})
+	}
+
+	return c.JSON(http.StatusOK, GroupSettingsResponse{
+		RequireConfirmationDefault:    updated.RequireConfirmationDefault,
+		AutoCompleteRedemptionDefault: updated.AutoCompleteRedemptionDefault,
+		AutoFulfillRedemptionDefault:  updated.AutoFulfillRedemptionDefault,
+		ProviderIncentiveRatio:        updated.ProviderIncentiveRatio,
+	})
+}

@@ -50,6 +50,10 @@ func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service,
 	groupRoutes.PUT("/:id/members/:userId/role", groupHandler.UpdateMemberRole, middleware.RequireGroupAdmin(groupService))
 	groupRoutes.PUT("/:id/members/:userId/permissions", groupHandler.UpdateMemberPermissions, middleware.RequireGroupAdmin(groupService))
 
+	// Group Settings Routes
+	groupRoutes.GET("/:id/settings", groupHandler.GetGroupSettings, middleware.RequireGroupPermission(groupService, group.PermissionModifyDefaults))
+	groupRoutes.PUT("/:id/settings", groupHandler.UpdateGroupSettings, middleware.RequireGroupPermission(groupService, group.PermissionModifyDefaults))
+
 	// Group Routes (Public - for invitation preview)
 	v1.GET("/groups/by-invitation/:code", groupHandler.GetGroupByInvitation)
 

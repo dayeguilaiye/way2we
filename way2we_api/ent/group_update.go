@@ -83,6 +83,69 @@ func (_u *GroupUpdate) ClearInvitationCode() *GroupUpdate {
 	return _u
 }
 
+// SetRequireConfirmationDefault sets the "require_confirmation_default" field.
+func (_u *GroupUpdate) SetRequireConfirmationDefault(v bool) *GroupUpdate {
+	_u.mutation.SetRequireConfirmationDefault(v)
+	return _u
+}
+
+// SetNillableRequireConfirmationDefault sets the "require_confirmation_default" field if the given value is not nil.
+func (_u *GroupUpdate) SetNillableRequireConfirmationDefault(v *bool) *GroupUpdate {
+	if v != nil {
+		_u.SetRequireConfirmationDefault(*v)
+	}
+	return _u
+}
+
+// SetAutoCompleteRedemptionDefault sets the "auto_complete_redemption_default" field.
+func (_u *GroupUpdate) SetAutoCompleteRedemptionDefault(v bool) *GroupUpdate {
+	_u.mutation.SetAutoCompleteRedemptionDefault(v)
+	return _u
+}
+
+// SetNillableAutoCompleteRedemptionDefault sets the "auto_complete_redemption_default" field if the given value is not nil.
+func (_u *GroupUpdate) SetNillableAutoCompleteRedemptionDefault(v *bool) *GroupUpdate {
+	if v != nil {
+		_u.SetAutoCompleteRedemptionDefault(*v)
+	}
+	return _u
+}
+
+// SetAutoFulfillRedemptionDefault sets the "auto_fulfill_redemption_default" field.
+func (_u *GroupUpdate) SetAutoFulfillRedemptionDefault(v bool) *GroupUpdate {
+	_u.mutation.SetAutoFulfillRedemptionDefault(v)
+	return _u
+}
+
+// SetNillableAutoFulfillRedemptionDefault sets the "auto_fulfill_redemption_default" field if the given value is not nil.
+func (_u *GroupUpdate) SetNillableAutoFulfillRedemptionDefault(v *bool) *GroupUpdate {
+	if v != nil {
+		_u.SetAutoFulfillRedemptionDefault(*v)
+	}
+	return _u
+}
+
+// SetProviderIncentiveRatio sets the "provider_incentive_ratio" field.
+func (_u *GroupUpdate) SetProviderIncentiveRatio(v int) *GroupUpdate {
+	_u.mutation.ResetProviderIncentiveRatio()
+	_u.mutation.SetProviderIncentiveRatio(v)
+	return _u
+}
+
+// SetNillableProviderIncentiveRatio sets the "provider_incentive_ratio" field if the given value is not nil.
+func (_u *GroupUpdate) SetNillableProviderIncentiveRatio(v *int) *GroupUpdate {
+	if v != nil {
+		_u.SetProviderIncentiveRatio(*v)
+	}
+	return _u
+}
+
+// AddProviderIncentiveRatio adds value to the "provider_incentive_ratio" field.
+func (_u *GroupUpdate) AddProviderIncentiveRatio(v int) *GroupUpdate {
+	_u.mutation.AddProviderIncentiveRatio(v)
+	return _u
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *GroupUpdate) SetUpdatedAt(v time.Time) *GroupUpdate {
 	_u.mutation.SetUpdatedAt(v)
@@ -183,6 +246,11 @@ func (_u *GroupUpdate) check() error {
 			return &ValidationError{Name: "invitation_code", err: fmt.Errorf(`ent: validator failed for field "Group.invitation_code": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.ProviderIncentiveRatio(); ok {
+		if err := group.ProviderIncentiveRatioValidator(v); err != nil {
+			return &ValidationError{Name: "provider_incentive_ratio", err: fmt.Errorf(`ent: validator failed for field "Group.provider_incentive_ratio": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -212,6 +280,21 @@ func (_u *GroupUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.InvitationCodeCleared() {
 		_spec.ClearField(group.FieldInvitationCode, field.TypeString)
+	}
+	if value, ok := _u.mutation.RequireConfirmationDefault(); ok {
+		_spec.SetField(group.FieldRequireConfirmationDefault, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.AutoCompleteRedemptionDefault(); ok {
+		_spec.SetField(group.FieldAutoCompleteRedemptionDefault, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.AutoFulfillRedemptionDefault(); ok {
+		_spec.SetField(group.FieldAutoFulfillRedemptionDefault, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.ProviderIncentiveRatio(); ok {
+		_spec.SetField(group.FieldProviderIncentiveRatio, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedProviderIncentiveRatio(); ok {
+		_spec.AddField(group.FieldProviderIncentiveRatio, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(group.FieldUpdatedAt, field.TypeTime, value)
@@ -335,6 +418,69 @@ func (_u *GroupUpdateOne) ClearInvitationCode() *GroupUpdateOne {
 	return _u
 }
 
+// SetRequireConfirmationDefault sets the "require_confirmation_default" field.
+func (_u *GroupUpdateOne) SetRequireConfirmationDefault(v bool) *GroupUpdateOne {
+	_u.mutation.SetRequireConfirmationDefault(v)
+	return _u
+}
+
+// SetNillableRequireConfirmationDefault sets the "require_confirmation_default" field if the given value is not nil.
+func (_u *GroupUpdateOne) SetNillableRequireConfirmationDefault(v *bool) *GroupUpdateOne {
+	if v != nil {
+		_u.SetRequireConfirmationDefault(*v)
+	}
+	return _u
+}
+
+// SetAutoCompleteRedemptionDefault sets the "auto_complete_redemption_default" field.
+func (_u *GroupUpdateOne) SetAutoCompleteRedemptionDefault(v bool) *GroupUpdateOne {
+	_u.mutation.SetAutoCompleteRedemptionDefault(v)
+	return _u
+}
+
+// SetNillableAutoCompleteRedemptionDefault sets the "auto_complete_redemption_default" field if the given value is not nil.
+func (_u *GroupUpdateOne) SetNillableAutoCompleteRedemptionDefault(v *bool) *GroupUpdateOne {
+	if v != nil {
+		_u.SetAutoCompleteRedemptionDefault(*v)
+	}
+	return _u
+}
+
+// SetAutoFulfillRedemptionDefault sets the "auto_fulfill_redemption_default" field.
+func (_u *GroupUpdateOne) SetAutoFulfillRedemptionDefault(v bool) *GroupUpdateOne {
+	_u.mutation.SetAutoFulfillRedemptionDefault(v)
+	return _u
+}
+
+// SetNillableAutoFulfillRedemptionDefault sets the "auto_fulfill_redemption_default" field if the given value is not nil.
+func (_u *GroupUpdateOne) SetNillableAutoFulfillRedemptionDefault(v *bool) *GroupUpdateOne {
+	if v != nil {
+		_u.SetAutoFulfillRedemptionDefault(*v)
+	}
+	return _u
+}
+
+// SetProviderIncentiveRatio sets the "provider_incentive_ratio" field.
+func (_u *GroupUpdateOne) SetProviderIncentiveRatio(v int) *GroupUpdateOne {
+	_u.mutation.ResetProviderIncentiveRatio()
+	_u.mutation.SetProviderIncentiveRatio(v)
+	return _u
+}
+
+// SetNillableProviderIncentiveRatio sets the "provider_incentive_ratio" field if the given value is not nil.
+func (_u *GroupUpdateOne) SetNillableProviderIncentiveRatio(v *int) *GroupUpdateOne {
+	if v != nil {
+		_u.SetProviderIncentiveRatio(*v)
+	}
+	return _u
+}
+
+// AddProviderIncentiveRatio adds value to the "provider_incentive_ratio" field.
+func (_u *GroupUpdateOne) AddProviderIncentiveRatio(v int) *GroupUpdateOne {
+	_u.mutation.AddProviderIncentiveRatio(v)
+	return _u
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *GroupUpdateOne) SetUpdatedAt(v time.Time) *GroupUpdateOne {
 	_u.mutation.SetUpdatedAt(v)
@@ -448,6 +594,11 @@ func (_u *GroupUpdateOne) check() error {
 			return &ValidationError{Name: "invitation_code", err: fmt.Errorf(`ent: validator failed for field "Group.invitation_code": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.ProviderIncentiveRatio(); ok {
+		if err := group.ProviderIncentiveRatioValidator(v); err != nil {
+			return &ValidationError{Name: "provider_incentive_ratio", err: fmt.Errorf(`ent: validator failed for field "Group.provider_incentive_ratio": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -494,6 +645,21 @@ func (_u *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error)
 	}
 	if _u.mutation.InvitationCodeCleared() {
 		_spec.ClearField(group.FieldInvitationCode, field.TypeString)
+	}
+	if value, ok := _u.mutation.RequireConfirmationDefault(); ok {
+		_spec.SetField(group.FieldRequireConfirmationDefault, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.AutoCompleteRedemptionDefault(); ok {
+		_spec.SetField(group.FieldAutoCompleteRedemptionDefault, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.AutoFulfillRedemptionDefault(); ok {
+		_spec.SetField(group.FieldAutoFulfillRedemptionDefault, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.ProviderIncentiveRatio(); ok {
+		_spec.SetField(group.FieldProviderIncentiveRatio, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedProviderIncentiveRatio(); ok {
+		_spec.AddField(group.FieldProviderIncentiveRatio, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(group.FieldUpdatedAt, field.TypeTime, value)

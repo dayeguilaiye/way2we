@@ -45,12 +45,44 @@ func init() {
 	groupDescInvitationCode := groupFields[2].Descriptor()
 	// group.InvitationCodeValidator is a validator for the "invitation_code" field. It is called by the builders before save.
 	group.InvitationCodeValidator = groupDescInvitationCode.Validators[0].(func(string) error)
+	// groupDescRequireConfirmationDefault is the schema descriptor for require_confirmation_default field.
+	groupDescRequireConfirmationDefault := groupFields[3].Descriptor()
+	// group.DefaultRequireConfirmationDefault holds the default value on creation for the require_confirmation_default field.
+	group.DefaultRequireConfirmationDefault = groupDescRequireConfirmationDefault.Default.(bool)
+	// groupDescAutoCompleteRedemptionDefault is the schema descriptor for auto_complete_redemption_default field.
+	groupDescAutoCompleteRedemptionDefault := groupFields[4].Descriptor()
+	// group.DefaultAutoCompleteRedemptionDefault holds the default value on creation for the auto_complete_redemption_default field.
+	group.DefaultAutoCompleteRedemptionDefault = groupDescAutoCompleteRedemptionDefault.Default.(bool)
+	// groupDescAutoFulfillRedemptionDefault is the schema descriptor for auto_fulfill_redemption_default field.
+	groupDescAutoFulfillRedemptionDefault := groupFields[5].Descriptor()
+	// group.DefaultAutoFulfillRedemptionDefault holds the default value on creation for the auto_fulfill_redemption_default field.
+	group.DefaultAutoFulfillRedemptionDefault = groupDescAutoFulfillRedemptionDefault.Default.(bool)
+	// groupDescProviderIncentiveRatio is the schema descriptor for provider_incentive_ratio field.
+	groupDescProviderIncentiveRatio := groupFields[6].Descriptor()
+	// group.DefaultProviderIncentiveRatio holds the default value on creation for the provider_incentive_ratio field.
+	group.DefaultProviderIncentiveRatio = groupDescProviderIncentiveRatio.Default.(int)
+	// group.ProviderIncentiveRatioValidator is a validator for the "provider_incentive_ratio" field. It is called by the builders before save.
+	group.ProviderIncentiveRatioValidator = func() func(int) error {
+		validators := groupDescProviderIncentiveRatio.Validators
+		fns := [...]func(int) error{
+			validators[0].(func(int) error),
+			validators[1].(func(int) error),
+		}
+		return func(provider_incentive_ratio int) error {
+			for _, fn := range fns {
+				if err := fn(provider_incentive_ratio); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// groupDescCreatedAt is the schema descriptor for created_at field.
-	groupDescCreatedAt := groupFields[3].Descriptor()
+	groupDescCreatedAt := groupFields[7].Descriptor()
 	// group.DefaultCreatedAt holds the default value on creation for the created_at field.
 	group.DefaultCreatedAt = groupDescCreatedAt.Default.(func() time.Time)
 	// groupDescUpdatedAt is the schema descriptor for updated_at field.
-	groupDescUpdatedAt := groupFields[4].Descriptor()
+	groupDescUpdatedAt := groupFields[8].Descriptor()
 	// group.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	group.DefaultUpdatedAt = groupDescUpdatedAt.Default.(func() time.Time)
 	// group.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.

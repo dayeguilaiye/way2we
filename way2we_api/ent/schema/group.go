@@ -30,6 +30,20 @@ func (Group) Fields() []ent.Field {
 			Optional().
 			Nillable().
 			Comment("6-digit alphanumeric invitation code for joining the group"),
+		field.Bool("require_confirmation_default").
+			Default(true).
+			Comment("Default: completion requires confirmation"),
+		field.Bool("auto_complete_redemption_default").
+			Default(false).
+			Comment("Default: redemption completes automatically"),
+		field.Bool("auto_fulfill_redemption_default").
+			Default(false).
+			Comment("Default: redemption is auto-fulfilled"),
+		field.Int("provider_incentive_ratio").
+			Default(0).
+			Min(0).
+			Max(100).
+			Comment("Provider incentive ratio (0-100)"),
 		field.Time("created_at").
 			Default(time.Now).
 			Immutable().

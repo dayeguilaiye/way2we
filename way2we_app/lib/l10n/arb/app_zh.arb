@@ -157,6 +157,23 @@
     "permRecordForOthers": "代他人记录",
     "permModifyDefaults": "修改群组默认值",
     "permCreateSpecialEvents": "创建特殊事件",
-    "permRevokeRecords": "撤销记录"
+    "permRevokeRecords": "撤销记录",
+
+    "defaultSettingsTitle": "默认配置",
+    "requireConfirmation": "需要确认",
+    "requireConfirmationDesc": "完成约定默认需要确认",
+    "autoComplete": "自动完成兑换",
+    "autoCompleteDesc": "兑换请求自动完成",
+    "autoFulfill": "自动履约",
+    "autoFulfillDesc": "兑换自动履约",
+    "providerIncentive": "提供者激励比例",
+    "providerIncentiveDesc": "给提供者的积分比例 ({value}%)",
+    "@providerIncentiveDesc": {
+        "placeholders": {
+            "value": {"type": "int"}
+        }
+    },
+    "save": "保存",
+    "saveSuccess": "配置保存成功"
 }
 

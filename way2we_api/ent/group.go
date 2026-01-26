@@ -23,6 +23,14 @@ type Group struct {
 	Description string `json:"description,omitempty"`
 	// 6-digit alphanumeric invitation code for joining the group
 	InvitationCode *string `json:"invitation_code,omitempty"`
+	// Default: completion requires confirmation
+	RequireConfirmationDefault bool `json:"require_confirmation_default,omitempty"`
+	// Default: redemption completes automatically
+	AutoCompleteRedemptionDefault bool `json:"auto_complete_redemption_default,omitempty"`
+	// Default: redemption is auto-fulfilled
+	AutoFulfillRedemptionDefault bool `json:"auto_fulfill_redemption_default,omitempty"`
+	// Provider incentive ratio (0-100)
+	ProviderIncentiveRatio int `json:"provider_incentive_ratio,omitempty"`
 	// Group creation timestamp
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Last update timestamp
@@ -56,7 +64,9 @@ func (*Group) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case group.FieldID:
+		case group.FieldRequireConfirmationDefault, group.FieldAutoCompleteRedemptionDefault, group.FieldAutoFulfillRedemptionDefault:
+			values[i] = new(sql.NullBool)
+		case group.FieldID, group.FieldProviderIncentiveRatio:
 			values[i] = new(sql.NullInt64)
 		case group.FieldName, group.FieldDescription, group.FieldInvitationCode:
 			values[i] = new(sql.NullString)
@@ -101,6 +111,30 @@ func (_m *Group) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.InvitationCode = new(string)
 				*_m.InvitationCode = value.String
+			}
+		case group.FieldRequireConfirmationDefault:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field require_confirmation_default", values[i])
+			} else if value.Valid {
+				_m.RequireConfirmationDefault = value.Bool
+			}
+		case group.FieldAutoCompleteRedemptionDefault:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field auto_complete_redemption_default", values[i])
+			} else if value.Valid {
+				_m.AutoCompleteRedemptionDefault = value.Bool
+			}
+		case group.FieldAutoFulfillRedemptionDefault:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field auto_fulfill_redemption_default", values[i])
+			} else if value.Valid {
+				_m.AutoFulfillRedemptionDefault = value.Bool
+			}
+		case group.FieldProviderIncentiveRatio:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field provider_incentive_ratio", values[i])
+			} else if value.Valid {
+				_m.ProviderIncentiveRatio = int(value.Int64)
 			}
 		case group.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -165,6 +199,18 @@ func (_m *Group) String() string {
 		builder.WriteString("invitation_code=")
 		builder.WriteString(*v)
 	}
+	builder.WriteString(", ")
+	builder.WriteString("require_confirmation_default=")
+	builder.WriteString(fmt.Sprintf("%v", _m.RequireConfirmationDefault))
+	builder.WriteString(", ")
+	builder.WriteString("auto_complete_redemption_default=")
+	builder.WriteString(fmt.Sprintf("%v", _m.AutoCompleteRedemptionDefault))
+	builder.WriteString(", ")
+	builder.WriteString("auto_fulfill_redemption_default=")
+	builder.WriteString(fmt.Sprintf("%v", _m.AutoFulfillRedemptionDefault))
+	builder.WriteString(", ")
+	builder.WriteString("provider_incentive_ratio=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ProviderIncentiveRatio))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))

@@ -153,6 +153,32 @@ class GetUserGroupsResponse {
   final List<UserGroup> groups;
 }
 
+/// Model for group default settings.
+class GroupSettings {
+  const GroupSettings({
+    required this.requireConfirmationDefault,
+    required this.autoCompleteRedemptionDefault,
+    required this.autoFulfillRedemptionDefault,
+    required this.providerIncentiveRatio,
+  });
+
+  factory GroupSettings.fromJson(Map<String, dynamic> json) {
+    return GroupSettings(
+      requireConfirmationDefault: json['require_confirmation_default'] as bool,
+      autoCompleteRedemptionDefault:
+          json['auto_complete_redemption_default'] as bool,
+      autoFulfillRedemptionDefault:
+          json['auto_fulfill_redemption_default'] as bool,
+      providerIncentiveRatio: json['provider_incentive_ratio'] as int,
+    );
+  }
+
+  final bool requireConfirmationDefault;
+  final bool autoCompleteRedemptionDefault;
+  final bool autoFulfillRedemptionDefault;
+  final int providerIncentiveRatio;
+}
+
 /// Provider for group-related API calls.
 class GroupProvider {
   GroupProvider({required Dio dio}) : _dio = dio;
@@ -315,6 +341,44 @@ class GroupProvider {
         '/v1/groups/$groupId/members/$userId/permissions',
         data: {'permissions': permissions},
       );
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
+  /// Gets the default settings for a group.
+  Future<GroupSettings> getGroupSettings({required int groupId}) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '/v1/groups/$groupId/settings',
+      );
+
+      if (response.data == null) {
+        throw const GroupApiException('Unexpected null response');
+      }
+
+      return GroupSettings.fromJson(response.data!);
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
+  /// Updates the default settings for a group.
+  Future<GroupSettings> updateGroupSettings({
+    required int groupId,
+    required Map<String, dynamic> settings,
+  }) async {
+    try {
+      final response = await _dio.put<Map<String, dynamic>>(
+        '/v1/groups/$groupId/settings',
+        data: settings,
+      );
+
+      if (response.data == null) {
+        throw const GroupApiException('Unexpected null response');
+      }
+
+      return GroupSettings.fromJson(response.data!);
     } on DioException catch (e) {
       _handleDioError(e);
     }

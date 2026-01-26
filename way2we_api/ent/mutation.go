@@ -38,21 +38,26 @@ const (
 // GroupMutation represents an operation that mutates the Group nodes in the graph.
 type GroupMutation struct {
 	config
-	op              Op
-	typ             string
-	id              *int
-	name            *string
-	description     *string
-	invitation_code *string
-	created_at      *time.Time
-	updated_at      *time.Time
-	clearedFields   map[string]struct{}
-	members         map[int]struct{}
-	removedmembers  map[int]struct{}
-	clearedmembers  bool
-	done            bool
-	oldValue        func(context.Context) (*Group, error)
-	predicates      []predicate.Group
+	op                               Op
+	typ                              string
+	id                               *int
+	name                             *string
+	description                      *string
+	invitation_code                  *string
+	require_confirmation_default     *bool
+	auto_complete_redemption_default *bool
+	auto_fulfill_redemption_default  *bool
+	provider_incentive_ratio         *int
+	addprovider_incentive_ratio      *int
+	created_at                       *time.Time
+	updated_at                       *time.Time
+	clearedFields                    map[string]struct{}
+	members                          map[int]struct{}
+	removedmembers                   map[int]struct{}
+	clearedmembers                   bool
+	done                             bool
+	oldValue                         func(context.Context) (*Group, error)
+	predicates                       []predicate.Group
 }
 
 var _ ent.Mutation = (*GroupMutation)(nil)
@@ -287,6 +292,170 @@ func (m *GroupMutation) ResetInvitationCode() {
 	delete(m.clearedFields, group.FieldInvitationCode)
 }
 
+// SetRequireConfirmationDefault sets the "require_confirmation_default" field.
+func (m *GroupMutation) SetRequireConfirmationDefault(b bool) {
+	m.require_confirmation_default = &b
+}
+
+// RequireConfirmationDefault returns the value of the "require_confirmation_default" field in the mutation.
+func (m *GroupMutation) RequireConfirmationDefault() (r bool, exists bool) {
+	v := m.require_confirmation_default
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRequireConfirmationDefault returns the old "require_confirmation_default" field's value of the Group entity.
+// If the Group object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMutation) OldRequireConfirmationDefault(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRequireConfirmationDefault is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRequireConfirmationDefault requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRequireConfirmationDefault: %w", err)
+	}
+	return oldValue.RequireConfirmationDefault, nil
+}
+
+// ResetRequireConfirmationDefault resets all changes to the "require_confirmation_default" field.
+func (m *GroupMutation) ResetRequireConfirmationDefault() {
+	m.require_confirmation_default = nil
+}
+
+// SetAutoCompleteRedemptionDefault sets the "auto_complete_redemption_default" field.
+func (m *GroupMutation) SetAutoCompleteRedemptionDefault(b bool) {
+	m.auto_complete_redemption_default = &b
+}
+
+// AutoCompleteRedemptionDefault returns the value of the "auto_complete_redemption_default" field in the mutation.
+func (m *GroupMutation) AutoCompleteRedemptionDefault() (r bool, exists bool) {
+	v := m.auto_complete_redemption_default
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAutoCompleteRedemptionDefault returns the old "auto_complete_redemption_default" field's value of the Group entity.
+// If the Group object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMutation) OldAutoCompleteRedemptionDefault(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAutoCompleteRedemptionDefault is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAutoCompleteRedemptionDefault requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAutoCompleteRedemptionDefault: %w", err)
+	}
+	return oldValue.AutoCompleteRedemptionDefault, nil
+}
+
+// ResetAutoCompleteRedemptionDefault resets all changes to the "auto_complete_redemption_default" field.
+func (m *GroupMutation) ResetAutoCompleteRedemptionDefault() {
+	m.auto_complete_redemption_default = nil
+}
+
+// SetAutoFulfillRedemptionDefault sets the "auto_fulfill_redemption_default" field.
+func (m *GroupMutation) SetAutoFulfillRedemptionDefault(b bool) {
+	m.auto_fulfill_redemption_default = &b
+}
+
+// AutoFulfillRedemptionDefault returns the value of the "auto_fulfill_redemption_default" field in the mutation.
+func (m *GroupMutation) AutoFulfillRedemptionDefault() (r bool, exists bool) {
+	v := m.auto_fulfill_redemption_default
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAutoFulfillRedemptionDefault returns the old "auto_fulfill_redemption_default" field's value of the Group entity.
+// If the Group object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMutation) OldAutoFulfillRedemptionDefault(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAutoFulfillRedemptionDefault is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAutoFulfillRedemptionDefault requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAutoFulfillRedemptionDefault: %w", err)
+	}
+	return oldValue.AutoFulfillRedemptionDefault, nil
+}
+
+// ResetAutoFulfillRedemptionDefault resets all changes to the "auto_fulfill_redemption_default" field.
+func (m *GroupMutation) ResetAutoFulfillRedemptionDefault() {
+	m.auto_fulfill_redemption_default = nil
+}
+
+// SetProviderIncentiveRatio sets the "provider_incentive_ratio" field.
+func (m *GroupMutation) SetProviderIncentiveRatio(i int) {
+	m.provider_incentive_ratio = &i
+	m.addprovider_incentive_ratio = nil
+}
+
+// ProviderIncentiveRatio returns the value of the "provider_incentive_ratio" field in the mutation.
+func (m *GroupMutation) ProviderIncentiveRatio() (r int, exists bool) {
+	v := m.provider_incentive_ratio
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProviderIncentiveRatio returns the old "provider_incentive_ratio" field's value of the Group entity.
+// If the Group object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMutation) OldProviderIncentiveRatio(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProviderIncentiveRatio is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProviderIncentiveRatio requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProviderIncentiveRatio: %w", err)
+	}
+	return oldValue.ProviderIncentiveRatio, nil
+}
+
+// AddProviderIncentiveRatio adds i to the "provider_incentive_ratio" field.
+func (m *GroupMutation) AddProviderIncentiveRatio(i int) {
+	if m.addprovider_incentive_ratio != nil {
+		*m.addprovider_incentive_ratio += i
+	} else {
+		m.addprovider_incentive_ratio = &i
+	}
+}
+
+// AddedProviderIncentiveRatio returns the value that was added to the "provider_incentive_ratio" field in this mutation.
+func (m *GroupMutation) AddedProviderIncentiveRatio() (r int, exists bool) {
+	v := m.addprovider_incentive_ratio
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetProviderIncentiveRatio resets all changes to the "provider_incentive_ratio" field.
+func (m *GroupMutation) ResetProviderIncentiveRatio() {
+	m.provider_incentive_ratio = nil
+	m.addprovider_incentive_ratio = nil
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (m *GroupMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -447,7 +616,7 @@ func (m *GroupMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 9)
 	if m.name != nil {
 		fields = append(fields, group.FieldName)
 	}
@@ -456,6 +625,18 @@ func (m *GroupMutation) Fields() []string {
 	}
 	if m.invitation_code != nil {
 		fields = append(fields, group.FieldInvitationCode)
+	}
+	if m.require_confirmation_default != nil {
+		fields = append(fields, group.FieldRequireConfirmationDefault)
+	}
+	if m.auto_complete_redemption_default != nil {
+		fields = append(fields, group.FieldAutoCompleteRedemptionDefault)
+	}
+	if m.auto_fulfill_redemption_default != nil {
+		fields = append(fields, group.FieldAutoFulfillRedemptionDefault)
+	}
+	if m.provider_incentive_ratio != nil {
+		fields = append(fields, group.FieldProviderIncentiveRatio)
 	}
 	if m.created_at != nil {
 		fields = append(fields, group.FieldCreatedAt)
@@ -477,6 +658,14 @@ func (m *GroupMutation) Field(name string) (ent.Value, bool) {
 		return m.Description()
 	case group.FieldInvitationCode:
 		return m.InvitationCode()
+	case group.FieldRequireConfirmationDefault:
+		return m.RequireConfirmationDefault()
+	case group.FieldAutoCompleteRedemptionDefault:
+		return m.AutoCompleteRedemptionDefault()
+	case group.FieldAutoFulfillRedemptionDefault:
+		return m.AutoFulfillRedemptionDefault()
+	case group.FieldProviderIncentiveRatio:
+		return m.ProviderIncentiveRatio()
 	case group.FieldCreatedAt:
 		return m.CreatedAt()
 	case group.FieldUpdatedAt:
@@ -496,6 +685,14 @@ func (m *GroupMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldDescription(ctx)
 	case group.FieldInvitationCode:
 		return m.OldInvitationCode(ctx)
+	case group.FieldRequireConfirmationDefault:
+		return m.OldRequireConfirmationDefault(ctx)
+	case group.FieldAutoCompleteRedemptionDefault:
+		return m.OldAutoCompleteRedemptionDefault(ctx)
+	case group.FieldAutoFulfillRedemptionDefault:
+		return m.OldAutoFulfillRedemptionDefault(ctx)
+	case group.FieldProviderIncentiveRatio:
+		return m.OldProviderIncentiveRatio(ctx)
 	case group.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case group.FieldUpdatedAt:
@@ -530,6 +727,34 @@ func (m *GroupMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetInvitationCode(v)
 		return nil
+	case group.FieldRequireConfirmationDefault:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRequireConfirmationDefault(v)
+		return nil
+	case group.FieldAutoCompleteRedemptionDefault:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAutoCompleteRedemptionDefault(v)
+		return nil
+	case group.FieldAutoFulfillRedemptionDefault:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAutoFulfillRedemptionDefault(v)
+		return nil
+	case group.FieldProviderIncentiveRatio:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProviderIncentiveRatio(v)
+		return nil
 	case group.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -551,13 +776,21 @@ func (m *GroupMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *GroupMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addprovider_incentive_ratio != nil {
+		fields = append(fields, group.FieldProviderIncentiveRatio)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *GroupMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case group.FieldProviderIncentiveRatio:
+		return m.AddedProviderIncentiveRatio()
+	}
 	return nil, false
 }
 
@@ -566,6 +799,13 @@ func (m *GroupMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *GroupMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case group.FieldProviderIncentiveRatio:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddProviderIncentiveRatio(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Group numeric field %s", name)
 }
@@ -616,6 +856,18 @@ func (m *GroupMutation) ResetField(name string) error {
 		return nil
 	case group.FieldInvitationCode:
 		m.ResetInvitationCode()
+		return nil
+	case group.FieldRequireConfirmationDefault:
+		m.ResetRequireConfirmationDefault()
+		return nil
+	case group.FieldAutoCompleteRedemptionDefault:
+		m.ResetAutoCompleteRedemptionDefault()
+		return nil
+	case group.FieldAutoFulfillRedemptionDefault:
+		m.ResetAutoFulfillRedemptionDefault()
+		return nil
+	case group.FieldProviderIncentiveRatio:
+		m.ResetProviderIncentiveRatio()
 		return nil
 	case group.FieldCreatedAt:
 		m.ResetCreatedAt()

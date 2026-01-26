@@ -14,6 +14,10 @@ var (
 		{Name: "name", Type: field.TypeString, Size: 30},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 200},
 		{Name: "invitation_code", Type: field.TypeString, Unique: true, Nullable: true, Size: 6},
+		{Name: "require_confirmation_default", Type: field.TypeBool, Default: true},
+		{Name: "auto_complete_redemption_default", Type: field.TypeBool, Default: false},
+		{Name: "auto_fulfill_redemption_default", Type: field.TypeBool, Default: false},
+		{Name: "provider_incentive_ratio", Type: field.TypeInt, Default: 0},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 	}

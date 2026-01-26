@@ -27,17 +27,28 @@ var (
 	ErrLastAdminCannotDemote  = errors.New("group must have at least one administrator")
 	ErrPermissionInvalid      = errors.New("invalid permission")
 	ErrMemberNotFound         = errors.New("member not found in group")
+	ErrInvalidIncentiveRatio  = errors.New("provider incentive ratio must be between 0 and 100")
+)
+
+const (
+	PermissionCreateAgreement     = "create_agreement"
+	PermissionEditAgreement       = "edit_agreement"
+	PermissionDeleteAgreement     = "delete_agreement"
+	PermissionRecordForOthers     = "record_for_others"
+	PermissionModifyDefaults      = "modify_defaults"
+	PermissionCreateSpecialEvents = "create_special_events"
+	PermissionRevokeRecords       = "revoke_records"
 )
 
 // ValidPermissions defines the set of allowed permissions
 var ValidPermissions = map[string]struct{}{
-	"create_agreement":      {},
-	"edit_agreement":        {},
-	"delete_agreement":      {},
-	"record_for_others":     {},
-	"modify_defaults":       {},
-	"create_special_events": {},
-	"revoke_records":        {},
+	PermissionCreateAgreement:     {},
+	PermissionEditAgreement:       {},
+	PermissionDeleteAgreement:     {},
+	PermissionRecordForOthers:     {},
+	PermissionModifyDefaults:      {},
+	PermissionCreateSpecialEvents: {},
+	PermissionRevokeRecords:       {},
 }
 
 // Service handles group-related business logic.
@@ -572,6 +583,57 @@ type MemberInfo struct {
 	Role        groupmember.Role `json:"role"`
 	Permissions []string         `json:"permissions"`
 	JoinedAt    string           `json:"joined_at"`
+}
+
+// SettingsUpdate defines parameters for updating group settings.
+type SettingsUpdate struct {
+	RequireConfirmationDefault    bool `json:"require_confirmation_default"`
+	AutoCompleteRedemptionDefault bool `json:"auto_complete_redemption_default"`
+	AutoFulfillRedemptionDefault  bool `json:"auto_fulfill_redemption_default"`
+	ProviderIncentiveRatio        int  `json:"provider_incentive_ratio"`
+}
+
+// UpdateGroupSettings updates the default settings for a group.
+func (s *Service) UpdateGroupSettings(ctx context.Context, userID, groupID int, settings SettingsUpdate) (*ent.Group, error) {
+	// 1. Permission check
+	isAdmin, err := s.IsGroupAdmin(ctx, groupID, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	canModify := isAdmin
+	if !canModify {
+		canModify, err = s.HasPermission(ctx, groupID, userID, "modify_defaults")
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if !canModify {
+		return nil, ErrNotAdmin // Using ErrNotAdmin as general "modification not allowed" error
+	}
+
+	// 2. Validation
+	if settings.ProviderIncentiveRatio < 0 || settings.ProviderIncentiveRatio > 100 {
+		return nil, ErrInvalidIncentiveRatio
+	}
+
+	// 3. Update
+	g, err := s.client.Group.UpdateOneID(groupID).
+		SetRequireConfirmationDefault(settings.RequireConfirmationDefault).
+		SetAutoCompleteRedemptionDefault(settings.AutoCompleteRedemptionDefault).
+		SetAutoFulfillRedemptionDefault(settings.AutoFulfillRedemptionDefault).
+		SetProviderIncentiveRatio(settings.ProviderIncentiveRatio).
+		Save(ctx)
+
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, ErrGroupNotFound
+		}
+		return nil, fmt.Errorf("failed to update group settings: %w", err)
+	}
+
+	return g, nil
 }
 
 // ListMembers retrieves all members of a group with their roles and permissions.

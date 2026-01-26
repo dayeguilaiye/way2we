@@ -55,7 +55,7 @@ development_status:
   2-1-group-creation-and-invitation: done  # 完整实现了创建群组、邀请码系统、加入群组和UX优化
   2-2-view-group-list-switch-group: done
   2-3-member-management-permissions: done  # 合并了成员列表角色管理、权限分配
-  2-4-group-default-configuration: backlog
+  2-4-group-default-configuration: done
   epic-2-retrospective: optional
 
   # Epic 3: 约定规则管理

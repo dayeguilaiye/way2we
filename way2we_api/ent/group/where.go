@@ -70,6 +70,26 @@ func InvitationCode(v string) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldInvitationCode, v))
 }
 
+// RequireConfirmationDefault applies equality check predicate on the "require_confirmation_default" field. It's identical to RequireConfirmationDefaultEQ.
+func RequireConfirmationDefault(v bool) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldRequireConfirmationDefault, v))
+}
+
+// AutoCompleteRedemptionDefault applies equality check predicate on the "auto_complete_redemption_default" field. It's identical to AutoCompleteRedemptionDefaultEQ.
+func AutoCompleteRedemptionDefault(v bool) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldAutoCompleteRedemptionDefault, v))
+}
+
+// AutoFulfillRedemptionDefault applies equality check predicate on the "auto_fulfill_redemption_default" field. It's identical to AutoFulfillRedemptionDefaultEQ.
+func AutoFulfillRedemptionDefault(v bool) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldAutoFulfillRedemptionDefault, v))
+}
+
+// ProviderIncentiveRatio applies equality check predicate on the "provider_incentive_ratio" field. It's identical to ProviderIncentiveRatioEQ.
+func ProviderIncentiveRatio(v int) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldProviderIncentiveRatio, v))
+}
+
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldCreatedAt, v))
@@ -293,6 +313,76 @@ func InvitationCodeEqualFold(v string) predicate.Group {
 // InvitationCodeContainsFold applies the ContainsFold predicate on the "invitation_code" field.
 func InvitationCodeContainsFold(v string) predicate.Group {
 	return predicate.Group(sql.FieldContainsFold(FieldInvitationCode, v))
+}
+
+// RequireConfirmationDefaultEQ applies the EQ predicate on the "require_confirmation_default" field.
+func RequireConfirmationDefaultEQ(v bool) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldRequireConfirmationDefault, v))
+}
+
+// RequireConfirmationDefaultNEQ applies the NEQ predicate on the "require_confirmation_default" field.
+func RequireConfirmationDefaultNEQ(v bool) predicate.Group {
+	return predicate.Group(sql.FieldNEQ(FieldRequireConfirmationDefault, v))
+}
+
+// AutoCompleteRedemptionDefaultEQ applies the EQ predicate on the "auto_complete_redemption_default" field.
+func AutoCompleteRedemptionDefaultEQ(v bool) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldAutoCompleteRedemptionDefault, v))
+}
+
+// AutoCompleteRedemptionDefaultNEQ applies the NEQ predicate on the "auto_complete_redemption_default" field.
+func AutoCompleteRedemptionDefaultNEQ(v bool) predicate.Group {
+	return predicate.Group(sql.FieldNEQ(FieldAutoCompleteRedemptionDefault, v))
+}
+
+// AutoFulfillRedemptionDefaultEQ applies the EQ predicate on the "auto_fulfill_redemption_default" field.
+func AutoFulfillRedemptionDefaultEQ(v bool) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldAutoFulfillRedemptionDefault, v))
+}
+
+// AutoFulfillRedemptionDefaultNEQ applies the NEQ predicate on the "auto_fulfill_redemption_default" field.
+func AutoFulfillRedemptionDefaultNEQ(v bool) predicate.Group {
+	return predicate.Group(sql.FieldNEQ(FieldAutoFulfillRedemptionDefault, v))
+}
+
+// ProviderIncentiveRatioEQ applies the EQ predicate on the "provider_incentive_ratio" field.
+func ProviderIncentiveRatioEQ(v int) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldProviderIncentiveRatio, v))
+}
+
+// ProviderIncentiveRatioNEQ applies the NEQ predicate on the "provider_incentive_ratio" field.
+func ProviderIncentiveRatioNEQ(v int) predicate.Group {
+	return predicate.Group(sql.FieldNEQ(FieldProviderIncentiveRatio, v))
+}
+
+// ProviderIncentiveRatioIn applies the In predicate on the "provider_incentive_ratio" field.
+func ProviderIncentiveRatioIn(vs ...int) predicate.Group {
+	return predicate.Group(sql.FieldIn(FieldProviderIncentiveRatio, vs...))
+}
+
+// ProviderIncentiveRatioNotIn applies the NotIn predicate on the "provider_incentive_ratio" field.
+func ProviderIncentiveRatioNotIn(vs ...int) predicate.Group {
+	return predicate.Group(sql.FieldNotIn(FieldProviderIncentiveRatio, vs...))
+}
+
+// ProviderIncentiveRatioGT applies the GT predicate on the "provider_incentive_ratio" field.
+func ProviderIncentiveRatioGT(v int) predicate.Group {
+	return predicate.Group(sql.FieldGT(FieldProviderIncentiveRatio, v))
+}
+
+// ProviderIncentiveRatioGTE applies the GTE predicate on the "provider_incentive_ratio" field.
+func ProviderIncentiveRatioGTE(v int) predicate.Group {
+	return predicate.Group(sql.FieldGTE(FieldProviderIncentiveRatio, v))
+}
+
+// ProviderIncentiveRatioLT applies the LT predicate on the "provider_incentive_ratio" field.
+func ProviderIncentiveRatioLT(v int) predicate.Group {
+	return predicate.Group(sql.FieldLT(FieldProviderIncentiveRatio, v))
+}
+
+// ProviderIncentiveRatioLTE applies the LTE predicate on the "provider_incentive_ratio" field.
+func ProviderIncentiveRatioLTE(v int) predicate.Group {
+	return predicate.Group(sql.FieldLTE(FieldProviderIncentiveRatio, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.

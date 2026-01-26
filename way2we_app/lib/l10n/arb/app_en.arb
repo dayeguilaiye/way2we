@@ -495,5 +495,53 @@
     "permCreateSpecialEvents": "Create Special Events",
     "@permCreateSpecialEvents": { "description": "Permission label" },
     "permRevokeRecords": "Revoke Records",
-    "@permRevokeRecords": { "description": "Permission label" }
+    "@permRevokeRecords": { "description": "Permission label" },
+
+    "defaultSettingsTitle": "Default Configuration",
+    "@defaultSettingsTitle": {
+        "description": "Title for default settings page"
+    },
+    "requireConfirmation": "Require Confirmation",
+    "@requireConfirmation": {
+        "description": "Label for require confirmation setting"
+    },
+    "requireConfirmationDesc": "Agreements require confirmation by default",
+    "@requireConfirmationDesc": {
+        "description": "Description for require confirmation setting"
+    },
+    "autoComplete": "Auto Complete Redemption",
+    "@autoComplete": {
+        "description": "Label for auto complete setting"
+    },
+    "autoCompleteDesc": "Redemptions complete automatically",
+    "@autoCompleteDesc": {
+        "description": "Description for auto complete setting"
+    },
+    "autoFulfill": "Auto Fulfill Redemption",
+    "@autoFulfill": {
+        "description": "Label for auto fulfill setting"
+    },
+    "autoFulfillDesc": "Redemptions are fulfilled automatically",
+    "@autoFulfillDesc": {
+        "description": "Description for auto fulfill setting"
+    },
+    "providerIncentive": "Provider Incentive Ratio",
+    "@providerIncentive": {
+        "description": "Label for provider incentive setting"
+    },
+    "providerIncentiveDesc": "Percentage of points given to provider ({value}%)",
+    "@providerIncentiveDesc": {
+        "description": "Description for provider incentive setting",
+        "placeholders": {
+            "value": {"type": "int"}
+        }
+    },
+    "save": "Save",
+    "@save": {
+        "description": "Save button text"
+    },
+    "saveSuccess": "Settings saved successfully",
+    "@saveSuccess": {
+        "description": "Save success message"
+    }
 }
