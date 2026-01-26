@@ -85,7 +85,7 @@ func main() {
 	userHandler := handler.NewUserHandler(userService, storageProvider)
 	groupHandler := handler.NewGroupHandler(groupService)
 
-	handler.RegisterRoutes(e, cfg, authService, authHandler, userHandler, groupHandler)
+	handler.RegisterRoutes(e, cfg, authService, authHandler, userHandler, groupHandler, groupService)
 
 	// Routes
 	e.GET("/", func(c echo.Context) error {

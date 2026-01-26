@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -27,6 +28,8 @@ type GroupMember struct {
 	Role groupmember.Role `json:"role,omitempty"`
 	// When the user joined the group
 	JoinedAt time.Time `json:"joined_at,omitempty"`
+	// Granular permissions for the member
+	Permissions []string `json:"permissions,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GroupMemberQuery when eager-loading is set.
 	Edges        GroupMemberEdges `json:"edges"`
@@ -71,6 +74,8 @@ func (*GroupMember) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case groupmember.FieldPermissions:
+			values[i] = new([]byte)
 		case groupmember.FieldID, groupmember.FieldUserID, groupmember.FieldGroupID:
 			values[i] = new(sql.NullInt64)
 		case groupmember.FieldRole:
@@ -121,6 +126,14 @@ func (_m *GroupMember) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field joined_at", values[i])
 			} else if value.Valid {
 				_m.JoinedAt = value.Time
+			}
+		case groupmember.FieldPermissions:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field permissions", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.Permissions); err != nil {
+					return fmt.Errorf("unmarshal field permissions: %w", err)
+				}
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -179,6 +192,9 @@ func (_m *GroupMember) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("joined_at=")
 	builder.WriteString(_m.JoinedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("permissions=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Permissions))
 	builder.WriteByte(')')
 	return builder.String()
 }

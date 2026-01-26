@@ -132,6 +132,31 @@
     
     "groupSelectTitle": "选择群组",
     "groupCreateAction": "创建新群组",
-    "groupJoinAction": "加入群组"
+    "groupJoinAction": "加入群组",
+    
+    "memberManagementTitle": "成员管理",
+    "noMembersWarning": "该群组暂无成员。",
+    "commonRetry": "重试",
+    
+    "memberDetailTitle": "成员详情",
+    "memberRoleLabel": "群组角色",
+    "memberPermissionsLabel": "详细权限",
+    "memberAdminPermissionNote": "管理员默认拥有所有权限。",
+    "memberJoinedDate": "加入时间 {date}",
+    "@memberJoinedDate": {
+        "placeholders": {
+            "date": {"type": "String"}
+        }
+    },
+    "roleAdmin": "管理员",
+    "roleMember": "成员",
+    
+    "permCreateAgreement": "创建协议",
+    "permEditAgreement": "编辑协议",
+    "permDeleteAgreement": "删除协议",
+    "permRecordForOthers": "代他人记录",
+    "permModifyDefaults": "修改群组默认值",
+    "permCreateSpecialEvents": "创建特殊事件",
+    "permRevokeRecords": "撤销记录"
 }
 

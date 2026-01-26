@@ -62,6 +62,12 @@ func (_c *GroupMemberCreate) SetNillableJoinedAt(v *time.Time) *GroupMemberCreat
 	return _c
 }
 
+// SetPermissions sets the "permissions" field.
+func (_c *GroupMemberCreate) SetPermissions(v []string) *GroupMemberCreate {
+	_c.mutation.SetPermissions(v)
+	return _c
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (_c *GroupMemberCreate) SetUser(v *User) *GroupMemberCreate {
 	return _c.SetUserID(v.ID)
@@ -175,6 +181,10 @@ func (_c *GroupMemberCreate) createSpec() (*GroupMember, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.JoinedAt(); ok {
 		_spec.SetField(groupmember.FieldJoinedAt, field.TypeTime, value)
 		_node.JoinedAt = value
+	}
+	if value, ok := _c.mutation.Permissions(); ok {
+		_spec.SetField(groupmember.FieldPermissions, field.TypeJSON, value)
+		_node.Permissions = value
 	}
 	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

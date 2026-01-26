@@ -269,6 +269,57 @@ class GroupProvider {
     }
   }
 
+  /// Lists all members of a group.
+  Future<List<Map<String, dynamic>>> listMembers({required int groupId}) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '/v1/groups/$groupId/members',
+      );
+
+      if (response.data == null) {
+        throw const GroupApiException('Unexpected null response');
+      }
+
+      return (response.data!['members'] as List<dynamic>)
+          .map((e) => e as Map<String, dynamic>)
+          .toList();
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
+  /// Updates a member's role in a group.
+  Future<void> updateMemberRole({
+    required int groupId,
+    required int userId,
+    required String role,
+  }) async {
+    try {
+      await _dio.put<void>(
+        '/v1/groups/$groupId/members/$userId/role',
+        data: {'role': role},
+      );
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
+  /// Updates a member's permissions in a group.
+  Future<void> updateMemberPermissions({
+    required int groupId,
+    required int userId,
+    required List<String> permissions,
+  }) async {
+    try {
+      await _dio.put<void>(
+        '/v1/groups/$groupId/members/$userId/permissions',
+        data: {'permissions': permissions},
+      );
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
   Never _handleDioError(DioException e) {
     if (e.response?.data is Map<String, dynamic>) {
       final data = e.response!.data as Map<String, dynamic>;

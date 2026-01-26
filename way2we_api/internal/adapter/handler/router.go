@@ -3,12 +3,13 @@ package handler
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/way2we/way2we_api/internal/app/auth"
+	"github.com/way2we/way2we_api/internal/app/group"
 	"github.com/way2we/way2we_api/internal/pkg/config"
 	"github.com/way2we/way2we_api/internal/pkg/middleware"
 )
 
 // RegisterRoutes registers all routes for the application.
-func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service, authHandler *AuthHandler, userHandler *UserHandler, groupHandler *GroupHandler) {
+func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service, authHandler *AuthHandler, userHandler *UserHandler, groupHandler *GroupHandler, groupService *group.Service) {
 	v1 := e.Group("/v1")
 
 	// Auth Routes (Public)
@@ -42,6 +43,12 @@ func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service,
 	groupRoutes.GET("/:id/invitation", groupHandler.GetInvitation)
 	groupRoutes.POST("/:id/invitation/refresh", groupHandler.RefreshInvitation)
 	groupRoutes.POST("/join", groupHandler.JoinGroup)
+
+	// Member Management Routes
+	// Apply permission checks via middleware where appropriate for better architectural enforcement
+	groupRoutes.GET("/:id/members", groupHandler.ListMembers) // Handler handles membership check
+	groupRoutes.PUT("/:id/members/:userId/role", groupHandler.UpdateMemberRole, middleware.RequireGroupAdmin(groupService))
+	groupRoutes.PUT("/:id/members/:userId/permissions", groupHandler.UpdateMemberPermissions, middleware.RequireGroupAdmin(groupService))
 
 	// Group Routes (Public - for invitation preview)
 	v1.GET("/groups/by-invitation/:code", groupHandler.GetGroupByInvitation)

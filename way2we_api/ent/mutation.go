@@ -714,19 +714,21 @@ func (m *GroupMutation) ResetEdge(name string) error {
 // GroupMemberMutation represents an operation that mutates the GroupMember nodes in the graph.
 type GroupMemberMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	role          *groupmember.Role
-	joined_at     *time.Time
-	clearedFields map[string]struct{}
-	user          *int
-	cleareduser   bool
-	group         *int
-	clearedgroup  bool
-	done          bool
-	oldValue      func(context.Context) (*GroupMember, error)
-	predicates    []predicate.GroupMember
+	op                Op
+	typ               string
+	id                *int
+	role              *groupmember.Role
+	joined_at         *time.Time
+	permissions       *[]string
+	appendpermissions []string
+	clearedFields     map[string]struct{}
+	user              *int
+	cleareduser       bool
+	group             *int
+	clearedgroup      bool
+	done              bool
+	oldValue          func(context.Context) (*GroupMember, error)
+	predicates        []predicate.GroupMember
 }
 
 var _ ent.Mutation = (*GroupMemberMutation)(nil)
@@ -971,6 +973,71 @@ func (m *GroupMemberMutation) ResetJoinedAt() {
 	m.joined_at = nil
 }
 
+// SetPermissions sets the "permissions" field.
+func (m *GroupMemberMutation) SetPermissions(s []string) {
+	m.permissions = &s
+	m.appendpermissions = nil
+}
+
+// Permissions returns the value of the "permissions" field in the mutation.
+func (m *GroupMemberMutation) Permissions() (r []string, exists bool) {
+	v := m.permissions
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPermissions returns the old "permissions" field's value of the GroupMember entity.
+// If the GroupMember object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMemberMutation) OldPermissions(ctx context.Context) (v []string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPermissions is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPermissions requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPermissions: %w", err)
+	}
+	return oldValue.Permissions, nil
+}
+
+// AppendPermissions adds s to the "permissions" field.
+func (m *GroupMemberMutation) AppendPermissions(s []string) {
+	m.appendpermissions = append(m.appendpermissions, s...)
+}
+
+// AppendedPermissions returns the list of values that were appended to the "permissions" field in this mutation.
+func (m *GroupMemberMutation) AppendedPermissions() ([]string, bool) {
+	if len(m.appendpermissions) == 0 {
+		return nil, false
+	}
+	return m.appendpermissions, true
+}
+
+// ClearPermissions clears the value of the "permissions" field.
+func (m *GroupMemberMutation) ClearPermissions() {
+	m.permissions = nil
+	m.appendpermissions = nil
+	m.clearedFields[groupmember.FieldPermissions] = struct{}{}
+}
+
+// PermissionsCleared returns if the "permissions" field was cleared in this mutation.
+func (m *GroupMemberMutation) PermissionsCleared() bool {
+	_, ok := m.clearedFields[groupmember.FieldPermissions]
+	return ok
+}
+
+// ResetPermissions resets all changes to the "permissions" field.
+func (m *GroupMemberMutation) ResetPermissions() {
+	m.permissions = nil
+	m.appendpermissions = nil
+	delete(m.clearedFields, groupmember.FieldPermissions)
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *GroupMemberMutation) ClearUser() {
 	m.cleareduser = true
@@ -1059,7 +1126,7 @@ func (m *GroupMemberMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupMemberMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.user != nil {
 		fields = append(fields, groupmember.FieldUserID)
 	}
@@ -1071,6 +1138,9 @@ func (m *GroupMemberMutation) Fields() []string {
 	}
 	if m.joined_at != nil {
 		fields = append(fields, groupmember.FieldJoinedAt)
+	}
+	if m.permissions != nil {
+		fields = append(fields, groupmember.FieldPermissions)
 	}
 	return fields
 }
@@ -1088,6 +1158,8 @@ func (m *GroupMemberMutation) Field(name string) (ent.Value, bool) {
 		return m.Role()
 	case groupmember.FieldJoinedAt:
 		return m.JoinedAt()
+	case groupmember.FieldPermissions:
+		return m.Permissions()
 	}
 	return nil, false
 }
@@ -1105,6 +1177,8 @@ func (m *GroupMemberMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldRole(ctx)
 	case groupmember.FieldJoinedAt:
 		return m.OldJoinedAt(ctx)
+	case groupmember.FieldPermissions:
+		return m.OldPermissions(ctx)
 	}
 	return nil, fmt.Errorf("unknown GroupMember field %s", name)
 }
@@ -1142,6 +1216,13 @@ func (m *GroupMemberMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetJoinedAt(v)
 		return nil
+	case groupmember.FieldPermissions:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPermissions(v)
+		return nil
 	}
 	return fmt.Errorf("unknown GroupMember field %s", name)
 }
@@ -1174,7 +1255,11 @@ func (m *GroupMemberMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *GroupMemberMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(groupmember.FieldPermissions) {
+		fields = append(fields, groupmember.FieldPermissions)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -1187,6 +1272,11 @@ func (m *GroupMemberMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *GroupMemberMutation) ClearField(name string) error {
+	switch name {
+	case groupmember.FieldPermissions:
+		m.ClearPermissions()
+		return nil
+	}
 	return fmt.Errorf("unknown GroupMember nullable field %s", name)
 }
 
@@ -1205,6 +1295,9 @@ func (m *GroupMemberMutation) ResetField(name string) error {
 		return nil
 	case groupmember.FieldJoinedAt:
 		m.ResetJoinedAt()
+		return nil
+	case groupmember.FieldPermissions:
+		m.ResetPermissions()
 		return nil
 	}
 	return fmt.Errorf("unknown GroupMember field %s", name)

@@ -24,7 +24,21 @@ var (
 	ErrAlreadyMember          = errors.New("user is already a member of this group")
 	ErrNotAdmin               = errors.New("user is not an admin of this group")
 	ErrGenerateCodeFailed     = errors.New("failed to generate invitation code")
+	ErrLastAdminCannotDemote  = errors.New("group must have at least one administrator")
+	ErrPermissionInvalid      = errors.New("invalid permission")
+	ErrMemberNotFound         = errors.New("member not found in group")
 )
+
+// ValidPermissions defines the set of allowed permissions
+var ValidPermissions = map[string]struct{}{
+	"create_agreement":      {},
+	"edit_agreement":        {},
+	"delete_agreement":      {},
+	"record_for_others":     {},
+	"modify_defaults":       {},
+	"create_special_events": {},
+	"revoke_records":        {},
+}
 
 // Service handles group-related business logic.
 type Service struct {
@@ -167,7 +181,7 @@ func (s *Service) GenerateInvitationCode(ctx context.Context, groupID int) (stri
 // Only admins can view the invitation code.
 func (s *Service) GetInvitationCode(ctx context.Context, groupID int, userID int) (string, error) {
 	// Check if user is admin of the group
-	isAdmin, err := s.isGroupAdmin(ctx, groupID, userID)
+	isAdmin, err := s.IsGroupAdmin(ctx, groupID, userID)
 	if err != nil {
 		return "", err
 	}
@@ -196,7 +210,7 @@ func (s *Service) GetInvitationCode(ctx context.Context, groupID int, userID int
 // Only admins can refresh the invitation code.
 func (s *Service) RefreshInvitationCode(ctx context.Context, groupID int, userID int) (string, error) {
 	// Check if user is admin of the group
-	isAdmin, err := s.isGroupAdmin(ctx, groupID, userID)
+	isAdmin, err := s.IsGroupAdmin(ctx, groupID, userID)
 	if err != nil {
 		return "", err
 	}
@@ -396,8 +410,8 @@ func (s *Service) GetUserGroups(ctx context.Context, userID int) ([]*UserGroupIn
 	return result, nil
 }
 
-// isGroupAdmin checks if a user is an admin of the specified group.
-func (s *Service) isGroupAdmin(ctx context.Context, groupID int, userID int) (bool, error) {
+// IsGroupAdmin checks if a user is an admin of the specified group.
+func (s *Service) IsGroupAdmin(ctx context.Context, groupID int, userID int) (bool, error) {
 	member, err := s.client.GroupMember.Query().
 		Where(
 			groupmember.GroupID(groupID),
@@ -412,4 +426,193 @@ func (s *Service) isGroupAdmin(ctx context.Context, groupID int, userID int) (bo
 		return false, fmt.Errorf("failed to check admin status: %w", err)
 	}
 	return member.Role == groupmember.RoleAdmin, nil
+}
+
+// HasPermission checks if a user has a specific permission in the group.
+// Admins automatically have all permissions.
+func (s *Service) HasPermission(ctx context.Context, groupID int, userID int, permission string) (bool, error) {
+	// 1. Get member info
+	member, err := s.client.GroupMember.Query().
+		Where(
+			groupmember.GroupID(groupID),
+			groupmember.UserID(userID),
+		).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return false, nil
+		}
+		return false, fmt.Errorf("failed to check permission: %w", err)
+	}
+
+	// 2. Admin has all permissions
+	if member.Role == groupmember.RoleAdmin {
+		return true, nil
+	}
+
+	// 3. Check specific permission
+	for _, p := range member.Permissions {
+		if p == permission {
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
+// UpdateMemberRole updates a member's role.
+func (s *Service) UpdateMemberRole(ctx context.Context, groupID int, targetUserID int, role groupmember.Role, actorUserID int) error {
+	// 1. Verify actor is admin
+	isAdmin, err := s.IsGroupAdmin(ctx, groupID, actorUserID)
+	if err != nil {
+		return err
+	}
+	if !isAdmin {
+		return ErrNotAdmin
+	}
+
+	// 2. Check if target member exists
+	targetMember, err := s.client.GroupMember.Query().
+		Where(
+			groupmember.GroupID(groupID),
+			groupmember.UserID(targetUserID),
+		).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return ErrMemberNotFound
+		}
+		return fmt.Errorf("failed to query target member: %w", err)
+	}
+
+	// 3. Validation: If demoting an admin, ensure at least one admin remains
+	if targetMember.Role == groupmember.RoleAdmin && role == groupmember.RoleMember {
+		adminCount, err := s.client.GroupMember.Query().
+			Where(
+				groupmember.GroupID(groupID),
+				groupmember.RoleEQ(groupmember.RoleAdmin),
+			).
+			Count(ctx)
+		if err != nil {
+			return fmt.Errorf("failed to count admins: %w", err)
+		}
+		if adminCount <= 1 {
+			return ErrLastAdminCannotDemote
+		}
+	}
+
+	// 4. Update Role
+	err = s.client.GroupMember.UpdateOne(targetMember).
+		SetRole(role).
+		Exec(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to update member role: %w", err)
+	}
+
+	return nil
+}
+
+// UpdateMemberPermissions updates a member's granular permissions.
+func (s *Service) UpdateMemberPermissions(ctx context.Context, groupID int, targetUserID int, permissions []string, actorUserID int) error {
+	// 1. Verify actor is admin
+	isAdmin, err := s.IsGroupAdmin(ctx, groupID, actorUserID)
+	if err != nil {
+		return err
+	}
+	if !isAdmin {
+		return ErrNotAdmin
+	}
+
+	// 2. Validate Permissions
+	for _, p := range permissions {
+		if _, ok := ValidPermissions[p]; !ok {
+			return fmt.Errorf("%w: %s", ErrPermissionInvalid, p)
+		}
+	}
+
+	// 3. Update Permissions
+	// We use Update().Where(...) to avoid extra query if we don't need the member object for other logic
+	// But it's safer to ensure member exists first like UpdateMemberRole, or just handle not found error
+
+	// Check/Get Member logic is cleaner to ensure it exists
+	exists, err := s.client.GroupMember.Query().
+		Where(
+			groupmember.GroupID(groupID),
+			groupmember.UserID(targetUserID),
+		).
+		Exist(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to check member existence: %w", err)
+	}
+	if !exists {
+		return ErrMemberNotFound
+	}
+
+	err = s.client.GroupMember.Update().
+		Where(
+			groupmember.GroupID(groupID),
+			groupmember.UserID(targetUserID),
+		).
+		SetPermissions(permissions).
+		Exec(ctx)
+
+	if err != nil {
+		return fmt.Errorf("failed to update permissions: %w", err)
+	}
+
+	return nil
+}
+
+// MemberInfo contains detailed member information.
+type MemberInfo struct {
+	ID          int              `json:"id"`
+	UserID      int              `json:"user_id"`
+	Nickname    string           `json:"nickname"`
+	AvatarURL   string           `json:"avatar_url"`
+	Role        groupmember.Role `json:"role"`
+	Permissions []string         `json:"permissions"`
+	JoinedAt    string           `json:"joined_at"`
+}
+
+// ListMembers retrieves all members of a group with their roles and permissions.
+func (s *Service) ListMembers(ctx context.Context, groupID int, actorUserID int) ([]*MemberInfo, error) {
+	// 1. Verify actor is a member of the group (any member can see the list, or maybe only admin? AC says "Group Administrator... want to view...". Usually member lists are visible to all members.)
+	// Let's check if the actor is at least a member.
+	exists, err := s.client.GroupMember.Query().
+		Where(
+			groupmember.GroupID(groupID),
+			groupmember.UserID(actorUserID),
+		).
+		Exist(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check actor membership: %w", err)
+	}
+	if !exists {
+		return nil, ErrNotAdmin // Or a more specific ErrNotMember, but usually we use ErrNotAdmin for restricted areas
+	}
+
+	// 2. Query members with user edge
+	members, err := s.client.GroupMember.Query().
+		Where(groupmember.GroupID(groupID)).
+		WithUser().
+		All(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query members: %w", err)
+	}
+
+	result := make([]*MemberInfo, 0, len(members))
+	for _, m := range members {
+		info := &MemberInfo{
+			ID:          m.ID,
+			UserID:      m.UserID,
+			Nickname:    m.Edges.User.Nickname,
+			AvatarURL:   m.Edges.User.Avatar,
+			Role:        m.Role,
+			Permissions: m.Permissions,
+			JoinedAt:    m.JoinedAt.Format("2006-01-02T15:04:05Z07:00"),
+		}
+		result = append(result, info)
+	}
+
+	return result, nil
 }

@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/way2we/way2we_api/ent/group"
 	"github.com/way2we/way2we_api/ent/groupmember"
@@ -68,6 +69,24 @@ func (_u *GroupMemberUpdate) SetNillableRole(v *groupmember.Role) *GroupMemberUp
 	if v != nil {
 		_u.SetRole(*v)
 	}
+	return _u
+}
+
+// SetPermissions sets the "permissions" field.
+func (_u *GroupMemberUpdate) SetPermissions(v []string) *GroupMemberUpdate {
+	_u.mutation.SetPermissions(v)
+	return _u
+}
+
+// AppendPermissions appends value to the "permissions" field.
+func (_u *GroupMemberUpdate) AppendPermissions(v []string) *GroupMemberUpdate {
+	_u.mutation.AppendPermissions(v)
+	return _u
+}
+
+// ClearPermissions clears the value of the "permissions" field.
+func (_u *GroupMemberUpdate) ClearPermissions() *GroupMemberUpdate {
+	_u.mutation.ClearPermissions()
 	return _u
 }
 
@@ -155,6 +174,17 @@ func (_u *GroupMemberUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	}
 	if value, ok := _u.mutation.Role(); ok {
 		_spec.SetField(groupmember.FieldRole, field.TypeEnum, value)
+	}
+	if value, ok := _u.mutation.Permissions(); ok {
+		_spec.SetField(groupmember.FieldPermissions, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedPermissions(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, groupmember.FieldPermissions, value)
+		})
+	}
+	if _u.mutation.PermissionsCleared() {
+		_spec.ClearField(groupmember.FieldPermissions, field.TypeJSON)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -276,6 +306,24 @@ func (_u *GroupMemberUpdateOne) SetNillableRole(v *groupmember.Role) *GroupMembe
 	return _u
 }
 
+// SetPermissions sets the "permissions" field.
+func (_u *GroupMemberUpdateOne) SetPermissions(v []string) *GroupMemberUpdateOne {
+	_u.mutation.SetPermissions(v)
+	return _u
+}
+
+// AppendPermissions appends value to the "permissions" field.
+func (_u *GroupMemberUpdateOne) AppendPermissions(v []string) *GroupMemberUpdateOne {
+	_u.mutation.AppendPermissions(v)
+	return _u
+}
+
+// ClearPermissions clears the value of the "permissions" field.
+func (_u *GroupMemberUpdateOne) ClearPermissions() *GroupMemberUpdateOne {
+	_u.mutation.ClearPermissions()
+	return _u
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (_u *GroupMemberUpdateOne) SetUser(v *User) *GroupMemberUpdateOne {
 	return _u.SetUserID(v.ID)
@@ -390,6 +438,17 @@ func (_u *GroupMemberUpdateOne) sqlSave(ctx context.Context) (_node *GroupMember
 	}
 	if value, ok := _u.mutation.Role(); ok {
 		_spec.SetField(groupmember.FieldRole, field.TypeEnum, value)
+	}
+	if value, ok := _u.mutation.Permissions(); ok {
+		_spec.SetField(groupmember.FieldPermissions, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedPermissions(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, groupmember.FieldPermissions, value)
+		})
+	}
+	if _u.mutation.PermissionsCleared() {
+		_spec.ClearField(groupmember.FieldPermissions, field.TypeJSON)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -170,6 +170,16 @@ func JoinedAtLTE(v time.Time) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldLTE(FieldJoinedAt, v))
 }
 
+// PermissionsIsNil applies the IsNil predicate on the "permissions" field.
+func PermissionsIsNil() predicate.GroupMember {
+	return predicate.GroupMember(sql.FieldIsNull(FieldPermissions))
+}
+
+// PermissionsNotNil applies the NotNil predicate on the "permissions" field.
+func PermissionsNotNil() predicate.GroupMember {
+	return predicate.GroupMember(sql.FieldNotNull(FieldPermissions))
+}
+
 // HasUser applies the HasEdge predicate on the "user" edge.
 func HasUser() predicate.GroupMember {
 	return predicate.GroupMember(func(s *sql.Selector) {

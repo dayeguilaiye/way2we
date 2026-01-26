@@ -30,6 +30,9 @@ func (GroupMember) Fields() []ent.Field {
 			Default(time.Now).
 			Immutable().
 			Comment("When the user joined the group"),
+		field.JSON("permissions", []string{}).
+			Optional().
+			Comment("Granular permissions for the member"),
 	}
 }
 

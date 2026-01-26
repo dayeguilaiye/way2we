@@ -435,5 +435,65 @@
     "groupJoinAction": "Join Existing Group",
     "@groupJoinAction": {
         "description": "Action to join an existing group"
-    }
+    },
+    
+    "memberManagementTitle": "Member Management",
+    "@memberManagementTitle": {
+        "description": "Title for member management page"
+    },
+    "noMembersWarning": "No members found in this group.",
+    "@noMembersWarning": {
+        "description": "Warning shown when member list is empty"
+    },
+    "commonRetry": "Retry",
+    "@commonRetry": {
+        "description": "General retry button text"
+    },
+
+    "memberDetailTitle": "Member Details",
+    "@memberDetailTitle": {
+        "description": "Title for member detail page"
+    },
+    "memberRoleLabel": "Group Role",
+    "@memberRoleLabel": {
+        "description": "Label for group role section"
+    },
+    "memberPermissionsLabel": "Granular Permissions",
+    "@memberPermissionsLabel": {
+        "description": "Label for permissions section"
+    },
+    "memberAdminPermissionNote": "Administrators have all permissions by default.",
+    "@memberAdminPermissionNote": {
+        "description": "Note explaining admin permissions"
+    },
+    "memberJoinedDate": "Joined {date}",
+    "@memberJoinedDate": {
+        "description": "Member joined date",
+        "placeholders": {
+            "date": {"type": "String"}
+        }
+    },
+    "roleAdmin": "Admin",
+    "@roleAdmin": {
+        "description": "Admin role label"
+    },
+    "roleMember": "Member",
+    "@roleMember": {
+        "description": "Member role label"
+    },
+    
+    "permCreateAgreement": "Create Agreement",
+    "@permCreateAgreement": { "description": "Permission label" },
+    "permEditAgreement": "Edit Agreement",
+    "@permEditAgreement": { "description": "Permission label" },
+    "permDeleteAgreement": "Delete Agreement",
+    "@permDeleteAgreement": { "description": "Permission label" },
+    "permRecordForOthers": "Record for Others",
+    "@permRecordForOthers": { "description": "Permission label" },
+    "permModifyDefaults": "Modify Group Defaults",
+    "@permModifyDefaults": { "description": "Permission label" },
+    "permCreateSpecialEvents": "Create Special Events",
+    "@permCreateSpecialEvents": { "description": "Permission label" },
+    "permRevokeRecords": "Revoke Records",
+    "@permRevokeRecords": { "description": "Permission label" }
 }

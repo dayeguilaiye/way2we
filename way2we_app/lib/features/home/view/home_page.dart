@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:way2we_app/features/auth/bloc/authentication_bloc.dart';
 import 'package:way2we_app/features/group/bloc/group_control_bloc.dart';
 import 'package:way2we_app/features/group/view/invitation_page.dart';
+import 'package:way2we_app/features/group/view/member_management_page.dart';
 import 'package:way2we_app/features/group/view/widgets/group_switcher_sheet.dart';
 import 'package:way2we_app/features/profile/view/profile_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
@@ -163,6 +164,32 @@ class HomePage extends StatelessWidget {
                           context,
                           icon: Icons.stars_outlined,
                           label: 'Rewards (Coming Soon)',
+                        ),
+                        const SizedBox(height: AppSpacing.space4),
+                        // Member Management Entry
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MemberManagementPage.route(
+                                groupId: selectedGroup.id,
+                                groupName: selectedGroup.name,
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.people_outline,
+                                size: 32,
+                                color: theme.colorScheme.primary,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                l10n.memberManagementTitle,
+                                style: theme.textTheme.labelMedium,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ],

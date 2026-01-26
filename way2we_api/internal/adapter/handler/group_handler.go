@@ -7,6 +7,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/way2we/way2we_api/ent"
+	"github.com/way2we/way2we_api/ent/groupmember"
 	"github.com/way2we/way2we_api/internal/app/group"
 )
 
@@ -378,4 +379,187 @@ func (h *GroupHandler) GetUserGroups(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, resp)
+}
+
+// MemberDTO represents member info in API response.
+type MemberDTO struct {
+	ID          int      `json:"id"`
+	UserID      int      `json:"user_id"`
+	Nickname    string   `json:"nickname"`
+	AvatarURL   string   `json:"avatar_url"`
+	Role        string   `json:"role"`
+	Permissions []string `json:"permissions"`
+	JoinedAt    string   `json:"joined_at"`
+}
+
+// ListMembersResponse represents the response for listing members.
+type ListMembersResponse struct {
+	Members []MemberDTO `json:"members"`
+}
+
+// ListMembers handles GET /v1/groups/:id/members
+func (h *GroupHandler) ListMembers(c echo.Context) error {
+	userID, ok := c.Get("user_id").(int)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, ErrorResponse{
+			Code:    "ERR_UNAUTHORIZED",
+			Message: "未授权",
+		})
+	}
+
+	groupIDStr := c.Param("id")
+	groupID, err := strconv.Atoi(groupIDStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "ERR_INVALID_GROUP_ID",
+			Message: "无效的群组ID",
+		})
+	}
+
+	members, err := h.groupService.ListMembers(c.Request().Context(), groupID, userID)
+	if err != nil {
+		if errors.Is(err, group.ErrNotAdmin) {
+			return c.JSON(http.StatusForbidden, ErrorResponse{
+				Code:    "ERR_FORBIDDEN",
+				Message: "您无权查看该群组的成员列表",
+			})
+		}
+		if errors.Is(err, group.ErrGroupNotFound) {
+			return c.JSON(http.StatusNotFound, ErrorResponse{
+				Code:    "ERR_GROUP_NOT_FOUND",
+				Message: "群组不存在",
+			})
+		}
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Code:    "ERR_LIST_MEMBERS_FAILED",
+			Message: "获取成员列表失败",
+		})
+	}
+
+	resp := ListMembersResponse{
+		Members: make([]MemberDTO, 0, len(members)),
+	}
+	for _, m := range members {
+		resp.Members = append(resp.Members, MemberDTO{
+			ID:          m.ID,
+			UserID:      m.UserID,
+			Nickname:    m.Nickname,
+			AvatarURL:   m.AvatarURL,
+			Role:        string(m.Role),
+			Permissions: m.Permissions,
+			JoinedAt:    m.JoinedAt,
+		})
+	}
+
+	return c.JSON(http.StatusOK, resp)
+}
+
+// UpdateMemberRoleRequest represents request to update member role.
+type UpdateMemberRoleRequest struct {
+	Role string `json:"role"`
+}
+
+// UpdateMemberRole handles PUT /v1/groups/:id/members/:userId/role
+func (h *GroupHandler) UpdateMemberRole(c echo.Context) error {
+	actorID, ok := c.Get("user_id").(int)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, ErrorResponse{
+			Code:    "ERR_UNAUTHORIZED",
+			Message: "未授权",
+		})
+	}
+
+	groupID, _ := strconv.Atoi(c.Param("id"))
+	targetUserID, _ := strconv.Atoi(c.Param("userId"))
+
+	var req UpdateMemberRoleRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "ERR_INVALID_REQUEST",
+			Message: "请求格式无效",
+		})
+	}
+
+	err := h.groupService.UpdateMemberRole(c.Request().Context(), groupID, targetUserID, groupmember.Role(req.Role), actorID)
+	if err != nil {
+		if errors.Is(err, group.ErrNotAdmin) {
+			return c.JSON(http.StatusForbidden, ErrorResponse{
+				Code:    "ERR_NOT_ADMIN",
+				Message: "仅管理员可修改成员角色",
+			})
+		}
+		if errors.Is(err, group.ErrLastAdminCannotDemote) {
+			return c.JSON(http.StatusBadRequest, ErrorResponse{
+				Code:    "ERR_LAST_ADMIN",
+				Message: "群组必须至少保留一名管理员",
+			})
+		}
+		if errors.Is(err, group.ErrMemberNotFound) {
+			return c.JSON(http.StatusNotFound, ErrorResponse{
+				Code:    "ERR_MEMBER_NOT_FOUND",
+				Message: "成员不在群组中",
+			})
+		}
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Code:    "ERR_UPDATE_ROLE_FAILED",
+			Message: "更新角色失败",
+		})
+	}
+
+	return c.NoContent(http.StatusOK)
+}
+
+// UpdateMemberPermissionsRequest represents request to update member permissions.
+type UpdateMemberPermissionsRequest struct {
+	Permissions []string `json:"permissions"`
+}
+
+// UpdateMemberPermissions handles PUT /v1/groups/:id/members/:userId/permissions
+func (h *GroupHandler) UpdateMemberPermissions(c echo.Context) error {
+	actorID, ok := c.Get("user_id").(int)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, ErrorResponse{
+			Code:    "ERR_UNAUTHORIZED",
+			Message: "未授权",
+		})
+	}
+
+	groupID, _ := strconv.Atoi(c.Param("id"))
+	targetUserID, _ := strconv.Atoi(c.Param("userId"))
+
+	var req UpdateMemberPermissionsRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "ERR_INVALID_REQUEST",
+			Message: "请求格式无效",
+		})
+	}
+
+	err := h.groupService.UpdateMemberPermissions(c.Request().Context(), groupID, targetUserID, req.Permissions, actorID)
+	if err != nil {
+		if errors.Is(err, group.ErrNotAdmin) {
+			return c.JSON(http.StatusForbidden, ErrorResponse{
+				Code:    "ERR_NOT_ADMIN",
+				Message: "仅管理员可分配权限",
+			})
+		}
+		if errors.Is(err, group.ErrPermissionInvalid) {
+			return c.JSON(http.StatusBadRequest, ErrorResponse{
+				Code:    "ERR_INVALID_PERMISSION",
+				Message: "包含无效的权限项",
+			})
+		}
+		if errors.Is(err, group.ErrMemberNotFound) {
+			return c.JSON(http.StatusNotFound, ErrorResponse{
+				Code:    "ERR_MEMBER_NOT_FOUND",
+				Message: "成员不在群组中",
+			})
+		}
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Code:    "ERR_UPDATE_PERMISSIONS_FAILED",
+			Message: "更新权限失败",
+		})
+	}
+
+	return c.NoContent(http.StatusOK)
 }

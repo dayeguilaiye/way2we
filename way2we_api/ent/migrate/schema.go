@@ -28,6 +28,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"admin", "member"}, Default: "member"},
 		{Name: "joined_at", Type: field.TypeTime},
+		{Name: "permissions", Type: field.TypeJSON, Nullable: true},
 		{Name: "group_id", Type: field.TypeInt},
 		{Name: "user_id", Type: field.TypeInt},
 	}
@@ -39,13 +40,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "group_members_groups_members",
-				Columns:    []*schema.Column{GroupMembersColumns[3]},
+				Columns:    []*schema.Column{GroupMembersColumns[4]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "group_members_users_user",
-				Columns:    []*schema.Column{GroupMembersColumns[4]},
+				Columns:    []*schema.Column{GroupMembersColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -54,7 +55,7 @@ var (
 			{
 				Name:    "groupmember_user_id_group_id",
 				Unique:  true,
-				Columns: []*schema.Column{GroupMembersColumns[4], GroupMembersColumns[3]},
+				Columns: []*schema.Column{GroupMembersColumns[5], GroupMembersColumns[4]},
 			},
 		},
 	}

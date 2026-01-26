@@ -23,6 +23,8 @@ const (
 	FieldRole = "role"
 	// FieldJoinedAt holds the string denoting the joined_at field in the database.
 	FieldJoinedAt = "joined_at"
+	// FieldPermissions holds the string denoting the permissions field in the database.
+	FieldPermissions = "permissions"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
@@ -52,6 +54,7 @@ var Columns = []string{
 	FieldGroupID,
 	FieldRole,
 	FieldJoinedAt,
+	FieldPermissions,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
