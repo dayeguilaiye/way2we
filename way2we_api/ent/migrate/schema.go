@@ -8,6 +8,53 @@ import (
 )
 
 var (
+	// AgreementsColumns holds the columns for the "agreements" table.
+	AgreementsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString, Size: 50},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 200},
+		{Name: "points", Type: field.TypeInt},
+		{Name: "require_confirmation", Type: field.TypeBool, Default: true},
+		{Name: "cover_image_url", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"active", "inactive"}, Default: "active"},
+		{Name: "applicable_member_ids", Type: field.TypeJSON, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "creator_id", Type: field.TypeInt},
+		{Name: "group_id", Type: field.TypeInt},
+	}
+	// AgreementsTable holds the schema information for the "agreements" table.
+	AgreementsTable = &schema.Table{
+		Name:       "agreements",
+		Columns:    AgreementsColumns,
+		PrimaryKey: []*schema.Column{AgreementsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "agreements_users_creator",
+				Columns:    []*schema.Column{AgreementsColumns[10]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "agreements_groups_agreements",
+				Columns:    []*schema.Column{AgreementsColumns[11]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "agreement_group_id",
+				Unique:  false,
+				Columns: []*schema.Column{AgreementsColumns[11]},
+			},
+			{
+				Name:    "agreement_group_id_status",
+				Unique:  false,
+				Columns: []*schema.Column{AgreementsColumns[11], AgreementsColumns[6]},
+			},
+		},
+	}
 	// GroupsColumns holds the columns for the "groups" table.
 	GroupsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -124,6 +171,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		AgreementsTable,
 		GroupsTable,
 		GroupMembersTable,
 		TokenBlacklistsTable,
@@ -133,6 +181,8 @@ var (
 )
 
 func init() {
+	AgreementsTable.ForeignKeys[0].RefTable = UsersTable
+	AgreementsTable.ForeignKeys[1].RefTable = GroupsTable
 	GroupMembersTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupMembersTable.ForeignKeys[1].RefTable = UsersTable
 	UserIdentitiesTable.ForeignKeys[0].RefTable = UsersTable

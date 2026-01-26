@@ -97,6 +97,7 @@ void main() {
                 joinedAt: '',
                 createdAt: '',
                 memberCount: 1,
+                permissions: [],
               ),
             ],
           ),

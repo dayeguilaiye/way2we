@@ -20,6 +20,7 @@ void main() {
         role: 'admin',
         joinedAt: '2023-01-01',
         createdAt: '2023-01-01',
+        permissions: [],
       ),
       const UserGroup(
         id: 2,
@@ -28,6 +29,7 @@ void main() {
         role: 'member',
         joinedAt: '2023-01-01',
         createdAt: '2023-01-01',
+        permissions: [],
       ),
     ];
 

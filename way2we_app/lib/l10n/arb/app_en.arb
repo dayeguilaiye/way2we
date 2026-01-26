@@ -543,5 +543,130 @@
     "saveSuccess": "Settings saved successfully",
     "@saveSuccess": {
         "description": "Save success message"
+    },
+    "retry": "Retry",
+    "@retry": {
+        "description": "Retry button text"
+    },
+
+    "agreementTabTitle": "Agreements",
+    "@agreementTabTitle": {
+        "description": "Agreements tab title"
+    },
+    "agreementEmptyTitle": "No agreements yet",
+    "@agreementEmptyTitle": {
+        "description": "Empty state title for agreements"
+    },
+    "agreementEmptySubtitle": "Create your first agreement",
+    "@agreementEmptySubtitle": {
+        "description": "Empty state subtitle for agreements"
+    },
+    "agreementNoInactive": "No inactive agreements",
+    "@agreementNoInactive": {
+        "description": "Empty state for inactive agreements tab"
+    },
+    "agreementCreateButton": "Create Agreement",
+    "@agreementCreateButton": {
+        "description": "Create agreement button text"
+    },
+    "agreementNameLabel": "Name",
+    "@agreementNameLabel": {
+        "description": "Agreement name field label"
+    },
+    "agreementNamePlaceholder": "e.g., Do the dishes",
+    "@agreementNamePlaceholder": {
+        "description": "Agreement name field placeholder"
+    },
+    "agreementNameRequired": "Name is required",
+    "@agreementNameRequired": {
+        "description": "Name required validation message"
+    },
+    "agreementDescriptionLabel": "Description (optional)",
+    "@agreementDescriptionLabel": {
+        "description": "Agreement description field label"
+    },
+    "agreementPointsLabel": "Points",
+    "@agreementPointsLabel": {
+        "description": "Agreement points field label"
+    },
+    "agreementPointsInvalid": "Points must be between 1 and 99999",
+    "@agreementPointsInvalid": {
+        "description": "Points validation message"
+    },
+    "agreementRequireConfirmationLabel": "Requires confirmation",
+    "@agreementRequireConfirmationLabel": {
+        "description": "Require confirmation toggle label"
+    },
+    "agreementRequireConfirmationHint": "Completion must be confirmed by another member",
+    "@agreementRequireConfirmationHint": {
+        "description": "Require confirmation toggle hint"
+    },
+    "agreementCoverImageLabel": "Cover image (optional)",
+    "@agreementCoverImageLabel": {
+        "description": "Cover image field label"
+    },
+    "agreementApplicableMembersLabel": "Applicable to",
+    "@agreementApplicableMembersLabel": {
+        "description": "Applicable members field label"
+    },
+    "agreementAllMembers": "All members",
+    "@agreementAllMembers": {
+        "description": "All members option text"
+    },
+    "agreementMembersCount": "members",
+    "@agreementMembersCount": {
+        "description": "Members count suffix"
+    },
+    "agreementSaveButton": "Save",
+    "@agreementSaveButton": {
+        "description": "Save agreement button text"
+    },
+    "agreementCreateSuccess": "Agreement created",
+    "@agreementCreateSuccess": {
+        "description": "Agreement creation success message"
+    },
+    "agreementCreateError": "Failed to create agreement",
+    "@agreementCreateError": {
+        "description": "Agreement creation error message"
+    },
+    "agreementUpdateSuccess": "Agreement updated",
+    "@agreementUpdateSuccess": {
+        "description": "Agreement update success message"
+    },
+    "agreementUpdateError": "Failed to update agreement",
+    "@agreementUpdateError": {
+        "description": "Agreement update error message"
+    },
+    "agreementEditTitle": "Edit Agreement",
+    "@agreementEditTitle": {
+        "description": "Edit agreement page title"
+    },
+    "agreementDetails": "Details",
+    "@agreementDetails": {
+        "description": "Agreement details button text"
+    },
+    "agreementRecordComplete": "Record",
+    "@agreementRecordComplete": {
+        "description": "Record completion button text"
+    },
+    "agreementDeactivate": "Deactivate",
+    "@agreementDeactivate": {
+        "description": "Deactivate agreement button text"
+    },
+    "agreementActivate": "Activate",
+    "@agreementActivate": {
+        "description": "Activate agreement button text"
+    },
+    "agreementStatusActive": "Active",
+    "@agreementStatusActive": {
+        "description": "Active status label"
+    },
+    "agreementStatusInactive": "Inactive",
+    "@agreementStatusInactive": {
+        "description": "Inactive status label"
+    },
+    "agreementRequiresConfirmation": "Requires confirmation",
+    "@agreementRequiresConfirmation": {
+        "description": "Requires confirmation badge text"
     }
 }

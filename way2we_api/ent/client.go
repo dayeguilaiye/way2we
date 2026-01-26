@@ -15,6 +15,7 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/way2we/way2we_api/ent/agreement"
 	"github.com/way2we/way2we_api/ent/group"
 	"github.com/way2we/way2we_api/ent/groupmember"
 	"github.com/way2we/way2we_api/ent/tokenblacklist"
@@ -27,6 +28,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// Agreement is the client for interacting with the Agreement builders.
+	Agreement *AgreementClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// GroupMember is the client for interacting with the GroupMember builders.
@@ -48,6 +51,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.Agreement = NewAgreementClient(c.config)
 	c.Group = NewGroupClient(c.config)
 	c.GroupMember = NewGroupMemberClient(c.config)
 	c.TokenBlacklist = NewTokenBlacklistClient(c.config)
@@ -145,6 +149,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:            ctx,
 		config:         cfg,
+		Agreement:      NewAgreementClient(cfg),
 		Group:          NewGroupClient(cfg),
 		GroupMember:    NewGroupMemberClient(cfg),
 		TokenBlacklist: NewTokenBlacklistClient(cfg),
@@ -169,6 +174,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:            ctx,
 		config:         cfg,
+		Agreement:      NewAgreementClient(cfg),
 		Group:          NewGroupClient(cfg),
 		GroupMember:    NewGroupMemberClient(cfg),
 		TokenBlacklist: NewTokenBlacklistClient(cfg),
@@ -180,7 +186,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Group.
+//		Agreement.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -202,26 +208,28 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.Group.Use(hooks...)
-	c.GroupMember.Use(hooks...)
-	c.TokenBlacklist.Use(hooks...)
-	c.User.Use(hooks...)
-	c.UserIdentity.Use(hooks...)
+	for _, n := range []interface{ Use(...Hook) }{
+		c.Agreement, c.Group, c.GroupMember, c.TokenBlacklist, c.User, c.UserIdentity,
+	} {
+		n.Use(hooks...)
+	}
 }
 
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
-	c.Group.Intercept(interceptors...)
-	c.GroupMember.Intercept(interceptors...)
-	c.TokenBlacklist.Intercept(interceptors...)
-	c.User.Intercept(interceptors...)
-	c.UserIdentity.Intercept(interceptors...)
+	for _, n := range []interface{ Intercept(...Interceptor) }{
+		c.Agreement, c.Group, c.GroupMember, c.TokenBlacklist, c.User, c.UserIdentity,
+	} {
+		n.Intercept(interceptors...)
+	}
 }
 
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
+	case *AgreementMutation:
+		return c.Agreement.mutate(ctx, m)
 	case *GroupMutation:
 		return c.Group.mutate(ctx, m)
 	case *GroupMemberMutation:
@@ -234,6 +242,171 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.UserIdentity.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
+	}
+}
+
+// AgreementClient is a client for the Agreement schema.
+type AgreementClient struct {
+	config
+}
+
+// NewAgreementClient returns a client for the Agreement from the given config.
+func NewAgreementClient(c config) *AgreementClient {
+	return &AgreementClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `agreement.Hooks(f(g(h())))`.
+func (c *AgreementClient) Use(hooks ...Hook) {
+	c.hooks.Agreement = append(c.hooks.Agreement, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `agreement.Intercept(f(g(h())))`.
+func (c *AgreementClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Agreement = append(c.inters.Agreement, interceptors...)
+}
+
+// Create returns a builder for creating a Agreement entity.
+func (c *AgreementClient) Create() *AgreementCreate {
+	mutation := newAgreementMutation(c.config, OpCreate)
+	return &AgreementCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Agreement entities.
+func (c *AgreementClient) CreateBulk(builders ...*AgreementCreate) *AgreementCreateBulk {
+	return &AgreementCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AgreementClient) MapCreateBulk(slice any, setFunc func(*AgreementCreate, int)) *AgreementCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AgreementCreateBulk{err: fmt.Errorf("calling to AgreementClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AgreementCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AgreementCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Agreement.
+func (c *AgreementClient) Update() *AgreementUpdate {
+	mutation := newAgreementMutation(c.config, OpUpdate)
+	return &AgreementUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AgreementClient) UpdateOne(_m *Agreement) *AgreementUpdateOne {
+	mutation := newAgreementMutation(c.config, OpUpdateOne, withAgreement(_m))
+	return &AgreementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AgreementClient) UpdateOneID(id int) *AgreementUpdateOne {
+	mutation := newAgreementMutation(c.config, OpUpdateOne, withAgreementID(id))
+	return &AgreementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Agreement.
+func (c *AgreementClient) Delete() *AgreementDelete {
+	mutation := newAgreementMutation(c.config, OpDelete)
+	return &AgreementDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AgreementClient) DeleteOne(_m *Agreement) *AgreementDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AgreementClient) DeleteOneID(id int) *AgreementDeleteOne {
+	builder := c.Delete().Where(agreement.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AgreementDeleteOne{builder}
+}
+
+// Query returns a query builder for Agreement.
+func (c *AgreementClient) Query() *AgreementQuery {
+	return &AgreementQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAgreement},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Agreement entity by its id.
+func (c *AgreementClient) Get(ctx context.Context, id int) (*Agreement, error) {
+	return c.Query().Where(agreement.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AgreementClient) GetX(ctx context.Context, id int) *Agreement {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryGroup queries the group edge of a Agreement.
+func (c *AgreementClient) QueryGroup(_m *Agreement) *GroupQuery {
+	query := (&GroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(agreement.Table, agreement.FieldID, id),
+			sqlgraph.To(group.Table, group.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, agreement.GroupTable, agreement.GroupColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCreator queries the creator edge of a Agreement.
+func (c *AgreementClient) QueryCreator(_m *Agreement) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(agreement.Table, agreement.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, agreement.CreatorTable, agreement.CreatorColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AgreementClient) Hooks() []Hook {
+	return c.hooks.Agreement
+}
+
+// Interceptors returns the client interceptors.
+func (c *AgreementClient) Interceptors() []Interceptor {
+	return c.inters.Agreement
+}
+
+func (c *AgreementClient) mutate(ctx context.Context, m *AgreementMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AgreementCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AgreementUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AgreementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AgreementDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Agreement mutation op: %q", m.Op())
 	}
 }
 
@@ -354,6 +527,22 @@ func (c *GroupClient) QueryMembers(_m *Group) *GroupMemberQuery {
 			sqlgraph.From(group.Table, group.FieldID, id),
 			sqlgraph.To(groupmember.Table, groupmember.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, group.MembersTable, group.MembersColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAgreements queries the agreements edge of a Group.
+func (c *GroupClient) QueryAgreements(_m *Group) *AgreementQuery {
+	query := (&AgreementClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, id),
+			sqlgraph.To(agreement.Table, agreement.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.AgreementsTable, group.AgreementsColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1001,9 +1190,10 @@ func (c *UserIdentityClient) mutate(ctx context.Context, m *UserIdentityMutation
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Group, GroupMember, TokenBlacklist, User, UserIdentity []ent.Hook
+		Agreement, Group, GroupMember, TokenBlacklist, User, UserIdentity []ent.Hook
 	}
 	inters struct {
-		Group, GroupMember, TokenBlacklist, User, UserIdentity []ent.Interceptor
+		Agreement, Group, GroupMember, TokenBlacklist, User,
+		UserIdentity []ent.Interceptor
 	}
 )

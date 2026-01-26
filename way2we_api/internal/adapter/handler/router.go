@@ -9,7 +9,7 @@ import (
 )
 
 // RegisterRoutes registers all routes for the application.
-func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service, authHandler *AuthHandler, userHandler *UserHandler, groupHandler *GroupHandler, groupService *group.Service) {
+func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service, authHandler *AuthHandler, userHandler *UserHandler, groupHandler *GroupHandler, groupService *group.Service, agreementHandler *AgreementHandler) {
 	v1 := e.Group("/v1")
 
 	// Auth Routes (Public)
@@ -53,6 +53,14 @@ func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service,
 	// Group Settings Routes
 	groupRoutes.GET("/:id/settings", groupHandler.GetGroupSettings, middleware.RequireGroupPermission(groupService, group.PermissionModifyDefaults))
 	groupRoutes.PUT("/:id/settings", groupHandler.UpdateGroupSettings, middleware.RequireGroupPermission(groupService, group.PermissionModifyDefaults))
+
+	// Agreement Routes (Protected - nested under groups)
+	// Permission checks handled in service layer
+	groupRoutes.GET("/:groupId/agreements", agreementHandler.ListAgreements)
+	groupRoutes.POST("/:groupId/agreements", agreementHandler.CreateAgreement)
+	groupRoutes.GET("/:groupId/agreements/:id", agreementHandler.GetAgreement)
+	groupRoutes.PUT("/:groupId/agreements/:id", agreementHandler.UpdateAgreement)
+	groupRoutes.PUT("/:groupId/agreements/:id/status", agreementHandler.UpdateAgreementStatus)
 
 	// Group Routes (Public - for invitation preview)
 	v1.GET("/groups/by-invitation/:code", groupHandler.GetGroupByInvitation)

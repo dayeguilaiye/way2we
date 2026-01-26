@@ -59,8 +59,8 @@ development_status:
   epic-2-retrospective: optional
 
   # Epic 3: 约定规则管理
-  epic-3: backlog
-  3-1-agreement-management: backlog  # 合并了查看约定列表、创建、编辑、停用与启用约定
+  epic-3: in-progress
+  3-1-agreement-management: done  # 合并了查看约定列表、创建、编辑、停用与启用约定
   3-2-pin-agreement: backlog
   epic-3-retrospective: optional
 

@@ -34,6 +34,8 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// EdgeMembers holds the string denoting the members edge name in mutations.
 	EdgeMembers = "members"
+	// EdgeAgreements holds the string denoting the agreements edge name in mutations.
+	EdgeAgreements = "agreements"
 	// Table holds the table name of the group in the database.
 	Table = "groups"
 	// MembersTable is the table that holds the members relation/edge.
@@ -43,6 +45,13 @@ const (
 	MembersInverseTable = "group_members"
 	// MembersColumn is the table column denoting the members relation/edge.
 	MembersColumn = "group_id"
+	// AgreementsTable is the table that holds the agreements relation/edge.
+	AgreementsTable = "agreements"
+	// AgreementsInverseTable is the table name for the Agreement entity.
+	// It exists in this package in order to avoid circular dependency with the "agreement" package.
+	AgreementsInverseTable = "agreements"
+	// AgreementsColumn is the table column denoting the agreements relation/edge.
+	AgreementsColumn = "group_id"
 )
 
 // Columns holds all SQL columns for group fields.
@@ -160,10 +169,31 @@ func ByMembers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newMembersStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByAgreementsCount orders the results by agreements count.
+func ByAgreementsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAgreementsStep(), opts...)
+	}
+}
+
+// ByAgreements orders the results by agreements terms.
+func ByAgreements(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAgreementsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newMembersStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MembersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, MembersTable, MembersColumn),
+	)
+}
+func newAgreementsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AgreementsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, AgreementsTable, AgreementsColumn),
 	)
 }

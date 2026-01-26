@@ -61,5 +61,8 @@ func (Group) Edges() []ent.Edge {
 		// Use GroupMember as the through edge to store role
 		edge.To("members", GroupMember.Type).
 			Comment("Group members with roles"),
+		// Group's agreements
+		edge.To("agreements", Agreement.Type).
+			Comment("Agreements belonging to this group"),
 	}
 }

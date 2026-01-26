@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:way2we_app/features/agreement/view/agreement_list_page.dart';
 import 'package:way2we_app/features/auth/bloc/authentication_bloc.dart';
 import 'package:way2we_app/features/group/bloc/group_control_bloc.dart';
 import 'package:way2we_app/features/group/view/group_default_settings_page.dart';
@@ -155,10 +156,27 @@ class HomePage extends StatelessWidget {
 
                         // Placeholder for future content
                         const SizedBox(height: AppSpacing.space6),
-                        _buildFeaturePlaceholder(
-                          context,
-                          icon: Icons.assignment_outlined,
-                          label: 'Agreements (Coming Soon)',
+                        // Agreements Entry
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              AgreementListPage.route(groupId: selectedGroup.id),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.assignment_outlined,
+                                size: 32,
+                                color: theme.colorScheme.primary,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                l10n.agreementTabTitle,
+                                style: theme.textTheme.labelMedium,
+                              ),
+                            ],
+                          ),
                         ),
                         const SizedBox(height: AppSpacing.space4),
                         _buildFeaturePlaceholder(

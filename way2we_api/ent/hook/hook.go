@@ -9,6 +9,18 @@ import (
 	"github.com/way2we/way2we_api/ent"
 )
 
+// The AgreementFunc type is an adapter to allow the use of ordinary
+// function as Agreement mutator.
+type AgreementFunc func(context.Context, *ent.AgreementMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AgreementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AgreementMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AgreementMutation", m)
+}
+
 // The GroupFunc type is an adapter to allow the use of ordinary
 // function as Group mutator.
 type GroupFunc func(context.Context, *ent.GroupMutation) (ent.Value, error)

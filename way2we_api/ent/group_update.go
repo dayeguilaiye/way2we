@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/way2we/way2we_api/ent/agreement"
 	"github.com/way2we/way2we_api/ent/group"
 	"github.com/way2we/way2we_api/ent/groupmember"
 	"github.com/way2we/way2we_api/ent/predicate"
@@ -167,6 +168,21 @@ func (_u *GroupUpdate) AddMembers(v ...*GroupMember) *GroupUpdate {
 	return _u.AddMemberIDs(ids...)
 }
 
+// AddAgreementIDs adds the "agreements" edge to the Agreement entity by IDs.
+func (_u *GroupUpdate) AddAgreementIDs(ids ...int) *GroupUpdate {
+	_u.mutation.AddAgreementIDs(ids...)
+	return _u
+}
+
+// AddAgreements adds the "agreements" edges to the Agreement entity.
+func (_u *GroupUpdate) AddAgreements(v ...*Agreement) *GroupUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddAgreementIDs(ids...)
+}
+
 // Mutation returns the GroupMutation object of the builder.
 func (_u *GroupUpdate) Mutation() *GroupMutation {
 	return _u.mutation
@@ -191,6 +207,27 @@ func (_u *GroupUpdate) RemoveMembers(v ...*GroupMember) *GroupUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveMemberIDs(ids...)
+}
+
+// ClearAgreements clears all "agreements" edges to the Agreement entity.
+func (_u *GroupUpdate) ClearAgreements() *GroupUpdate {
+	_u.mutation.ClearAgreements()
+	return _u
+}
+
+// RemoveAgreementIDs removes the "agreements" edge to Agreement entities by IDs.
+func (_u *GroupUpdate) RemoveAgreementIDs(ids ...int) *GroupUpdate {
+	_u.mutation.RemoveAgreementIDs(ids...)
+	return _u
+}
+
+// RemoveAgreements removes "agreements" edges to Agreement entities.
+func (_u *GroupUpdate) RemoveAgreements(v ...*Agreement) *GroupUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveAgreementIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -337,6 +374,51 @@ func (_u *GroupUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(groupmember.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.AgreementsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.AgreementsTable,
+			Columns: []string{group.AgreementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(agreement.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedAgreementsIDs(); len(nodes) > 0 && !_u.mutation.AgreementsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.AgreementsTable,
+			Columns: []string{group.AgreementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(agreement.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.AgreementsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.AgreementsTable,
+			Columns: []string{group.AgreementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(agreement.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -502,6 +584,21 @@ func (_u *GroupUpdateOne) AddMembers(v ...*GroupMember) *GroupUpdateOne {
 	return _u.AddMemberIDs(ids...)
 }
 
+// AddAgreementIDs adds the "agreements" edge to the Agreement entity by IDs.
+func (_u *GroupUpdateOne) AddAgreementIDs(ids ...int) *GroupUpdateOne {
+	_u.mutation.AddAgreementIDs(ids...)
+	return _u
+}
+
+// AddAgreements adds the "agreements" edges to the Agreement entity.
+func (_u *GroupUpdateOne) AddAgreements(v ...*Agreement) *GroupUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddAgreementIDs(ids...)
+}
+
 // Mutation returns the GroupMutation object of the builder.
 func (_u *GroupUpdateOne) Mutation() *GroupMutation {
 	return _u.mutation
@@ -526,6 +623,27 @@ func (_u *GroupUpdateOne) RemoveMembers(v ...*GroupMember) *GroupUpdateOne {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveMemberIDs(ids...)
+}
+
+// ClearAgreements clears all "agreements" edges to the Agreement entity.
+func (_u *GroupUpdateOne) ClearAgreements() *GroupUpdateOne {
+	_u.mutation.ClearAgreements()
+	return _u
+}
+
+// RemoveAgreementIDs removes the "agreements" edge to Agreement entities by IDs.
+func (_u *GroupUpdateOne) RemoveAgreementIDs(ids ...int) *GroupUpdateOne {
+	_u.mutation.RemoveAgreementIDs(ids...)
+	return _u
+}
+
+// RemoveAgreements removes "agreements" edges to Agreement entities.
+func (_u *GroupUpdateOne) RemoveAgreements(v ...*Agreement) *GroupUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveAgreementIDs(ids...)
 }
 
 // Where appends a list predicates to the GroupUpdate builder.
@@ -702,6 +820,51 @@ func (_u *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error)
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(groupmember.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.AgreementsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.AgreementsTable,
+			Columns: []string{group.AgreementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(agreement.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedAgreementsIDs(); len(nodes) > 0 && !_u.mutation.AgreementsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.AgreementsTable,
+			Columns: []string{group.AgreementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(agreement.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.AgreementsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.AgreementsTable,
+			Columns: []string{group.AgreementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(agreement.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

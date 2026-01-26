@@ -354,6 +354,7 @@ type UserGroupInfo struct {
 	Role        groupmember.Role
 	MemberCount int
 	JoinedAt    string
+	Permissions []string
 }
 
 // GetUserGroups retrieves all groups that a user belongs to.
@@ -415,6 +416,7 @@ func (s *Service) GetUserGroups(ctx context.Context, userID int) ([]*UserGroupIn
 			Role:        m.Role,
 			MemberCount: countMap[groupID],
 			JoinedAt:    m.JoinedAt.Format("2006-01-02T15:04:05Z07:00"),
+			Permissions: m.Permissions,
 		})
 	}
 

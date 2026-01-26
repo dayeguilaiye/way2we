@@ -325,13 +325,14 @@ func (h *GroupHandler) JoinGroup(c echo.Context) error {
 
 // UserGroupDTO represents a group with user's membership info.
 type UserGroupDTO struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description,omitempty"`
-	MemberCount int    `json:"member_count"`
-	Role        string `json:"role"`
-	JoinedAt    string `json:"joined_at"`
-	CreatedAt   string `json:"created_at"`
+	ID          int      `json:"id"`
+	Name        string   `json:"name"`
+	Description string   `json:"description,omitempty"`
+	MemberCount int      `json:"member_count"`
+	Role        string   `json:"role"`
+	JoinedAt    string   `json:"joined_at"`
+	CreatedAt   string   `json:"created_at"`
+	Permissions []string `json:"permissions"`
 }
 
 // GetUserGroupsResponse represents the response for getting user's groups.
@@ -367,6 +368,10 @@ func (h *GroupHandler) GetUserGroups(c echo.Context) error {
 		Groups: make([]UserGroupDTO, 0, len(groups)),
 	}
 	for _, g := range groups {
+		permissions := g.Permissions
+		if permissions == nil {
+			permissions = []string{}
+		}
 		resp.Groups = append(resp.Groups, UserGroupDTO{
 			ID:          g.Group.ID,
 			Name:        g.Group.Name,
@@ -375,6 +380,7 @@ func (h *GroupHandler) GetUserGroups(c echo.Context) error {
 			Role:        string(g.Role),
 			JoinedAt:    g.JoinedAt,
 			CreatedAt:   g.Group.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+			Permissions: permissions,
 		})
 	}
 

@@ -107,11 +107,12 @@ class UserGroup {
   const UserGroup({
     required this.id,
     required this.name,
-    this.description,
     required this.memberCount,
     required this.role,
+    required this.permissions,
     required this.joinedAt,
     required this.createdAt,
+    this.description,
   });
 
   factory UserGroup.fromJson(Map<String, dynamic> json) {
@@ -121,6 +122,11 @@ class UserGroup {
       description: json['description'] as String?,
       memberCount: json['member_count'] as int? ?? 0,
       role: json['role'] as String,
+      permissions:
+          (json['permissions'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
       joinedAt: json['joined_at'] as String,
       createdAt: json['created_at'] as String,
     );
@@ -131,10 +137,16 @@ class UserGroup {
   final String? description;
   final int memberCount;
   final String role;
+  final List<String> permissions;
   final String joinedAt;
   final String createdAt;
 
   bool get isAdmin => role == 'admin';
+
+  bool hasPermission(String permission) {
+    if (isAdmin) return true;
+    return permissions.contains(permission);
+  }
 }
 
 /// Response model for get user groups API.

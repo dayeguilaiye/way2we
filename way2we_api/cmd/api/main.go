@@ -14,6 +14,7 @@ import (
 	adapterAuth "github.com/way2we/way2we_api/internal/adapter/auth"
 	"github.com/way2we/way2we_api/internal/adapter/handler"
 	"github.com/way2we/way2we_api/internal/adapter/storage"
+	"github.com/way2we/way2we_api/internal/app/agreement"
 	"github.com/way2we/way2we_api/internal/app/auth"
 	"github.com/way2we/way2we_api/internal/app/group"
 	"github.com/way2we/way2we_api/internal/app/user"
@@ -80,12 +81,16 @@ func main() {
 	// Initialize group service
 	groupService := group.NewService(client)
 
+	// Initialize agreement service
+	agreementService := agreement.NewService(client, groupService)
+
 	// Register routes
 	authHandler := handler.NewAuthHandler(authService)
 	userHandler := handler.NewUserHandler(userService, storageProvider)
 	groupHandler := handler.NewGroupHandler(groupService)
+	agreementHandler := handler.NewAgreementHandler(agreementService)
 
-	handler.RegisterRoutes(e, cfg, authService, authHandler, userHandler, groupHandler, groupService)
+	handler.RegisterRoutes(e, cfg, authService, authHandler, userHandler, groupHandler, groupService, agreementHandler)
 
 	// Routes
 	e.GET("/", func(c echo.Context) error {

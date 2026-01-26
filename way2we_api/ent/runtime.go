@@ -5,6 +5,7 @@ package ent
 import (
 	"time"
 
+	"github.com/way2we/way2we_api/ent/agreement"
 	"github.com/way2we/way2we_api/ent/group"
 	"github.com/way2we/way2we_api/ent/groupmember"
 	"github.com/way2we/way2we_api/ent/schema"
@@ -17,6 +18,62 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	agreementFields := schema.Agreement{}.Fields()
+	_ = agreementFields
+	// agreementDescName is the schema descriptor for name field.
+	agreementDescName := agreementFields[0].Descriptor()
+	// agreement.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	agreement.NameValidator = func() func(string) error {
+		validators := agreementDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// agreementDescDescription is the schema descriptor for description field.
+	agreementDescDescription := agreementFields[1].Descriptor()
+	// agreement.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	agreement.DescriptionValidator = agreementDescDescription.Validators[0].(func(string) error)
+	// agreementDescPoints is the schema descriptor for points field.
+	agreementDescPoints := agreementFields[2].Descriptor()
+	// agreement.PointsValidator is a validator for the "points" field. It is called by the builders before save.
+	agreement.PointsValidator = func() func(int) error {
+		validators := agreementDescPoints.Validators
+		fns := [...]func(int) error{
+			validators[0].(func(int) error),
+			validators[1].(func(int) error),
+		}
+		return func(points int) error {
+			for _, fn := range fns {
+				if err := fn(points); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// agreementDescRequireConfirmation is the schema descriptor for require_confirmation field.
+	agreementDescRequireConfirmation := agreementFields[3].Descriptor()
+	// agreement.DefaultRequireConfirmation holds the default value on creation for the require_confirmation field.
+	agreement.DefaultRequireConfirmation = agreementDescRequireConfirmation.Default.(bool)
+	// agreementDescCreatedAt is the schema descriptor for created_at field.
+	agreementDescCreatedAt := agreementFields[9].Descriptor()
+	// agreement.DefaultCreatedAt holds the default value on creation for the created_at field.
+	agreement.DefaultCreatedAt = agreementDescCreatedAt.Default.(func() time.Time)
+	// agreementDescUpdatedAt is the schema descriptor for updated_at field.
+	agreementDescUpdatedAt := agreementFields[10].Descriptor()
+	// agreement.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	agreement.DefaultUpdatedAt = agreementDescUpdatedAt.Default.(func() time.Time)
+	// agreement.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	agreement.UpdateDefaultUpdatedAt = agreementDescUpdatedAt.UpdateDefault.(func() time.Time)
 	groupFields := schema.Group{}.Fields()
 	_ = groupFields
 	// groupDescName is the schema descriptor for name field.
