@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 
 /// Exception thrown when profile API operations fail.
@@ -80,11 +81,13 @@ class ProfileProvider {
   Future<String> uploadAvatar(XFile imageFile) async {
     try {
       final token = await _storage.read(key: _tokenKey);
+      final mimeType = imageFile.mimeType;
 
       final formData = FormData.fromMap({
         'avatar': MultipartFile.fromBytes(
           await imageFile.readAsBytes(),
           filename: imageFile.name,
+          contentType: mimeType != null ? MediaType.parse(mimeType) : null,
         ),
       });
 

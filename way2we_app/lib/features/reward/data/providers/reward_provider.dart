@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:way2we_app/features/reward/data/models/reward.dart';
 
 /// Exception thrown when reward API operations fail.
@@ -192,15 +193,12 @@ class RewardProvider {
   /// Uploads a reward cover image and returns the URL.
   Future<String> uploadRewardCover(XFile imageFile) async {
     try {
-      final multipart = imageFile.path.isNotEmpty
-          ? await MultipartFile.fromFile(
-              imageFile.path,
-              filename: imageFile.name,
-            )
-          : MultipartFile.fromBytes(
-              await imageFile.readAsBytes(),
-              filename: imageFile.name,
-            );
+      final mimeType = imageFile.mimeType;
+      final multipart = MultipartFile.fromBytes(
+        await imageFile.readAsBytes(),
+        filename: imageFile.name,
+        contentType: mimeType != null ? MediaType.parse(mimeType) : null,
+      );
       final formData = FormData.fromMap({
         'cover': multipart,
       });
