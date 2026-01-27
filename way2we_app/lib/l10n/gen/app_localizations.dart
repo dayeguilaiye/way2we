@@ -1116,6 +1116,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something went wrong. Please try again.'**
   String get agreementGenericError;
+
+  /// No description provided for @rewardTabTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards'**
+  String get rewardTabTitle;
+
+  /// No description provided for @rewardStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get rewardStatusActive;
+
+  /// No description provided for @rewardStatusInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get rewardStatusInactive;
+
+  /// No description provided for @rewardEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No rewards yet'**
+  String get rewardEmptyTitle;
+
+  /// No description provided for @rewardEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first reward'**
+  String get rewardEmptySubtitle;
+
+  /// No description provided for @rewardNoInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'No inactive rewards'**
+  String get rewardNoInactive;
+
+  /// No description provided for @rewardCreateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Reward'**
+  String get rewardCreateButton;
+
+  /// No description provided for @rewardNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get rewardNameLabel;
+
+  /// No description provided for @rewardNamePlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Movie ticket'**
+  String get rewardNamePlaceholder;
+
+  /// No description provided for @rewardNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get rewardNameRequired;
+
+  /// No description provided for @rewardDescriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (optional)'**
+  String get rewardDescriptionLabel;
+
+  /// No description provided for @rewardCostPointsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost points'**
+  String get rewardCostPointsLabel;
+
+  /// No description provided for @rewardCostPointsInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Points must be between 1 and 99999'**
+  String get rewardCostPointsInvalid;
+
+  /// No description provided for @rewardAutoFulfillLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Fulfill'**
+  String get rewardAutoFulfillLabel;
+
+  /// No description provided for @rewardAutoCompleteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Complete'**
+  String get rewardAutoCompleteLabel;
+
+  /// No description provided for @rewardCoverImageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cover image (optional)'**
+  String get rewardCoverImageLabel;
+
+  /// No description provided for @rewardCoverUploadAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload cover'**
+  String get rewardCoverUploadAction;
+
+  /// No description provided for @rewardCoverUploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading...'**
+  String get rewardCoverUploading;
+
+  /// No description provided for @rewardCoverRemoveAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove cover'**
+  String get rewardCoverRemoveAction;
+
+  /// No description provided for @rewardCoverUploadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Cover upload failed'**
+  String get rewardCoverUploadError;
+
+  /// No description provided for @rewardSaveButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get rewardSaveButton;
+
+  /// No description provided for @rewardCreateSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward created'**
+  String get rewardCreateSuccess;
+
+  /// No description provided for @rewardCreateError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to create reward'**
+  String get rewardCreateError;
+
+  /// No description provided for @rewardUpdateSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward updated'**
+  String get rewardUpdateSuccess;
+
+  /// No description provided for @rewardUpdateError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update reward'**
+  String get rewardUpdateError;
+
+  /// No description provided for @rewardEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit reward'**
+  String get rewardEditTitle;
+
+  /// No description provided for @rewardDisableAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable'**
+  String get rewardDisableAction;
+
+  /// No description provided for @rewardEnableAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable'**
+  String get rewardEnableAction;
+
+  /// No description provided for @rewardDisableSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward disabled'**
+  String get rewardDisableSuccess;
+
+  /// No description provided for @rewardEnableSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward enabled'**
+  String get rewardEnableSuccess;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

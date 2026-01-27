@@ -538,4 +538,94 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get agreementGenericError => 'Something went wrong. Please try again.';
+
+  @override
+  String get rewardTabTitle => 'Rewards';
+
+  @override
+  String get rewardStatusActive => 'Active';
+
+  @override
+  String get rewardStatusInactive => 'Inactive';
+
+  @override
+  String get rewardEmptyTitle => 'No rewards yet';
+
+  @override
+  String get rewardEmptySubtitle => 'Create your first reward';
+
+  @override
+  String get rewardNoInactive => 'No inactive rewards';
+
+  @override
+  String get rewardCreateButton => 'Create Reward';
+
+  @override
+  String get rewardNameLabel => 'Name';
+
+  @override
+  String get rewardNamePlaceholder => 'e.g., Movie ticket';
+
+  @override
+  String get rewardNameRequired => 'Name is required';
+
+  @override
+  String get rewardDescriptionLabel => 'Description (optional)';
+
+  @override
+  String get rewardCostPointsLabel => 'Cost points';
+
+  @override
+  String get rewardCostPointsInvalid => 'Points must be between 1 and 99999';
+
+  @override
+  String get rewardAutoFulfillLabel => 'Auto Fulfill';
+
+  @override
+  String get rewardAutoCompleteLabel => 'Auto Complete';
+
+  @override
+  String get rewardCoverImageLabel => 'Cover image (optional)';
+
+  @override
+  String get rewardCoverUploadAction => 'Upload cover';
+
+  @override
+  String get rewardCoverUploading => 'Uploading...';
+
+  @override
+  String get rewardCoverRemoveAction => 'Remove cover';
+
+  @override
+  String get rewardCoverUploadError => 'Cover upload failed';
+
+  @override
+  String get rewardSaveButton => 'Save';
+
+  @override
+  String get rewardCreateSuccess => 'Reward created';
+
+  @override
+  String get rewardCreateError => 'Failed to create reward';
+
+  @override
+  String get rewardUpdateSuccess => 'Reward updated';
+
+  @override
+  String get rewardUpdateError => 'Failed to update reward';
+
+  @override
+  String get rewardEditTitle => 'Edit reward';
+
+  @override
+  String get rewardDisableAction => 'Disable';
+
+  @override
+  String get rewardEnableAction => 'Enable';
+
+  @override
+  String get rewardDisableSuccess => 'Reward disabled';
+
+  @override
+  String get rewardEnableSuccess => 'Reward enabled';
 }

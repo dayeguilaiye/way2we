@@ -8,6 +8,7 @@ import (
 	"github.com/way2we/way2we_api/ent/agreement"
 	"github.com/way2we/way2we_api/ent/group"
 	"github.com/way2we/way2we_api/ent/groupmember"
+	"github.com/way2we/way2we_api/ent/reward"
 	"github.com/way2we/way2we_api/ent/schema"
 	"github.com/way2we/way2we_api/ent/tokenblacklist"
 	"github.com/way2we/way2we_api/ent/user"
@@ -150,6 +151,66 @@ func init() {
 	groupmemberDescJoinedAt := groupmemberFields[3].Descriptor()
 	// groupmember.DefaultJoinedAt holds the default value on creation for the joined_at field.
 	groupmember.DefaultJoinedAt = groupmemberDescJoinedAt.Default.(func() time.Time)
+	rewardFields := schema.Reward{}.Fields()
+	_ = rewardFields
+	// rewardDescName is the schema descriptor for name field.
+	rewardDescName := rewardFields[0].Descriptor()
+	// reward.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	reward.NameValidator = func() func(string) error {
+		validators := rewardDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// rewardDescDescription is the schema descriptor for description field.
+	rewardDescDescription := rewardFields[1].Descriptor()
+	// reward.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	reward.DescriptionValidator = rewardDescDescription.Validators[0].(func(string) error)
+	// rewardDescCostPoints is the schema descriptor for cost_points field.
+	rewardDescCostPoints := rewardFields[2].Descriptor()
+	// reward.CostPointsValidator is a validator for the "cost_points" field. It is called by the builders before save.
+	reward.CostPointsValidator = func() func(int) error {
+		validators := rewardDescCostPoints.Validators
+		fns := [...]func(int) error{
+			validators[0].(func(int) error),
+			validators[1].(func(int) error),
+		}
+		return func(cost_points int) error {
+			for _, fn := range fns {
+				if err := fn(cost_points); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// rewardDescAutoFulfill is the schema descriptor for auto_fulfill field.
+	rewardDescAutoFulfill := rewardFields[5].Descriptor()
+	// reward.DefaultAutoFulfill holds the default value on creation for the auto_fulfill field.
+	reward.DefaultAutoFulfill = rewardDescAutoFulfill.Default.(bool)
+	// rewardDescAutoComplete is the schema descriptor for auto_complete field.
+	rewardDescAutoComplete := rewardFields[6].Descriptor()
+	// reward.DefaultAutoComplete holds the default value on creation for the auto_complete field.
+	reward.DefaultAutoComplete = rewardDescAutoComplete.Default.(bool)
+	// rewardDescCreatedAt is the schema descriptor for created_at field.
+	rewardDescCreatedAt := rewardFields[9].Descriptor()
+	// reward.DefaultCreatedAt holds the default value on creation for the created_at field.
+	reward.DefaultCreatedAt = rewardDescCreatedAt.Default.(func() time.Time)
+	// rewardDescUpdatedAt is the schema descriptor for updated_at field.
+	rewardDescUpdatedAt := rewardFields[10].Descriptor()
+	// reward.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	reward.DefaultUpdatedAt = rewardDescUpdatedAt.Default.(func() time.Time)
+	// reward.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	reward.UpdateDefaultUpdatedAt = rewardDescUpdatedAt.UpdateDefault.(func() time.Time)
 	tokenblacklistFields := schema.TokenBlacklist{}.Fields()
 	_ = tokenblacklistFields
 	// tokenblacklistDescTokenHash is the schema descriptor for token_hash field.

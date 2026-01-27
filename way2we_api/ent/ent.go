@@ -15,6 +15,7 @@ import (
 	"github.com/way2we/way2we_api/ent/agreement"
 	"github.com/way2we/way2we_api/ent/group"
 	"github.com/way2we/way2we_api/ent/groupmember"
+	"github.com/way2we/way2we_api/ent/reward"
 	"github.com/way2we/way2we_api/ent/tokenblacklist"
 	"github.com/way2we/way2we_api/ent/user"
 	"github.com/way2we/way2we_api/ent/useridentity"
@@ -81,6 +82,7 @@ func checkColumn(t, c string) error {
 			agreement.Table:      agreement.ValidColumn,
 			group.Table:          group.ValidColumn,
 			groupmember.Table:    groupmember.ValidColumn,
+			reward.Table:         reward.ValidColumn,
 			tokenblacklist.Table: tokenblacklist.ValidColumn,
 			user.Table:           user.ValidColumn,
 			useridentity.Table:   useridentity.ValidColumn,

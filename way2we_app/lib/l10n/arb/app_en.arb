@@ -712,5 +712,36 @@
     "agreementGenericError": "Something went wrong. Please try again.",
     "@agreementGenericError": {
         "description": "Generic agreement error message"
-    }
+    },
+
+    "rewardTabTitle": "Rewards",
+    "rewardStatusActive": "Active",
+    "rewardStatusInactive": "Inactive",
+    "rewardEmptyTitle": "No rewards yet",
+    "rewardEmptySubtitle": "Create your first reward",
+    "rewardNoInactive": "No inactive rewards",
+    "rewardCreateButton": "Create Reward",
+    "rewardNameLabel": "Name",
+    "rewardNamePlaceholder": "e.g., Movie ticket",
+    "rewardNameRequired": "Name is required",
+    "rewardDescriptionLabel": "Description (optional)",
+    "rewardCostPointsLabel": "Cost points",
+    "rewardCostPointsInvalid": "Points must be between 1 and 99999",
+    "rewardAutoFulfillLabel": "Auto Fulfill",
+    "rewardAutoCompleteLabel": "Auto Complete",
+    "rewardCoverImageLabel": "Cover image (optional)",
+    "rewardCoverUploadAction": "Upload cover",
+    "rewardCoverUploading": "Uploading...",
+    "rewardCoverRemoveAction": "Remove cover",
+    "rewardCoverUploadError": "Cover upload failed",
+    "rewardSaveButton": "Save",
+    "rewardCreateSuccess": "Reward created",
+    "rewardCreateError": "Failed to create reward",
+    "rewardUpdateSuccess": "Reward updated",
+    "rewardUpdateError": "Failed to update reward",
+    "rewardEditTitle": "Edit reward",
+    "rewardDisableAction": "Disable",
+    "rewardEnableAction": "Enable",
+    "rewardDisableSuccess": "Reward disabled",
+    "rewardEnableSuccess": "Reward enabled"
 }

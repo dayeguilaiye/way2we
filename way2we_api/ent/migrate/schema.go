@@ -110,6 +110,53 @@ var (
 			},
 		},
 	}
+	// RewardsColumns holds the columns for the "rewards" table.
+	RewardsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString, Size: 50},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 200},
+		{Name: "cost_points", Type: field.TypeInt},
+		{Name: "cover_image_url", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"active", "inactive"}, Default: "active"},
+		{Name: "auto_fulfill", Type: field.TypeBool, Default: false},
+		{Name: "auto_complete", Type: field.TypeBool, Default: false},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "group_id", Type: field.TypeInt},
+		{Name: "provider_id", Type: field.TypeInt},
+	}
+	// RewardsTable holds the schema information for the "rewards" table.
+	RewardsTable = &schema.Table{
+		Name:       "rewards",
+		Columns:    RewardsColumns,
+		PrimaryKey: []*schema.Column{RewardsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "rewards_groups_rewards",
+				Columns:    []*schema.Column{RewardsColumns[10]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "rewards_users_provider",
+				Columns:    []*schema.Column{RewardsColumns[11]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "reward_group_id",
+				Unique:  false,
+				Columns: []*schema.Column{RewardsColumns[10]},
+			},
+			{
+				Name:    "reward_group_id_status",
+				Unique:  false,
+				Columns: []*schema.Column{RewardsColumns[10], RewardsColumns[5]},
+			},
+		},
+	}
 	// TokenBlacklistsColumns holds the columns for the "token_blacklists" table.
 	TokenBlacklistsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -199,6 +246,7 @@ var (
 		AgreementsTable,
 		GroupsTable,
 		GroupMembersTable,
+		RewardsTable,
 		TokenBlacklistsTable,
 		UsersTable,
 		UserIdentitiesTable,
@@ -211,6 +259,8 @@ func init() {
 	AgreementsTable.ForeignKeys[1].RefTable = GroupsTable
 	GroupMembersTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupMembersTable.ForeignKeys[1].RefTable = UsersTable
+	RewardsTable.ForeignKeys[0].RefTable = GroupsTable
+	RewardsTable.ForeignKeys[1].RefTable = UsersTable
 	UserIdentitiesTable.ForeignKeys[0].RefTable = UsersTable
 	UserPinnedAgreementsTable.ForeignKeys[0].RefTable = UsersTable
 	UserPinnedAgreementsTable.ForeignKeys[1].RefTable = AgreementsTable

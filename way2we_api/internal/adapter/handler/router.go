@@ -9,7 +9,7 @@ import (
 )
 
 // RegisterRoutes registers all routes for the application.
-func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service, authHandler *AuthHandler, userHandler *UserHandler, groupHandler *GroupHandler, groupService *group.Service, agreementHandler *AgreementHandler) {
+func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service, authHandler *AuthHandler, userHandler *UserHandler, groupHandler *GroupHandler, groupService *group.Service, agreementHandler *AgreementHandler, rewardHandler *RewardHandler) {
 	v1 := e.Group("/v1")
 
 	// Auth Routes (Public)
@@ -34,6 +34,7 @@ func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service,
 	uploadGroup := v1.Group("/uploads")
 	uploadGroup.Use(jwtMiddleware)
 	uploadGroup.POST("/avatar", userHandler.UploadAvatar)
+	uploadGroup.POST("/reward-cover", rewardHandler.UploadRewardCover)
 
 	// Group Routes (Protected)
 	groupRoutes := v1.Group("/groups")
@@ -63,6 +64,14 @@ func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service,
 	groupRoutes.PUT("/:groupId/agreements/:id/status", agreementHandler.UpdateAgreementStatus)
 	groupRoutes.POST("/:groupId/agreements/:agreementId/pin", agreementHandler.PinAgreement)
 	groupRoutes.DELETE("/:groupId/agreements/:agreementId/pin", agreementHandler.UnpinAgreement)
+
+	// Reward Routes (Protected - nested under groups)
+	// Permission checks handled in service layer
+	groupRoutes.GET("/:groupId/rewards", rewardHandler.ListRewards)
+	groupRoutes.POST("/:groupId/rewards", rewardHandler.CreateReward)
+	groupRoutes.GET("/:groupId/rewards/:id", rewardHandler.GetReward)
+	groupRoutes.PUT("/:groupId/rewards/:id", rewardHandler.UpdateReward)
+	groupRoutes.PUT("/:groupId/rewards/:id/status", rewardHandler.UpdateRewardStatus)
 
 	// Group Routes (Public - for invitation preview)
 	v1.GET("/groups/by-invitation/:code", groupHandler.GetGroupByInvitation)

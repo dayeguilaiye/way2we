@@ -36,6 +36,8 @@ const (
 	EdgeMembers = "members"
 	// EdgeAgreements holds the string denoting the agreements edge name in mutations.
 	EdgeAgreements = "agreements"
+	// EdgeRewards holds the string denoting the rewards edge name in mutations.
+	EdgeRewards = "rewards"
 	// Table holds the table name of the group in the database.
 	Table = "groups"
 	// MembersTable is the table that holds the members relation/edge.
@@ -52,6 +54,13 @@ const (
 	AgreementsInverseTable = "agreements"
 	// AgreementsColumn is the table column denoting the agreements relation/edge.
 	AgreementsColumn = "group_id"
+	// RewardsTable is the table that holds the rewards relation/edge.
+	RewardsTable = "rewards"
+	// RewardsInverseTable is the table name for the Reward entity.
+	// It exists in this package in order to avoid circular dependency with the "reward" package.
+	RewardsInverseTable = "rewards"
+	// RewardsColumn is the table column denoting the rewards relation/edge.
+	RewardsColumn = "group_id"
 )
 
 // Columns holds all SQL columns for group fields.
@@ -183,6 +192,20 @@ func ByAgreements(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newAgreementsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByRewardsCount orders the results by rewards count.
+func ByRewardsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newRewardsStep(), opts...)
+	}
+}
+
+// ByRewards orders the results by rewards terms.
+func ByRewards(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newRewardsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newMembersStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -195,5 +218,12 @@ func newAgreementsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(AgreementsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, AgreementsTable, AgreementsColumn),
+	)
+}
+func newRewardsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(RewardsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, RewardsTable, RewardsColumn),
 	)
 }

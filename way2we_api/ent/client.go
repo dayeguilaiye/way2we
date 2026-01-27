@@ -18,6 +18,7 @@ import (
 	"github.com/way2we/way2we_api/ent/agreement"
 	"github.com/way2we/way2we_api/ent/group"
 	"github.com/way2we/way2we_api/ent/groupmember"
+	"github.com/way2we/way2we_api/ent/reward"
 	"github.com/way2we/way2we_api/ent/tokenblacklist"
 	"github.com/way2we/way2we_api/ent/user"
 	"github.com/way2we/way2we_api/ent/useridentity"
@@ -34,6 +35,8 @@ type Client struct {
 	Group *GroupClient
 	// GroupMember is the client for interacting with the GroupMember builders.
 	GroupMember *GroupMemberClient
+	// Reward is the client for interacting with the Reward builders.
+	Reward *RewardClient
 	// TokenBlacklist is the client for interacting with the TokenBlacklist builders.
 	TokenBlacklist *TokenBlacklistClient
 	// User is the client for interacting with the User builders.
@@ -54,6 +57,7 @@ func (c *Client) init() {
 	c.Agreement = NewAgreementClient(c.config)
 	c.Group = NewGroupClient(c.config)
 	c.GroupMember = NewGroupMemberClient(c.config)
+	c.Reward = NewRewardClient(c.config)
 	c.TokenBlacklist = NewTokenBlacklistClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UserIdentity = NewUserIdentityClient(c.config)
@@ -152,6 +156,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Agreement:      NewAgreementClient(cfg),
 		Group:          NewGroupClient(cfg),
 		GroupMember:    NewGroupMemberClient(cfg),
+		Reward:         NewRewardClient(cfg),
 		TokenBlacklist: NewTokenBlacklistClient(cfg),
 		User:           NewUserClient(cfg),
 		UserIdentity:   NewUserIdentityClient(cfg),
@@ -177,6 +182,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Agreement:      NewAgreementClient(cfg),
 		Group:          NewGroupClient(cfg),
 		GroupMember:    NewGroupMemberClient(cfg),
+		Reward:         NewRewardClient(cfg),
 		TokenBlacklist: NewTokenBlacklistClient(cfg),
 		User:           NewUserClient(cfg),
 		UserIdentity:   NewUserIdentityClient(cfg),
@@ -209,7 +215,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Agreement, c.Group, c.GroupMember, c.TokenBlacklist, c.User, c.UserIdentity,
+		c.Agreement, c.Group, c.GroupMember, c.Reward, c.TokenBlacklist, c.User,
+		c.UserIdentity,
 	} {
 		n.Use(hooks...)
 	}
@@ -219,7 +226,8 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Agreement, c.Group, c.GroupMember, c.TokenBlacklist, c.User, c.UserIdentity,
+		c.Agreement, c.Group, c.GroupMember, c.Reward, c.TokenBlacklist, c.User,
+		c.UserIdentity,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -234,6 +242,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Group.mutate(ctx, m)
 	case *GroupMemberMutation:
 		return c.GroupMember.mutate(ctx, m)
+	case *RewardMutation:
+		return c.Reward.mutate(ctx, m)
 	case *TokenBlacklistMutation:
 		return c.TokenBlacklist.mutate(ctx, m)
 	case *UserMutation:
@@ -566,6 +576,22 @@ func (c *GroupClient) QueryAgreements(_m *Group) *AgreementQuery {
 	return query
 }
 
+// QueryRewards queries the rewards edge of a Group.
+func (c *GroupClient) QueryRewards(_m *Group) *RewardQuery {
+	query := (&RewardClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, id),
+			sqlgraph.To(reward.Table, reward.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.RewardsTable, group.RewardsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *GroupClient) Hooks() []Hook {
 	return c.hooks.Group
@@ -753,6 +779,171 @@ func (c *GroupMemberClient) mutate(ctx context.Context, m *GroupMemberMutation) 
 		return (&GroupMemberDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown GroupMember mutation op: %q", m.Op())
+	}
+}
+
+// RewardClient is a client for the Reward schema.
+type RewardClient struct {
+	config
+}
+
+// NewRewardClient returns a client for the Reward from the given config.
+func NewRewardClient(c config) *RewardClient {
+	return &RewardClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `reward.Hooks(f(g(h())))`.
+func (c *RewardClient) Use(hooks ...Hook) {
+	c.hooks.Reward = append(c.hooks.Reward, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `reward.Intercept(f(g(h())))`.
+func (c *RewardClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Reward = append(c.inters.Reward, interceptors...)
+}
+
+// Create returns a builder for creating a Reward entity.
+func (c *RewardClient) Create() *RewardCreate {
+	mutation := newRewardMutation(c.config, OpCreate)
+	return &RewardCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Reward entities.
+func (c *RewardClient) CreateBulk(builders ...*RewardCreate) *RewardCreateBulk {
+	return &RewardCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *RewardClient) MapCreateBulk(slice any, setFunc func(*RewardCreate, int)) *RewardCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &RewardCreateBulk{err: fmt.Errorf("calling to RewardClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*RewardCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &RewardCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Reward.
+func (c *RewardClient) Update() *RewardUpdate {
+	mutation := newRewardMutation(c.config, OpUpdate)
+	return &RewardUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RewardClient) UpdateOne(_m *Reward) *RewardUpdateOne {
+	mutation := newRewardMutation(c.config, OpUpdateOne, withReward(_m))
+	return &RewardUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RewardClient) UpdateOneID(id int) *RewardUpdateOne {
+	mutation := newRewardMutation(c.config, OpUpdateOne, withRewardID(id))
+	return &RewardUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Reward.
+func (c *RewardClient) Delete() *RewardDelete {
+	mutation := newRewardMutation(c.config, OpDelete)
+	return &RewardDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *RewardClient) DeleteOne(_m *Reward) *RewardDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *RewardClient) DeleteOneID(id int) *RewardDeleteOne {
+	builder := c.Delete().Where(reward.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RewardDeleteOne{builder}
+}
+
+// Query returns a query builder for Reward.
+func (c *RewardClient) Query() *RewardQuery {
+	return &RewardQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeReward},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Reward entity by its id.
+func (c *RewardClient) Get(ctx context.Context, id int) (*Reward, error) {
+	return c.Query().Where(reward.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RewardClient) GetX(ctx context.Context, id int) *Reward {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryGroup queries the group edge of a Reward.
+func (c *RewardClient) QueryGroup(_m *Reward) *GroupQuery {
+	query := (&GroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(reward.Table, reward.FieldID, id),
+			sqlgraph.To(group.Table, group.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, reward.GroupTable, reward.GroupColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryProvider queries the provider edge of a Reward.
+func (c *RewardClient) QueryProvider(_m *Reward) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(reward.Table, reward.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, reward.ProviderTable, reward.ProviderColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *RewardClient) Hooks() []Hook {
+	return c.hooks.Reward
+}
+
+// Interceptors returns the client interceptors.
+func (c *RewardClient) Interceptors() []Interceptor {
+	return c.inters.Reward
+}
+
+func (c *RewardClient) mutate(ctx context.Context, m *RewardMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&RewardCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&RewardUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&RewardUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&RewardDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Reward mutation op: %q", m.Op())
 	}
 }
 
@@ -1222,10 +1413,11 @@ func (c *UserIdentityClient) mutate(ctx context.Context, m *UserIdentityMutation
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Agreement, Group, GroupMember, TokenBlacklist, User, UserIdentity []ent.Hook
+		Agreement, Group, GroupMember, Reward, TokenBlacklist, User,
+		UserIdentity []ent.Hook
 	}
 	inters struct {
-		Agreement, Group, GroupMember, TokenBlacklist, User,
+		Agreement, Group, GroupMember, Reward, TokenBlacklist, User,
 		UserIdentity []ent.Interceptor
 	}
 )

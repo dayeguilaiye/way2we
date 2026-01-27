@@ -18,6 +18,8 @@ type Tx struct {
 	Group *GroupClient
 	// GroupMember is the client for interacting with the GroupMember builders.
 	GroupMember *GroupMemberClient
+	// Reward is the client for interacting with the Reward builders.
+	Reward *RewardClient
 	// TokenBlacklist is the client for interacting with the TokenBlacklist builders.
 	TokenBlacklist *TokenBlacklistClient
 	// User is the client for interacting with the User builders.
@@ -158,6 +160,7 @@ func (tx *Tx) init() {
 	tx.Agreement = NewAgreementClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
 	tx.GroupMember = NewGroupMemberClient(tx.config)
+	tx.Reward = NewRewardClient(tx.config)
 	tx.TokenBlacklist = NewTokenBlacklistClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UserIdentity = NewUserIdentityClient(tx.config)

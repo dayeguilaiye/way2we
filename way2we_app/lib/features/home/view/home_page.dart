@@ -13,6 +13,7 @@ import 'package:way2we_app/features/group/view/invitation_page.dart';
 import 'package:way2we_app/features/group/view/member_management_page.dart';
 import 'package:way2we_app/features/group/view/widgets/group_switcher_sheet.dart';
 import 'package:way2we_app/features/profile/view/profile_page.dart';
+import 'package:way2we_app/features/reward/view/reward_list_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
 import 'package:way2we_app/theme/theme.dart';
 
@@ -188,10 +189,26 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: AppSpacing.space4),
-                        _buildFeaturePlaceholder(
-                          context,
-                          icon: Icons.stars_outlined,
-                          label: 'Rewards (Coming Soon)',
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              RewardListPage.route(groupId: selectedGroup.id),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.card_giftcard_outlined,
+                                size: 32,
+                                color: theme.colorScheme.primary,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                l10n.rewardTabTitle,
+                                style: theme.textTheme.labelMedium,
+                              ),
+                            ],
+                          ),
                         ),
                         const SizedBox(height: AppSpacing.space4),
                         // Group Settings Entry

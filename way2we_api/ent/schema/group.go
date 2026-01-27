@@ -64,5 +64,8 @@ func (Group) Edges() []ent.Edge {
 		// Group's agreements
 		edge.To("agreements", Agreement.Type).
 			Comment("Agreements belonging to this group"),
+		// Group's rewards
+		edge.To("rewards", Reward.Type).
+			Comment("Rewards belonging to this group"),
 	}
 }

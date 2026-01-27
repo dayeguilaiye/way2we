@@ -15,6 +15,9 @@ type Group func(*sql.Selector)
 // GroupMember is the predicate function for groupmember builders.
 type GroupMember func(*sql.Selector)
 
+// Reward is the predicate function for reward builders.
+type Reward func(*sql.Selector)
+
 // TokenBlacklist is the predicate function for tokenblacklist builders.
 type TokenBlacklist func(*sql.Selector)
 

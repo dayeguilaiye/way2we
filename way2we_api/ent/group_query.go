@@ -16,6 +16,7 @@ import (
 	"github.com/way2we/way2we_api/ent/group"
 	"github.com/way2we/way2we_api/ent/groupmember"
 	"github.com/way2we/way2we_api/ent/predicate"
+	"github.com/way2we/way2we_api/ent/reward"
 )
 
 // GroupQuery is the builder for querying Group entities.
@@ -27,6 +28,7 @@ type GroupQuery struct {
 	predicates     []predicate.Group
 	withMembers    *GroupMemberQuery
 	withAgreements *AgreementQuery
+	withRewards    *RewardQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -100,6 +102,28 @@ func (_q *GroupQuery) QueryAgreements() *AgreementQuery {
 			sqlgraph.From(group.Table, group.FieldID, selector),
 			sqlgraph.To(agreement.Table, agreement.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, group.AgreementsTable, group.AgreementsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryRewards chains the current query on the "rewards" edge.
+func (_q *GroupQuery) QueryRewards() *RewardQuery {
+	query := (&RewardClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, selector),
+			sqlgraph.To(reward.Table, reward.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.RewardsTable, group.RewardsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -301,6 +325,7 @@ func (_q *GroupQuery) Clone() *GroupQuery {
 		predicates:     append([]predicate.Group{}, _q.predicates...),
 		withMembers:    _q.withMembers.Clone(),
 		withAgreements: _q.withAgreements.Clone(),
+		withRewards:    _q.withRewards.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -326,6 +351,17 @@ func (_q *GroupQuery) WithAgreements(opts ...func(*AgreementQuery)) *GroupQuery 
 		opt(query)
 	}
 	_q.withAgreements = query
+	return _q
+}
+
+// WithRewards tells the query-builder to eager-load the nodes that are connected to
+// the "rewards" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *GroupQuery) WithRewards(opts ...func(*RewardQuery)) *GroupQuery {
+	query := (&RewardClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withRewards = query
 	return _q
 }
 
@@ -407,9 +443,10 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 	var (
 		nodes       = []*Group{}
 		_spec       = _q.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			_q.withMembers != nil,
 			_q.withAgreements != nil,
+			_q.withRewards != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -441,6 +478,13 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 		if err := _q.loadAgreements(ctx, query, nodes,
 			func(n *Group) { n.Edges.Agreements = []*Agreement{} },
 			func(n *Group, e *Agreement) { n.Edges.Agreements = append(n.Edges.Agreements, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withRewards; query != nil {
+		if err := _q.loadRewards(ctx, query, nodes,
+			func(n *Group) { n.Edges.Rewards = []*Reward{} },
+			func(n *Group, e *Reward) { n.Edges.Rewards = append(n.Edges.Rewards, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -492,6 +536,36 @@ func (_q *GroupQuery) loadAgreements(ctx context.Context, query *AgreementQuery,
 	}
 	query.Where(predicate.Agreement(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(group.AgreementsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.GroupID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "group_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *GroupQuery) loadRewards(ctx context.Context, query *RewardQuery, nodes []*Group, init func(*Group), assign func(*Group, *Reward)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Group)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(reward.FieldGroupID)
+	}
+	query.Where(predicate.Reward(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(group.RewardsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

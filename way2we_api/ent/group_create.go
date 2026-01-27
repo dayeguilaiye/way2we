@@ -13,6 +13,7 @@ import (
 	"github.com/way2we/way2we_api/ent/agreement"
 	"github.com/way2we/way2we_api/ent/group"
 	"github.com/way2we/way2we_api/ent/groupmember"
+	"github.com/way2we/way2we_api/ent/reward"
 )
 
 // GroupCreate is the builder for creating a Group entity.
@@ -168,6 +169,21 @@ func (_c *GroupCreate) AddAgreements(v ...*Agreement) *GroupCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddAgreementIDs(ids...)
+}
+
+// AddRewardIDs adds the "rewards" edge to the Reward entity by IDs.
+func (_c *GroupCreate) AddRewardIDs(ids ...int) *GroupCreate {
+	_c.mutation.AddRewardIDs(ids...)
+	return _c
+}
+
+// AddRewards adds the "rewards" edges to the Reward entity.
+func (_c *GroupCreate) AddRewards(v ...*Reward) *GroupCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddRewardIDs(ids...)
 }
 
 // Mutation returns the GroupMutation object of the builder.
@@ -361,6 +377,22 @@ func (_c *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(agreement.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.RewardsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.RewardsTable,
+			Columns: []string{group.RewardsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reward.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

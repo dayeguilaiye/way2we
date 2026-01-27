@@ -15,6 +15,7 @@ import (
 	"github.com/way2we/way2we_api/ent/group"
 	"github.com/way2we/way2we_api/ent/groupmember"
 	"github.com/way2we/way2we_api/ent/predicate"
+	"github.com/way2we/way2we_api/ent/reward"
 )
 
 // GroupUpdate is the builder for updating Group entities.
@@ -183,6 +184,21 @@ func (_u *GroupUpdate) AddAgreements(v ...*Agreement) *GroupUpdate {
 	return _u.AddAgreementIDs(ids...)
 }
 
+// AddRewardIDs adds the "rewards" edge to the Reward entity by IDs.
+func (_u *GroupUpdate) AddRewardIDs(ids ...int) *GroupUpdate {
+	_u.mutation.AddRewardIDs(ids...)
+	return _u
+}
+
+// AddRewards adds the "rewards" edges to the Reward entity.
+func (_u *GroupUpdate) AddRewards(v ...*Reward) *GroupUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddRewardIDs(ids...)
+}
+
 // Mutation returns the GroupMutation object of the builder.
 func (_u *GroupUpdate) Mutation() *GroupMutation {
 	return _u.mutation
@@ -228,6 +244,27 @@ func (_u *GroupUpdate) RemoveAgreements(v ...*Agreement) *GroupUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveAgreementIDs(ids...)
+}
+
+// ClearRewards clears all "rewards" edges to the Reward entity.
+func (_u *GroupUpdate) ClearRewards() *GroupUpdate {
+	_u.mutation.ClearRewards()
+	return _u
+}
+
+// RemoveRewardIDs removes the "rewards" edge to Reward entities by IDs.
+func (_u *GroupUpdate) RemoveRewardIDs(ids ...int) *GroupUpdate {
+	_u.mutation.RemoveRewardIDs(ids...)
+	return _u
+}
+
+// RemoveRewards removes "rewards" edges to Reward entities.
+func (_u *GroupUpdate) RemoveRewards(v ...*Reward) *GroupUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveRewardIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -426,6 +463,51 @@ func (_u *GroupUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.RewardsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.RewardsTable,
+			Columns: []string{group.RewardsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reward.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedRewardsIDs(); len(nodes) > 0 && !_u.mutation.RewardsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.RewardsTable,
+			Columns: []string{group.RewardsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reward.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RewardsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.RewardsTable,
+			Columns: []string{group.RewardsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reward.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{group.Label}
@@ -599,6 +681,21 @@ func (_u *GroupUpdateOne) AddAgreements(v ...*Agreement) *GroupUpdateOne {
 	return _u.AddAgreementIDs(ids...)
 }
 
+// AddRewardIDs adds the "rewards" edge to the Reward entity by IDs.
+func (_u *GroupUpdateOne) AddRewardIDs(ids ...int) *GroupUpdateOne {
+	_u.mutation.AddRewardIDs(ids...)
+	return _u
+}
+
+// AddRewards adds the "rewards" edges to the Reward entity.
+func (_u *GroupUpdateOne) AddRewards(v ...*Reward) *GroupUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddRewardIDs(ids...)
+}
+
 // Mutation returns the GroupMutation object of the builder.
 func (_u *GroupUpdateOne) Mutation() *GroupMutation {
 	return _u.mutation
@@ -644,6 +741,27 @@ func (_u *GroupUpdateOne) RemoveAgreements(v ...*Agreement) *GroupUpdateOne {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveAgreementIDs(ids...)
+}
+
+// ClearRewards clears all "rewards" edges to the Reward entity.
+func (_u *GroupUpdateOne) ClearRewards() *GroupUpdateOne {
+	_u.mutation.ClearRewards()
+	return _u
+}
+
+// RemoveRewardIDs removes the "rewards" edge to Reward entities by IDs.
+func (_u *GroupUpdateOne) RemoveRewardIDs(ids ...int) *GroupUpdateOne {
+	_u.mutation.RemoveRewardIDs(ids...)
+	return _u
+}
+
+// RemoveRewards removes "rewards" edges to Reward entities.
+func (_u *GroupUpdateOne) RemoveRewards(v ...*Reward) *GroupUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveRewardIDs(ids...)
 }
 
 // Where appends a list predicates to the GroupUpdate builder.
@@ -865,6 +983,51 @@ func (_u *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error)
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(agreement.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.RewardsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.RewardsTable,
+			Columns: []string{group.RewardsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reward.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedRewardsIDs(); len(nodes) > 0 && !_u.mutation.RewardsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.RewardsTable,
+			Columns: []string{group.RewardsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reward.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RewardsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.RewardsTable,
+			Columns: []string{group.RewardsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reward.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

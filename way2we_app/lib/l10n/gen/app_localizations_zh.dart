@@ -538,4 +538,94 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get agreementGenericError => '操作失败，请稍后重试';
+
+  @override
+  String get rewardTabTitle => '兑换/商品';
+
+  @override
+  String get rewardStatusActive => '上架中';
+
+  @override
+  String get rewardStatusInactive => '已下架';
+
+  @override
+  String get rewardEmptyTitle => '还没有商品，添加一个奖励';
+
+  @override
+  String get rewardEmptySubtitle => '创建第一个商品';
+
+  @override
+  String get rewardNoInactive => '暂无下架商品';
+
+  @override
+  String get rewardCreateButton => '创建商品';
+
+  @override
+  String get rewardNameLabel => '名称';
+
+  @override
+  String get rewardNamePlaceholder => '例如：电影票';
+
+  @override
+  String get rewardNameRequired => '请输入名称';
+
+  @override
+  String get rewardDescriptionLabel => '描述（选填）';
+
+  @override
+  String get rewardCostPointsLabel => '积分价格';
+
+  @override
+  String get rewardCostPointsInvalid => '积分必须在1到99999之间';
+
+  @override
+  String get rewardAutoFulfillLabel => '自动履约';
+
+  @override
+  String get rewardAutoCompleteLabel => '自动完成';
+
+  @override
+  String get rewardCoverImageLabel => '封面图片（选填）';
+
+  @override
+  String get rewardCoverUploadAction => '上传封面';
+
+  @override
+  String get rewardCoverUploading => '上传中...';
+
+  @override
+  String get rewardCoverRemoveAction => '移除封面';
+
+  @override
+  String get rewardCoverUploadError => '封面上传失败';
+
+  @override
+  String get rewardSaveButton => '保存';
+
+  @override
+  String get rewardCreateSuccess => '商品创建成功';
+
+  @override
+  String get rewardCreateError => '创建商品失败';
+
+  @override
+  String get rewardUpdateSuccess => '商品更新成功';
+
+  @override
+  String get rewardUpdateError => '更新商品失败';
+
+  @override
+  String get rewardEditTitle => '编辑商品';
+
+  @override
+  String get rewardDisableAction => '停用';
+
+  @override
+  String get rewardEnableAction => '启用';
+
+  @override
+  String get rewardDisableSuccess => '已停用商品';
+
+  @override
+  String get rewardEnableSuccess => '已启用商品';
 }

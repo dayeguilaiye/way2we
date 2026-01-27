@@ -10,6 +10,7 @@ import 'package:way2we_app/features/group/bloc/group_control_bloc.dart';
 import 'package:way2we_app/features/group/data/providers/group_provider.dart';
 import 'package:way2we_app/features/group/view/group_selection_page.dart';
 import 'package:way2we_app/features/home/view/home_page.dart';
+import 'package:way2we_app/features/reward/data/providers/reward_provider.dart';
 import 'package:way2we_app/features/splash/view/splash_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
 import 'package:way2we_app/theme/app_theme.dart';
@@ -33,6 +34,7 @@ class App extends StatelessWidget {
     );
     final groupProvider = GroupProvider(dio: dio);
     final agreementProvider = AgreementProvider(dio: dio);
+    final rewardProvider = RewardProvider(dio: dio);
 
     // Create AuthenticationBloc and register with ServiceLocator
     // for 401 handling
@@ -50,6 +52,7 @@ class App extends StatelessWidget {
         RepositoryProvider<AuthProvider>.value(value: authProvider),
         RepositoryProvider<GroupProvider>.value(value: groupProvider),
         RepositoryProvider<AgreementProvider>.value(value: agreementProvider),
+        RepositoryProvider<RewardProvider>.value(value: rewardProvider),
       ],
       child: MultiBlocProvider(
         providers: [

@@ -45,6 +45,18 @@ func (f GroupMemberFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.GroupMemberMutation", m)
 }
 
+// The RewardFunc type is an adapter to allow the use of ordinary
+// function as Reward mutator.
+type RewardFunc func(context.Context, *ent.RewardMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RewardFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.RewardMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RewardMutation", m)
+}
+
 // The TokenBlacklistFunc type is an adapter to allow the use of ordinary
 // function as TokenBlacklist mutator.
 type TokenBlacklistFunc func(context.Context, *ent.TokenBlacklistMutation) (ent.Value, error)

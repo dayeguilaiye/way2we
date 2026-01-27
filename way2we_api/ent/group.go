@@ -47,9 +47,11 @@ type GroupEdges struct {
 	Members []*GroupMember `json:"members,omitempty"`
 	// Agreements belonging to this group
 	Agreements []*Agreement `json:"agreements,omitempty"`
+	// Rewards belonging to this group
+	Rewards []*Reward `json:"rewards,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // MembersOrErr returns the Members value or an error if the edge
@@ -68,6 +70,15 @@ func (e GroupEdges) AgreementsOrErr() ([]*Agreement, error) {
 		return e.Agreements, nil
 	}
 	return nil, &NotLoadedError{edge: "agreements"}
+}
+
+// RewardsOrErr returns the Rewards value or an error if the edge
+// was not loaded in eager-loading.
+func (e GroupEdges) RewardsOrErr() ([]*Reward, error) {
+	if e.loadedTypes[2] {
+		return e.Rewards, nil
+	}
+	return nil, &NotLoadedError{edge: "rewards"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -180,6 +191,11 @@ func (_m *Group) QueryMembers() *GroupMemberQuery {
 // QueryAgreements queries the "agreements" edge of the Group entity.
 func (_m *Group) QueryAgreements() *AgreementQuery {
 	return NewGroupClient(_m.config).QueryAgreements(_m)
+}
+
+// QueryRewards queries the "rewards" edge of the Group entity.
+func (_m *Group) QueryRewards() *RewardQuery {
+	return NewGroupClient(_m.config).QueryRewards(_m)
 }
 
 // Update returns a builder for updating this Group.
