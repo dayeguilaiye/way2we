@@ -59,6 +59,9 @@ type AgreementMutation struct {
 	clearedgroup                bool
 	creator                     *int
 	clearedcreator              bool
+	pinned_by_users             map[int]struct{}
+	removedpinned_by_users      map[int]struct{}
+	clearedpinned_by_users      bool
 	done                        bool
 	oldValue                    func(context.Context) (*Agreement, error)
 	predicates                  []predicate.Agreement
@@ -687,6 +690,60 @@ func (m *AgreementMutation) ResetCreator() {
 	m.clearedcreator = false
 }
 
+// AddPinnedByUserIDs adds the "pinned_by_users" edge to the User entity by ids.
+func (m *AgreementMutation) AddPinnedByUserIDs(ids ...int) {
+	if m.pinned_by_users == nil {
+		m.pinned_by_users = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.pinned_by_users[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPinnedByUsers clears the "pinned_by_users" edge to the User entity.
+func (m *AgreementMutation) ClearPinnedByUsers() {
+	m.clearedpinned_by_users = true
+}
+
+// PinnedByUsersCleared reports if the "pinned_by_users" edge to the User entity was cleared.
+func (m *AgreementMutation) PinnedByUsersCleared() bool {
+	return m.clearedpinned_by_users
+}
+
+// RemovePinnedByUserIDs removes the "pinned_by_users" edge to the User entity by IDs.
+func (m *AgreementMutation) RemovePinnedByUserIDs(ids ...int) {
+	if m.removedpinned_by_users == nil {
+		m.removedpinned_by_users = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.pinned_by_users, ids[i])
+		m.removedpinned_by_users[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPinnedByUsers returns the removed IDs of the "pinned_by_users" edge to the User entity.
+func (m *AgreementMutation) RemovedPinnedByUsersIDs() (ids []int) {
+	for id := range m.removedpinned_by_users {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PinnedByUsersIDs returns the "pinned_by_users" edge IDs in the mutation.
+func (m *AgreementMutation) PinnedByUsersIDs() (ids []int) {
+	for id := range m.pinned_by_users {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPinnedByUsers resets all changes to the "pinned_by_users" edge.
+func (m *AgreementMutation) ResetPinnedByUsers() {
+	m.pinned_by_users = nil
+	m.clearedpinned_by_users = false
+	m.removedpinned_by_users = nil
+}
+
 // Where appends a list predicates to the AgreementMutation builder.
 func (m *AgreementMutation) Where(ps ...predicate.Agreement) {
 	m.predicates = append(m.predicates, ps...)
@@ -1026,12 +1083,15 @@ func (m *AgreementMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *AgreementMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.group != nil {
 		edges = append(edges, agreement.EdgeGroup)
 	}
 	if m.creator != nil {
 		edges = append(edges, agreement.EdgeCreator)
+	}
+	if m.pinned_by_users != nil {
+		edges = append(edges, agreement.EdgePinnedByUsers)
 	}
 	return edges
 }
@@ -1048,30 +1108,50 @@ func (m *AgreementMutation) AddedIDs(name string) []ent.Value {
 		if id := m.creator; id != nil {
 			return []ent.Value{*id}
 		}
+	case agreement.EdgePinnedByUsers:
+		ids := make([]ent.Value, 0, len(m.pinned_by_users))
+		for id := range m.pinned_by_users {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *AgreementMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
+	if m.removedpinned_by_users != nil {
+		edges = append(edges, agreement.EdgePinnedByUsers)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *AgreementMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case agreement.EdgePinnedByUsers:
+		ids := make([]ent.Value, 0, len(m.removedpinned_by_users))
+		for id := range m.removedpinned_by_users {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *AgreementMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedgroup {
 		edges = append(edges, agreement.EdgeGroup)
 	}
 	if m.clearedcreator {
 		edges = append(edges, agreement.EdgeCreator)
+	}
+	if m.clearedpinned_by_users {
+		edges = append(edges, agreement.EdgePinnedByUsers)
 	}
 	return edges
 }
@@ -1084,6 +1164,8 @@ func (m *AgreementMutation) EdgeCleared(name string) bool {
 		return m.clearedgroup
 	case agreement.EdgeCreator:
 		return m.clearedcreator
+	case agreement.EdgePinnedByUsers:
+		return m.clearedpinned_by_users
 	}
 	return false
 }
@@ -1111,6 +1193,9 @@ func (m *AgreementMutation) ResetEdge(name string) error {
 		return nil
 	case agreement.EdgeCreator:
 		m.ResetCreator()
+		return nil
+	case agreement.EdgePinnedByUsers:
+		m.ResetPinnedByUsers()
 		return nil
 	}
 	return fmt.Errorf("unknown Agreement edge %s", name)
@@ -3263,6 +3348,9 @@ type UserMutation struct {
 	group_memberships        map[int]struct{}
 	removedgroup_memberships map[int]struct{}
 	clearedgroup_memberships bool
+	pinned_agreements        map[int]struct{}
+	removedpinned_agreements map[int]struct{}
+	clearedpinned_agreements bool
 	done                     bool
 	oldValue                 func(context.Context) (*User, error)
 	predicates               []predicate.User
@@ -3680,6 +3768,60 @@ func (m *UserMutation) ResetGroupMemberships() {
 	m.removedgroup_memberships = nil
 }
 
+// AddPinnedAgreementIDs adds the "pinned_agreements" edge to the Agreement entity by ids.
+func (m *UserMutation) AddPinnedAgreementIDs(ids ...int) {
+	if m.pinned_agreements == nil {
+		m.pinned_agreements = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.pinned_agreements[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPinnedAgreements clears the "pinned_agreements" edge to the Agreement entity.
+func (m *UserMutation) ClearPinnedAgreements() {
+	m.clearedpinned_agreements = true
+}
+
+// PinnedAgreementsCleared reports if the "pinned_agreements" edge to the Agreement entity was cleared.
+func (m *UserMutation) PinnedAgreementsCleared() bool {
+	return m.clearedpinned_agreements
+}
+
+// RemovePinnedAgreementIDs removes the "pinned_agreements" edge to the Agreement entity by IDs.
+func (m *UserMutation) RemovePinnedAgreementIDs(ids ...int) {
+	if m.removedpinned_agreements == nil {
+		m.removedpinned_agreements = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.pinned_agreements, ids[i])
+		m.removedpinned_agreements[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPinnedAgreements returns the removed IDs of the "pinned_agreements" edge to the Agreement entity.
+func (m *UserMutation) RemovedPinnedAgreementsIDs() (ids []int) {
+	for id := range m.removedpinned_agreements {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PinnedAgreementsIDs returns the "pinned_agreements" edge IDs in the mutation.
+func (m *UserMutation) PinnedAgreementsIDs() (ids []int) {
+	for id := range m.pinned_agreements {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPinnedAgreements resets all changes to the "pinned_agreements" edge.
+func (m *UserMutation) ResetPinnedAgreements() {
+	m.pinned_agreements = nil
+	m.clearedpinned_agreements = false
+	m.removedpinned_agreements = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -3896,12 +4038,15 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.identities != nil {
 		edges = append(edges, user.EdgeIdentities)
 	}
 	if m.group_memberships != nil {
 		edges = append(edges, user.EdgeGroupMemberships)
+	}
+	if m.pinned_agreements != nil {
+		edges = append(edges, user.EdgePinnedAgreements)
 	}
 	return edges
 }
@@ -3922,18 +4067,27 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgePinnedAgreements:
+		ids := make([]ent.Value, 0, len(m.pinned_agreements))
+		for id := range m.pinned_agreements {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removedidentities != nil {
 		edges = append(edges, user.EdgeIdentities)
 	}
 	if m.removedgroup_memberships != nil {
 		edges = append(edges, user.EdgeGroupMemberships)
+	}
+	if m.removedpinned_agreements != nil {
+		edges = append(edges, user.EdgePinnedAgreements)
 	}
 	return edges
 }
@@ -3954,18 +4108,27 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgePinnedAgreements:
+		ids := make([]ent.Value, 0, len(m.removedpinned_agreements))
+		for id := range m.removedpinned_agreements {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedidentities {
 		edges = append(edges, user.EdgeIdentities)
 	}
 	if m.clearedgroup_memberships {
 		edges = append(edges, user.EdgeGroupMemberships)
+	}
+	if m.clearedpinned_agreements {
+		edges = append(edges, user.EdgePinnedAgreements)
 	}
 	return edges
 }
@@ -3978,6 +4141,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedidentities
 	case user.EdgeGroupMemberships:
 		return m.clearedgroup_memberships
+	case user.EdgePinnedAgreements:
+		return m.clearedpinned_agreements
 	}
 	return false
 }
@@ -3999,6 +4164,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeGroupMemberships:
 		m.ResetGroupMemberships()
+		return nil
+	case user.EdgePinnedAgreements:
+		m.ResetPinnedAgreements()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/way2we/way2we_api/ent/agreement"
 	"github.com/way2we/way2we_api/ent/groupmember"
 	"github.com/way2we/way2we_api/ent/user"
 	"github.com/way2we/way2we_api/ent/useridentity"
@@ -112,6 +113,21 @@ func (_c *UserCreate) AddGroupMemberships(v ...*GroupMember) *UserCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddGroupMembershipIDs(ids...)
+}
+
+// AddPinnedAgreementIDs adds the "pinned_agreements" edge to the Agreement entity by IDs.
+func (_c *UserCreate) AddPinnedAgreementIDs(ids ...int) *UserCreate {
+	_c.mutation.AddPinnedAgreementIDs(ids...)
+	return _c
+}
+
+// AddPinnedAgreements adds the "pinned_agreements" edges to the Agreement entity.
+func (_c *UserCreate) AddPinnedAgreements(v ...*Agreement) *UserCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddPinnedAgreementIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -251,6 +267,22 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(groupmember.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.PinnedAgreementsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.PinnedAgreementsTable,
+			Columns: user.PinnedAgreementsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(agreement.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

@@ -31,6 +31,7 @@ type AgreementDTO struct {
 	RequireConfirmation bool   `json:"require_confirmation"`
 	CoverImageURL       string `json:"cover_image_url,omitempty"`
 	Status              string `json:"status"`
+	IsPinned            bool   `json:"is_pinned"`
 	GroupID             int    `json:"group_id"`
 	CreatorID           int    `json:"creator_id"`
 	ApplicableMemberIDs []int  `json:"applicable_member_ids"`
@@ -54,6 +55,8 @@ func toAgreementDTO(a *ent.Agreement) *AgreementDTO {
 		applicableMemberIDs = []int{}
 	}
 
+	isPinned := len(a.Edges.PinnedByUsers) > 0
+
 	return &AgreementDTO{
 		ID:                  a.ID,
 		Name:                a.Name,
@@ -62,6 +65,7 @@ func toAgreementDTO(a *ent.Agreement) *AgreementDTO {
 		RequireConfirmation: a.RequireConfirmation,
 		CoverImageURL:       coverImageURL,
 		Status:              string(a.Status),
+		IsPinned:            isPinned,
 		GroupID:             a.GroupID,
 		CreatorID:           a.CreatorID,
 		ApplicableMemberIDs: applicableMemberIDs,
@@ -453,4 +457,118 @@ func (h *AgreementHandler) UpdateAgreementStatus(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, toAgreementDTO(agr))
+}
+
+// PinAgreement handles POST /v1/groups/:groupId/agreements/:agreementId/pin
+func (h *AgreementHandler) PinAgreement(c echo.Context) error {
+	userID, ok := c.Get("user_id").(int)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, ErrorResponse{
+			Code:    "ERR_UNAUTHORIZED",
+			Message: "未授权",
+		})
+	}
+
+	groupIDStr := c.Param("groupId")
+	groupID, err := strconv.Atoi(groupIDStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "ERR_INVALID_GROUP_ID",
+			Message: "无效的群组ID",
+		})
+	}
+
+	agreementIDStr := c.Param("agreementId")
+	agreementID, err := strconv.Atoi(agreementIDStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "ERR_INVALID_AGREEMENT_ID",
+			Message: "无效的约定ID",
+		})
+	}
+
+	err = h.agreementService.PinAgreement(c.Request().Context(), groupID, userID, agreementID)
+	if err != nil {
+		if errors.Is(err, agreement.ErrNotGroupMember) {
+			return c.JSON(http.StatusForbidden, ErrorResponse{
+				Code:    "ERR_PIN_AGREEMENT_NOT_MEMBER",
+				Message: "您不是该群组的成员",
+			})
+		}
+		if errors.Is(err, agreement.ErrAgreementNotFound) || errors.Is(err, agreement.ErrAgreementNotInGroup) {
+			return c.JSON(http.StatusNotFound, ErrorResponse{
+				Code:    "ERR_PIN_AGREEMENT_NOT_FOUND",
+				Message: "约定不存在",
+			})
+		}
+		if errors.Is(err, agreement.ErrPinAgreementFailed) {
+			return c.JSON(http.StatusInternalServerError, ErrorResponse{
+				Code:    "ERR_PIN_AGREEMENT_FAILED",
+				Message: "置顶约定失败",
+			})
+		}
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Code:    "ERR_PIN_AGREEMENT_FAILED",
+			Message: "置顶约定失败",
+		})
+	}
+
+	return c.NoContent(http.StatusOK)
+}
+
+// UnpinAgreement handles DELETE /v1/groups/:groupId/agreements/:agreementId/pin
+func (h *AgreementHandler) UnpinAgreement(c echo.Context) error {
+	userID, ok := c.Get("user_id").(int)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, ErrorResponse{
+			Code:    "ERR_UNAUTHORIZED",
+			Message: "未授权",
+		})
+	}
+
+	groupIDStr := c.Param("groupId")
+	groupID, err := strconv.Atoi(groupIDStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "ERR_INVALID_GROUP_ID",
+			Message: "无效的群组ID",
+		})
+	}
+
+	agreementIDStr := c.Param("agreementId")
+	agreementID, err := strconv.Atoi(agreementIDStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "ERR_INVALID_AGREEMENT_ID",
+			Message: "无效的约定ID",
+		})
+	}
+
+	err = h.agreementService.UnpinAgreement(c.Request().Context(), groupID, userID, agreementID)
+	if err != nil {
+		if errors.Is(err, agreement.ErrNotGroupMember) {
+			return c.JSON(http.StatusForbidden, ErrorResponse{
+				Code:    "ERR_UNPIN_AGREEMENT_NOT_MEMBER",
+				Message: "您不是该群组的成员",
+			})
+		}
+		if errors.Is(err, agreement.ErrAgreementNotFound) || errors.Is(err, agreement.ErrAgreementNotInGroup) {
+			return c.JSON(http.StatusNotFound, ErrorResponse{
+				Code:    "ERR_UNPIN_AGREEMENT_NOT_FOUND",
+				Message: "约定不存在",
+			})
+		}
+		if errors.Is(err, agreement.ErrUnpinAgreementFailed) {
+			return c.JSON(http.StatusInternalServerError, ErrorResponse{
+				Code:    "ERR_UNPIN_AGREEMENT_FAILED",
+				Message: "取消置顶失败",
+			})
+		}
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Code:    "ERR_UNPIN_AGREEMENT_FAILED",
+			Message: "取消置顶失败",
+		})
+	}
+
+	return c.NoContent(http.StatusOK)
 }

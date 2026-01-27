@@ -14,3 +14,13 @@ final class LoadAgreements extends AgreementListEvent {
 final class RefreshAgreements extends AgreementListEvent {
   const RefreshAgreements();
 }
+
+final class TogglePinAgreement extends AgreementListEvent {
+  const TogglePinAgreement({
+    required this.agreementId,
+    required this.currentPinStatus,
+  });
+
+  final int agreementId;
+  final bool currentPinStatus;
+}

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:way2we_app/app/di.dart';
 import 'package:way2we_app/features/agreement/bloc/detail/agreement_detail_bloc.dart';
 import 'package:way2we_app/features/agreement/data/providers/agreement_provider.dart';
 import 'package:way2we_app/features/agreement/models/agreement.dart';
+import 'package:way2we_app/features/agreement/view/agreement_error_mapper.dart';
 import 'package:way2we_app/features/agreement/view/edit_agreement_page.dart';
 import 'package:way2we_app/features/group/bloc/group_control_bloc.dart';
 import 'package:way2we_app/l10n/l10n.dart';
@@ -20,20 +20,17 @@ class AgreementDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (_) => AgreementProvider(dio: ServiceLocator.instance.dio),
-      child: BlocProvider(
-        create: (context) =>
-            AgreementDetailBloc(
-              agreementProvider: context.read<AgreementProvider>(),
-            )..add(
-              LoadAgreementDetail(
-                groupId: groupId,
-                agreementId: agreementId,
-              ),
+    return BlocProvider(
+      create: (context) =>
+          AgreementDetailBloc(
+            agreementProvider: context.read<AgreementProvider>(),
+          )..add(
+            LoadAgreementDetail(
+              groupId: groupId,
+              agreementId: agreementId,
             ),
-        child: AgreementDetailView(groupId: groupId),
-      ),
+          ),
+      child: AgreementDetailView(groupId: groupId),
     );
   }
 }
@@ -60,10 +57,29 @@ class AgreementDetailView extends StatelessWidget {
               backgroundColor: theme.colorScheme.primary,
             ),
           );
-        } else if (state is AgreementDetailError) {
+        } else if (state is AgreementPinUpdateSuccess) {
+          final message = state.isPinned
+              ? l10n.agreementPinSuccess
+              : l10n.agreementUnpinSuccess;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(message),
+              backgroundColor: theme.colorScheme.primary,
+            ),
+          );
+        } else if (state is AgreementPinUpdateFailure) {
+          final message = agreementErrorMessage(context, state.code);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(message),
+              backgroundColor: theme.colorScheme.error,
+            ),
+          );
+        } else if (state is AgreementDetailError) {
+          final message = agreementErrorMessage(context, state.code);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(message),
               backgroundColor: theme.colorScheme.error,
             ),
           );
@@ -72,22 +88,20 @@ class AgreementDetailView extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(l10n.agreementDetails),
-          actions: [
-            BlocBuilder<AgreementDetailBloc, AgreementDetailState>(
-              builder: (context, state) {
-                if (state is! AgreementDetailLoaded &&
-                    state is! AgreementStatusUpdateSuccess) {
-                  return const SizedBox.shrink();
-                }
+          actions: () {
+            final state = context.watch<AgreementDetailBloc>().state;
+            final agreement = state.agreementOrNull;
+            if (agreement == null) {
+              return <Widget>[];
+            }
 
-                final agreement = state is AgreementDetailLoaded
-                    ? state.agreement
-                    : (state as AgreementStatusUpdateSuccess).agreement;
+            final isPinUpdating = state is AgreementPinUpdating;
 
-                return _buildEditButton(context, agreement);
-              },
-            ),
-          ],
+            return [
+              _buildPinButton(context, agreement, isPinUpdating),
+              _buildEditButton(context, agreement),
+            ];
+          }(),
         ),
         body: BlocBuilder<AgreementDetailBloc, AgreementDetailState>(
           builder: (context, state) {
@@ -96,6 +110,7 @@ class AgreementDetailView extends StatelessWidget {
             }
 
             if (state is AgreementDetailError) {
+              final message = agreementErrorMessage(context, state.code);
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -106,27 +121,45 @@ class AgreementDetailView extends StatelessWidget {
                       color: theme.colorScheme.error,
                     ),
                     const SizedBox(height: 16),
-                    Text(state.message),
+                    Text(message),
                   ],
                 ),
               );
             }
 
-            if (state is AgreementDetailLoaded ||
-                state is AgreementStatusUpdateSuccess ||
-                state is AgreementStatusUpdating) {
-              final agreement = state is AgreementDetailLoaded
-                  ? state.agreement
-                  : state is AgreementStatusUpdateSuccess
-                  ? state.agreement
-                  : (state as AgreementStatusUpdating).agreement;
-
+            final agreement = state.agreementOrNull;
+            if (agreement != null) {
               return _buildContent(context, agreement);
             }
 
             return const SizedBox.shrink();
           },
         ),
+      ),
+    );
+  }
+
+  Widget _buildPinButton(
+    BuildContext context,
+    Agreement agreement,
+    bool isUpdating,
+  ) {
+    final theme = Theme.of(context);
+
+    return IconButton(
+      tooltip: agreement.isPinned
+          ? context.l10n.agreementUnpinAction
+          : context.l10n.agreementPinAction,
+      onPressed: isUpdating
+          ? null
+          : () {
+              context.read<AgreementDetailBloc>().add(
+                TogglePin(currentPinStatus: agreement.isPinned),
+              );
+            },
+      icon: Icon(
+        agreement.isPinned ? Icons.push_pin : Icons.push_pin_outlined,
+        color: agreement.isPinned ? theme.colorScheme.primary : null,
       ),
     );
   }

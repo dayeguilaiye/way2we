@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:way2we_app/app/view/app.dart';
+import 'package:way2we_app/features/agreement/bloc/list/agreement_list_bloc.dart';
+import 'package:way2we_app/features/agreement/data/providers/agreement_provider.dart';
+import 'package:way2we_app/features/agreement/view/agreement_detail_page.dart';
 import 'package:way2we_app/features/agreement/view/agreement_list_page.dart';
+import 'package:way2we_app/features/agreement/view/widgets/agreement_card.dart';
 import 'package:way2we_app/features/auth/bloc/authentication_bloc.dart';
 import 'package:way2we_app/features/group/bloc/group_control_bloc.dart';
 import 'package:way2we_app/features/group/view/group_default_settings_page.dart';
@@ -100,9 +105,13 @@ class HomePage extends StatelessWidget {
           ),
           body: isLoading
               ? const Center(child: CircularProgressIndicator())
-              : Center(
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.pagePaddingH,
+                    vertical: AppSpacing.space6,
+                  ),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
                         width: 120,
@@ -153,8 +162,8 @@ class HomePage extends StatelessWidget {
                             ),
                           ),
                         ],
-
-                        // Placeholder for future content
+                        const SizedBox(height: AppSpacing.space6),
+                        PinnedAgreementsSection(groupId: selectedGroup.id),
                         const SizedBox(height: AppSpacing.space6),
                         // Agreements Entry
                         InkWell(
@@ -261,6 +270,138 @@ class HomePage extends StatelessWidget {
             style: theme.textTheme.labelMedium,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class PinnedAgreementsSection extends StatefulWidget {
+  const PinnedAgreementsSection({required this.groupId, super.key});
+
+  final int groupId;
+
+  @override
+  State<PinnedAgreementsSection> createState() =>
+      _PinnedAgreementsSectionState();
+}
+
+class _PinnedAgreementsSectionState extends State<PinnedAgreementsSection>
+    with RouteAware {
+  late final AgreementListBloc _bloc;
+  bool _subscribed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = AgreementListBloc(
+      agreementProvider: context.read<AgreementProvider>(),
+    );
+    _loadAgreements();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is PageRoute && !_subscribed) {
+      routeObserver.subscribe(this, route);
+      _subscribed = true;
+    }
+  }
+
+  @override
+  void didUpdateWidget(PinnedAgreementsSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.groupId != widget.groupId) {
+      _loadAgreements();
+    }
+  }
+
+  @override
+  void didPopNext() {
+    _loadAgreements();
+  }
+
+  @override
+  void dispose() {
+    if (_subscribed) {
+      routeObserver.unsubscribe(this);
+    }
+    _bloc.close();
+    super.dispose();
+  }
+
+  void _loadAgreements() {
+    _bloc.add(LoadAgreements(groupId: widget.groupId, statusFilter: 'active'));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+
+    return BlocProvider.value(
+      value: _bloc,
+      child: BlocBuilder<AgreementListBloc, AgreementListState>(
+        builder: (context, state) {
+          if (state is AgreementListLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state is AgreementListError) {
+            return const SizedBox.shrink();
+          }
+
+          if (state is AgreementListReadyState) {
+            final pinnedAgreements = state.activeAgreements
+                .where((agreement) => agreement.isPinned)
+                .toList();
+
+            if (pinnedAgreements.isEmpty) {
+              return const SizedBox.shrink();
+            }
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.agreementPinnedSectionTitle,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: AppTypography.bold,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.space3),
+                SizedBox(
+                  height: 160,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: pinnedAgreements.length,
+                    separatorBuilder: (_, __) =>
+                        const SizedBox(width: AppSpacing.space3),
+                    itemBuilder: (context, index) {
+                      final agreement = pinnedAgreements[index];
+                      return AgreementCompactCard(
+                        agreement: agreement,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => AgreementDetailPage(
+                                groupId: widget.groupId,
+                                agreementId: agreement.id,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            );
+          }
+
+          return const SizedBox.shrink();
+        },
       ),
     );
   }

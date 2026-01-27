@@ -196,6 +196,21 @@ func (_u *AgreementUpdate) SetCreator(v *User) *AgreementUpdate {
 	return _u.SetCreatorID(v.ID)
 }
 
+// AddPinnedByUserIDs adds the "pinned_by_users" edge to the User entity by IDs.
+func (_u *AgreementUpdate) AddPinnedByUserIDs(ids ...int) *AgreementUpdate {
+	_u.mutation.AddPinnedByUserIDs(ids...)
+	return _u
+}
+
+// AddPinnedByUsers adds the "pinned_by_users" edges to the User entity.
+func (_u *AgreementUpdate) AddPinnedByUsers(v ...*User) *AgreementUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddPinnedByUserIDs(ids...)
+}
+
 // Mutation returns the AgreementMutation object of the builder.
 func (_u *AgreementUpdate) Mutation() *AgreementMutation {
 	return _u.mutation
@@ -211,6 +226,27 @@ func (_u *AgreementUpdate) ClearGroup() *AgreementUpdate {
 func (_u *AgreementUpdate) ClearCreator() *AgreementUpdate {
 	_u.mutation.ClearCreator()
 	return _u
+}
+
+// ClearPinnedByUsers clears all "pinned_by_users" edges to the User entity.
+func (_u *AgreementUpdate) ClearPinnedByUsers() *AgreementUpdate {
+	_u.mutation.ClearPinnedByUsers()
+	return _u
+}
+
+// RemovePinnedByUserIDs removes the "pinned_by_users" edge to User entities by IDs.
+func (_u *AgreementUpdate) RemovePinnedByUserIDs(ids ...int) *AgreementUpdate {
+	_u.mutation.RemovePinnedByUserIDs(ids...)
+	return _u
+}
+
+// RemovePinnedByUsers removes "pinned_by_users" edges to User entities.
+func (_u *AgreementUpdate) RemovePinnedByUsers(v ...*User) *AgreementUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemovePinnedByUserIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -381,6 +417,51 @@ func (_u *AgreementUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Inverse: false,
 			Table:   agreement.CreatorTable,
 			Columns: []string{agreement.CreatorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.PinnedByUsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   agreement.PinnedByUsersTable,
+			Columns: agreement.PinnedByUsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedPinnedByUsersIDs(); len(nodes) > 0 && !_u.mutation.PinnedByUsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   agreement.PinnedByUsersTable,
+			Columns: agreement.PinnedByUsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.PinnedByUsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   agreement.PinnedByUsersTable,
+			Columns: agreement.PinnedByUsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -576,6 +657,21 @@ func (_u *AgreementUpdateOne) SetCreator(v *User) *AgreementUpdateOne {
 	return _u.SetCreatorID(v.ID)
 }
 
+// AddPinnedByUserIDs adds the "pinned_by_users" edge to the User entity by IDs.
+func (_u *AgreementUpdateOne) AddPinnedByUserIDs(ids ...int) *AgreementUpdateOne {
+	_u.mutation.AddPinnedByUserIDs(ids...)
+	return _u
+}
+
+// AddPinnedByUsers adds the "pinned_by_users" edges to the User entity.
+func (_u *AgreementUpdateOne) AddPinnedByUsers(v ...*User) *AgreementUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddPinnedByUserIDs(ids...)
+}
+
 // Mutation returns the AgreementMutation object of the builder.
 func (_u *AgreementUpdateOne) Mutation() *AgreementMutation {
 	return _u.mutation
@@ -591,6 +687,27 @@ func (_u *AgreementUpdateOne) ClearGroup() *AgreementUpdateOne {
 func (_u *AgreementUpdateOne) ClearCreator() *AgreementUpdateOne {
 	_u.mutation.ClearCreator()
 	return _u
+}
+
+// ClearPinnedByUsers clears all "pinned_by_users" edges to the User entity.
+func (_u *AgreementUpdateOne) ClearPinnedByUsers() *AgreementUpdateOne {
+	_u.mutation.ClearPinnedByUsers()
+	return _u
+}
+
+// RemovePinnedByUserIDs removes the "pinned_by_users" edge to User entities by IDs.
+func (_u *AgreementUpdateOne) RemovePinnedByUserIDs(ids ...int) *AgreementUpdateOne {
+	_u.mutation.RemovePinnedByUserIDs(ids...)
+	return _u
+}
+
+// RemovePinnedByUsers removes "pinned_by_users" edges to User entities.
+func (_u *AgreementUpdateOne) RemovePinnedByUsers(v ...*User) *AgreementUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemovePinnedByUserIDs(ids...)
 }
 
 // Where appends a list predicates to the AgreementUpdate builder.
@@ -791,6 +908,51 @@ func (_u *AgreementUpdateOne) sqlSave(ctx context.Context) (_node *Agreement, er
 			Inverse: false,
 			Table:   agreement.CreatorTable,
 			Columns: []string{agreement.CreatorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.PinnedByUsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   agreement.PinnedByUsersTable,
+			Columns: agreement.PinnedByUsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedPinnedByUsersIDs(); len(nodes) > 0 && !_u.mutation.PinnedByUsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   agreement.PinnedByUsersTable,
+			Columns: agreement.PinnedByUsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.PinnedByUsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   agreement.PinnedByUsersTable,
+			Columns: agreement.PinnedByUsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),

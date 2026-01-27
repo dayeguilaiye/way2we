@@ -19,3 +19,9 @@ final class UpdateAgreementStatus extends AgreementDetailEvent {
 
   final String newStatus; // 'active' or 'inactive'
 }
+
+final class TogglePin extends AgreementDetailEvent {
+  const TogglePin({required this.currentPinStatus});
+
+  final bool currentPinStatus;
+}

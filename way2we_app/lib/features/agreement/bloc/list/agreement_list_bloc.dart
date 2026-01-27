@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:way2we_app/features/agreement/data/providers/agreement_provider.dart';
 import 'package:way2we_app/features/agreement/models/agreement.dart';
@@ -11,6 +12,7 @@ class AgreementListBloc extends Bloc<AgreementListEvent, AgreementListState> {
       super(const AgreementListInitial()) {
     on<LoadAgreements>(_onLoadAgreements);
     on<RefreshAgreements>(_onRefreshAgreements);
+    on<TogglePinAgreement>(_onTogglePinAgreement);
   }
 
   final AgreementProvider _agreementProvider;
@@ -70,6 +72,75 @@ class AgreementListBloc extends Bloc<AgreementListEvent, AgreementListState> {
       emit(AgreementListError(message: e.message, code: e.code));
     } on Exception catch (e) {
       emit(AgreementListError(message: e.toString()));
+    }
+  }
+
+  Future<void> _onTogglePinAgreement(
+    TogglePinAgreement event,
+    Emitter<AgreementListState> emit,
+  ) async {
+    if (_currentGroupId == null) return;
+
+    final currentState = state;
+    if (currentState is! AgreementListReadyState) return;
+
+    final previousAgreements = currentState.agreements;
+    final updatedAgreements = previousAgreements
+        .map(
+          (agreement) => agreement.id == event.agreementId
+              ? agreement.copyWith(isPinned: !event.currentPinStatus)
+              : agreement,
+        )
+        .toList();
+
+    emit(
+      AgreementListLoaded(
+        agreements: updatedAgreements,
+        groupId: currentState.groupId,
+        statusFilter: currentState.statusFilter,
+      ),
+    );
+
+    try {
+      if (event.currentPinStatus) {
+        await _agreementProvider.unpinAgreement(
+          groupId: _currentGroupId!,
+          agreementId: event.agreementId,
+        );
+      } else {
+        await _agreementProvider.pinAgreement(
+          groupId: _currentGroupId!,
+          agreementId: event.agreementId,
+        );
+      }
+
+      emit(
+        AgreementListActionSuccess(
+          agreements: updatedAgreements,
+          groupId: currentState.groupId,
+          statusFilter: currentState.statusFilter,
+          isPinned: !event.currentPinStatus,
+        ),
+      );
+    } on AgreementApiException catch (e) {
+      emit(
+        AgreementListActionFailure(
+          agreements: previousAgreements,
+          groupId: currentState.groupId,
+          statusFilter: currentState.statusFilter,
+          message: e.message,
+          code: e.code,
+        ),
+      );
+    } on Exception catch (e) {
+      emit(
+        AgreementListActionFailure(
+          agreements: previousAgreements,
+          groupId: currentState.groupId,
+          statusFilter: currentState.statusFilter,
+          message: e.toString(),
+        ),
+      );
     }
   }
 }

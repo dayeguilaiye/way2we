@@ -385,6 +385,22 @@ func (c *AgreementClient) QueryCreator(_m *Agreement) *UserQuery {
 	return query
 }
 
+// QueryPinnedByUsers queries the pinned_by_users edge of a Agreement.
+func (c *AgreementClient) QueryPinnedByUsers(_m *Agreement) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(agreement.Table, agreement.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, agreement.PinnedByUsersTable, agreement.PinnedByUsersPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *AgreementClient) Hooks() []Hook {
 	return c.hooks.Agreement
@@ -1006,6 +1022,22 @@ func (c *UserClient) QueryGroupMemberships(_m *User) *GroupMemberQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(groupmember.Table, groupmember.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, user.GroupMembershipsTable, user.GroupMembershipsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPinnedAgreements queries the pinned_agreements edge of a User.
+func (c *UserClient) QueryPinnedAgreements(_m *User) *AgreementQuery {
+	query := (&AgreementClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(agreement.Table, agreement.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.PinnedAgreementsTable, user.PinnedAgreementsPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil

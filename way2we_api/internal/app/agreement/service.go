@@ -8,6 +8,7 @@ import (
 	"github.com/way2we/way2we_api/ent"
 	"github.com/way2we/way2we_api/ent/agreement"
 	"github.com/way2we/way2we_api/ent/groupmember"
+	"github.com/way2we/way2we_api/ent/user"
 	"github.com/way2we/way2we_api/internal/app/group"
 )
 
@@ -24,6 +25,8 @@ var (
 	ErrUpdateAgreementFailed   = errors.New("failed to update agreement")
 	ErrInvalidStatus           = errors.New("invalid status, must be 'active' or 'inactive'")
 	ErrAgreementNotInGroup     = errors.New("agreement does not belong to this group")
+	ErrPinAgreementFailed      = errors.New("failed to pin agreement")
+	ErrUnpinAgreementFailed    = errors.New("failed to unpin agreement")
 )
 
 // Service handles agreement-related business logic.
@@ -80,7 +83,10 @@ func (s *Service) ListAgreements(ctx context.Context, groupID int, userID int, s
 	// 2. Build query
 	query := s.client.Agreement.Query().
 		Where(agreement.GroupID(groupID)).
-		Order(ent.Desc(agreement.FieldCreatedAt))
+		Order(ent.Desc(agreement.FieldCreatedAt)).
+		WithPinnedByUsers(func(q *ent.UserQuery) {
+			q.Where(user.ID(userID))
+		})
 
 	// 3. Apply status filter if provided
 	if statusFilter != "" {
@@ -101,6 +107,93 @@ func (s *Service) ListAgreements(ctx context.Context, groupID int, userID int, s
 	}
 
 	return agreements, nil
+}
+
+// PinAgreement pins an agreement for a user.
+// Any group member can pin agreements.
+func (s *Service) PinAgreement(ctx context.Context, groupID int, userID int, agreementID int) error {
+	// 1. Verify user is a member of the group
+	exists, err := s.client.GroupMember.Query().
+		Where(
+			groupmember.GroupID(groupID),
+			groupmember.UserID(userID),
+		).
+		Exist(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to check membership: %w", err)
+	}
+	if !exists {
+		return ErrNotGroupMember
+	}
+
+	// 2. Get agreement
+	agr, err := s.client.Agreement.Get(ctx, agreementID)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return ErrAgreementNotFound
+		}
+		return fmt.Errorf("failed to get agreement: %w", err)
+	}
+
+	// 3. Verify agreement belongs to the group
+	if agr.GroupID != groupID {
+		return ErrAgreementNotInGroup
+	}
+
+	// 4. Add pinned relationship (idempotent on constraint conflict)
+	err = s.client.User.UpdateOneID(userID).
+		AddPinnedAgreementIDs(agreementID).
+		Exec(ctx)
+	if err != nil {
+		if ent.IsConstraintError(err) {
+			return nil
+		}
+		return fmt.Errorf("%w: %w", ErrPinAgreementFailed, err)
+	}
+
+	return nil
+}
+
+// UnpinAgreement removes a pinned agreement for a user.
+// Any group member can unpin agreements.
+func (s *Service) UnpinAgreement(ctx context.Context, groupID int, userID int, agreementID int) error {
+	// 1. Verify user is a member of the group
+	exists, err := s.client.GroupMember.Query().
+		Where(
+			groupmember.GroupID(groupID),
+			groupmember.UserID(userID),
+		).
+		Exist(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to check membership: %w", err)
+	}
+	if !exists {
+		return ErrNotGroupMember
+	}
+
+	// 2. Get agreement
+	agr, err := s.client.Agreement.Get(ctx, agreementID)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return ErrAgreementNotFound
+		}
+		return fmt.Errorf("failed to get agreement: %w", err)
+	}
+
+	// 3. Verify agreement belongs to the group
+	if agr.GroupID != groupID {
+		return ErrAgreementNotInGroup
+	}
+
+	// 4. Remove pinned relationship (idempotent)
+	err = s.client.User.UpdateOneID(userID).
+		RemovePinnedAgreementIDs(agreementID).
+		Exec(ctx)
+	if err != nil {
+		return fmt.Errorf("%w: %w", ErrUnpinAgreementFailed, err)
+	}
+
+	return nil
 }
 
 // CreateAgreement creates a new agreement in the group.
@@ -202,6 +295,10 @@ func (s *Service) GetAgreement(ctx context.Context, groupID int, agreementID int
 		return nil, ErrAgreementNotInGroup
 	}
 
+	if err := s.loadPinnedByUser(ctx, agr, userID); err != nil {
+		return nil, err
+	}
+
 	return agr, nil
 }
 
@@ -280,6 +377,10 @@ func (s *Service) UpdateAgreement(ctx context.Context, groupID int, agreementID 
 		return nil, fmt.Errorf("%w: %v", ErrUpdateAgreementFailed, err)
 	}
 
+	if err := s.loadPinnedByUser(ctx, updated, userID); err != nil {
+		return nil, err
+	}
+
 	return updated, nil
 }
 
@@ -328,5 +429,23 @@ func (s *Service) UpdateAgreementStatus(ctx context.Context, groupID int, agreem
 		return nil, fmt.Errorf("%w: %v", ErrUpdateAgreementFailed, err)
 	}
 
+	if err := s.loadPinnedByUser(ctx, updated, userID); err != nil {
+		return nil, err
+	}
+
 	return updated, nil
+}
+
+func (s *Service) loadPinnedByUser(ctx context.Context, agr *ent.Agreement, userID int) error {
+	pinnedUsers, err := s.client.Agreement.Query().
+		Where(agreement.ID(agr.ID)).
+		QueryPinnedByUsers().
+		Where(user.ID(userID)).
+		All(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to query pinned users: %w", err)
+	}
+
+	agr.Edges.PinnedByUsers = pinnedUsers
+	return nil
 }

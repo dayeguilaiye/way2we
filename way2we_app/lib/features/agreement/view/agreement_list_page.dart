@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:way2we_app/app/di.dart';
 import 'package:way2we_app/features/agreement/bloc/list/agreement_list_bloc.dart';
 import 'package:way2we_app/features/agreement/data/providers/agreement_provider.dart';
 import 'package:way2we_app/features/agreement/models/agreement.dart';
 import 'package:way2we_app/features/agreement/view/agreement_detail_page.dart';
 import 'package:way2we_app/features/agreement/view/create_agreement_page.dart';
+import 'package:way2we_app/features/agreement/view/agreement_error_mapper.dart';
 import 'package:way2we_app/features/agreement/view/widgets/agreement_card.dart';
 import 'package:way2we_app/features/group/bloc/group_control_bloc.dart';
 import 'package:way2we_app/l10n/l10n.dart';
@@ -26,14 +26,11 @@ class AgreementListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (_) => AgreementProvider(dio: ServiceLocator.instance.dio),
-      child: BlocProvider(
-        create: (context) => AgreementListBloc(
-          agreementProvider: context.read<AgreementProvider>(),
-        )..add(LoadAgreements(groupId: groupId)),
-        child: AgreementListView(groupId: groupId),
-      ),
+    return BlocProvider(
+      create: (context) => AgreementListBloc(
+        agreementProvider: context.read<AgreementProvider>(),
+      )..add(LoadAgreements(groupId: groupId)),
+      child: AgreementListView(groupId: groupId),
     );
   }
 }
@@ -88,13 +85,35 @@ class _AgreementListViewState extends State<AgreementListView>
           ],
         ),
       ),
-      body: BlocBuilder<AgreementListBloc, AgreementListState>(
+      body: BlocConsumer<AgreementListBloc, AgreementListState>(
+        listener: (context, state) {
+          if (state is AgreementListActionSuccess) {
+            final message = state.isPinned
+                ? l10n.agreementPinSuccess
+                : l10n.agreementUnpinSuccess;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(message),
+                backgroundColor: theme.colorScheme.primary,
+              ),
+            );
+          } else if (state is AgreementListActionFailure) {
+            final message = agreementErrorMessage(context, state.code);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(message),
+                backgroundColor: theme.colorScheme.error,
+              ),
+            );
+          }
+        },
         builder: (context, state) {
           if (state is AgreementListLoading) {
             return const Center(child: CircularProgressIndicator());
           }
 
           if (state is AgreementListError) {
+            final message = agreementErrorMessage(context, state.code);
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -105,7 +124,7 @@ class _AgreementListViewState extends State<AgreementListView>
                     color: theme.colorScheme.error,
                   ),
                   const SizedBox(height: 16),
-                  Text(state.message),
+                  Text(message),
                   const SizedBox(height: 16),
                   FilledButton(
                     onPressed: _loadAgreements,
@@ -116,7 +135,7 @@ class _AgreementListViewState extends State<AgreementListView>
             );
           }
 
-          if (state is AgreementListLoaded) {
+          if (state is AgreementListReadyState) {
             return TabBarView(
               controller: _tabController,
               children: [
@@ -199,21 +218,35 @@ class _AgreementListViewState extends State<AgreementListView>
       );
     }
 
+    final pinnedAgreements =
+        agreements.where((agreement) => agreement.isPinned).toList();
+    final unpinnedAgreements =
+        agreements.where((agreement) => !agreement.isPinned).toList();
+    final orderedAgreements = [...pinnedAgreements, ...unpinnedAgreements];
+
     return RefreshIndicator(
       onRefresh: () async {
         context.read<AgreementListBloc>().add(const RefreshAgreements());
       },
       child: ListView.builder(
         padding: const EdgeInsets.only(top: 8, bottom: 80),
-        itemCount: agreements.length,
+        itemCount: orderedAgreements.length,
         itemBuilder: (context, index) {
-          final agreement = agreements[index];
+          final agreement = orderedAgreements[index];
           return AgreementCard(
             agreement: agreement,
             onTap: () => _navigateToDetail(context, agreement),
             onRecordComplete: isActive
                 ? () => _recordComplete(agreement)
                 : null,
+            onTogglePin: () {
+              context.read<AgreementListBloc>().add(
+                TogglePinAgreement(
+                  agreementId: agreement.id,
+                  currentPinStatus: agreement.isPinned,
+                ),
+              );
+            },
           );
         },
       ),

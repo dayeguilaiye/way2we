@@ -41,6 +41,8 @@ const (
 	EdgeGroup = "group"
 	// EdgeCreator holds the string denoting the creator edge name in mutations.
 	EdgeCreator = "creator"
+	// EdgePinnedByUsers holds the string denoting the pinned_by_users edge name in mutations.
+	EdgePinnedByUsers = "pinned_by_users"
 	// Table holds the table name of the agreement in the database.
 	Table = "agreements"
 	// GroupTable is the table that holds the group relation/edge.
@@ -57,6 +59,11 @@ const (
 	CreatorInverseTable = "users"
 	// CreatorColumn is the table column denoting the creator relation/edge.
 	CreatorColumn = "creator_id"
+	// PinnedByUsersTable is the table that holds the pinned_by_users relation/edge. The primary key declared below.
+	PinnedByUsersTable = "user_pinned_agreements"
+	// PinnedByUsersInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	PinnedByUsersInverseTable = "users"
 )
 
 // Columns holds all SQL columns for agreement fields.
@@ -74,6 +81,12 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
+
+var (
+	// PinnedByUsersPrimaryKey and PinnedByUsersColumn2 are the table columns denoting the
+	// primary key for the pinned_by_users relation (M2M).
+	PinnedByUsersPrimaryKey = []string{"user_id", "agreement_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -199,6 +212,20 @@ func ByCreatorField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newCreatorStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByPinnedByUsersCount orders the results by pinned_by_users count.
+func ByPinnedByUsersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newPinnedByUsersStep(), opts...)
+	}
+}
+
+// ByPinnedByUsers orders the results by pinned_by_users terms.
+func ByPinnedByUsers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPinnedByUsersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newGroupStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -211,5 +238,12 @@ func newCreatorStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(CreatorInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, false, CreatorTable, CreatorColumn),
+	)
+}
+func newPinnedByUsersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PinnedByUsersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, PinnedByUsersTable, PinnedByUsersPrimaryKey...),
 	)
 }

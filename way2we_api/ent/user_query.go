@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/way2we/way2we_api/ent/agreement"
 	"github.com/way2we/way2we_api/ent/groupmember"
 	"github.com/way2we/way2we_api/ent/predicate"
 	"github.com/way2we/way2we_api/ent/user"
@@ -27,6 +28,7 @@ type UserQuery struct {
 	predicates           []predicate.User
 	withIdentities       *UserIdentityQuery
 	withGroupMemberships *GroupMemberQuery
+	withPinnedAgreements *AgreementQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -100,6 +102,28 @@ func (_q *UserQuery) QueryGroupMemberships() *GroupMemberQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(groupmember.Table, groupmember.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, user.GroupMembershipsTable, user.GroupMembershipsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPinnedAgreements chains the current query on the "pinned_agreements" edge.
+func (_q *UserQuery) QueryPinnedAgreements() *AgreementQuery {
+	query := (&AgreementClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(agreement.Table, agreement.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.PinnedAgreementsTable, user.PinnedAgreementsPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -301,6 +325,7 @@ func (_q *UserQuery) Clone() *UserQuery {
 		predicates:           append([]predicate.User{}, _q.predicates...),
 		withIdentities:       _q.withIdentities.Clone(),
 		withGroupMemberships: _q.withGroupMemberships.Clone(),
+		withPinnedAgreements: _q.withPinnedAgreements.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -326,6 +351,17 @@ func (_q *UserQuery) WithGroupMemberships(opts ...func(*GroupMemberQuery)) *User
 		opt(query)
 	}
 	_q.withGroupMemberships = query
+	return _q
+}
+
+// WithPinnedAgreements tells the query-builder to eager-load the nodes that are connected to
+// the "pinned_agreements" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithPinnedAgreements(opts ...func(*AgreementQuery)) *UserQuery {
+	query := (&AgreementClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withPinnedAgreements = query
 	return _q
 }
 
@@ -407,9 +443,10 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = _q.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			_q.withIdentities != nil,
 			_q.withGroupMemberships != nil,
+			_q.withPinnedAgreements != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -441,6 +478,13 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := _q.loadGroupMemberships(ctx, query, nodes,
 			func(n *User) { n.Edges.GroupMemberships = []*GroupMember{} },
 			func(n *User, e *GroupMember) { n.Edges.GroupMemberships = append(n.Edges.GroupMemberships, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withPinnedAgreements; query != nil {
+		if err := _q.loadPinnedAgreements(ctx, query, nodes,
+			func(n *User) { n.Edges.PinnedAgreements = []*Agreement{} },
+			func(n *User, e *Agreement) { n.Edges.PinnedAgreements = append(n.Edges.PinnedAgreements, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -505,6 +549,67 @@ func (_q *UserQuery) loadGroupMemberships(ctx context.Context, query *GroupMembe
 			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
+	}
+	return nil
+}
+func (_q *UserQuery) loadPinnedAgreements(ctx context.Context, query *AgreementQuery, nodes []*User, init func(*User), assign func(*User, *Agreement)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int]*User)
+	nids := make(map[int]map[*User]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(user.PinnedAgreementsTable)
+		s.Join(joinT).On(s.C(agreement.FieldID), joinT.C(user.PinnedAgreementsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(user.PinnedAgreementsPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(user.PinnedAgreementsPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := int(values[0].(*sql.NullInt64).Int64)
+				inValue := int(values[1].(*sql.NullInt64).Int64)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*User]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Agreement](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "pinned_agreements" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
 	}
 	return nil
 }

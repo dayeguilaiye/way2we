@@ -72,6 +72,9 @@ func (Agreement) Edges() []ent.Edge {
 			Required().
 			Field("creator_id").
 			Comment("The user who created this agreement"),
+		edge.From("pinned_by_users", User.Type).
+			Ref("pinned_agreements").
+			Comment("Users who pinned this agreement"),
 	}
 }
 

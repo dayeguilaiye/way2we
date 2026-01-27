@@ -26,6 +26,7 @@ class Agreement extends Equatable {
     required this.applicableMemberIds,
     required this.createdAt,
     required this.updatedAt,
+    this.isPinned = false,
     this.description,
     this.coverImageUrl,
   });
@@ -39,6 +40,7 @@ class Agreement extends Equatable {
       requireConfirmation: json['require_confirmation'] as bool,
       coverImageUrl: json['cover_image_url'] as String?,
       status: AgreementStatus.fromString(json['status'] as String),
+      isPinned: json['is_pinned'] as bool? ?? false,
       groupId: json['group_id'] as int,
       creatorId: json['creator_id'] as int,
       applicableMemberIds:
@@ -58,6 +60,7 @@ class Agreement extends Equatable {
   final bool requireConfirmation;
   final String? coverImageUrl;
   final AgreementStatus status;
+  final bool isPinned;
   final int groupId;
   final int creatorId;
   final List<int> applicableMemberIds;
@@ -73,6 +76,7 @@ class Agreement extends Equatable {
       'require_confirmation': requireConfirmation,
       'cover_image_url': coverImageUrl,
       'status': status.name,
+      'is_pinned': isPinned,
       'group_id': groupId,
       'creator_id': creatorId,
       'applicable_member_ids': applicableMemberIds,
@@ -93,6 +97,7 @@ class Agreement extends Equatable {
     bool? requireConfirmation,
     String? coverImageUrl,
     AgreementStatus? status,
+    bool? isPinned,
     int? groupId,
     int? creatorId,
     List<int>? applicableMemberIds,
@@ -107,6 +112,7 @@ class Agreement extends Equatable {
       requireConfirmation: requireConfirmation ?? this.requireConfirmation,
       coverImageUrl: coverImageUrl ?? this.coverImageUrl,
       status: status ?? this.status,
+      isPinned: isPinned ?? this.isPinned,
       groupId: groupId ?? this.groupId,
       creatorId: creatorId ?? this.creatorId,
       applicableMemberIds: applicableMemberIds ?? this.applicableMemberIds,
@@ -124,6 +130,7 @@ class Agreement extends Equatable {
     requireConfirmation,
     coverImageUrl,
     status,
+    isPinned,
     groupId,
     creatorId,
     applicableMemberIds,

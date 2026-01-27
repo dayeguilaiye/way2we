@@ -212,6 +212,34 @@ class AgreementProvider {
     }
   }
 
+  /// Pins an agreement for the current user.
+  Future<void> pinAgreement({
+    required int groupId,
+    required int agreementId,
+  }) async {
+    try {
+      await _dio.post<void>(
+        '/v1/groups/$groupId/agreements/$agreementId/pin',
+      );
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
+  /// Unpins an agreement for the current user.
+  Future<void> unpinAgreement({
+    required int groupId,
+    required int agreementId,
+  }) async {
+    try {
+      await _dio.delete<void>(
+        '/v1/groups/$groupId/agreements/$agreementId/pin',
+      );
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
   Never _handleDioError(DioException e) {
     if (e.response?.data is Map<String, dynamic>) {
       final data = e.response!.data as Map<String, dynamic>;

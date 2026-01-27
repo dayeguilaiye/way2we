@@ -61,7 +61,7 @@ development_status:
   # Epic 3: 约定规则管理
   epic-3: in-progress
   3-1-agreement-management: done  # 合并了查看约定列表、创建、编辑、停用与启用约定
-  3-2-pin-agreement: backlog
+  3-2-pin-agreement: review
   epic-3-retrospective: optional
 
   # Epic 4: 商品/兑换项管理

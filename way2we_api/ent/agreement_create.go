@@ -146,6 +146,21 @@ func (_c *AgreementCreate) SetCreator(v *User) *AgreementCreate {
 	return _c.SetCreatorID(v.ID)
 }
 
+// AddPinnedByUserIDs adds the "pinned_by_users" edge to the User entity by IDs.
+func (_c *AgreementCreate) AddPinnedByUserIDs(ids ...int) *AgreementCreate {
+	_c.mutation.AddPinnedByUserIDs(ids...)
+	return _c
+}
+
+// AddPinnedByUsers adds the "pinned_by_users" edges to the User entity.
+func (_c *AgreementCreate) AddPinnedByUsers(v ...*User) *AgreementCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddPinnedByUserIDs(ids...)
+}
+
 // Mutation returns the AgreementMutation object of the builder.
 func (_c *AgreementCreate) Mutation() *AgreementMutation {
 	return _c.mutation
@@ -345,6 +360,22 @@ func (_c *AgreementCreate) createSpec() (*Agreement, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.CreatorID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.PinnedByUsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   agreement.PinnedByUsersTable,
+			Columns: agreement.PinnedByUsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

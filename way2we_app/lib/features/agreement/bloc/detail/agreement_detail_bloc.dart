@@ -12,6 +12,7 @@ class AgreementDetailBloc
         super(const AgreementDetailInitial()) {
     on<LoadAgreementDetail>(_onLoadAgreementDetail);
     on<UpdateAgreementStatus>(_onUpdateAgreementStatus);
+    on<TogglePin>(_onTogglePin);
   }
 
   final AgreementProvider _agreementProvider;
@@ -50,10 +51,10 @@ class AgreementDetailBloc
   ) async {
     if (_currentGroupId == null || _currentAgreementId == null) return;
 
-    final currentState = state;
-    if (currentState is! AgreementDetailLoaded) return;
+    final agreement = state.agreementOrNull;
+    if (agreement == null) return;
 
-    emit(AgreementStatusUpdating(agreement: currentState.agreement));
+    emit(AgreementStatusUpdating(agreement: agreement));
 
     try {
       final updatedAgreement = await _agreementProvider.updateAgreementStatus(
@@ -69,4 +70,58 @@ class AgreementDetailBloc
       emit(AgreementDetailError(message: e.toString()));
     }
   }
+
+  Future<void> _onTogglePin(
+    TogglePin event,
+    Emitter<AgreementDetailState> emit,
+  ) async {
+    if (_currentGroupId == null || _currentAgreementId == null) return;
+
+    final agreement = state.agreementOrNull;
+    if (agreement == null) return;
+
+    emit(AgreementPinUpdating(agreement: agreement));
+
+    try {
+      if (event.currentPinStatus) {
+        await _agreementProvider.unpinAgreement(
+          groupId: _currentGroupId!,
+          agreementId: _currentAgreementId!,
+        );
+      } else {
+        await _agreementProvider.pinAgreement(
+          groupId: _currentGroupId!,
+          agreementId: _currentAgreementId!,
+        );
+      }
+
+      final updatedAgreement =
+          agreement.copyWith(isPinned: !event.currentPinStatus);
+
+      emit(
+        AgreementPinUpdateSuccess(
+          agreement: updatedAgreement,
+          isPinned: updatedAgreement.isPinned,
+        ),
+      );
+    } on AgreementApiException catch (e) {
+      emit(
+        AgreementPinUpdateFailure(
+          agreement: agreement,
+          message: e.message,
+          code: e.code,
+        ),
+      );
+      emit(AgreementDetailLoaded(agreement: agreement, groupId: _currentGroupId!));
+    } on Exception catch (e) {
+      emit(
+        AgreementPinUpdateFailure(
+          agreement: agreement,
+          message: e.toString(),
+        ),
+      );
+      emit(AgreementDetailLoaded(agreement: agreement, groupId: _currentGroupId!));
+    }
+  }
+
 }

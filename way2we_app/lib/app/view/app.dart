@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:way2we_app/app/di.dart';
+import 'package:way2we_app/features/agreement/data/providers/agreement_provider.dart';
 import 'package:way2we_app/features/auth/bloc/authentication_bloc.dart';
 import 'package:way2we_app/features/auth/data/providers/auth_provider.dart';
 import 'package:way2we_app/features/auth/view/login_page.dart';
@@ -15,6 +16,8 @@ import 'package:way2we_app/theme/app_theme.dart';
 
 /// Global navigator key for navigation outside of widget context.
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+final RouteObserver<PageRoute<dynamic>> routeObserver =
+    RouteObserver<PageRoute<dynamic>>();
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -29,6 +32,7 @@ class App extends StatelessWidget {
       storage: ServiceLocator.instance.storage,
     );
     final groupProvider = GroupProvider(dio: dio);
+    final agreementProvider = AgreementProvider(dio: dio);
 
     // Create AuthenticationBloc and register with ServiceLocator
     // for 401 handling
@@ -45,6 +49,7 @@ class App extends StatelessWidget {
       providers: [
         RepositoryProvider<AuthProvider>.value(value: authProvider),
         RepositoryProvider<GroupProvider>.value(value: groupProvider),
+        RepositoryProvider<AgreementProvider>.value(value: agreementProvider),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -69,6 +74,7 @@ class _AppViewState extends State<_AppView> {
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: navigatorKey,
+      navigatorObservers: [routeObserver],
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       localizationsDelegates: AppLocalizations.localizationsDelegates,

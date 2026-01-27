@@ -1,7 +1,10 @@
 part of 'agreement_list_bloc.dart';
 
-sealed class AgreementListState {
+sealed class AgreementListState extends Equatable {
   const AgreementListState();
+
+  @override
+  List<Object?> get props => [];
 }
 
 final class AgreementListInitial extends AgreementListState {
@@ -12,8 +15,8 @@ final class AgreementListLoading extends AgreementListState {
   const AgreementListLoading();
 }
 
-final class AgreementListLoaded extends AgreementListState {
-  const AgreementListLoaded({
+sealed class AgreementListReadyState extends AgreementListState {
+  const AgreementListReadyState({
     required this.agreements,
     required this.groupId,
     this.statusFilter,
@@ -30,6 +33,47 @@ final class AgreementListLoaded extends AgreementListState {
       agreements.where((a) => !a.isActive).toList();
 
   bool get isEmpty => agreements.isEmpty;
+
+  @override
+  List<Object?> get props => [agreements, groupId, statusFilter];
+}
+
+final class AgreementListLoaded extends AgreementListReadyState {
+  const AgreementListLoaded({
+    required super.agreements,
+    required super.groupId,
+    super.statusFilter,
+  });
+}
+
+final class AgreementListActionSuccess extends AgreementListReadyState {
+  const AgreementListActionSuccess({
+    required super.agreements,
+    required super.groupId,
+    super.statusFilter,
+    required this.isPinned,
+  });
+
+  final bool isPinned;
+
+  @override
+  List<Object?> get props => [...super.props, isPinned];
+}
+
+final class AgreementListActionFailure extends AgreementListReadyState {
+  const AgreementListActionFailure({
+    required super.agreements,
+    required super.groupId,
+    super.statusFilter,
+    required this.message,
+    this.code,
+  });
+
+  final String message;
+  final String? code;
+
+  @override
+  List<Object?> get props => [...super.props, message, code];
 }
 
 final class AgreementListError extends AgreementListState {
@@ -40,4 +84,7 @@ final class AgreementListError extends AgreementListState {
 
   final String message;
   final String? code;
+
+  @override
+  List<Object?> get props => [message, code];
 }

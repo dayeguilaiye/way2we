@@ -206,6 +206,16 @@
     "agreementActivate": "启用",
     "agreementStatusActive": "生效中",
     "agreementStatusInactive": "已停用",
-    "agreementRequiresConfirmation": "需要确认"
+    "agreementRequiresConfirmation": "需要确认",
+    "agreementPinAction": "置顶",
+    "agreementUnpinAction": "取消置顶",
+    "agreementPinSuccess": "已置顶",
+    "agreementUnpinSuccess": "已取消置顶",
+    "agreementPinnedSectionTitle": "置顶约定",
+    "agreementNotMemberError": "您不是该群组的成员",
+    "agreementNotFoundError": "约定不存在",
+    "agreementPinError": "置顶失败",
+    "agreementUnpinError": "取消置顶失败",
+    "agreementLoadError": "获取约定失败",
+    "agreementGenericError": "操作失败，请稍后重试"
 }
-

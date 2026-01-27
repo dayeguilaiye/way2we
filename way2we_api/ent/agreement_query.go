@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -20,12 +21,13 @@ import (
 // AgreementQuery is the builder for querying Agreement entities.
 type AgreementQuery struct {
 	config
-	ctx         *QueryContext
-	order       []agreement.OrderOption
-	inters      []Interceptor
-	predicates  []predicate.Agreement
-	withGroup   *GroupQuery
-	withCreator *UserQuery
+	ctx               *QueryContext
+	order             []agreement.OrderOption
+	inters            []Interceptor
+	predicates        []predicate.Agreement
+	withGroup         *GroupQuery
+	withCreator       *UserQuery
+	withPinnedByUsers *UserQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -99,6 +101,28 @@ func (_q *AgreementQuery) QueryCreator() *UserQuery {
 			sqlgraph.From(agreement.Table, agreement.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, agreement.CreatorTable, agreement.CreatorColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPinnedByUsers chains the current query on the "pinned_by_users" edge.
+func (_q *AgreementQuery) QueryPinnedByUsers() *UserQuery {
+	query := (&UserClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(agreement.Table, agreement.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, agreement.PinnedByUsersTable, agreement.PinnedByUsersPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -293,13 +317,14 @@ func (_q *AgreementQuery) Clone() *AgreementQuery {
 		return nil
 	}
 	return &AgreementQuery{
-		config:      _q.config,
-		ctx:         _q.ctx.Clone(),
-		order:       append([]agreement.OrderOption{}, _q.order...),
-		inters:      append([]Interceptor{}, _q.inters...),
-		predicates:  append([]predicate.Agreement{}, _q.predicates...),
-		withGroup:   _q.withGroup.Clone(),
-		withCreator: _q.withCreator.Clone(),
+		config:            _q.config,
+		ctx:               _q.ctx.Clone(),
+		order:             append([]agreement.OrderOption{}, _q.order...),
+		inters:            append([]Interceptor{}, _q.inters...),
+		predicates:        append([]predicate.Agreement{}, _q.predicates...),
+		withGroup:         _q.withGroup.Clone(),
+		withCreator:       _q.withCreator.Clone(),
+		withPinnedByUsers: _q.withPinnedByUsers.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -325,6 +350,17 @@ func (_q *AgreementQuery) WithCreator(opts ...func(*UserQuery)) *AgreementQuery 
 		opt(query)
 	}
 	_q.withCreator = query
+	return _q
+}
+
+// WithPinnedByUsers tells the query-builder to eager-load the nodes that are connected to
+// the "pinned_by_users" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *AgreementQuery) WithPinnedByUsers(opts ...func(*UserQuery)) *AgreementQuery {
+	query := (&UserClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withPinnedByUsers = query
 	return _q
 }
 
@@ -406,9 +442,10 @@ func (_q *AgreementQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ag
 	var (
 		nodes       = []*Agreement{}
 		_spec       = _q.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			_q.withGroup != nil,
 			_q.withCreator != nil,
+			_q.withPinnedByUsers != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -438,6 +475,13 @@ func (_q *AgreementQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ag
 	if query := _q.withCreator; query != nil {
 		if err := _q.loadCreator(ctx, query, nodes, nil,
 			func(n *Agreement, e *User) { n.Edges.Creator = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withPinnedByUsers; query != nil {
+		if err := _q.loadPinnedByUsers(ctx, query, nodes,
+			func(n *Agreement) { n.Edges.PinnedByUsers = []*User{} },
+			func(n *Agreement, e *User) { n.Edges.PinnedByUsers = append(n.Edges.PinnedByUsers, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -498,6 +542,67 @@ func (_q *AgreementQuery) loadCreator(ctx context.Context, query *UserQuery, nod
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (_q *AgreementQuery) loadPinnedByUsers(ctx context.Context, query *UserQuery, nodes []*Agreement, init func(*Agreement), assign func(*Agreement, *User)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int]*Agreement)
+	nids := make(map[int]map[*Agreement]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(agreement.PinnedByUsersTable)
+		s.Join(joinT).On(s.C(user.FieldID), joinT.C(agreement.PinnedByUsersPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(agreement.PinnedByUsersPrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(agreement.PinnedByUsersPrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := int(values[0].(*sql.NullInt64).Int64)
+				inValue := int(values[1].(*sql.NullInt64).Int64)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Agreement]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*User](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "pinned_by_users" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
 		}
 	}
 	return nil

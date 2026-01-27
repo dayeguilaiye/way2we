@@ -46,5 +46,7 @@ func (User) Edges() []ent.Edge {
 		edge.From("group_memberships", GroupMember.Type).
 			Ref("user").
 			Comment("Groups this user is a member of"),
+		edge.To("pinned_agreements", Agreement.Type).
+			Comment("Agreements pinned by this user"),
 	}
 }

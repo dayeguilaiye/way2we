@@ -39,9 +39,11 @@ type UserEdges struct {
 	Identities []*UserIdentity `json:"identities,omitempty"`
 	// Groups this user is a member of
 	GroupMemberships []*GroupMember `json:"group_memberships,omitempty"`
+	// Agreements pinned by this user
+	PinnedAgreements []*Agreement `json:"pinned_agreements,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // IdentitiesOrErr returns the Identities value or an error if the edge
@@ -60,6 +62,15 @@ func (e UserEdges) GroupMembershipsOrErr() ([]*GroupMember, error) {
 		return e.GroupMemberships, nil
 	}
 	return nil, &NotLoadedError{edge: "group_memberships"}
+}
+
+// PinnedAgreementsOrErr returns the PinnedAgreements value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) PinnedAgreementsOrErr() ([]*Agreement, error) {
+	if e.loadedTypes[2] {
+		return e.PinnedAgreements, nil
+	}
+	return nil, &NotLoadedError{edge: "pinned_agreements"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -145,6 +156,11 @@ func (_m *User) QueryIdentities() *UserIdentityQuery {
 // QueryGroupMemberships queries the "group_memberships" edge of the User entity.
 func (_m *User) QueryGroupMemberships() *GroupMemberQuery {
 	return NewUserClient(_m.config).QueryGroupMemberships(_m)
+}
+
+// QueryPinnedAgreements queries the "pinned_agreements" edge of the User entity.
+func (_m *User) QueryPinnedAgreements() *AgreementQuery {
+	return NewUserClient(_m.config).QueryPinnedAgreements(_m)
 }
 
 // Update returns a builder for updating this User.

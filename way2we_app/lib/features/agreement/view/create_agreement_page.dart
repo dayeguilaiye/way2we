@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:way2we_app/app/di.dart';
 import 'package:way2we_app/features/agreement/bloc/form/agreement_form_bloc.dart';
 import 'package:way2we_app/features/agreement/data/providers/agreement_provider.dart';
 import 'package:way2we_app/features/group/data/providers/group_provider.dart';
@@ -16,22 +15,12 @@ class CreateAgreementPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider(
-          create: (_) => AgreementProvider(dio: ServiceLocator.instance.dio),
-        ),
-        RepositoryProvider(
-          create: (_) => GroupProvider(dio: ServiceLocator.instance.dio),
-        ),
-      ],
-      child: BlocProvider(
-        create: (context) => AgreementFormBloc(
-          agreementProvider: context.read<AgreementProvider>(),
-          groupProvider: context.read<GroupProvider>(),
-        )..add(InitializeForm(groupId: groupId)),
-        child: CreateAgreementView(groupId: groupId),
-      ),
+    return BlocProvider(
+      create: (context) => AgreementFormBloc(
+        agreementProvider: context.read<AgreementProvider>(),
+        groupProvider: context.read<GroupProvider>(),
+      )..add(InitializeForm(groupId: groupId)),
+      child: CreateAgreementView(groupId: groupId),
     );
   }
 }

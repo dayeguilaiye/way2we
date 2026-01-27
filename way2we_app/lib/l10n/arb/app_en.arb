@@ -668,5 +668,49 @@
     "agreementRequiresConfirmation": "Requires confirmation",
     "@agreementRequiresConfirmation": {
         "description": "Requires confirmation badge text"
+    },
+    "agreementPinAction": "Pin",
+    "@agreementPinAction": {
+        "description": "Pin agreement action label"
+    },
+    "agreementUnpinAction": "Unpin",
+    "@agreementUnpinAction": {
+        "description": "Unpin agreement action label"
+    },
+    "agreementPinSuccess": "Pinned",
+    "@agreementPinSuccess": {
+        "description": "Agreement pin success message"
+    },
+    "agreementUnpinSuccess": "Unpinned",
+    "@agreementUnpinSuccess": {
+        "description": "Agreement unpin success message"
+    },
+    "agreementPinnedSectionTitle": "Pinned agreements",
+    "@agreementPinnedSectionTitle": {
+        "description": "Pinned agreements section title"
+    },
+    "agreementNotMemberError": "You are not a member of this group",
+    "@agreementNotMemberError": {
+        "description": "Agreement error when user is not a group member"
+    },
+    "agreementNotFoundError": "Agreement not found",
+    "@agreementNotFoundError": {
+        "description": "Agreement error when agreement does not exist"
+    },
+    "agreementPinError": "Failed to pin agreement",
+    "@agreementPinError": {
+        "description": "Agreement error when pin action fails"
+    },
+    "agreementUnpinError": "Failed to unpin agreement",
+    "@agreementUnpinError": {
+        "description": "Agreement error when unpin action fails"
+    },
+    "agreementLoadError": "Failed to load agreements",
+    "@agreementLoadError": {
+        "description": "Agreement error when loading agreements fails"
+    },
+    "agreementGenericError": "Something went wrong. Please try again.",
+    "@agreementGenericError": {
+        "description": "Generic agreement error message"
     }
 }

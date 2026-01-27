@@ -54,9 +54,11 @@ type AgreementEdges struct {
 	Group *Group `json:"group,omitempty"`
 	// The user who created this agreement
 	Creator *User `json:"creator,omitempty"`
+	// Users who pinned this agreement
+	PinnedByUsers []*User `json:"pinned_by_users,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // GroupOrErr returns the Group value or an error if the edge
@@ -79,6 +81,15 @@ func (e AgreementEdges) CreatorOrErr() (*User, error) {
 		return nil, &NotFoundError{label: user.Label}
 	}
 	return nil, &NotLoadedError{edge: "creator"}
+}
+
+// PinnedByUsersOrErr returns the PinnedByUsers value or an error if the edge
+// was not loaded in eager-loading.
+func (e AgreementEdges) PinnedByUsersOrErr() ([]*User, error) {
+	if e.loadedTypes[2] {
+		return e.PinnedByUsers, nil
+	}
+	return nil, &NotLoadedError{edge: "pinned_by_users"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -207,6 +218,11 @@ func (_m *Agreement) QueryGroup() *GroupQuery {
 // QueryCreator queries the "creator" edge of the Agreement entity.
 func (_m *Agreement) QueryCreator() *UserQuery {
 	return NewAgreementClient(_m.config).QueryCreator(_m)
+}
+
+// QueryPinnedByUsers queries the "pinned_by_users" edge of the Agreement entity.
+func (_m *Agreement) QueryPinnedByUsers() *UserQuery {
+	return NewAgreementClient(_m.config).QueryPinnedByUsers(_m)
 }
 
 // Update returns a builder for updating this Agreement.

@@ -169,6 +169,31 @@ var (
 			},
 		},
 	}
+	// UserPinnedAgreementsColumns holds the columns for the "user_pinned_agreements" table.
+	UserPinnedAgreementsColumns = []*schema.Column{
+		{Name: "user_id", Type: field.TypeInt},
+		{Name: "agreement_id", Type: field.TypeInt},
+	}
+	// UserPinnedAgreementsTable holds the schema information for the "user_pinned_agreements" table.
+	UserPinnedAgreementsTable = &schema.Table{
+		Name:       "user_pinned_agreements",
+		Columns:    UserPinnedAgreementsColumns,
+		PrimaryKey: []*schema.Column{UserPinnedAgreementsColumns[0], UserPinnedAgreementsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_pinned_agreements_user_id",
+				Columns:    []*schema.Column{UserPinnedAgreementsColumns[0]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "user_pinned_agreements_agreement_id",
+				Columns:    []*schema.Column{UserPinnedAgreementsColumns[1]},
+				RefColumns: []*schema.Column{AgreementsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AgreementsTable,
@@ -177,6 +202,7 @@ var (
 		TokenBlacklistsTable,
 		UsersTable,
 		UserIdentitiesTable,
+		UserPinnedAgreementsTable,
 	}
 )
 
@@ -186,4 +212,6 @@ func init() {
 	GroupMembersTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupMembersTable.ForeignKeys[1].RefTable = UsersTable
 	UserIdentitiesTable.ForeignKeys[0].RefTable = UsersTable
+	UserPinnedAgreementsTable.ForeignKeys[0].RefTable = UsersTable
+	UserPinnedAgreementsTable.ForeignKeys[1].RefTable = AgreementsTable
 }
