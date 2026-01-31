@@ -49,9 +49,13 @@ type GroupEdges struct {
 	Agreements []*Agreement `json:"agreements,omitempty"`
 	// Rewards belonging to this group
 	Rewards []*Reward `json:"rewards,omitempty"`
+	// Point logs belonging to this group
+	PointLogs []*PointLog `json:"point_logs,omitempty"`
+	// Member point summaries in this group
+	MemberSummaries []*MemberSummary `json:"member_summaries,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [5]bool
 }
 
 // MembersOrErr returns the Members value or an error if the edge
@@ -79,6 +83,24 @@ func (e GroupEdges) RewardsOrErr() ([]*Reward, error) {
 		return e.Rewards, nil
 	}
 	return nil, &NotLoadedError{edge: "rewards"}
+}
+
+// PointLogsOrErr returns the PointLogs value or an error if the edge
+// was not loaded in eager-loading.
+func (e GroupEdges) PointLogsOrErr() ([]*PointLog, error) {
+	if e.loadedTypes[3] {
+		return e.PointLogs, nil
+	}
+	return nil, &NotLoadedError{edge: "point_logs"}
+}
+
+// MemberSummariesOrErr returns the MemberSummaries value or an error if the edge
+// was not loaded in eager-loading.
+func (e GroupEdges) MemberSummariesOrErr() ([]*MemberSummary, error) {
+	if e.loadedTypes[4] {
+		return e.MemberSummaries, nil
+	}
+	return nil, &NotLoadedError{edge: "member_summaries"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -196,6 +218,16 @@ func (_m *Group) QueryAgreements() *AgreementQuery {
 // QueryRewards queries the "rewards" edge of the Group entity.
 func (_m *Group) QueryRewards() *RewardQuery {
 	return NewGroupClient(_m.config).QueryRewards(_m)
+}
+
+// QueryPointLogs queries the "point_logs" edge of the Group entity.
+func (_m *Group) QueryPointLogs() *PointLogQuery {
+	return NewGroupClient(_m.config).QueryPointLogs(_m)
+}
+
+// QueryMemberSummaries queries the "member_summaries" edge of the Group entity.
+func (_m *Group) QueryMemberSummaries() *MemberSummaryQuery {
+	return NewGroupClient(_m.config).QueryMemberSummaries(_m)
 }
 
 // Update returns a builder for updating this Group.

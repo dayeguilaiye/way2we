@@ -15,6 +15,8 @@ import (
 	"github.com/way2we/way2we_api/ent/agreement"
 	"github.com/way2we/way2we_api/ent/group"
 	"github.com/way2we/way2we_api/ent/groupmember"
+	"github.com/way2we/way2we_api/ent/membersummary"
+	"github.com/way2we/way2we_api/ent/pointlog"
 	"github.com/way2we/way2we_api/ent/predicate"
 	"github.com/way2we/way2we_api/ent/reward"
 )
@@ -22,13 +24,15 @@ import (
 // GroupQuery is the builder for querying Group entities.
 type GroupQuery struct {
 	config
-	ctx            *QueryContext
-	order          []group.OrderOption
-	inters         []Interceptor
-	predicates     []predicate.Group
-	withMembers    *GroupMemberQuery
-	withAgreements *AgreementQuery
-	withRewards    *RewardQuery
+	ctx                 *QueryContext
+	order               []group.OrderOption
+	inters              []Interceptor
+	predicates          []predicate.Group
+	withMembers         *GroupMemberQuery
+	withAgreements      *AgreementQuery
+	withRewards         *RewardQuery
+	withPointLogs       *PointLogQuery
+	withMemberSummaries *MemberSummaryQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -124,6 +128,50 @@ func (_q *GroupQuery) QueryRewards() *RewardQuery {
 			sqlgraph.From(group.Table, group.FieldID, selector),
 			sqlgraph.To(reward.Table, reward.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, group.RewardsTable, group.RewardsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPointLogs chains the current query on the "point_logs" edge.
+func (_q *GroupQuery) QueryPointLogs() *PointLogQuery {
+	query := (&PointLogClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, selector),
+			sqlgraph.To(pointlog.Table, pointlog.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.PointLogsTable, group.PointLogsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryMemberSummaries chains the current query on the "member_summaries" edge.
+func (_q *GroupQuery) QueryMemberSummaries() *MemberSummaryQuery {
+	query := (&MemberSummaryClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, selector),
+			sqlgraph.To(membersummary.Table, membersummary.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.MemberSummariesTable, group.MemberSummariesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -318,14 +366,16 @@ func (_q *GroupQuery) Clone() *GroupQuery {
 		return nil
 	}
 	return &GroupQuery{
-		config:         _q.config,
-		ctx:            _q.ctx.Clone(),
-		order:          append([]group.OrderOption{}, _q.order...),
-		inters:         append([]Interceptor{}, _q.inters...),
-		predicates:     append([]predicate.Group{}, _q.predicates...),
-		withMembers:    _q.withMembers.Clone(),
-		withAgreements: _q.withAgreements.Clone(),
-		withRewards:    _q.withRewards.Clone(),
+		config:              _q.config,
+		ctx:                 _q.ctx.Clone(),
+		order:               append([]group.OrderOption{}, _q.order...),
+		inters:              append([]Interceptor{}, _q.inters...),
+		predicates:          append([]predicate.Group{}, _q.predicates...),
+		withMembers:         _q.withMembers.Clone(),
+		withAgreements:      _q.withAgreements.Clone(),
+		withRewards:         _q.withRewards.Clone(),
+		withPointLogs:       _q.withPointLogs.Clone(),
+		withMemberSummaries: _q.withMemberSummaries.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -362,6 +412,28 @@ func (_q *GroupQuery) WithRewards(opts ...func(*RewardQuery)) *GroupQuery {
 		opt(query)
 	}
 	_q.withRewards = query
+	return _q
+}
+
+// WithPointLogs tells the query-builder to eager-load the nodes that are connected to
+// the "point_logs" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *GroupQuery) WithPointLogs(opts ...func(*PointLogQuery)) *GroupQuery {
+	query := (&PointLogClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withPointLogs = query
+	return _q
+}
+
+// WithMemberSummaries tells the query-builder to eager-load the nodes that are connected to
+// the "member_summaries" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *GroupQuery) WithMemberSummaries(opts ...func(*MemberSummaryQuery)) *GroupQuery {
+	query := (&MemberSummaryClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withMemberSummaries = query
 	return _q
 }
 
@@ -443,10 +515,12 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 	var (
 		nodes       = []*Group{}
 		_spec       = _q.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [5]bool{
 			_q.withMembers != nil,
 			_q.withAgreements != nil,
 			_q.withRewards != nil,
+			_q.withPointLogs != nil,
+			_q.withMemberSummaries != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -485,6 +559,20 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 		if err := _q.loadRewards(ctx, query, nodes,
 			func(n *Group) { n.Edges.Rewards = []*Reward{} },
 			func(n *Group, e *Reward) { n.Edges.Rewards = append(n.Edges.Rewards, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withPointLogs; query != nil {
+		if err := _q.loadPointLogs(ctx, query, nodes,
+			func(n *Group) { n.Edges.PointLogs = []*PointLog{} },
+			func(n *Group, e *PointLog) { n.Edges.PointLogs = append(n.Edges.PointLogs, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withMemberSummaries; query != nil {
+		if err := _q.loadMemberSummaries(ctx, query, nodes,
+			func(n *Group) { n.Edges.MemberSummaries = []*MemberSummary{} },
+			func(n *Group, e *MemberSummary) { n.Edges.MemberSummaries = append(n.Edges.MemberSummaries, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -566,6 +654,66 @@ func (_q *GroupQuery) loadRewards(ctx context.Context, query *RewardQuery, nodes
 	}
 	query.Where(predicate.Reward(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(group.RewardsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.GroupID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "group_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *GroupQuery) loadPointLogs(ctx context.Context, query *PointLogQuery, nodes []*Group, init func(*Group), assign func(*Group, *PointLog)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Group)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(pointlog.FieldGroupID)
+	}
+	query.Where(predicate.PointLog(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(group.PointLogsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.GroupID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "group_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *GroupQuery) loadMemberSummaries(ctx context.Context, query *MemberSummaryQuery, nodes []*Group, init func(*Group), assign func(*Group, *MemberSummary)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Group)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(membersummary.FieldGroupID)
+	}
+	query.Where(predicate.MemberSummary(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(group.MemberSummariesColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

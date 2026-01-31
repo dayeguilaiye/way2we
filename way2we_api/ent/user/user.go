@@ -32,6 +32,10 @@ const (
 	EdgePinnedAgreements = "pinned_agreements"
 	// EdgePinnedRewards holds the string denoting the pinned_rewards edge name in mutations.
 	EdgePinnedRewards = "pinned_rewards"
+	// EdgePointLogs holds the string denoting the point_logs edge name in mutations.
+	EdgePointLogs = "point_logs"
+	// EdgeMemberSummaries holds the string denoting the member_summaries edge name in mutations.
+	EdgeMemberSummaries = "member_summaries"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// IdentitiesTable is the table that holds the identities relation/edge.
@@ -58,6 +62,20 @@ const (
 	// PinnedRewardsInverseTable is the table name for the Reward entity.
 	// It exists in this package in order to avoid circular dependency with the "reward" package.
 	PinnedRewardsInverseTable = "rewards"
+	// PointLogsTable is the table that holds the point_logs relation/edge.
+	PointLogsTable = "point_logs"
+	// PointLogsInverseTable is the table name for the PointLog entity.
+	// It exists in this package in order to avoid circular dependency with the "pointlog" package.
+	PointLogsInverseTable = "point_logs"
+	// PointLogsColumn is the table column denoting the point_logs relation/edge.
+	PointLogsColumn = "user_id"
+	// MemberSummariesTable is the table that holds the member_summaries relation/edge.
+	MemberSummariesTable = "member_summaries"
+	// MemberSummariesInverseTable is the table name for the MemberSummary entity.
+	// It exists in this package in order to avoid circular dependency with the "membersummary" package.
+	MemberSummariesInverseTable = "member_summaries"
+	// MemberSummariesColumn is the table column denoting the member_summaries relation/edge.
+	MemberSummariesColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -190,6 +208,34 @@ func ByPinnedRewards(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newPinnedRewardsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByPointLogsCount orders the results by point_logs count.
+func ByPointLogsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newPointLogsStep(), opts...)
+	}
+}
+
+// ByPointLogs orders the results by point_logs terms.
+func ByPointLogs(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPointLogsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByMemberSummariesCount orders the results by member_summaries count.
+func ByMemberSummariesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newMemberSummariesStep(), opts...)
+	}
+}
+
+// ByMemberSummaries orders the results by member_summaries terms.
+func ByMemberSummaries(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMemberSummariesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newIdentitiesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -216,5 +262,19 @@ func newPinnedRewardsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(PinnedRewardsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, false, PinnedRewardsTable, PinnedRewardsPrimaryKey...),
+	)
+}
+func newPointLogsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PointLogsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, PointLogsTable, PointLogsColumn),
+	)
+}
+func newMemberSummariesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MemberSummariesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, MemberSummariesTable, MemberSummariesColumn),
 	)
 }

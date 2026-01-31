@@ -15,6 +15,12 @@ type Group func(*sql.Selector)
 // GroupMember is the predicate function for groupmember builders.
 type GroupMember func(*sql.Selector)
 
+// MemberSummary is the predicate function for membersummary builders.
+type MemberSummary func(*sql.Selector)
+
+// PointLog is the predicate function for pointlog builders.
+type PointLog func(*sql.Selector)
+
 // Reward is the predicate function for reward builders.
 type Reward func(*sql.Selector)
 

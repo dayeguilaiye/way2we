@@ -67,5 +67,11 @@ func (Group) Edges() []ent.Edge {
 		// Group's rewards
 		edge.To("rewards", Reward.Type).
 			Comment("Rewards belonging to this group"),
+		// Group's point logs
+		edge.To("point_logs", PointLog.Type).
+			Comment("Point logs belonging to this group"),
+		// Group's member summaries
+		edge.To("member_summaries", MemberSummary.Type).
+			Comment("Member point summaries in this group"),
 	}
 }

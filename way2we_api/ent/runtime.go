@@ -8,6 +8,8 @@ import (
 	"github.com/way2we/way2we_api/ent/agreement"
 	"github.com/way2we/way2we_api/ent/group"
 	"github.com/way2we/way2we_api/ent/groupmember"
+	"github.com/way2we/way2we_api/ent/membersummary"
+	"github.com/way2we/way2we_api/ent/pointlog"
 	"github.com/way2we/way2we_api/ent/reward"
 	"github.com/way2we/way2we_api/ent/schema"
 	"github.com/way2we/way2we_api/ent/tokenblacklist"
@@ -151,6 +153,64 @@ func init() {
 	groupmemberDescJoinedAt := groupmemberFields[3].Descriptor()
 	// groupmember.DefaultJoinedAt holds the default value on creation for the joined_at field.
 	groupmember.DefaultJoinedAt = groupmemberDescJoinedAt.Default.(func() time.Time)
+	membersummaryFields := schema.MemberSummary{}.Fields()
+	_ = membersummaryFields
+	// membersummaryDescBalance is the schema descriptor for balance field.
+	membersummaryDescBalance := membersummaryFields[2].Descriptor()
+	// membersummary.DefaultBalance holds the default value on creation for the balance field.
+	membersummary.DefaultBalance = membersummaryDescBalance.Default.(int)
+	// membersummaryDescUpdatedAt is the schema descriptor for updated_at field.
+	membersummaryDescUpdatedAt := membersummaryFields[3].Descriptor()
+	// membersummary.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	membersummary.DefaultUpdatedAt = membersummaryDescUpdatedAt.Default.(func() time.Time)
+	// membersummary.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	membersummary.UpdateDefaultUpdatedAt = membersummaryDescUpdatedAt.UpdateDefault.(func() time.Time)
+	pointlogFields := schema.PointLog{}.Fields()
+	_ = pointlogFields
+	// pointlogDescReason is the schema descriptor for reason field.
+	pointlogDescReason := pointlogFields[4].Descriptor()
+	// pointlog.ReasonValidator is a validator for the "reason" field. It is called by the builders before save.
+	pointlog.ReasonValidator = pointlogDescReason.Validators[0].(func(string) error)
+	// pointlogDescSourceType is the schema descriptor for source_type field.
+	pointlogDescSourceType := pointlogFields[5].Descriptor()
+	// pointlog.SourceTypeValidator is a validator for the "source_type" field. It is called by the builders before save.
+	pointlog.SourceTypeValidator = func() func(string) error {
+		validators := pointlogDescSourceType.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(source_type string) error {
+			for _, fn := range fns {
+				if err := fn(source_type); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// pointlogDescSourceID is the schema descriptor for source_id field.
+	pointlogDescSourceID := pointlogFields[6].Descriptor()
+	// pointlog.SourceIDValidator is a validator for the "source_id" field. It is called by the builders before save.
+	pointlog.SourceIDValidator = func() func(string) error {
+		validators := pointlogDescSourceID.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(source_id string) error {
+			for _, fn := range fns {
+				if err := fn(source_id); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// pointlogDescCreatedAt is the schema descriptor for created_at field.
+	pointlogDescCreatedAt := pointlogFields[8].Descriptor()
+	// pointlog.DefaultCreatedAt holds the default value on creation for the created_at field.
+	pointlog.DefaultCreatedAt = pointlogDescCreatedAt.Default.(func() time.Time)
 	rewardFields := schema.Reward{}.Fields()
 	_ = rewardFields
 	// rewardDescName is the schema descriptor for name field.

@@ -18,6 +18,8 @@ import (
 	"github.com/way2we/way2we_api/ent/agreement"
 	"github.com/way2we/way2we_api/ent/group"
 	"github.com/way2we/way2we_api/ent/groupmember"
+	"github.com/way2we/way2we_api/ent/membersummary"
+	"github.com/way2we/way2we_api/ent/pointlog"
 	"github.com/way2we/way2we_api/ent/reward"
 	"github.com/way2we/way2we_api/ent/tokenblacklist"
 	"github.com/way2we/way2we_api/ent/user"
@@ -35,6 +37,10 @@ type Client struct {
 	Group *GroupClient
 	// GroupMember is the client for interacting with the GroupMember builders.
 	GroupMember *GroupMemberClient
+	// MemberSummary is the client for interacting with the MemberSummary builders.
+	MemberSummary *MemberSummaryClient
+	// PointLog is the client for interacting with the PointLog builders.
+	PointLog *PointLogClient
 	// Reward is the client for interacting with the Reward builders.
 	Reward *RewardClient
 	// TokenBlacklist is the client for interacting with the TokenBlacklist builders.
@@ -57,6 +63,8 @@ func (c *Client) init() {
 	c.Agreement = NewAgreementClient(c.config)
 	c.Group = NewGroupClient(c.config)
 	c.GroupMember = NewGroupMemberClient(c.config)
+	c.MemberSummary = NewMemberSummaryClient(c.config)
+	c.PointLog = NewPointLogClient(c.config)
 	c.Reward = NewRewardClient(c.config)
 	c.TokenBlacklist = NewTokenBlacklistClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -156,6 +164,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Agreement:      NewAgreementClient(cfg),
 		Group:          NewGroupClient(cfg),
 		GroupMember:    NewGroupMemberClient(cfg),
+		MemberSummary:  NewMemberSummaryClient(cfg),
+		PointLog:       NewPointLogClient(cfg),
 		Reward:         NewRewardClient(cfg),
 		TokenBlacklist: NewTokenBlacklistClient(cfg),
 		User:           NewUserClient(cfg),
@@ -182,6 +192,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Agreement:      NewAgreementClient(cfg),
 		Group:          NewGroupClient(cfg),
 		GroupMember:    NewGroupMemberClient(cfg),
+		MemberSummary:  NewMemberSummaryClient(cfg),
+		PointLog:       NewPointLogClient(cfg),
 		Reward:         NewRewardClient(cfg),
 		TokenBlacklist: NewTokenBlacklistClient(cfg),
 		User:           NewUserClient(cfg),
@@ -215,8 +227,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Agreement, c.Group, c.GroupMember, c.Reward, c.TokenBlacklist, c.User,
-		c.UserIdentity,
+		c.Agreement, c.Group, c.GroupMember, c.MemberSummary, c.PointLog, c.Reward,
+		c.TokenBlacklist, c.User, c.UserIdentity,
 	} {
 		n.Use(hooks...)
 	}
@@ -226,8 +238,8 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Agreement, c.Group, c.GroupMember, c.Reward, c.TokenBlacklist, c.User,
-		c.UserIdentity,
+		c.Agreement, c.Group, c.GroupMember, c.MemberSummary, c.PointLog, c.Reward,
+		c.TokenBlacklist, c.User, c.UserIdentity,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -242,6 +254,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Group.mutate(ctx, m)
 	case *GroupMemberMutation:
 		return c.GroupMember.mutate(ctx, m)
+	case *MemberSummaryMutation:
+		return c.MemberSummary.mutate(ctx, m)
+	case *PointLogMutation:
+		return c.PointLog.mutate(ctx, m)
 	case *RewardMutation:
 		return c.Reward.mutate(ctx, m)
 	case *TokenBlacklistMutation:
@@ -592,6 +608,38 @@ func (c *GroupClient) QueryRewards(_m *Group) *RewardQuery {
 	return query
 }
 
+// QueryPointLogs queries the point_logs edge of a Group.
+func (c *GroupClient) QueryPointLogs(_m *Group) *PointLogQuery {
+	query := (&PointLogClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, id),
+			sqlgraph.To(pointlog.Table, pointlog.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.PointLogsTable, group.PointLogsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMemberSummaries queries the member_summaries edge of a Group.
+func (c *GroupClient) QueryMemberSummaries(_m *Group) *MemberSummaryQuery {
+	query := (&MemberSummaryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, id),
+			sqlgraph.To(membersummary.Table, membersummary.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.MemberSummariesTable, group.MemberSummariesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *GroupClient) Hooks() []Hook {
 	return c.hooks.Group
@@ -779,6 +827,336 @@ func (c *GroupMemberClient) mutate(ctx context.Context, m *GroupMemberMutation) 
 		return (&GroupMemberDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown GroupMember mutation op: %q", m.Op())
+	}
+}
+
+// MemberSummaryClient is a client for the MemberSummary schema.
+type MemberSummaryClient struct {
+	config
+}
+
+// NewMemberSummaryClient returns a client for the MemberSummary from the given config.
+func NewMemberSummaryClient(c config) *MemberSummaryClient {
+	return &MemberSummaryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `membersummary.Hooks(f(g(h())))`.
+func (c *MemberSummaryClient) Use(hooks ...Hook) {
+	c.hooks.MemberSummary = append(c.hooks.MemberSummary, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `membersummary.Intercept(f(g(h())))`.
+func (c *MemberSummaryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MemberSummary = append(c.inters.MemberSummary, interceptors...)
+}
+
+// Create returns a builder for creating a MemberSummary entity.
+func (c *MemberSummaryClient) Create() *MemberSummaryCreate {
+	mutation := newMemberSummaryMutation(c.config, OpCreate)
+	return &MemberSummaryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MemberSummary entities.
+func (c *MemberSummaryClient) CreateBulk(builders ...*MemberSummaryCreate) *MemberSummaryCreateBulk {
+	return &MemberSummaryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MemberSummaryClient) MapCreateBulk(slice any, setFunc func(*MemberSummaryCreate, int)) *MemberSummaryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MemberSummaryCreateBulk{err: fmt.Errorf("calling to MemberSummaryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MemberSummaryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MemberSummaryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MemberSummary.
+func (c *MemberSummaryClient) Update() *MemberSummaryUpdate {
+	mutation := newMemberSummaryMutation(c.config, OpUpdate)
+	return &MemberSummaryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MemberSummaryClient) UpdateOne(_m *MemberSummary) *MemberSummaryUpdateOne {
+	mutation := newMemberSummaryMutation(c.config, OpUpdateOne, withMemberSummary(_m))
+	return &MemberSummaryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MemberSummaryClient) UpdateOneID(id int) *MemberSummaryUpdateOne {
+	mutation := newMemberSummaryMutation(c.config, OpUpdateOne, withMemberSummaryID(id))
+	return &MemberSummaryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MemberSummary.
+func (c *MemberSummaryClient) Delete() *MemberSummaryDelete {
+	mutation := newMemberSummaryMutation(c.config, OpDelete)
+	return &MemberSummaryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MemberSummaryClient) DeleteOne(_m *MemberSummary) *MemberSummaryDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MemberSummaryClient) DeleteOneID(id int) *MemberSummaryDeleteOne {
+	builder := c.Delete().Where(membersummary.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MemberSummaryDeleteOne{builder}
+}
+
+// Query returns a query builder for MemberSummary.
+func (c *MemberSummaryClient) Query() *MemberSummaryQuery {
+	return &MemberSummaryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMemberSummary},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MemberSummary entity by its id.
+func (c *MemberSummaryClient) Get(ctx context.Context, id int) (*MemberSummary, error) {
+	return c.Query().Where(membersummary.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MemberSummaryClient) GetX(ctx context.Context, id int) *MemberSummary {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryGroup queries the group edge of a MemberSummary.
+func (c *MemberSummaryClient) QueryGroup(_m *MemberSummary) *GroupQuery {
+	query := (&GroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(membersummary.Table, membersummary.FieldID, id),
+			sqlgraph.To(group.Table, group.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, membersummary.GroupTable, membersummary.GroupColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUser queries the user edge of a MemberSummary.
+func (c *MemberSummaryClient) QueryUser(_m *MemberSummary) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(membersummary.Table, membersummary.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, membersummary.UserTable, membersummary.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *MemberSummaryClient) Hooks() []Hook {
+	return c.hooks.MemberSummary
+}
+
+// Interceptors returns the client interceptors.
+func (c *MemberSummaryClient) Interceptors() []Interceptor {
+	return c.inters.MemberSummary
+}
+
+func (c *MemberSummaryClient) mutate(ctx context.Context, m *MemberSummaryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MemberSummaryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MemberSummaryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MemberSummaryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MemberSummaryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown MemberSummary mutation op: %q", m.Op())
+	}
+}
+
+// PointLogClient is a client for the PointLog schema.
+type PointLogClient struct {
+	config
+}
+
+// NewPointLogClient returns a client for the PointLog from the given config.
+func NewPointLogClient(c config) *PointLogClient {
+	return &PointLogClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `pointlog.Hooks(f(g(h())))`.
+func (c *PointLogClient) Use(hooks ...Hook) {
+	c.hooks.PointLog = append(c.hooks.PointLog, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `pointlog.Intercept(f(g(h())))`.
+func (c *PointLogClient) Intercept(interceptors ...Interceptor) {
+	c.inters.PointLog = append(c.inters.PointLog, interceptors...)
+}
+
+// Create returns a builder for creating a PointLog entity.
+func (c *PointLogClient) Create() *PointLogCreate {
+	mutation := newPointLogMutation(c.config, OpCreate)
+	return &PointLogCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PointLog entities.
+func (c *PointLogClient) CreateBulk(builders ...*PointLogCreate) *PointLogCreateBulk {
+	return &PointLogCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PointLogClient) MapCreateBulk(slice any, setFunc func(*PointLogCreate, int)) *PointLogCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PointLogCreateBulk{err: fmt.Errorf("calling to PointLogClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PointLogCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PointLogCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PointLog.
+func (c *PointLogClient) Update() *PointLogUpdate {
+	mutation := newPointLogMutation(c.config, OpUpdate)
+	return &PointLogUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PointLogClient) UpdateOne(_m *PointLog) *PointLogUpdateOne {
+	mutation := newPointLogMutation(c.config, OpUpdateOne, withPointLog(_m))
+	return &PointLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PointLogClient) UpdateOneID(id int) *PointLogUpdateOne {
+	mutation := newPointLogMutation(c.config, OpUpdateOne, withPointLogID(id))
+	return &PointLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PointLog.
+func (c *PointLogClient) Delete() *PointLogDelete {
+	mutation := newPointLogMutation(c.config, OpDelete)
+	return &PointLogDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PointLogClient) DeleteOne(_m *PointLog) *PointLogDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PointLogClient) DeleteOneID(id int) *PointLogDeleteOne {
+	builder := c.Delete().Where(pointlog.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PointLogDeleteOne{builder}
+}
+
+// Query returns a query builder for PointLog.
+func (c *PointLogClient) Query() *PointLogQuery {
+	return &PointLogQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePointLog},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a PointLog entity by its id.
+func (c *PointLogClient) Get(ctx context.Context, id int) (*PointLog, error) {
+	return c.Query().Where(pointlog.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PointLogClient) GetX(ctx context.Context, id int) *PointLog {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryGroup queries the group edge of a PointLog.
+func (c *PointLogClient) QueryGroup(_m *PointLog) *GroupQuery {
+	query := (&GroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(pointlog.Table, pointlog.FieldID, id),
+			sqlgraph.To(group.Table, group.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, pointlog.GroupTable, pointlog.GroupColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUser queries the user edge of a PointLog.
+func (c *PointLogClient) QueryUser(_m *PointLog) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(pointlog.Table, pointlog.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, pointlog.UserTable, pointlog.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *PointLogClient) Hooks() []Hook {
+	return c.hooks.PointLog
+}
+
+// Interceptors returns the client interceptors.
+func (c *PointLogClient) Interceptors() []Interceptor {
+	return c.inters.PointLog
+}
+
+func (c *PointLogClient) mutate(ctx context.Context, m *PointLogMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PointLogCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PointLogUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PointLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PointLogDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown PointLog mutation op: %q", m.Op())
 	}
 }
 
@@ -1268,6 +1646,38 @@ func (c *UserClient) QueryPinnedRewards(_m *User) *RewardQuery {
 	return query
 }
 
+// QueryPointLogs queries the point_logs edge of a User.
+func (c *UserClient) QueryPointLogs(_m *User) *PointLogQuery {
+	query := (&PointLogClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(pointlog.Table, pointlog.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.PointLogsTable, user.PointLogsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMemberSummaries queries the member_summaries edge of a User.
+func (c *UserClient) QueryMemberSummaries(_m *User) *MemberSummaryQuery {
+	query := (&MemberSummaryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(membersummary.Table, membersummary.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.MemberSummariesTable, user.MemberSummariesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -1445,11 +1855,11 @@ func (c *UserIdentityClient) mutate(ctx context.Context, m *UserIdentityMutation
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Agreement, Group, GroupMember, Reward, TokenBlacklist, User,
-		UserIdentity []ent.Hook
+		Agreement, Group, GroupMember, MemberSummary, PointLog, Reward, TokenBlacklist,
+		User, UserIdentity []ent.Hook
 	}
 	inters struct {
-		Agreement, Group, GroupMember, Reward, TokenBlacklist, User,
-		UserIdentity []ent.Interceptor
+		Agreement, Group, GroupMember, MemberSummary, PointLog, Reward, TokenBlacklist,
+		User, UserIdentity []ent.Interceptor
 	}
 )

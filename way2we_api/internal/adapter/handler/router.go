@@ -9,7 +9,7 @@ import (
 )
 
 // RegisterRoutes registers all routes for the application.
-func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service, authHandler *AuthHandler, userHandler *UserHandler, groupHandler *GroupHandler, groupService *group.Service, agreementHandler *AgreementHandler, rewardHandler *RewardHandler) {
+func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service, authHandler *AuthHandler, userHandler *UserHandler, groupHandler *GroupHandler, groupService *group.Service, agreementHandler *AgreementHandler, rewardHandler *RewardHandler, pointsHandler *PointsHandler) {
 	v1 := e.Group("/v1")
 
 	// Auth Routes (Public)
@@ -74,6 +74,10 @@ func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service,
 	groupRoutes.PUT("/:groupId/rewards/:id/status", rewardHandler.UpdateRewardStatus)
 	groupRoutes.POST("/:groupId/rewards/:id/pin", rewardHandler.PinReward)
 	groupRoutes.DELETE("/:groupId/rewards/:id/pin", rewardHandler.UnpinReward)
+
+	// Points Routes (Protected - nested under groups)
+	groupRoutes.GET("/:groupId/points/me", pointsHandler.GetMyPoints)
+	groupRoutes.GET("/:groupId/points/logs", pointsHandler.ListPointLogs)
 
 	// Group Routes (Public - for invitation preview)
 	v1.GET("/groups/by-invitation/:code", groupHandler.GetGroupByInvitation)

@@ -14,6 +14,8 @@ import (
 	"github.com/way2we/way2we_api/ent/agreement"
 	"github.com/way2we/way2we_api/ent/group"
 	"github.com/way2we/way2we_api/ent/groupmember"
+	"github.com/way2we/way2we_api/ent/membersummary"
+	"github.com/way2we/way2we_api/ent/pointlog"
 	"github.com/way2we/way2we_api/ent/predicate"
 	"github.com/way2we/way2we_api/ent/reward"
 	"github.com/way2we/way2we_api/ent/tokenblacklist"
@@ -33,6 +35,8 @@ const (
 	TypeAgreement      = "Agreement"
 	TypeGroup          = "Group"
 	TypeGroupMember    = "GroupMember"
+	TypeMemberSummary  = "MemberSummary"
+	TypePointLog       = "PointLog"
 	TypeReward         = "Reward"
 	TypeTokenBlacklist = "TokenBlacklist"
 	TypeUser           = "User"
@@ -1229,6 +1233,12 @@ type GroupMutation struct {
 	rewards                          map[int]struct{}
 	removedrewards                   map[int]struct{}
 	clearedrewards                   bool
+	point_logs                       map[int]struct{}
+	removedpoint_logs                map[int]struct{}
+	clearedpoint_logs                bool
+	member_summaries                 map[int]struct{}
+	removedmember_summaries          map[int]struct{}
+	clearedmember_summaries          bool
 	done                             bool
 	oldValue                         func(context.Context) (*Group, error)
 	predicates                       []predicate.Group
@@ -1864,6 +1874,114 @@ func (m *GroupMutation) ResetRewards() {
 	m.removedrewards = nil
 }
 
+// AddPointLogIDs adds the "point_logs" edge to the PointLog entity by ids.
+func (m *GroupMutation) AddPointLogIDs(ids ...int) {
+	if m.point_logs == nil {
+		m.point_logs = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.point_logs[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPointLogs clears the "point_logs" edge to the PointLog entity.
+func (m *GroupMutation) ClearPointLogs() {
+	m.clearedpoint_logs = true
+}
+
+// PointLogsCleared reports if the "point_logs" edge to the PointLog entity was cleared.
+func (m *GroupMutation) PointLogsCleared() bool {
+	return m.clearedpoint_logs
+}
+
+// RemovePointLogIDs removes the "point_logs" edge to the PointLog entity by IDs.
+func (m *GroupMutation) RemovePointLogIDs(ids ...int) {
+	if m.removedpoint_logs == nil {
+		m.removedpoint_logs = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.point_logs, ids[i])
+		m.removedpoint_logs[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPointLogs returns the removed IDs of the "point_logs" edge to the PointLog entity.
+func (m *GroupMutation) RemovedPointLogsIDs() (ids []int) {
+	for id := range m.removedpoint_logs {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PointLogsIDs returns the "point_logs" edge IDs in the mutation.
+func (m *GroupMutation) PointLogsIDs() (ids []int) {
+	for id := range m.point_logs {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPointLogs resets all changes to the "point_logs" edge.
+func (m *GroupMutation) ResetPointLogs() {
+	m.point_logs = nil
+	m.clearedpoint_logs = false
+	m.removedpoint_logs = nil
+}
+
+// AddMemberSummaryIDs adds the "member_summaries" edge to the MemberSummary entity by ids.
+func (m *GroupMutation) AddMemberSummaryIDs(ids ...int) {
+	if m.member_summaries == nil {
+		m.member_summaries = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.member_summaries[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMemberSummaries clears the "member_summaries" edge to the MemberSummary entity.
+func (m *GroupMutation) ClearMemberSummaries() {
+	m.clearedmember_summaries = true
+}
+
+// MemberSummariesCleared reports if the "member_summaries" edge to the MemberSummary entity was cleared.
+func (m *GroupMutation) MemberSummariesCleared() bool {
+	return m.clearedmember_summaries
+}
+
+// RemoveMemberSummaryIDs removes the "member_summaries" edge to the MemberSummary entity by IDs.
+func (m *GroupMutation) RemoveMemberSummaryIDs(ids ...int) {
+	if m.removedmember_summaries == nil {
+		m.removedmember_summaries = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.member_summaries, ids[i])
+		m.removedmember_summaries[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMemberSummaries returns the removed IDs of the "member_summaries" edge to the MemberSummary entity.
+func (m *GroupMutation) RemovedMemberSummariesIDs() (ids []int) {
+	for id := range m.removedmember_summaries {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MemberSummariesIDs returns the "member_summaries" edge IDs in the mutation.
+func (m *GroupMutation) MemberSummariesIDs() (ids []int) {
+	for id := range m.member_summaries {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMemberSummaries resets all changes to the "member_summaries" edge.
+func (m *GroupMutation) ResetMemberSummaries() {
+	m.member_summaries = nil
+	m.clearedmember_summaries = false
+	m.removedmember_summaries = nil
+}
+
 // Where appends a list predicates to the GroupMutation builder.
 func (m *GroupMutation) Where(ps ...predicate.Group) {
 	m.predicates = append(m.predicates, ps...)
@@ -2163,7 +2281,7 @@ func (m *GroupMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *GroupMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 5)
 	if m.members != nil {
 		edges = append(edges, group.EdgeMembers)
 	}
@@ -2172,6 +2290,12 @@ func (m *GroupMutation) AddedEdges() []string {
 	}
 	if m.rewards != nil {
 		edges = append(edges, group.EdgeRewards)
+	}
+	if m.point_logs != nil {
+		edges = append(edges, group.EdgePointLogs)
+	}
+	if m.member_summaries != nil {
+		edges = append(edges, group.EdgeMemberSummaries)
 	}
 	return edges
 }
@@ -2198,13 +2322,25 @@ func (m *GroupMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case group.EdgePointLogs:
+		ids := make([]ent.Value, 0, len(m.point_logs))
+		for id := range m.point_logs {
+			ids = append(ids, id)
+		}
+		return ids
+	case group.EdgeMemberSummaries:
+		ids := make([]ent.Value, 0, len(m.member_summaries))
+		for id := range m.member_summaries {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *GroupMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 5)
 	if m.removedmembers != nil {
 		edges = append(edges, group.EdgeMembers)
 	}
@@ -2213,6 +2349,12 @@ func (m *GroupMutation) RemovedEdges() []string {
 	}
 	if m.removedrewards != nil {
 		edges = append(edges, group.EdgeRewards)
+	}
+	if m.removedpoint_logs != nil {
+		edges = append(edges, group.EdgePointLogs)
+	}
+	if m.removedmember_summaries != nil {
+		edges = append(edges, group.EdgeMemberSummaries)
 	}
 	return edges
 }
@@ -2239,13 +2381,25 @@ func (m *GroupMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case group.EdgePointLogs:
+		ids := make([]ent.Value, 0, len(m.removedpoint_logs))
+		for id := range m.removedpoint_logs {
+			ids = append(ids, id)
+		}
+		return ids
+	case group.EdgeMemberSummaries:
+		ids := make([]ent.Value, 0, len(m.removedmember_summaries))
+		for id := range m.removedmember_summaries {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *GroupMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 5)
 	if m.clearedmembers {
 		edges = append(edges, group.EdgeMembers)
 	}
@@ -2254,6 +2408,12 @@ func (m *GroupMutation) ClearedEdges() []string {
 	}
 	if m.clearedrewards {
 		edges = append(edges, group.EdgeRewards)
+	}
+	if m.clearedpoint_logs {
+		edges = append(edges, group.EdgePointLogs)
+	}
+	if m.clearedmember_summaries {
+		edges = append(edges, group.EdgeMemberSummaries)
 	}
 	return edges
 }
@@ -2268,6 +2428,10 @@ func (m *GroupMutation) EdgeCleared(name string) bool {
 		return m.clearedagreements
 	case group.EdgeRewards:
 		return m.clearedrewards
+	case group.EdgePointLogs:
+		return m.clearedpoint_logs
+	case group.EdgeMemberSummaries:
+		return m.clearedmember_summaries
 	}
 	return false
 }
@@ -2292,6 +2456,12 @@ func (m *GroupMutation) ResetEdge(name string) error {
 		return nil
 	case group.EdgeRewards:
 		m.ResetRewards()
+		return nil
+	case group.EdgePointLogs:
+		m.ResetPointLogs()
+		return nil
+	case group.EdgeMemberSummaries:
+		m.ResetMemberSummaries()
 		return nil
 	}
 	return fmt.Errorf("unknown Group edge %s", name)
@@ -2979,6 +3149,1598 @@ func (m *GroupMemberMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown GroupMember edge %s", name)
+}
+
+// MemberSummaryMutation represents an operation that mutates the MemberSummary nodes in the graph.
+type MemberSummaryMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	balance       *int
+	addbalance    *int
+	updated_at    *time.Time
+	clearedFields map[string]struct{}
+	group         *int
+	clearedgroup  bool
+	user          *int
+	cleareduser   bool
+	done          bool
+	oldValue      func(context.Context) (*MemberSummary, error)
+	predicates    []predicate.MemberSummary
+}
+
+var _ ent.Mutation = (*MemberSummaryMutation)(nil)
+
+// membersummaryOption allows management of the mutation configuration using functional options.
+type membersummaryOption func(*MemberSummaryMutation)
+
+// newMemberSummaryMutation creates new mutation for the MemberSummary entity.
+func newMemberSummaryMutation(c config, op Op, opts ...membersummaryOption) *MemberSummaryMutation {
+	m := &MemberSummaryMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeMemberSummary,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withMemberSummaryID sets the ID field of the mutation.
+func withMemberSummaryID(id int) membersummaryOption {
+	return func(m *MemberSummaryMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *MemberSummary
+		)
+		m.oldValue = func(ctx context.Context) (*MemberSummary, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().MemberSummary.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withMemberSummary sets the old MemberSummary of the mutation.
+func withMemberSummary(node *MemberSummary) membersummaryOption {
+	return func(m *MemberSummaryMutation) {
+		m.oldValue = func(context.Context) (*MemberSummary, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m MemberSummaryMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m MemberSummaryMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *MemberSummaryMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *MemberSummaryMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().MemberSummary.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetGroupID sets the "group_id" field.
+func (m *MemberSummaryMutation) SetGroupID(i int) {
+	m.group = &i
+}
+
+// GroupID returns the value of the "group_id" field in the mutation.
+func (m *MemberSummaryMutation) GroupID() (r int, exists bool) {
+	v := m.group
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGroupID returns the old "group_id" field's value of the MemberSummary entity.
+// If the MemberSummary object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MemberSummaryMutation) OldGroupID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGroupID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGroupID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGroupID: %w", err)
+	}
+	return oldValue.GroupID, nil
+}
+
+// ResetGroupID resets all changes to the "group_id" field.
+func (m *MemberSummaryMutation) ResetGroupID() {
+	m.group = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *MemberSummaryMutation) SetUserID(i int) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *MemberSummaryMutation) UserID() (r int, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the MemberSummary entity.
+// If the MemberSummary object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MemberSummaryMutation) OldUserID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *MemberSummaryMutation) ResetUserID() {
+	m.user = nil
+}
+
+// SetBalance sets the "balance" field.
+func (m *MemberSummaryMutation) SetBalance(i int) {
+	m.balance = &i
+	m.addbalance = nil
+}
+
+// Balance returns the value of the "balance" field in the mutation.
+func (m *MemberSummaryMutation) Balance() (r int, exists bool) {
+	v := m.balance
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBalance returns the old "balance" field's value of the MemberSummary entity.
+// If the MemberSummary object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MemberSummaryMutation) OldBalance(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBalance is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBalance requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBalance: %w", err)
+	}
+	return oldValue.Balance, nil
+}
+
+// AddBalance adds i to the "balance" field.
+func (m *MemberSummaryMutation) AddBalance(i int) {
+	if m.addbalance != nil {
+		*m.addbalance += i
+	} else {
+		m.addbalance = &i
+	}
+}
+
+// AddedBalance returns the value that was added to the "balance" field in this mutation.
+func (m *MemberSummaryMutation) AddedBalance() (r int, exists bool) {
+	v := m.addbalance
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetBalance resets all changes to the "balance" field.
+func (m *MemberSummaryMutation) ResetBalance() {
+	m.balance = nil
+	m.addbalance = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *MemberSummaryMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *MemberSummaryMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the MemberSummary entity.
+// If the MemberSummary object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MemberSummaryMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *MemberSummaryMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// ClearGroup clears the "group" edge to the Group entity.
+func (m *MemberSummaryMutation) ClearGroup() {
+	m.clearedgroup = true
+	m.clearedFields[membersummary.FieldGroupID] = struct{}{}
+}
+
+// GroupCleared reports if the "group" edge to the Group entity was cleared.
+func (m *MemberSummaryMutation) GroupCleared() bool {
+	return m.clearedgroup
+}
+
+// GroupIDs returns the "group" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// GroupID instead. It exists only for internal usage by the builders.
+func (m *MemberSummaryMutation) GroupIDs() (ids []int) {
+	if id := m.group; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetGroup resets all changes to the "group" edge.
+func (m *MemberSummaryMutation) ResetGroup() {
+	m.group = nil
+	m.clearedgroup = false
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *MemberSummaryMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[membersummary.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *MemberSummaryMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *MemberSummaryMutation) UserIDs() (ids []int) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *MemberSummaryMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// Where appends a list predicates to the MemberSummaryMutation builder.
+func (m *MemberSummaryMutation) Where(ps ...predicate.MemberSummary) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the MemberSummaryMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *MemberSummaryMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.MemberSummary, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *MemberSummaryMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *MemberSummaryMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (MemberSummary).
+func (m *MemberSummaryMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *MemberSummaryMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.group != nil {
+		fields = append(fields, membersummary.FieldGroupID)
+	}
+	if m.user != nil {
+		fields = append(fields, membersummary.FieldUserID)
+	}
+	if m.balance != nil {
+		fields = append(fields, membersummary.FieldBalance)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, membersummary.FieldUpdatedAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *MemberSummaryMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case membersummary.FieldGroupID:
+		return m.GroupID()
+	case membersummary.FieldUserID:
+		return m.UserID()
+	case membersummary.FieldBalance:
+		return m.Balance()
+	case membersummary.FieldUpdatedAt:
+		return m.UpdatedAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *MemberSummaryMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case membersummary.FieldGroupID:
+		return m.OldGroupID(ctx)
+	case membersummary.FieldUserID:
+		return m.OldUserID(ctx)
+	case membersummary.FieldBalance:
+		return m.OldBalance(ctx)
+	case membersummary.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown MemberSummary field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MemberSummaryMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case membersummary.FieldGroupID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGroupID(v)
+		return nil
+	case membersummary.FieldUserID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case membersummary.FieldBalance:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBalance(v)
+		return nil
+	case membersummary.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MemberSummary field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *MemberSummaryMutation) AddedFields() []string {
+	var fields []string
+	if m.addbalance != nil {
+		fields = append(fields, membersummary.FieldBalance)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *MemberSummaryMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case membersummary.FieldBalance:
+		return m.AddedBalance()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MemberSummaryMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case membersummary.FieldBalance:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBalance(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MemberSummary numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *MemberSummaryMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *MemberSummaryMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *MemberSummaryMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown MemberSummary nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *MemberSummaryMutation) ResetField(name string) error {
+	switch name {
+	case membersummary.FieldGroupID:
+		m.ResetGroupID()
+		return nil
+	case membersummary.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case membersummary.FieldBalance:
+		m.ResetBalance()
+		return nil
+	case membersummary.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown MemberSummary field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *MemberSummaryMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.group != nil {
+		edges = append(edges, membersummary.EdgeGroup)
+	}
+	if m.user != nil {
+		edges = append(edges, membersummary.EdgeUser)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *MemberSummaryMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case membersummary.EdgeGroup:
+		if id := m.group; id != nil {
+			return []ent.Value{*id}
+		}
+	case membersummary.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *MemberSummaryMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *MemberSummaryMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *MemberSummaryMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedgroup {
+		edges = append(edges, membersummary.EdgeGroup)
+	}
+	if m.cleareduser {
+		edges = append(edges, membersummary.EdgeUser)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *MemberSummaryMutation) EdgeCleared(name string) bool {
+	switch name {
+	case membersummary.EdgeGroup:
+		return m.clearedgroup
+	case membersummary.EdgeUser:
+		return m.cleareduser
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *MemberSummaryMutation) ClearEdge(name string) error {
+	switch name {
+	case membersummary.EdgeGroup:
+		m.ClearGroup()
+		return nil
+	case membersummary.EdgeUser:
+		m.ClearUser()
+		return nil
+	}
+	return fmt.Errorf("unknown MemberSummary unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *MemberSummaryMutation) ResetEdge(name string) error {
+	switch name {
+	case membersummary.EdgeGroup:
+		m.ResetGroup()
+		return nil
+	case membersummary.EdgeUser:
+		m.ResetUser()
+		return nil
+	}
+	return fmt.Errorf("unknown MemberSummary edge %s", name)
+}
+
+// PointLogMutation represents an operation that mutates the PointLog nodes in the graph.
+type PointLogMutation struct {
+	config
+	op               Op
+	typ              string
+	id               *int
+	delta            *int
+	adddelta         *int
+	balance_after    *int
+	addbalance_after *int
+	reason           *string
+	source_type      *string
+	source_id        *string
+	source_ref       *string
+	created_at       *time.Time
+	clearedFields    map[string]struct{}
+	group            *int
+	clearedgroup     bool
+	user             *int
+	cleareduser      bool
+	done             bool
+	oldValue         func(context.Context) (*PointLog, error)
+	predicates       []predicate.PointLog
+}
+
+var _ ent.Mutation = (*PointLogMutation)(nil)
+
+// pointlogOption allows management of the mutation configuration using functional options.
+type pointlogOption func(*PointLogMutation)
+
+// newPointLogMutation creates new mutation for the PointLog entity.
+func newPointLogMutation(c config, op Op, opts ...pointlogOption) *PointLogMutation {
+	m := &PointLogMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePointLog,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPointLogID sets the ID field of the mutation.
+func withPointLogID(id int) pointlogOption {
+	return func(m *PointLogMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *PointLog
+		)
+		m.oldValue = func(ctx context.Context) (*PointLog, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().PointLog.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPointLog sets the old PointLog of the mutation.
+func withPointLog(node *PointLog) pointlogOption {
+	return func(m *PointLogMutation) {
+		m.oldValue = func(context.Context) (*PointLog, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PointLogMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PointLogMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *PointLogMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *PointLogMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().PointLog.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetGroupID sets the "group_id" field.
+func (m *PointLogMutation) SetGroupID(i int) {
+	m.group = &i
+}
+
+// GroupID returns the value of the "group_id" field in the mutation.
+func (m *PointLogMutation) GroupID() (r int, exists bool) {
+	v := m.group
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGroupID returns the old "group_id" field's value of the PointLog entity.
+// If the PointLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PointLogMutation) OldGroupID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGroupID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGroupID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGroupID: %w", err)
+	}
+	return oldValue.GroupID, nil
+}
+
+// ResetGroupID resets all changes to the "group_id" field.
+func (m *PointLogMutation) ResetGroupID() {
+	m.group = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *PointLogMutation) SetUserID(i int) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *PointLogMutation) UserID() (r int, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the PointLog entity.
+// If the PointLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PointLogMutation) OldUserID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *PointLogMutation) ResetUserID() {
+	m.user = nil
+}
+
+// SetDelta sets the "delta" field.
+func (m *PointLogMutation) SetDelta(i int) {
+	m.delta = &i
+	m.adddelta = nil
+}
+
+// Delta returns the value of the "delta" field in the mutation.
+func (m *PointLogMutation) Delta() (r int, exists bool) {
+	v := m.delta
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDelta returns the old "delta" field's value of the PointLog entity.
+// If the PointLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PointLogMutation) OldDelta(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDelta is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDelta requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDelta: %w", err)
+	}
+	return oldValue.Delta, nil
+}
+
+// AddDelta adds i to the "delta" field.
+func (m *PointLogMutation) AddDelta(i int) {
+	if m.adddelta != nil {
+		*m.adddelta += i
+	} else {
+		m.adddelta = &i
+	}
+}
+
+// AddedDelta returns the value that was added to the "delta" field in this mutation.
+func (m *PointLogMutation) AddedDelta() (r int, exists bool) {
+	v := m.adddelta
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDelta resets all changes to the "delta" field.
+func (m *PointLogMutation) ResetDelta() {
+	m.delta = nil
+	m.adddelta = nil
+}
+
+// SetBalanceAfter sets the "balance_after" field.
+func (m *PointLogMutation) SetBalanceAfter(i int) {
+	m.balance_after = &i
+	m.addbalance_after = nil
+}
+
+// BalanceAfter returns the value of the "balance_after" field in the mutation.
+func (m *PointLogMutation) BalanceAfter() (r int, exists bool) {
+	v := m.balance_after
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBalanceAfter returns the old "balance_after" field's value of the PointLog entity.
+// If the PointLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PointLogMutation) OldBalanceAfter(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBalanceAfter is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBalanceAfter requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBalanceAfter: %w", err)
+	}
+	return oldValue.BalanceAfter, nil
+}
+
+// AddBalanceAfter adds i to the "balance_after" field.
+func (m *PointLogMutation) AddBalanceAfter(i int) {
+	if m.addbalance_after != nil {
+		*m.addbalance_after += i
+	} else {
+		m.addbalance_after = &i
+	}
+}
+
+// AddedBalanceAfter returns the value that was added to the "balance_after" field in this mutation.
+func (m *PointLogMutation) AddedBalanceAfter() (r int, exists bool) {
+	v := m.addbalance_after
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetBalanceAfter resets all changes to the "balance_after" field.
+func (m *PointLogMutation) ResetBalanceAfter() {
+	m.balance_after = nil
+	m.addbalance_after = nil
+}
+
+// SetReason sets the "reason" field.
+func (m *PointLogMutation) SetReason(s string) {
+	m.reason = &s
+}
+
+// Reason returns the value of the "reason" field in the mutation.
+func (m *PointLogMutation) Reason() (r string, exists bool) {
+	v := m.reason
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReason returns the old "reason" field's value of the PointLog entity.
+// If the PointLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PointLogMutation) OldReason(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldReason is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldReason requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReason: %w", err)
+	}
+	return oldValue.Reason, nil
+}
+
+// ClearReason clears the value of the "reason" field.
+func (m *PointLogMutation) ClearReason() {
+	m.reason = nil
+	m.clearedFields[pointlog.FieldReason] = struct{}{}
+}
+
+// ReasonCleared returns if the "reason" field was cleared in this mutation.
+func (m *PointLogMutation) ReasonCleared() bool {
+	_, ok := m.clearedFields[pointlog.FieldReason]
+	return ok
+}
+
+// ResetReason resets all changes to the "reason" field.
+func (m *PointLogMutation) ResetReason() {
+	m.reason = nil
+	delete(m.clearedFields, pointlog.FieldReason)
+}
+
+// SetSourceType sets the "source_type" field.
+func (m *PointLogMutation) SetSourceType(s string) {
+	m.source_type = &s
+}
+
+// SourceType returns the value of the "source_type" field in the mutation.
+func (m *PointLogMutation) SourceType() (r string, exists bool) {
+	v := m.source_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSourceType returns the old "source_type" field's value of the PointLog entity.
+// If the PointLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PointLogMutation) OldSourceType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSourceType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSourceType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSourceType: %w", err)
+	}
+	return oldValue.SourceType, nil
+}
+
+// ResetSourceType resets all changes to the "source_type" field.
+func (m *PointLogMutation) ResetSourceType() {
+	m.source_type = nil
+}
+
+// SetSourceID sets the "source_id" field.
+func (m *PointLogMutation) SetSourceID(s string) {
+	m.source_id = &s
+}
+
+// SourceID returns the value of the "source_id" field in the mutation.
+func (m *PointLogMutation) SourceID() (r string, exists bool) {
+	v := m.source_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSourceID returns the old "source_id" field's value of the PointLog entity.
+// If the PointLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PointLogMutation) OldSourceID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSourceID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSourceID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSourceID: %w", err)
+	}
+	return oldValue.SourceID, nil
+}
+
+// ResetSourceID resets all changes to the "source_id" field.
+func (m *PointLogMutation) ResetSourceID() {
+	m.source_id = nil
+}
+
+// SetSourceRef sets the "source_ref" field.
+func (m *PointLogMutation) SetSourceRef(s string) {
+	m.source_ref = &s
+}
+
+// SourceRef returns the value of the "source_ref" field in the mutation.
+func (m *PointLogMutation) SourceRef() (r string, exists bool) {
+	v := m.source_ref
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSourceRef returns the old "source_ref" field's value of the PointLog entity.
+// If the PointLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PointLogMutation) OldSourceRef(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSourceRef is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSourceRef requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSourceRef: %w", err)
+	}
+	return oldValue.SourceRef, nil
+}
+
+// ClearSourceRef clears the value of the "source_ref" field.
+func (m *PointLogMutation) ClearSourceRef() {
+	m.source_ref = nil
+	m.clearedFields[pointlog.FieldSourceRef] = struct{}{}
+}
+
+// SourceRefCleared returns if the "source_ref" field was cleared in this mutation.
+func (m *PointLogMutation) SourceRefCleared() bool {
+	_, ok := m.clearedFields[pointlog.FieldSourceRef]
+	return ok
+}
+
+// ResetSourceRef resets all changes to the "source_ref" field.
+func (m *PointLogMutation) ResetSourceRef() {
+	m.source_ref = nil
+	delete(m.clearedFields, pointlog.FieldSourceRef)
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *PointLogMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *PointLogMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the PointLog entity.
+// If the PointLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PointLogMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *PointLogMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// ClearGroup clears the "group" edge to the Group entity.
+func (m *PointLogMutation) ClearGroup() {
+	m.clearedgroup = true
+	m.clearedFields[pointlog.FieldGroupID] = struct{}{}
+}
+
+// GroupCleared reports if the "group" edge to the Group entity was cleared.
+func (m *PointLogMutation) GroupCleared() bool {
+	return m.clearedgroup
+}
+
+// GroupIDs returns the "group" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// GroupID instead. It exists only for internal usage by the builders.
+func (m *PointLogMutation) GroupIDs() (ids []int) {
+	if id := m.group; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetGroup resets all changes to the "group" edge.
+func (m *PointLogMutation) ResetGroup() {
+	m.group = nil
+	m.clearedgroup = false
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *PointLogMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[pointlog.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *PointLogMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *PointLogMutation) UserIDs() (ids []int) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *PointLogMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// Where appends a list predicates to the PointLogMutation builder.
+func (m *PointLogMutation) Where(ps ...predicate.PointLog) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the PointLogMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *PointLogMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.PointLog, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *PointLogMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *PointLogMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (PointLog).
+func (m *PointLogMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *PointLogMutation) Fields() []string {
+	fields := make([]string, 0, 9)
+	if m.group != nil {
+		fields = append(fields, pointlog.FieldGroupID)
+	}
+	if m.user != nil {
+		fields = append(fields, pointlog.FieldUserID)
+	}
+	if m.delta != nil {
+		fields = append(fields, pointlog.FieldDelta)
+	}
+	if m.balance_after != nil {
+		fields = append(fields, pointlog.FieldBalanceAfter)
+	}
+	if m.reason != nil {
+		fields = append(fields, pointlog.FieldReason)
+	}
+	if m.source_type != nil {
+		fields = append(fields, pointlog.FieldSourceType)
+	}
+	if m.source_id != nil {
+		fields = append(fields, pointlog.FieldSourceID)
+	}
+	if m.source_ref != nil {
+		fields = append(fields, pointlog.FieldSourceRef)
+	}
+	if m.created_at != nil {
+		fields = append(fields, pointlog.FieldCreatedAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *PointLogMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case pointlog.FieldGroupID:
+		return m.GroupID()
+	case pointlog.FieldUserID:
+		return m.UserID()
+	case pointlog.FieldDelta:
+		return m.Delta()
+	case pointlog.FieldBalanceAfter:
+		return m.BalanceAfter()
+	case pointlog.FieldReason:
+		return m.Reason()
+	case pointlog.FieldSourceType:
+		return m.SourceType()
+	case pointlog.FieldSourceID:
+		return m.SourceID()
+	case pointlog.FieldSourceRef:
+		return m.SourceRef()
+	case pointlog.FieldCreatedAt:
+		return m.CreatedAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *PointLogMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case pointlog.FieldGroupID:
+		return m.OldGroupID(ctx)
+	case pointlog.FieldUserID:
+		return m.OldUserID(ctx)
+	case pointlog.FieldDelta:
+		return m.OldDelta(ctx)
+	case pointlog.FieldBalanceAfter:
+		return m.OldBalanceAfter(ctx)
+	case pointlog.FieldReason:
+		return m.OldReason(ctx)
+	case pointlog.FieldSourceType:
+		return m.OldSourceType(ctx)
+	case pointlog.FieldSourceID:
+		return m.OldSourceID(ctx)
+	case pointlog.FieldSourceRef:
+		return m.OldSourceRef(ctx)
+	case pointlog.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown PointLog field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PointLogMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case pointlog.FieldGroupID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGroupID(v)
+		return nil
+	case pointlog.FieldUserID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case pointlog.FieldDelta:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDelta(v)
+		return nil
+	case pointlog.FieldBalanceAfter:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBalanceAfter(v)
+		return nil
+	case pointlog.FieldReason:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReason(v)
+		return nil
+	case pointlog.FieldSourceType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSourceType(v)
+		return nil
+	case pointlog.FieldSourceID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSourceID(v)
+		return nil
+	case pointlog.FieldSourceRef:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSourceRef(v)
+		return nil
+	case pointlog.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PointLog field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *PointLogMutation) AddedFields() []string {
+	var fields []string
+	if m.adddelta != nil {
+		fields = append(fields, pointlog.FieldDelta)
+	}
+	if m.addbalance_after != nil {
+		fields = append(fields, pointlog.FieldBalanceAfter)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *PointLogMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case pointlog.FieldDelta:
+		return m.AddedDelta()
+	case pointlog.FieldBalanceAfter:
+		return m.AddedBalanceAfter()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PointLogMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case pointlog.FieldDelta:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDelta(v)
+		return nil
+	case pointlog.FieldBalanceAfter:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBalanceAfter(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PointLog numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *PointLogMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(pointlog.FieldReason) {
+		fields = append(fields, pointlog.FieldReason)
+	}
+	if m.FieldCleared(pointlog.FieldSourceRef) {
+		fields = append(fields, pointlog.FieldSourceRef)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *PointLogMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PointLogMutation) ClearField(name string) error {
+	switch name {
+	case pointlog.FieldReason:
+		m.ClearReason()
+		return nil
+	case pointlog.FieldSourceRef:
+		m.ClearSourceRef()
+		return nil
+	}
+	return fmt.Errorf("unknown PointLog nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *PointLogMutation) ResetField(name string) error {
+	switch name {
+	case pointlog.FieldGroupID:
+		m.ResetGroupID()
+		return nil
+	case pointlog.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case pointlog.FieldDelta:
+		m.ResetDelta()
+		return nil
+	case pointlog.FieldBalanceAfter:
+		m.ResetBalanceAfter()
+		return nil
+	case pointlog.FieldReason:
+		m.ResetReason()
+		return nil
+	case pointlog.FieldSourceType:
+		m.ResetSourceType()
+		return nil
+	case pointlog.FieldSourceID:
+		m.ResetSourceID()
+		return nil
+	case pointlog.FieldSourceRef:
+		m.ResetSourceRef()
+		return nil
+	case pointlog.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown PointLog field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *PointLogMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.group != nil {
+		edges = append(edges, pointlog.EdgeGroup)
+	}
+	if m.user != nil {
+		edges = append(edges, pointlog.EdgeUser)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *PointLogMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case pointlog.EdgeGroup:
+		if id := m.group; id != nil {
+			return []ent.Value{*id}
+		}
+	case pointlog.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *PointLogMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *PointLogMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *PointLogMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedgroup {
+		edges = append(edges, pointlog.EdgeGroup)
+	}
+	if m.cleareduser {
+		edges = append(edges, pointlog.EdgeUser)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *PointLogMutation) EdgeCleared(name string) bool {
+	switch name {
+	case pointlog.EdgeGroup:
+		return m.clearedgroup
+	case pointlog.EdgeUser:
+		return m.cleareduser
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *PointLogMutation) ClearEdge(name string) error {
+	switch name {
+	case pointlog.EdgeGroup:
+		m.ClearGroup()
+		return nil
+	case pointlog.EdgeUser:
+		m.ClearUser()
+		return nil
+	}
+	return fmt.Errorf("unknown PointLog unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *PointLogMutation) ResetEdge(name string) error {
+	switch name {
+	case pointlog.EdgeGroup:
+		m.ResetGroup()
+		return nil
+	case pointlog.EdgeUser:
+		m.ResetUser()
+		return nil
+	}
+	return fmt.Errorf("unknown PointLog edge %s", name)
 }
 
 // RewardMutation represents an operation that mutates the Reward nodes in the graph.
@@ -4567,6 +6329,12 @@ type UserMutation struct {
 	pinned_rewards           map[int]struct{}
 	removedpinned_rewards    map[int]struct{}
 	clearedpinned_rewards    bool
+	point_logs               map[int]struct{}
+	removedpoint_logs        map[int]struct{}
+	clearedpoint_logs        bool
+	member_summaries         map[int]struct{}
+	removedmember_summaries  map[int]struct{}
+	clearedmember_summaries  bool
 	done                     bool
 	oldValue                 func(context.Context) (*User, error)
 	predicates               []predicate.User
@@ -5092,6 +6860,114 @@ func (m *UserMutation) ResetPinnedRewards() {
 	m.removedpinned_rewards = nil
 }
 
+// AddPointLogIDs adds the "point_logs" edge to the PointLog entity by ids.
+func (m *UserMutation) AddPointLogIDs(ids ...int) {
+	if m.point_logs == nil {
+		m.point_logs = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.point_logs[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPointLogs clears the "point_logs" edge to the PointLog entity.
+func (m *UserMutation) ClearPointLogs() {
+	m.clearedpoint_logs = true
+}
+
+// PointLogsCleared reports if the "point_logs" edge to the PointLog entity was cleared.
+func (m *UserMutation) PointLogsCleared() bool {
+	return m.clearedpoint_logs
+}
+
+// RemovePointLogIDs removes the "point_logs" edge to the PointLog entity by IDs.
+func (m *UserMutation) RemovePointLogIDs(ids ...int) {
+	if m.removedpoint_logs == nil {
+		m.removedpoint_logs = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.point_logs, ids[i])
+		m.removedpoint_logs[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPointLogs returns the removed IDs of the "point_logs" edge to the PointLog entity.
+func (m *UserMutation) RemovedPointLogsIDs() (ids []int) {
+	for id := range m.removedpoint_logs {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PointLogsIDs returns the "point_logs" edge IDs in the mutation.
+func (m *UserMutation) PointLogsIDs() (ids []int) {
+	for id := range m.point_logs {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPointLogs resets all changes to the "point_logs" edge.
+func (m *UserMutation) ResetPointLogs() {
+	m.point_logs = nil
+	m.clearedpoint_logs = false
+	m.removedpoint_logs = nil
+}
+
+// AddMemberSummaryIDs adds the "member_summaries" edge to the MemberSummary entity by ids.
+func (m *UserMutation) AddMemberSummaryIDs(ids ...int) {
+	if m.member_summaries == nil {
+		m.member_summaries = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.member_summaries[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMemberSummaries clears the "member_summaries" edge to the MemberSummary entity.
+func (m *UserMutation) ClearMemberSummaries() {
+	m.clearedmember_summaries = true
+}
+
+// MemberSummariesCleared reports if the "member_summaries" edge to the MemberSummary entity was cleared.
+func (m *UserMutation) MemberSummariesCleared() bool {
+	return m.clearedmember_summaries
+}
+
+// RemoveMemberSummaryIDs removes the "member_summaries" edge to the MemberSummary entity by IDs.
+func (m *UserMutation) RemoveMemberSummaryIDs(ids ...int) {
+	if m.removedmember_summaries == nil {
+		m.removedmember_summaries = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.member_summaries, ids[i])
+		m.removedmember_summaries[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMemberSummaries returns the removed IDs of the "member_summaries" edge to the MemberSummary entity.
+func (m *UserMutation) RemovedMemberSummariesIDs() (ids []int) {
+	for id := range m.removedmember_summaries {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MemberSummariesIDs returns the "member_summaries" edge IDs in the mutation.
+func (m *UserMutation) MemberSummariesIDs() (ids []int) {
+	for id := range m.member_summaries {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMemberSummaries resets all changes to the "member_summaries" edge.
+func (m *UserMutation) ResetMemberSummaries() {
+	m.member_summaries = nil
+	m.clearedmember_summaries = false
+	m.removedmember_summaries = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -5308,7 +7184,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 6)
 	if m.identities != nil {
 		edges = append(edges, user.EdgeIdentities)
 	}
@@ -5320,6 +7196,12 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.pinned_rewards != nil {
 		edges = append(edges, user.EdgePinnedRewards)
+	}
+	if m.point_logs != nil {
+		edges = append(edges, user.EdgePointLogs)
+	}
+	if m.member_summaries != nil {
+		edges = append(edges, user.EdgeMemberSummaries)
 	}
 	return edges
 }
@@ -5352,13 +7234,25 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgePointLogs:
+		ids := make([]ent.Value, 0, len(m.point_logs))
+		for id := range m.point_logs {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeMemberSummaries:
+		ids := make([]ent.Value, 0, len(m.member_summaries))
+		for id := range m.member_summaries {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 6)
 	if m.removedidentities != nil {
 		edges = append(edges, user.EdgeIdentities)
 	}
@@ -5370,6 +7264,12 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedpinned_rewards != nil {
 		edges = append(edges, user.EdgePinnedRewards)
+	}
+	if m.removedpoint_logs != nil {
+		edges = append(edges, user.EdgePointLogs)
+	}
+	if m.removedmember_summaries != nil {
+		edges = append(edges, user.EdgeMemberSummaries)
 	}
 	return edges
 }
@@ -5402,13 +7302,25 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgePointLogs:
+		ids := make([]ent.Value, 0, len(m.removedpoint_logs))
+		for id := range m.removedpoint_logs {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeMemberSummaries:
+		ids := make([]ent.Value, 0, len(m.removedmember_summaries))
+		for id := range m.removedmember_summaries {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 6)
 	if m.clearedidentities {
 		edges = append(edges, user.EdgeIdentities)
 	}
@@ -5420,6 +7332,12 @@ func (m *UserMutation) ClearedEdges() []string {
 	}
 	if m.clearedpinned_rewards {
 		edges = append(edges, user.EdgePinnedRewards)
+	}
+	if m.clearedpoint_logs {
+		edges = append(edges, user.EdgePointLogs)
+	}
+	if m.clearedmember_summaries {
+		edges = append(edges, user.EdgeMemberSummaries)
 	}
 	return edges
 }
@@ -5436,6 +7354,10 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedpinned_agreements
 	case user.EdgePinnedRewards:
 		return m.clearedpinned_rewards
+	case user.EdgePointLogs:
+		return m.clearedpoint_logs
+	case user.EdgeMemberSummaries:
+		return m.clearedmember_summaries
 	}
 	return false
 }
@@ -5463,6 +7385,12 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgePinnedRewards:
 		m.ResetPinnedRewards()
+		return nil
+	case user.EdgePointLogs:
+		m.ResetPointLogs()
+		return nil
+	case user.EdgeMemberSummaries:
+		m.ResetMemberSummaries()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

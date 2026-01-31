@@ -467,6 +467,52 @@ func HasPinnedRewardsWith(preds ...predicate.Reward) predicate.User {
 	})
 }
 
+// HasPointLogs applies the HasEdge predicate on the "point_logs" edge.
+func HasPointLogs() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PointLogsTable, PointLogsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPointLogsWith applies the HasEdge predicate on the "point_logs" edge with a given conditions (other predicates).
+func HasPointLogsWith(preds ...predicate.PointLog) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newPointLogsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasMemberSummaries applies the HasEdge predicate on the "member_summaries" edge.
+func HasMemberSummaries() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, MemberSummariesTable, MemberSummariesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMemberSummariesWith applies the HasEdge predicate on the "member_summaries" edge with a given conditions (other predicates).
+func HasMemberSummariesWith(preds ...predicate.MemberSummary) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newMemberSummariesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

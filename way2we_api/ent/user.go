@@ -43,9 +43,13 @@ type UserEdges struct {
 	PinnedAgreements []*Agreement `json:"pinned_agreements,omitempty"`
 	// Rewards pinned by this user
 	PinnedRewards []*Reward `json:"pinned_rewards,omitempty"`
+	// Point logs for this user
+	PointLogs []*PointLog `json:"point_logs,omitempty"`
+	// Point summaries for this user
+	MemberSummaries []*MemberSummary `json:"member_summaries,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [6]bool
 }
 
 // IdentitiesOrErr returns the Identities value or an error if the edge
@@ -82,6 +86,24 @@ func (e UserEdges) PinnedRewardsOrErr() ([]*Reward, error) {
 		return e.PinnedRewards, nil
 	}
 	return nil, &NotLoadedError{edge: "pinned_rewards"}
+}
+
+// PointLogsOrErr returns the PointLogs value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) PointLogsOrErr() ([]*PointLog, error) {
+	if e.loadedTypes[4] {
+		return e.PointLogs, nil
+	}
+	return nil, &NotLoadedError{edge: "point_logs"}
+}
+
+// MemberSummariesOrErr returns the MemberSummaries value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) MemberSummariesOrErr() ([]*MemberSummary, error) {
+	if e.loadedTypes[5] {
+		return e.MemberSummaries, nil
+	}
+	return nil, &NotLoadedError{edge: "member_summaries"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -177,6 +199,16 @@ func (_m *User) QueryPinnedAgreements() *AgreementQuery {
 // QueryPinnedRewards queries the "pinned_rewards" edge of the User entity.
 func (_m *User) QueryPinnedRewards() *RewardQuery {
 	return NewUserClient(_m.config).QueryPinnedRewards(_m)
+}
+
+// QueryPointLogs queries the "point_logs" edge of the User entity.
+func (_m *User) QueryPointLogs() *PointLogQuery {
+	return NewUserClient(_m.config).QueryPointLogs(_m)
+}
+
+// QueryMemberSummaries queries the "member_summaries" edge of the User entity.
+func (_m *User) QueryMemberSummaries() *MemberSummaryQuery {
+	return NewUserClient(_m.config).QueryMemberSummaries(_m)
 }
 
 // Update returns a builder for updating this User.

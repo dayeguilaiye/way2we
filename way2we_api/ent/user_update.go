@@ -13,6 +13,8 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/way2we/way2we_api/ent/agreement"
 	"github.com/way2we/way2we_api/ent/groupmember"
+	"github.com/way2we/way2we_api/ent/membersummary"
+	"github.com/way2we/way2we_api/ent/pointlog"
 	"github.com/way2we/way2we_api/ent/predicate"
 	"github.com/way2we/way2we_api/ent/reward"
 	"github.com/way2we/way2we_api/ent/user"
@@ -152,6 +154,36 @@ func (_u *UserUpdate) AddPinnedRewards(v ...*Reward) *UserUpdate {
 	return _u.AddPinnedRewardIDs(ids...)
 }
 
+// AddPointLogIDs adds the "point_logs" edge to the PointLog entity by IDs.
+func (_u *UserUpdate) AddPointLogIDs(ids ...int) *UserUpdate {
+	_u.mutation.AddPointLogIDs(ids...)
+	return _u
+}
+
+// AddPointLogs adds the "point_logs" edges to the PointLog entity.
+func (_u *UserUpdate) AddPointLogs(v ...*PointLog) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddPointLogIDs(ids...)
+}
+
+// AddMemberSummaryIDs adds the "member_summaries" edge to the MemberSummary entity by IDs.
+func (_u *UserUpdate) AddMemberSummaryIDs(ids ...int) *UserUpdate {
+	_u.mutation.AddMemberSummaryIDs(ids...)
+	return _u
+}
+
+// AddMemberSummaries adds the "member_summaries" edges to the MemberSummary entity.
+func (_u *UserUpdate) AddMemberSummaries(v ...*MemberSummary) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddMemberSummaryIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_u *UserUpdate) Mutation() *UserMutation {
 	return _u.mutation
@@ -239,6 +271,48 @@ func (_u *UserUpdate) RemovePinnedRewards(v ...*Reward) *UserUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemovePinnedRewardIDs(ids...)
+}
+
+// ClearPointLogs clears all "point_logs" edges to the PointLog entity.
+func (_u *UserUpdate) ClearPointLogs() *UserUpdate {
+	_u.mutation.ClearPointLogs()
+	return _u
+}
+
+// RemovePointLogIDs removes the "point_logs" edge to PointLog entities by IDs.
+func (_u *UserUpdate) RemovePointLogIDs(ids ...int) *UserUpdate {
+	_u.mutation.RemovePointLogIDs(ids...)
+	return _u
+}
+
+// RemovePointLogs removes "point_logs" edges to PointLog entities.
+func (_u *UserUpdate) RemovePointLogs(v ...*PointLog) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemovePointLogIDs(ids...)
+}
+
+// ClearMemberSummaries clears all "member_summaries" edges to the MemberSummary entity.
+func (_u *UserUpdate) ClearMemberSummaries() *UserUpdate {
+	_u.mutation.ClearMemberSummaries()
+	return _u
+}
+
+// RemoveMemberSummaryIDs removes the "member_summaries" edge to MemberSummary entities by IDs.
+func (_u *UserUpdate) RemoveMemberSummaryIDs(ids ...int) *UserUpdate {
+	_u.mutation.RemoveMemberSummaryIDs(ids...)
+	return _u
+}
+
+// RemoveMemberSummaries removes "member_summaries" edges to MemberSummary entities.
+func (_u *UserUpdate) RemoveMemberSummaries(v ...*MemberSummary) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveMemberSummaryIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -502,6 +576,96 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.PointLogsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.PointLogsTable,
+			Columns: []string{user.PointLogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(pointlog.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedPointLogsIDs(); len(nodes) > 0 && !_u.mutation.PointLogsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.PointLogsTable,
+			Columns: []string{user.PointLogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(pointlog.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.PointLogsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.PointLogsTable,
+			Columns: []string{user.PointLogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(pointlog.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.MemberSummariesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MemberSummariesTable,
+			Columns: []string{user.MemberSummariesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(membersummary.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedMemberSummariesIDs(); len(nodes) > 0 && !_u.mutation.MemberSummariesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MemberSummariesTable,
+			Columns: []string{user.MemberSummariesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(membersummary.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.MemberSummariesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MemberSummariesTable,
+			Columns: []string{user.MemberSummariesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(membersummary.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -642,6 +806,36 @@ func (_u *UserUpdateOne) AddPinnedRewards(v ...*Reward) *UserUpdateOne {
 	return _u.AddPinnedRewardIDs(ids...)
 }
 
+// AddPointLogIDs adds the "point_logs" edge to the PointLog entity by IDs.
+func (_u *UserUpdateOne) AddPointLogIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.AddPointLogIDs(ids...)
+	return _u
+}
+
+// AddPointLogs adds the "point_logs" edges to the PointLog entity.
+func (_u *UserUpdateOne) AddPointLogs(v ...*PointLog) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddPointLogIDs(ids...)
+}
+
+// AddMemberSummaryIDs adds the "member_summaries" edge to the MemberSummary entity by IDs.
+func (_u *UserUpdateOne) AddMemberSummaryIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.AddMemberSummaryIDs(ids...)
+	return _u
+}
+
+// AddMemberSummaries adds the "member_summaries" edges to the MemberSummary entity.
+func (_u *UserUpdateOne) AddMemberSummaries(v ...*MemberSummary) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddMemberSummaryIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_u *UserUpdateOne) Mutation() *UserMutation {
 	return _u.mutation
@@ -729,6 +923,48 @@ func (_u *UserUpdateOne) RemovePinnedRewards(v ...*Reward) *UserUpdateOne {
 		ids[i] = v[i].ID
 	}
 	return _u.RemovePinnedRewardIDs(ids...)
+}
+
+// ClearPointLogs clears all "point_logs" edges to the PointLog entity.
+func (_u *UserUpdateOne) ClearPointLogs() *UserUpdateOne {
+	_u.mutation.ClearPointLogs()
+	return _u
+}
+
+// RemovePointLogIDs removes the "point_logs" edge to PointLog entities by IDs.
+func (_u *UserUpdateOne) RemovePointLogIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.RemovePointLogIDs(ids...)
+	return _u
+}
+
+// RemovePointLogs removes "point_logs" edges to PointLog entities.
+func (_u *UserUpdateOne) RemovePointLogs(v ...*PointLog) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemovePointLogIDs(ids...)
+}
+
+// ClearMemberSummaries clears all "member_summaries" edges to the MemberSummary entity.
+func (_u *UserUpdateOne) ClearMemberSummaries() *UserUpdateOne {
+	_u.mutation.ClearMemberSummaries()
+	return _u
+}
+
+// RemoveMemberSummaryIDs removes the "member_summaries" edge to MemberSummary entities by IDs.
+func (_u *UserUpdateOne) RemoveMemberSummaryIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.RemoveMemberSummaryIDs(ids...)
+	return _u
+}
+
+// RemoveMemberSummaries removes "member_summaries" edges to MemberSummary entities.
+func (_u *UserUpdateOne) RemoveMemberSummaries(v ...*MemberSummary) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveMemberSummaryIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -1015,6 +1251,96 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(reward.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.PointLogsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.PointLogsTable,
+			Columns: []string{user.PointLogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(pointlog.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedPointLogsIDs(); len(nodes) > 0 && !_u.mutation.PointLogsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.PointLogsTable,
+			Columns: []string{user.PointLogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(pointlog.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.PointLogsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.PointLogsTable,
+			Columns: []string{user.PointLogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(pointlog.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.MemberSummariesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MemberSummariesTable,
+			Columns: []string{user.MemberSummariesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(membersummary.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedMemberSummariesIDs(); len(nodes) > 0 && !_u.mutation.MemberSummariesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MemberSummariesTable,
+			Columns: []string{user.MemberSummariesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(membersummary.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.MemberSummariesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MemberSummariesTable,
+			Columns: []string{user.MemberSummariesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(membersummary.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

@@ -12,6 +12,8 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/way2we/way2we_api/ent/agreement"
 	"github.com/way2we/way2we_api/ent/groupmember"
+	"github.com/way2we/way2we_api/ent/membersummary"
+	"github.com/way2we/way2we_api/ent/pointlog"
 	"github.com/way2we/way2we_api/ent/reward"
 	"github.com/way2we/way2we_api/ent/user"
 	"github.com/way2we/way2we_api/ent/useridentity"
@@ -144,6 +146,36 @@ func (_c *UserCreate) AddPinnedRewards(v ...*Reward) *UserCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddPinnedRewardIDs(ids...)
+}
+
+// AddPointLogIDs adds the "point_logs" edge to the PointLog entity by IDs.
+func (_c *UserCreate) AddPointLogIDs(ids ...int) *UserCreate {
+	_c.mutation.AddPointLogIDs(ids...)
+	return _c
+}
+
+// AddPointLogs adds the "point_logs" edges to the PointLog entity.
+func (_c *UserCreate) AddPointLogs(v ...*PointLog) *UserCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddPointLogIDs(ids...)
+}
+
+// AddMemberSummaryIDs adds the "member_summaries" edge to the MemberSummary entity by IDs.
+func (_c *UserCreate) AddMemberSummaryIDs(ids ...int) *UserCreate {
+	_c.mutation.AddMemberSummaryIDs(ids...)
+	return _c
+}
+
+// AddMemberSummaries adds the "member_summaries" edges to the MemberSummary entity.
+func (_c *UserCreate) AddMemberSummaries(v ...*MemberSummary) *UserCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddMemberSummaryIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -315,6 +347,38 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(reward.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.PointLogsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.PointLogsTable,
+			Columns: []string{user.PointLogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(pointlog.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.MemberSummariesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MemberSummariesTable,
+			Columns: []string{user.MemberSummariesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(membersummary.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

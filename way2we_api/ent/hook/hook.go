@@ -45,6 +45,30 @@ func (f GroupMemberFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.GroupMemberMutation", m)
 }
 
+// The MemberSummaryFunc type is an adapter to allow the use of ordinary
+// function as MemberSummary mutator.
+type MemberSummaryFunc func(context.Context, *ent.MemberSummaryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MemberSummaryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.MemberSummaryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MemberSummaryMutation", m)
+}
+
+// The PointLogFunc type is an adapter to allow the use of ordinary
+// function as PointLog mutator.
+type PointLogFunc func(context.Context, *ent.PointLogMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PointLogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PointLogMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PointLogMutation", m)
+}
+
 // The RewardFunc type is an adapter to allow the use of ordinary
 // function as Reward mutator.
 type RewardFunc func(context.Context, *ent.RewardMutation) (ent.Value, error)

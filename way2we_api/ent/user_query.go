@@ -14,6 +14,8 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/way2we/way2we_api/ent/agreement"
 	"github.com/way2we/way2we_api/ent/groupmember"
+	"github.com/way2we/way2we_api/ent/membersummary"
+	"github.com/way2we/way2we_api/ent/pointlog"
 	"github.com/way2we/way2we_api/ent/predicate"
 	"github.com/way2we/way2we_api/ent/reward"
 	"github.com/way2we/way2we_api/ent/user"
@@ -31,6 +33,8 @@ type UserQuery struct {
 	withGroupMemberships *GroupMemberQuery
 	withPinnedAgreements *AgreementQuery
 	withPinnedRewards    *RewardQuery
+	withPointLogs        *PointLogQuery
+	withMemberSummaries  *MemberSummaryQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -148,6 +152,50 @@ func (_q *UserQuery) QueryPinnedRewards() *RewardQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(reward.Table, reward.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, user.PinnedRewardsTable, user.PinnedRewardsPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPointLogs chains the current query on the "point_logs" edge.
+func (_q *UserQuery) QueryPointLogs() *PointLogQuery {
+	query := (&PointLogClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(pointlog.Table, pointlog.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.PointLogsTable, user.PointLogsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryMemberSummaries chains the current query on the "member_summaries" edge.
+func (_q *UserQuery) QueryMemberSummaries() *MemberSummaryQuery {
+	query := (&MemberSummaryClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(membersummary.Table, membersummary.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.MemberSummariesTable, user.MemberSummariesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -351,6 +399,8 @@ func (_q *UserQuery) Clone() *UserQuery {
 		withGroupMemberships: _q.withGroupMemberships.Clone(),
 		withPinnedAgreements: _q.withPinnedAgreements.Clone(),
 		withPinnedRewards:    _q.withPinnedRewards.Clone(),
+		withPointLogs:        _q.withPointLogs.Clone(),
+		withMemberSummaries:  _q.withMemberSummaries.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -398,6 +448,28 @@ func (_q *UserQuery) WithPinnedRewards(opts ...func(*RewardQuery)) *UserQuery {
 		opt(query)
 	}
 	_q.withPinnedRewards = query
+	return _q
+}
+
+// WithPointLogs tells the query-builder to eager-load the nodes that are connected to
+// the "point_logs" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithPointLogs(opts ...func(*PointLogQuery)) *UserQuery {
+	query := (&PointLogClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withPointLogs = query
+	return _q
+}
+
+// WithMemberSummaries tells the query-builder to eager-load the nodes that are connected to
+// the "member_summaries" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithMemberSummaries(opts ...func(*MemberSummaryQuery)) *UserQuery {
+	query := (&MemberSummaryClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withMemberSummaries = query
 	return _q
 }
 
@@ -479,11 +551,13 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = _q.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [6]bool{
 			_q.withIdentities != nil,
 			_q.withGroupMemberships != nil,
 			_q.withPinnedAgreements != nil,
 			_q.withPinnedRewards != nil,
+			_q.withPointLogs != nil,
+			_q.withMemberSummaries != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -529,6 +603,20 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := _q.loadPinnedRewards(ctx, query, nodes,
 			func(n *User) { n.Edges.PinnedRewards = []*Reward{} },
 			func(n *User, e *Reward) { n.Edges.PinnedRewards = append(n.Edges.PinnedRewards, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withPointLogs; query != nil {
+		if err := _q.loadPointLogs(ctx, query, nodes,
+			func(n *User) { n.Edges.PointLogs = []*PointLog{} },
+			func(n *User, e *PointLog) { n.Edges.PointLogs = append(n.Edges.PointLogs, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withMemberSummaries; query != nil {
+		if err := _q.loadMemberSummaries(ctx, query, nodes,
+			func(n *User) { n.Edges.MemberSummaries = []*MemberSummary{} },
+			func(n *User, e *MemberSummary) { n.Edges.MemberSummaries = append(n.Edges.MemberSummaries, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -715,6 +803,66 @@ func (_q *UserQuery) loadPinnedRewards(ctx context.Context, query *RewardQuery, 
 		for kn := range nodes {
 			assign(kn, n)
 		}
+	}
+	return nil
+}
+func (_q *UserQuery) loadPointLogs(ctx context.Context, query *PointLogQuery, nodes []*User, init func(*User), assign func(*User, *PointLog)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(pointlog.FieldUserID)
+	}
+	query.Where(predicate.PointLog(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.PointLogsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *UserQuery) loadMemberSummaries(ctx context.Context, query *MemberSummaryQuery, nodes []*User, init func(*User), assign func(*User, *MemberSummary)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(membersummary.FieldUserID)
+	}
+	query.Where(predicate.MemberSummary(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.MemberSummariesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }

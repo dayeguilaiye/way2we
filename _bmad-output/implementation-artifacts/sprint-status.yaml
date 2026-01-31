@@ -51,7 +51,7 @@ development_status:
   epic-1-retrospective: optional
 
   # Epic 2: 群组创建与成员管理
-  epic-2: in-progress
+  epic-2: done
   2-1-group-creation-and-invitation: done  # 完整实现了创建群组、邀请码系统、加入群组和UX优化
   2-2-view-group-list-switch-group: done
   2-3-member-management-permissions: done  # 合并了成员列表角色管理、权限分配
@@ -59,19 +59,20 @@ development_status:
   epic-2-retrospective: optional
 
   # Epic 3: 约定规则管理
-  epic-3: in-progress
+  epic-3: done
   3-1-agreement-management: done  # 合并了查看约定列表、创建、编辑、停用与启用约定
-  3-2-pin-agreement: review
+  3-2-pin-agreement: done
   epic-3-retrospective: optional
 
   # Epic 4: 商品/兑换项管理
-  epic-4: in-progress
+  epic-4: done
   4-1-reward-management: done  # 合并了查看商品列表、创建、编辑、停用与启用商品
-  4-2-pin-reward: review
+  4-2-pin-reward: done
   epic-4-retrospective: optional
 
   # Epic 5: 完成约定与积分获取
   epic-5: backlog
+  5-0-points-ledger-foundation: done
   5-1-quick-record-agreement-completion: backlog
   5-2-view-points-balance: backlog
   5-3-confirm-reject-agreement-completion: backlog

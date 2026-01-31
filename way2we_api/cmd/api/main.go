@@ -17,6 +17,7 @@ import (
 	"github.com/way2we/way2we_api/internal/app/agreement"
 	"github.com/way2we/way2we_api/internal/app/auth"
 	"github.com/way2we/way2we_api/internal/app/group"
+	"github.com/way2we/way2we_api/internal/app/points"
 	"github.com/way2we/way2we_api/internal/app/reward"
 	"github.com/way2we/way2we_api/internal/app/user"
 	"github.com/way2we/way2we_api/internal/pkg/config"
@@ -86,6 +87,8 @@ func main() {
 	agreementService := agreement.NewService(client, groupService)
 	// Initialize reward service
 	rewardService := reward.NewService(client, groupService)
+	// Initialize points service
+	pointsService := points.NewService(client)
 
 	// Register routes
 	authHandler := handler.NewAuthHandler(authService)
@@ -93,8 +96,9 @@ func main() {
 	groupHandler := handler.NewGroupHandler(groupService)
 	agreementHandler := handler.NewAgreementHandler(agreementService)
 	rewardHandler := handler.NewRewardHandler(rewardService, storageProvider)
+	pointsHandler := handler.NewPointsHandler(pointsService)
 
-	handler.RegisterRoutes(e, cfg, authService, authHandler, userHandler, groupHandler, groupService, agreementHandler, rewardHandler)
+	handler.RegisterRoutes(e, cfg, authService, authHandler, userHandler, groupHandler, groupService, agreementHandler, rewardHandler, pointsHandler)
 
 	// Routes
 	e.GET("/", func(c echo.Context) error {

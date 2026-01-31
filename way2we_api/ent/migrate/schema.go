@@ -110,6 +110,86 @@ var (
 			},
 		},
 	}
+	// MemberSummariesColumns holds the columns for the "member_summaries" table.
+	MemberSummariesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "balance", Type: field.TypeInt, Default: 0},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "group_id", Type: field.TypeInt},
+		{Name: "user_id", Type: field.TypeInt},
+	}
+	// MemberSummariesTable holds the schema information for the "member_summaries" table.
+	MemberSummariesTable = &schema.Table{
+		Name:       "member_summaries",
+		Columns:    MemberSummariesColumns,
+		PrimaryKey: []*schema.Column{MemberSummariesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "member_summaries_groups_member_summaries",
+				Columns:    []*schema.Column{MemberSummariesColumns[3]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "member_summaries_users_member_summaries",
+				Columns:    []*schema.Column{MemberSummariesColumns[4]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "membersummary_group_id_user_id",
+				Unique:  true,
+				Columns: []*schema.Column{MemberSummariesColumns[3], MemberSummariesColumns[4]},
+			},
+		},
+	}
+	// PointLogsColumns holds the columns for the "point_logs" table.
+	PointLogsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "delta", Type: field.TypeInt},
+		{Name: "balance_after", Type: field.TypeInt},
+		{Name: "reason", Type: field.TypeString, Nullable: true, Size: 200},
+		{Name: "source_type", Type: field.TypeString, Size: 30},
+		{Name: "source_id", Type: field.TypeString, Size: 64},
+		{Name: "source_ref", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "group_id", Type: field.TypeInt},
+		{Name: "user_id", Type: field.TypeInt},
+	}
+	// PointLogsTable holds the schema information for the "point_logs" table.
+	PointLogsTable = &schema.Table{
+		Name:       "point_logs",
+		Columns:    PointLogsColumns,
+		PrimaryKey: []*schema.Column{PointLogsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "point_logs_groups_point_logs",
+				Columns:    []*schema.Column{PointLogsColumns[8]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "point_logs_users_point_logs",
+				Columns:    []*schema.Column{PointLogsColumns[9]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "pointlog_group_id_source_type_source_id",
+				Unique:  true,
+				Columns: []*schema.Column{PointLogsColumns[8], PointLogsColumns[4], PointLogsColumns[5]},
+			},
+			{
+				Name:    "pointlog_group_id_user_id_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{PointLogsColumns[8], PointLogsColumns[9], PointLogsColumns[7]},
+			},
+		},
+	}
 	// RewardsColumns holds the columns for the "rewards" table.
 	RewardsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -271,6 +351,8 @@ var (
 		AgreementsTable,
 		GroupsTable,
 		GroupMembersTable,
+		MemberSummariesTable,
+		PointLogsTable,
 		RewardsTable,
 		TokenBlacklistsTable,
 		UsersTable,
@@ -285,6 +367,10 @@ func init() {
 	AgreementsTable.ForeignKeys[1].RefTable = GroupsTable
 	GroupMembersTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupMembersTable.ForeignKeys[1].RefTable = UsersTable
+	MemberSummariesTable.ForeignKeys[0].RefTable = GroupsTable
+	MemberSummariesTable.ForeignKeys[1].RefTable = UsersTable
+	PointLogsTable.ForeignKeys[0].RefTable = GroupsTable
+	PointLogsTable.ForeignKeys[1].RefTable = UsersTable
 	RewardsTable.ForeignKeys[0].RefTable = GroupsTable
 	RewardsTable.ForeignKeys[1].RefTable = UsersTable
 	UserIdentitiesTable.ForeignKeys[0].RefTable = UsersTable

@@ -50,5 +50,9 @@ func (User) Edges() []ent.Edge {
 			Comment("Agreements pinned by this user"),
 		edge.To("pinned_rewards", Reward.Type).
 			Comment("Rewards pinned by this user"),
+		edge.To("point_logs", PointLog.Type).
+			Comment("Point logs for this user"),
+		edge.To("member_summaries", MemberSummary.Type).
+			Comment("Point summaries for this user"),
 	}
 }
