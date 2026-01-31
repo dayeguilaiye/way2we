@@ -270,6 +270,13 @@ class _RewardListViewState extends State<RewardListView>
               return RewardCard(
                 reward: reward,
                 onTap: () => _navigateToDetail(context, reward),
+                onTogglePin: () {
+                  context.read<RewardListBloc>().add(
+                    reward.isPinned
+                        ? UnpinRewardRequested(rewardId: reward.id)
+                        : PinRewardRequested(rewardId: reward.id),
+                  );
+                },
                 showActions: canManage,
                 statusActionLabel: statusLabel,
                 onToggleStatus: canManage

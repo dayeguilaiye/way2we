@@ -241,6 +241,31 @@ var (
 			},
 		},
 	}
+	// UserPinnedRewardsColumns holds the columns for the "user_pinned_rewards" table.
+	UserPinnedRewardsColumns = []*schema.Column{
+		{Name: "user_id", Type: field.TypeInt},
+		{Name: "reward_id", Type: field.TypeInt},
+	}
+	// UserPinnedRewardsTable holds the schema information for the "user_pinned_rewards" table.
+	UserPinnedRewardsTable = &schema.Table{
+		Name:       "user_pinned_rewards",
+		Columns:    UserPinnedRewardsColumns,
+		PrimaryKey: []*schema.Column{UserPinnedRewardsColumns[0], UserPinnedRewardsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_pinned_rewards_user_id",
+				Columns:    []*schema.Column{UserPinnedRewardsColumns[0]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "user_pinned_rewards_reward_id",
+				Columns:    []*schema.Column{UserPinnedRewardsColumns[1]},
+				RefColumns: []*schema.Column{RewardsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AgreementsTable,
@@ -251,6 +276,7 @@ var (
 		UsersTable,
 		UserIdentitiesTable,
 		UserPinnedAgreementsTable,
+		UserPinnedRewardsTable,
 	}
 )
 
@@ -264,4 +290,6 @@ func init() {
 	UserIdentitiesTable.ForeignKeys[0].RefTable = UsersTable
 	UserPinnedAgreementsTable.ForeignKeys[0].RefTable = UsersTable
 	UserPinnedAgreementsTable.ForeignKeys[1].RefTable = AgreementsTable
+	UserPinnedRewardsTable.ForeignKeys[0].RefTable = UsersTable
+	UserPinnedRewardsTable.ForeignKeys[1].RefTable = RewardsTable
 }

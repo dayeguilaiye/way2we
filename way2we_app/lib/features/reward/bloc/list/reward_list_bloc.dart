@@ -13,11 +13,14 @@ class RewardListBloc extends Bloc<RewardListEvent, RewardListState> {
     on<LoadRewards>(_onLoadRewards);
     on<RefreshRewards>(_onRefreshRewards);
     on<UpdateRewardStatus>(_onUpdateRewardStatus);
+    on<PinRewardRequested>(_onPinRewardRequested);
+    on<UnpinRewardRequested>(_onUnpinRewardRequested);
   }
 
   final RewardProvider _rewardProvider;
   int? _currentGroupId;
   String? _currentStatusFilter;
+  bool _currentPinnedOnly = false;
 
   Future<void> _onLoadRewards(
     LoadRewards event,
@@ -25,6 +28,7 @@ class RewardListBloc extends Bloc<RewardListEvent, RewardListState> {
   ) async {
     _currentGroupId = event.groupId;
     _currentStatusFilter = event.statusFilter;
+    _currentPinnedOnly = event.pinnedOnly;
 
     emit(const RewardListLoading());
 
@@ -32,11 +36,12 @@ class RewardListBloc extends Bloc<RewardListEvent, RewardListState> {
       final rewards = await _rewardProvider.listRewards(
         groupId: event.groupId,
         status: event.statusFilter,
+        pinnedOnly: event.pinnedOnly,
       );
 
       emit(
         RewardListLoaded(
-          rewards: rewards,
+          rewards: _sortByPinned(rewards),
           groupId: event.groupId,
           statusFilter: event.statusFilter,
         ),
@@ -58,11 +63,12 @@ class RewardListBloc extends Bloc<RewardListEvent, RewardListState> {
       final rewards = await _rewardProvider.listRewards(
         groupId: _currentGroupId!,
         status: _currentStatusFilter,
+        pinnedOnly: _currentPinnedOnly,
       );
 
       emit(
         RewardListLoaded(
-          rewards: rewards,
+          rewards: _sortByPinned(rewards),
           groupId: _currentGroupId!,
           statusFilter: _currentStatusFilter,
         ),
@@ -98,11 +104,109 @@ class RewardListBloc extends Bloc<RewardListEvent, RewardListState> {
 
       emit(
         RewardListActionSuccess(
-          rewards: updatedList,
+          rewards: _sortByPinned(updatedList),
           groupId: currentState.groupId,
           statusFilter: currentState.statusFilter,
           updatedStatus: event.newStatus,
         ),
+      );
+    } on RewardApiException catch (e) {
+      emit(
+        RewardListActionFailure(
+          rewards: currentState.rewards,
+          groupId: currentState.groupId,
+          statusFilter: currentState.statusFilter,
+          message: e.message,
+          code: e.code,
+        ),
+      );
+    } on Exception catch (e) {
+      emit(
+        RewardListActionFailure(
+          rewards: currentState.rewards,
+          groupId: currentState.groupId,
+          statusFilter: currentState.statusFilter,
+          message: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onPinRewardRequested(
+    PinRewardRequested event,
+    Emitter<RewardListState> emit,
+  ) async {
+    if (_currentGroupId == null) return;
+
+    final currentState = state;
+    if (currentState is! RewardListReadyState) return;
+
+    final optimistic = _applyPinnedUpdate(
+      currentState.rewards,
+      event.rewardId,
+      true,
+    );
+    emit(
+      RewardListLoaded(
+        rewards: _sortByPinned(optimistic),
+        groupId: currentState.groupId,
+        statusFilter: currentState.statusFilter,
+      ),
+    );
+
+    try {
+      await _rewardProvider.pinReward(
+        groupId: _currentGroupId!,
+        rewardId: event.rewardId,
+      );
+    } on RewardApiException catch (e) {
+      emit(
+        RewardListActionFailure(
+          rewards: currentState.rewards,
+          groupId: currentState.groupId,
+          statusFilter: currentState.statusFilter,
+          message: e.message,
+          code: e.code,
+        ),
+      );
+    } on Exception catch (e) {
+      emit(
+        RewardListActionFailure(
+          rewards: currentState.rewards,
+          groupId: currentState.groupId,
+          statusFilter: currentState.statusFilter,
+          message: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onUnpinRewardRequested(
+    UnpinRewardRequested event,
+    Emitter<RewardListState> emit,
+  ) async {
+    if (_currentGroupId == null) return;
+
+    final currentState = state;
+    if (currentState is! RewardListReadyState) return;
+
+    final optimistic = _applyPinnedUpdate(
+      currentState.rewards,
+      event.rewardId,
+      false,
+    );
+    emit(
+      RewardListLoaded(
+        rewards: _sortByPinned(optimistic),
+        groupId: currentState.groupId,
+        statusFilter: currentState.statusFilter,
+      ),
+    );
+
+    try {
+      await _rewardProvider.unpinReward(
+        groupId: _currentGroupId!,
+        rewardId: event.rewardId,
       );
     } on RewardApiException catch (e) {
       emit(
@@ -138,5 +242,29 @@ class RewardListBloc extends Bloc<RewardListEvent, RewardListState> {
           .toList();
     }
     return current.where((reward) => reward.id != updated.id).toList();
+  }
+
+  List<Reward> _applyPinnedUpdate(
+    List<Reward> current,
+    int rewardId,
+    bool isPinned,
+  ) {
+    return current
+        .map(
+          (reward) =>
+              reward.id == rewardId ? reward.copyWith(isPinned: isPinned) : reward,
+        )
+        .toList();
+  }
+
+  List<Reward> _sortByPinned(List<Reward> rewards) {
+    final indexed = rewards.asMap().entries.toList();
+    indexed.sort((a, b) {
+      if (a.value.isPinned == b.value.isPinned) {
+        return a.key.compareTo(b.key);
+      }
+      return a.value.isPinned ? -1 : 1;
+    });
+    return indexed.map((entry) => entry.value).toList();
   }
 }

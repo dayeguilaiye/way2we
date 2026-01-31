@@ -72,6 +72,9 @@ func (Reward) Edges() []ent.Edge {
 			Required().
 			Field("provider_id").
 			Comment("The user who provides this reward"),
+		edge.From("pinned_by", User.Type).
+			Ref("pinned_rewards").
+			Comment("Users who pinned this reward"),
 	}
 }
 

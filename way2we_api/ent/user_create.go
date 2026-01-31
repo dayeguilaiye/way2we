@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/way2we/way2we_api/ent/agreement"
 	"github.com/way2we/way2we_api/ent/groupmember"
+	"github.com/way2we/way2we_api/ent/reward"
 	"github.com/way2we/way2we_api/ent/user"
 	"github.com/way2we/way2we_api/ent/useridentity"
 )
@@ -128,6 +129,21 @@ func (_c *UserCreate) AddPinnedAgreements(v ...*Agreement) *UserCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddPinnedAgreementIDs(ids...)
+}
+
+// AddPinnedRewardIDs adds the "pinned_rewards" edge to the Reward entity by IDs.
+func (_c *UserCreate) AddPinnedRewardIDs(ids ...int) *UserCreate {
+	_c.mutation.AddPinnedRewardIDs(ids...)
+	return _c
+}
+
+// AddPinnedRewards adds the "pinned_rewards" edges to the Reward entity.
+func (_c *UserCreate) AddPinnedRewards(v ...*Reward) *UserCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddPinnedRewardIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -283,6 +299,22 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(agreement.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.PinnedRewardsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.PinnedRewardsTable,
+			Columns: user.PinnedRewardsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reward.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

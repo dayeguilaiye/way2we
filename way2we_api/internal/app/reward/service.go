@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sort"
 
 	"github.com/way2we/way2we_api/ent"
 	"github.com/way2we/way2we_api/ent/groupmember"
 	"github.com/way2we/way2we_api/ent/reward"
+	"github.com/way2we/way2we_api/ent/user"
 	"github.com/way2we/way2we_api/internal/app/group"
 )
 
@@ -24,6 +26,8 @@ var (
 	ErrUpdateRewardFailed = errors.New("failed to update reward")
 	ErrInvalidStatus      = errors.New("invalid status, must be 'active' or 'inactive'")
 	ErrRewardNotInGroup   = errors.New("reward does not belong to this group")
+	ErrPinRewardFailed    = errors.New("failed to pin reward")
+	ErrUnpinRewardFailed  = errors.New("failed to unpin reward")
 )
 
 // Service handles reward-related business logic.
@@ -62,7 +66,7 @@ type UpdateInput struct {
 
 // ListRewards retrieves rewards for a group. Default status is active.
 // Any group member can view rewards.
-func (s *Service) ListRewards(ctx context.Context, groupID int, userID int, statusFilter string) ([]*ent.Reward, error) {
+func (s *Service) ListRewards(ctx context.Context, groupID int, userID int, statusFilter string, pinnedOnly bool) ([]*ent.Reward, error) {
 	// 1. Verify user is a member of the group
 	exists, err := s.client.GroupMember.Query().
 		Where(
@@ -81,7 +85,10 @@ func (s *Service) ListRewards(ctx context.Context, groupID int, userID int, stat
 	query := s.client.Reward.Query().
 		Where(reward.GroupID(groupID)).
 		Order(ent.Desc(reward.FieldCreatedAt)).
-		WithProvider()
+		WithProvider().
+		WithPinnedBy(func(q *ent.UserQuery) {
+			q.Where(user.ID(userID))
+		})
 
 	// 3. Apply status filter (default to active)
 	if statusFilter == "" {
@@ -96,13 +103,36 @@ func (s *Service) ListRewards(ctx context.Context, groupID int, userID int, stat
 		return nil, ErrInvalidStatus
 	}
 
+	if pinnedOnly {
+		query = query.Where(reward.HasPinnedByWith(user.ID(userID)))
+	}
+
 	// 4. Execute query
 	rewards, err := query.All(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query rewards: %w", err)
 	}
 
+	sort.SliceStable(rewards, func(i, j int) bool {
+		leftPinned := len(rewards[i].Edges.PinnedBy) > 0
+		rightPinned := len(rewards[j].Edges.PinnedBy) > 0
+		if leftPinned == rightPinned {
+			return false
+		}
+		return leftPinned && !rightPinned
+	})
+
 	return rewards, nil
+}
+
+func (s *Service) loadRewardWithPinned(ctx context.Context, rewardID int, userID int) (*ent.Reward, error) {
+	return s.client.Reward.Query().
+		Where(reward.ID(rewardID)).
+		WithProvider().
+		WithPinnedBy(func(q *ent.UserQuery) {
+			q.Where(user.ID(userID))
+		}).
+		Only(ctx)
 }
 
 // GetReward retrieves a single reward by ID.
@@ -123,10 +153,7 @@ func (s *Service) GetReward(ctx context.Context, groupID int, rewardID int, user
 	}
 
 	// 2. Get reward
-	r, err := s.client.Reward.Query().
-		Where(reward.ID(rewardID)).
-		WithProvider().
-		Only(ctx)
+	r, err := s.loadRewardWithPinned(ctx, rewardID, userID)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return nil, ErrRewardNotFound
@@ -312,7 +339,15 @@ func (s *Service) UpdateReward(ctx context.Context, groupID int, rewardID int, u
 		return nil, fmt.Errorf("%w: %v", ErrUpdateRewardFailed, err)
 	}
 
-	return updated, nil
+	reloaded, err := s.loadRewardWithPinned(ctx, updated.ID, userID)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, ErrRewardNotFound
+		}
+		return nil, fmt.Errorf("failed to load updated reward: %w", err)
+	}
+
+	return reloaded, nil
 }
 
 // UpdateRewardStatus updates the status of a reward (activate/deactivate).
@@ -374,5 +409,100 @@ func (s *Service) UpdateRewardStatus(ctx context.Context, groupID int, rewardID 
 		return nil, fmt.Errorf("%w: %v", ErrUpdateRewardFailed, err)
 	}
 
-	return updated, nil
+	reloaded, err := s.loadRewardWithPinned(ctx, updated.ID, userID)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, ErrRewardNotFound
+		}
+		return nil, fmt.Errorf("failed to load updated reward: %w", err)
+	}
+
+	return reloaded, nil
+}
+
+// PinReward pins a reward for a user.
+// Any group member can pin rewards.
+func (s *Service) PinReward(ctx context.Context, groupID int, userID int, rewardID int) error {
+	// 1. Verify user is a member of the group
+	exists, err := s.client.GroupMember.Query().
+		Where(
+			groupmember.GroupID(groupID),
+			groupmember.UserID(userID),
+		).
+		Exist(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to check membership: %w", err)
+	}
+	if !exists {
+		return ErrNotGroupMember
+	}
+
+	// 2. Get reward
+	r, err := s.client.Reward.Get(ctx, rewardID)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return ErrRewardNotFound
+		}
+		return fmt.Errorf("failed to get reward: %w", err)
+	}
+
+	// 3. Verify reward belongs to the group
+	if r.GroupID != groupID {
+		return ErrRewardNotInGroup
+	}
+
+	// 4. Add pinned relationship (idempotent on constraint conflict)
+	err = s.client.User.UpdateOneID(userID).
+		AddPinnedRewardIDs(rewardID).
+		Exec(ctx)
+	if err != nil {
+		if ent.IsConstraintError(err) {
+			return nil
+		}
+		return fmt.Errorf("%w: %w", ErrPinRewardFailed, err)
+	}
+
+	return nil
+}
+
+// UnpinReward removes a pinned reward for a user.
+// Any group member can unpin rewards.
+func (s *Service) UnpinReward(ctx context.Context, groupID int, userID int, rewardID int) error {
+	// 1. Verify user is a member of the group
+	exists, err := s.client.GroupMember.Query().
+		Where(
+			groupmember.GroupID(groupID),
+			groupmember.UserID(userID),
+		).
+		Exist(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to check membership: %w", err)
+	}
+	if !exists {
+		return ErrNotGroupMember
+	}
+
+	// 2. Get reward
+	r, err := s.client.Reward.Get(ctx, rewardID)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return ErrRewardNotFound
+		}
+		return fmt.Errorf("failed to get reward: %w", err)
+	}
+
+	// 3. Verify reward belongs to the group
+	if r.GroupID != groupID {
+		return ErrRewardNotInGroup
+	}
+
+	// 4. Remove pinned relationship (idempotent)
+	err = s.client.User.UpdateOneID(userID).
+		RemovePinnedRewardIDs(rewardID).
+		Exec(ctx)
+	if err != nil {
+		return fmt.Errorf("%w: %w", ErrUnpinRewardFailed, err)
+	}
+
+	return nil
 }

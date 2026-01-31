@@ -248,5 +248,8 @@
     "rewardDisableAction": "停用",
     "rewardEnableAction": "启用",
     "rewardDisableSuccess": "已停用商品",
-    "rewardEnableSuccess": "已启用商品"
+    "rewardEnableSuccess": "已启用商品",
+    "rewardPinnedSectionTitle": "置顶商品",
+    "rewardPinAction": "置顶",
+    "rewardUnpinAction": "取消置顶"
 }

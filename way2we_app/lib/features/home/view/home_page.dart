@@ -13,6 +13,10 @@ import 'package:way2we_app/features/group/view/invitation_page.dart';
 import 'package:way2we_app/features/group/view/member_management_page.dart';
 import 'package:way2we_app/features/group/view/widgets/group_switcher_sheet.dart';
 import 'package:way2we_app/features/profile/view/profile_page.dart';
+import 'package:way2we_app/features/reward/bloc/list/reward_list_bloc.dart';
+import 'package:way2we_app/features/reward/data/models/reward.dart';
+import 'package:way2we_app/features/reward/data/providers/reward_provider.dart';
+import 'package:way2we_app/features/reward/view/reward_detail_page.dart';
 import 'package:way2we_app/features/reward/view/reward_list_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
 import 'package:way2we_app/theme/theme.dart';
@@ -165,6 +169,8 @@ class HomePage extends StatelessWidget {
                         ],
                         const SizedBox(height: AppSpacing.space6),
                         PinnedAgreementsSection(groupId: selectedGroup.id),
+                        const SizedBox(height: AppSpacing.space6),
+                        PinnedRewardsSection(groupId: selectedGroup.id),
                         const SizedBox(height: AppSpacing.space6),
                         // Agreements Entry
                         InkWell(
@@ -419,6 +425,232 @@ class _PinnedAgreementsSectionState extends State<PinnedAgreementsSection>
 
           return const SizedBox.shrink();
         },
+      ),
+    );
+  }
+}
+
+class PinnedRewardsSection extends StatefulWidget {
+  const PinnedRewardsSection({required this.groupId, super.key});
+
+  final int groupId;
+
+  @override
+  State<PinnedRewardsSection> createState() => _PinnedRewardsSectionState();
+}
+
+class _PinnedRewardsSectionState extends State<PinnedRewardsSection>
+    with RouteAware {
+  late final RewardListBloc _bloc;
+  bool _subscribed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = RewardListBloc(
+      rewardProvider: context.read<RewardProvider>(),
+    );
+    _loadRewards();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is PageRoute && !_subscribed) {
+      routeObserver.subscribe(this, route);
+      _subscribed = true;
+    }
+  }
+
+  @override
+  void didUpdateWidget(PinnedRewardsSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.groupId != widget.groupId) {
+      _loadRewards();
+    }
+  }
+
+  @override
+  void didPopNext() {
+    _loadRewards();
+  }
+
+  @override
+  void dispose() {
+    if (_subscribed) {
+      routeObserver.unsubscribe(this);
+    }
+    _bloc.close();
+    super.dispose();
+  }
+
+  void _loadRewards() {
+    _bloc.add(
+      LoadRewards(
+        groupId: widget.groupId,
+        statusFilter: 'active',
+        pinnedOnly: true,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+
+    return BlocProvider.value(
+      value: _bloc,
+      child: BlocBuilder<RewardListBloc, RewardListState>(
+        builder: (context, state) {
+          if (state is RewardListLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state is RewardListError) {
+            return const SizedBox.shrink();
+          }
+
+          if (state is RewardListReadyState) {
+            final pinnedRewards =
+                state.rewards.where((reward) => reward.isPinned).toList();
+
+            if (pinnedRewards.isEmpty) {
+              return const SizedBox.shrink();
+            }
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.rewardPinnedSectionTitle,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: AppTypography.bold,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.space3),
+                SizedBox(
+                  height: 140,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: pinnedRewards.length,
+                    separatorBuilder: (_, __) =>
+                        const SizedBox(width: AppSpacing.space3),
+                    itemBuilder: (context, index) {
+                      final reward = pinnedRewards[index];
+                      return RewardCompactCard(
+                        reward: reward,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => RewardDetailPage(
+                                groupId: widget.groupId,
+                                reward: reward,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            );
+          }
+
+          return const SizedBox.shrink();
+        },
+      ),
+    );
+  }
+}
+
+class RewardCompactCard extends StatelessWidget {
+  const RewardCompactCard({required this.reward, this.onTap, super.key});
+
+  final Reward reward;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return SizedBox(
+      width: 180,
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: reward.coverImageUrl != null &&
+                              reward.coverImageUrl!.isNotEmpty
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                reward.coverImageUrl!,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => Icon(
+                                  Icons.card_giftcard_outlined,
+                                  color: theme.colorScheme.onPrimaryContainer,
+                                ),
+                              ),
+                            )
+                          : Icon(
+                              Icons.card_giftcard_outlined,
+                              color: theme.colorScheme.onPrimaryContainer,
+                            ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        reward.name,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: AppTypography.bold,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '${reward.costPoints} pts',
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  reward.providerNickname?.isNotEmpty == true
+                      ? reward.providerNickname!
+                      : '—',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

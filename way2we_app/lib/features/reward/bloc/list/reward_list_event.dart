@@ -8,13 +8,18 @@ sealed class RewardListEvent extends Equatable {
 }
 
 final class LoadRewards extends RewardListEvent {
-  const LoadRewards({required this.groupId, this.statusFilter});
+  const LoadRewards({
+    required this.groupId,
+    this.statusFilter,
+    this.pinnedOnly = false,
+  });
 
   final int groupId;
   final String? statusFilter;
+  final bool pinnedOnly;
 
   @override
-  List<Object?> get props => [groupId, statusFilter];
+  List<Object?> get props => [groupId, statusFilter, pinnedOnly];
 }
 
 final class RefreshRewards extends RewardListEvent {
@@ -32,4 +37,22 @@ final class UpdateRewardStatus extends RewardListEvent {
 
   @override
   List<Object?> get props => [rewardId, newStatus];
+}
+
+final class PinRewardRequested extends RewardListEvent {
+  const PinRewardRequested({required this.rewardId});
+
+  final int rewardId;
+
+  @override
+  List<Object?> get props => [rewardId];
+}
+
+final class UnpinRewardRequested extends RewardListEvent {
+  const UnpinRewardRequested({required this.rewardId});
+
+  final int rewardId;
+
+  @override
+  List<Object?> get props => [rewardId];
 }

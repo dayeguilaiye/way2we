@@ -41,6 +41,8 @@ const (
 	EdgeGroup = "group"
 	// EdgeProvider holds the string denoting the provider edge name in mutations.
 	EdgeProvider = "provider"
+	// EdgePinnedBy holds the string denoting the pinned_by edge name in mutations.
+	EdgePinnedBy = "pinned_by"
 	// Table holds the table name of the reward in the database.
 	Table = "rewards"
 	// GroupTable is the table that holds the group relation/edge.
@@ -57,6 +59,11 @@ const (
 	ProviderInverseTable = "users"
 	// ProviderColumn is the table column denoting the provider relation/edge.
 	ProviderColumn = "provider_id"
+	// PinnedByTable is the table that holds the pinned_by relation/edge. The primary key declared below.
+	PinnedByTable = "user_pinned_rewards"
+	// PinnedByInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	PinnedByInverseTable = "users"
 )
 
 // Columns holds all SQL columns for reward fields.
@@ -74,6 +81,12 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
+
+var (
+	// PinnedByPrimaryKey and PinnedByColumn2 are the table columns denoting the
+	// primary key for the pinned_by relation (M2M).
+	PinnedByPrimaryKey = []string{"user_id", "reward_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -206,6 +219,20 @@ func ByProviderField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newProviderStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByPinnedByCount orders the results by pinned_by count.
+func ByPinnedByCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newPinnedByStep(), opts...)
+	}
+}
+
+// ByPinnedBy orders the results by pinned_by terms.
+func ByPinnedBy(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPinnedByStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newGroupStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -218,5 +245,12 @@ func newProviderStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ProviderInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, false, ProviderTable, ProviderColumn),
+	)
+}
+func newPinnedByStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PinnedByInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, PinnedByTable, PinnedByPrimaryKey...),
 	)
 }

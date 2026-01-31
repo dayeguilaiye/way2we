@@ -26,6 +26,7 @@ class Reward extends Equatable {
     this.description,
     this.coverImageUrl,
     this.providerNickname,
+    this.isPinned = false,
   });
 
   /// Creates a [Reward] from JSON.
@@ -50,6 +51,8 @@ class Reward extends Equatable {
   final int providerId;
   @JsonKey(name: 'provider_nickname')
   final String? providerNickname;
+  @JsonKey(name: 'is_pinned', defaultValue: false)
+  final bool isPinned;
   @JsonKey(name: 'created_at')
   final DateTime createdAt;
   @JsonKey(name: 'updated_at')
@@ -59,6 +62,25 @@ class Reward extends Equatable {
   Map<String, dynamic> toJson() => _$RewardToJson(this);
 
   bool get isActive => status == RewardStatus.active;
+
+  Reward copyWith({bool? isPinned}) {
+    return Reward(
+      id: id,
+      name: name,
+      description: description,
+      costPoints: costPoints,
+      coverImageUrl: coverImageUrl,
+      status: status,
+      autoFulfill: autoFulfill,
+      autoComplete: autoComplete,
+      groupId: groupId,
+      providerId: providerId,
+      providerNickname: providerNickname,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      isPinned: isPinned ?? this.isPinned,
+    );
+  }
 
   @override
   List<Object?> get props => [
@@ -73,6 +95,7 @@ class Reward extends Equatable {
     groupId,
     providerId,
     providerNickname,
+    isPinned,
     createdAt,
     updatedAt,
   ];

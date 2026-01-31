@@ -53,9 +53,11 @@ type RewardEdges struct {
 	Group *Group `json:"group,omitempty"`
 	// The user who provides this reward
 	Provider *User `json:"provider,omitempty"`
+	// Users who pinned this reward
+	PinnedBy []*User `json:"pinned_by,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // GroupOrErr returns the Group value or an error if the edge
@@ -78,6 +80,15 @@ func (e RewardEdges) ProviderOrErr() (*User, error) {
 		return nil, &NotFoundError{label: user.Label}
 	}
 	return nil, &NotLoadedError{edge: "provider"}
+}
+
+// PinnedByOrErr returns the PinnedBy value or an error if the edge
+// was not loaded in eager-loading.
+func (e RewardEdges) PinnedByOrErr() ([]*User, error) {
+	if e.loadedTypes[2] {
+		return e.PinnedBy, nil
+	}
+	return nil, &NotLoadedError{edge: "pinned_by"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -202,6 +213,11 @@ func (_m *Reward) QueryGroup() *GroupQuery {
 // QueryProvider queries the "provider" edge of the Reward entity.
 func (_m *Reward) QueryProvider() *UserQuery {
 	return NewRewardClient(_m.config).QueryProvider(_m)
+}
+
+// QueryPinnedBy queries the "pinned_by" edge of the Reward entity.
+func (_m *Reward) QueryPinnedBy() *UserQuery {
+	return NewRewardClient(_m.config).QueryPinnedBy(_m)
 }
 
 // Update returns a builder for updating this Reward.

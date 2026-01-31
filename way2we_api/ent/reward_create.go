@@ -154,6 +154,21 @@ func (_c *RewardCreate) SetProvider(v *User) *RewardCreate {
 	return _c.SetProviderID(v.ID)
 }
 
+// AddPinnedByIDs adds the "pinned_by" edge to the User entity by IDs.
+func (_c *RewardCreate) AddPinnedByIDs(ids ...int) *RewardCreate {
+	_c.mutation.AddPinnedByIDs(ids...)
+	return _c
+}
+
+// AddPinnedBy adds the "pinned_by" edges to the User entity.
+func (_c *RewardCreate) AddPinnedBy(v ...*User) *RewardCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddPinnedByIDs(ids...)
+}
+
 // Mutation returns the RewardMutation object of the builder.
 func (_c *RewardCreate) Mutation() *RewardMutation {
 	return _c.mutation
@@ -360,6 +375,22 @@ func (_c *RewardCreate) createSpec() (*Reward, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.ProviderID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.PinnedByIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   reward.PinnedByTable,
+			Columns: reward.PinnedByPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

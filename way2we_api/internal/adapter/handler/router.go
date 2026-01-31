@@ -72,6 +72,8 @@ func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service,
 	groupRoutes.GET("/:groupId/rewards/:id", rewardHandler.GetReward)
 	groupRoutes.PUT("/:groupId/rewards/:id", rewardHandler.UpdateReward)
 	groupRoutes.PUT("/:groupId/rewards/:id/status", rewardHandler.UpdateRewardStatus)
+	groupRoutes.POST("/:groupId/rewards/:id/pin", rewardHandler.PinReward)
+	groupRoutes.DELETE("/:groupId/rewards/:id/pin", rewardHandler.UnpinReward)
 
 	// Group Routes (Public - for invitation preview)
 	v1.GET("/groups/by-invitation/:code", groupHandler.GetGroupByInvitation)

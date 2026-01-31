@@ -16,9 +16,13 @@ void main() {
     bloc = RewardListBloc(rewardProvider: rewardProvider);
   });
 
-  Reward buildReward({required RewardStatus status}) {
+  Reward buildReward({
+    required RewardStatus status,
+    int id = 1,
+    bool isPinned = false,
+  }) {
     return Reward(
-      id: 1,
+      id: id,
       name: 'Reward',
       description: 'Desc',
       costPoints: 10,
@@ -30,6 +34,7 @@ void main() {
       providerNickname: 'Alice',
       createdAt: DateTime.parse('2024-01-01T00:00:00Z'),
       updatedAt: DateTime.parse('2024-01-01T00:00:00Z'),
+      isPinned: isPinned,
     );
   }
 
@@ -41,7 +46,11 @@ void main() {
     'emits loaded when load rewards succeeds',
     build: () {
       when(
-        () => rewardProvider.listRewards(groupId: 1, status: 'active'),
+        () => rewardProvider.listRewards(
+          groupId: 1,
+          status: 'active',
+          pinnedOnly: false,
+        ),
       ).thenAnswer((_) async => [buildReward(status: RewardStatus.active)]);
       return bloc;
     },
@@ -62,7 +71,11 @@ void main() {
       final activeReward = buildReward(status: RewardStatus.active);
       final inactiveReward = buildReward(status: RewardStatus.inactive);
       when(
-        () => rewardProvider.listRewards(groupId: 1, status: 'active'),
+        () => rewardProvider.listRewards(
+          groupId: 1,
+          status: 'active',
+          pinnedOnly: false,
+        ),
       ).thenAnswer((_) async => [activeReward]);
       when(
         () => rewardProvider.updateRewardStatus(
@@ -94,10 +107,103 @@ void main() {
   );
 
   blocTest<RewardListBloc, RewardListState>(
+    'emits optimistic update when pin reward succeeds',
+    build: () {
+      final rewardA = buildReward(status: RewardStatus.active, id: 1);
+      final rewardB = buildReward(status: RewardStatus.active, id: 2);
+      when(
+        () => rewardProvider.listRewards(
+          groupId: 1,
+          status: 'active',
+          pinnedOnly: false,
+        ),
+      ).thenAnswer((_) async => [rewardA, rewardB]);
+      when(
+        () => rewardProvider.pinReward(groupId: 1, rewardId: 2),
+      ).thenAnswer((_) async {});
+      return bloc;
+    },
+    act: (bloc) {
+      bloc.add(const LoadRewards(groupId: 1, statusFilter: 'active'));
+      bloc.add(const PinRewardRequested(rewardId: 2));
+    },
+    expect: () => [
+      const RewardListLoading(),
+      RewardListLoaded(
+        rewards: [
+          buildReward(status: RewardStatus.active, id: 1),
+          buildReward(status: RewardStatus.active, id: 2),
+        ],
+        groupId: 1,
+        statusFilter: 'active',
+      ),
+      RewardListLoaded(
+        rewards: [
+          buildReward(status: RewardStatus.active, id: 2, isPinned: true),
+          buildReward(status: RewardStatus.active, id: 1),
+        ],
+        groupId: 1,
+        statusFilter: 'active',
+      ),
+    ],
+  );
+
+  blocTest<RewardListBloc, RewardListState>(
+    'emits action failure when unpin reward fails',
+    build: () {
+      final pinnedReward =
+          buildReward(status: RewardStatus.active, id: 1, isPinned: true);
+      when(
+        () => rewardProvider.listRewards(
+          groupId: 1,
+          status: 'active',
+          pinnedOnly: false,
+        ),
+      ).thenAnswer((_) async => [pinnedReward]);
+      when(
+        () => rewardProvider.unpinReward(groupId: 1, rewardId: 1),
+      ).thenThrow(const RewardApiException('Unpin failed', code: 'ERR_UNPIN'));
+      return bloc;
+    },
+    act: (bloc) {
+      bloc.add(const LoadRewards(groupId: 1, statusFilter: 'active'));
+      bloc.add(const UnpinRewardRequested(rewardId: 1));
+    },
+    expect: () => [
+      const RewardListLoading(),
+      RewardListLoaded(
+        rewards: [
+          buildReward(status: RewardStatus.active, id: 1, isPinned: true),
+        ],
+        groupId: 1,
+        statusFilter: 'active',
+      ),
+      RewardListLoaded(
+        rewards: [buildReward(status: RewardStatus.active, id: 1)],
+        groupId: 1,
+        statusFilter: 'active',
+      ),
+      RewardListActionFailure(
+        rewards: [
+          buildReward(status: RewardStatus.active, id: 1, isPinned: true),
+        ],
+        groupId: 1,
+        statusFilter: 'active',
+        message: 'Unpin failed',
+        code: 'ERR_UNPIN',
+      ),
+    ],
+  );
+
+  blocTest<RewardListBloc, RewardListState>(
     'emits error when load rewards fails',
     build: () {
       when(
-        () => rewardProvider.listRewards(groupId: 1, status: 'active'),
+        () => rewardProvider.listRewards(
+          groupId: 1,
+          status: 'active',
+          pinnedOnly: false,
+        ),
       ).thenThrow(const RewardApiException('Load failed', code: 'ERR_LOAD'));
       return bloc;
     },
@@ -113,7 +219,11 @@ void main() {
     build: () {
       final activeReward = buildReward(status: RewardStatus.active);
       when(
-        () => rewardProvider.listRewards(groupId: 1, status: 'active'),
+        () => rewardProvider.listRewards(
+          groupId: 1,
+          status: 'active',
+          pinnedOnly: false,
+        ),
       ).thenAnswer((_) async => [activeReward]);
       when(
         () => rewardProvider.updateRewardStatus(

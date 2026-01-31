@@ -922,6 +922,22 @@ func (c *RewardClient) QueryProvider(_m *Reward) *UserQuery {
 	return query
 }
 
+// QueryPinnedBy queries the pinned_by edge of a Reward.
+func (c *RewardClient) QueryPinnedBy(_m *Reward) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(reward.Table, reward.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, reward.PinnedByTable, reward.PinnedByPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *RewardClient) Hooks() []Hook {
 	return c.hooks.Reward
@@ -1229,6 +1245,22 @@ func (c *UserClient) QueryPinnedAgreements(_m *User) *AgreementQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(agreement.Table, agreement.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, user.PinnedAgreementsTable, user.PinnedAgreementsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPinnedRewards queries the pinned_rewards edge of a User.
+func (c *UserClient) QueryPinnedRewards(_m *User) *RewardQuery {
+	query := (&RewardClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(reward.Table, reward.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.PinnedRewardsTable, user.PinnedRewardsPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil

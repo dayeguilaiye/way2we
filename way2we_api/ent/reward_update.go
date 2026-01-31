@@ -191,6 +191,21 @@ func (_u *RewardUpdate) SetProvider(v *User) *RewardUpdate {
 	return _u.SetProviderID(v.ID)
 }
 
+// AddPinnedByIDs adds the "pinned_by" edge to the User entity by IDs.
+func (_u *RewardUpdate) AddPinnedByIDs(ids ...int) *RewardUpdate {
+	_u.mutation.AddPinnedByIDs(ids...)
+	return _u
+}
+
+// AddPinnedBy adds the "pinned_by" edges to the User entity.
+func (_u *RewardUpdate) AddPinnedBy(v ...*User) *RewardUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddPinnedByIDs(ids...)
+}
+
 // Mutation returns the RewardMutation object of the builder.
 func (_u *RewardUpdate) Mutation() *RewardMutation {
 	return _u.mutation
@@ -206,6 +221,27 @@ func (_u *RewardUpdate) ClearGroup() *RewardUpdate {
 func (_u *RewardUpdate) ClearProvider() *RewardUpdate {
 	_u.mutation.ClearProvider()
 	return _u
+}
+
+// ClearPinnedBy clears all "pinned_by" edges to the User entity.
+func (_u *RewardUpdate) ClearPinnedBy() *RewardUpdate {
+	_u.mutation.ClearPinnedBy()
+	return _u
+}
+
+// RemovePinnedByIDs removes the "pinned_by" edge to User entities by IDs.
+func (_u *RewardUpdate) RemovePinnedByIDs(ids ...int) *RewardUpdate {
+	_u.mutation.RemovePinnedByIDs(ids...)
+	return _u
+}
+
+// RemovePinnedBy removes "pinned_by" edges to User entities.
+func (_u *RewardUpdate) RemovePinnedBy(v ...*User) *RewardUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemovePinnedByIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -368,6 +404,51 @@ func (_u *RewardUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Inverse: false,
 			Table:   reward.ProviderTable,
 			Columns: []string{reward.ProviderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.PinnedByCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   reward.PinnedByTable,
+			Columns: reward.PinnedByPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedPinnedByIDs(); len(nodes) > 0 && !_u.mutation.PinnedByCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   reward.PinnedByTable,
+			Columns: reward.PinnedByPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.PinnedByIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   reward.PinnedByTable,
+			Columns: reward.PinnedByPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -559,6 +640,21 @@ func (_u *RewardUpdateOne) SetProvider(v *User) *RewardUpdateOne {
 	return _u.SetProviderID(v.ID)
 }
 
+// AddPinnedByIDs adds the "pinned_by" edge to the User entity by IDs.
+func (_u *RewardUpdateOne) AddPinnedByIDs(ids ...int) *RewardUpdateOne {
+	_u.mutation.AddPinnedByIDs(ids...)
+	return _u
+}
+
+// AddPinnedBy adds the "pinned_by" edges to the User entity.
+func (_u *RewardUpdateOne) AddPinnedBy(v ...*User) *RewardUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddPinnedByIDs(ids...)
+}
+
 // Mutation returns the RewardMutation object of the builder.
 func (_u *RewardUpdateOne) Mutation() *RewardMutation {
 	return _u.mutation
@@ -574,6 +670,27 @@ func (_u *RewardUpdateOne) ClearGroup() *RewardUpdateOne {
 func (_u *RewardUpdateOne) ClearProvider() *RewardUpdateOne {
 	_u.mutation.ClearProvider()
 	return _u
+}
+
+// ClearPinnedBy clears all "pinned_by" edges to the User entity.
+func (_u *RewardUpdateOne) ClearPinnedBy() *RewardUpdateOne {
+	_u.mutation.ClearPinnedBy()
+	return _u
+}
+
+// RemovePinnedByIDs removes the "pinned_by" edge to User entities by IDs.
+func (_u *RewardUpdateOne) RemovePinnedByIDs(ids ...int) *RewardUpdateOne {
+	_u.mutation.RemovePinnedByIDs(ids...)
+	return _u
+}
+
+// RemovePinnedBy removes "pinned_by" edges to User entities.
+func (_u *RewardUpdateOne) RemovePinnedBy(v ...*User) *RewardUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemovePinnedByIDs(ids...)
 }
 
 // Where appends a list predicates to the RewardUpdate builder.
@@ -766,6 +883,51 @@ func (_u *RewardUpdateOne) sqlSave(ctx context.Context) (_node *Reward, err erro
 			Inverse: false,
 			Table:   reward.ProviderTable,
 			Columns: []string{reward.ProviderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.PinnedByCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   reward.PinnedByTable,
+			Columns: reward.PinnedByPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedPinnedByIDs(); len(nodes) > 0 && !_u.mutation.PinnedByCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   reward.PinnedByTable,
+			Columns: reward.PinnedByPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.PinnedByIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   reward.PinnedByTable,
+			Columns: reward.PinnedByPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:way2we_app/features/reward/data/models/reward.dart';
+import 'package:way2we_app/l10n/l10n.dart';
 
 /// Card widget for displaying a reward item.
 class RewardCard extends StatelessWidget {
   const RewardCard({
     required this.reward,
     this.onTap,
+    this.onTogglePin,
     this.onToggleStatus,
     this.statusActionLabel,
     this.showActions = false,
@@ -14,6 +16,7 @@ class RewardCard extends StatelessWidget {
 
   final Reward reward;
   final VoidCallback? onTap;
+  final VoidCallback? onTogglePin;
   final VoidCallback? onToggleStatus;
   final String? statusActionLabel;
   final bool showActions;
@@ -21,12 +24,14 @@ class RewardCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: onTap,
+        onLongPress: onTogglePin,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -113,6 +118,23 @@ class RewardCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if (onTogglePin != null) ...[
+                    const SizedBox(width: 8),
+                    IconButton(
+                      onPressed: onTogglePin,
+                      icon: Icon(
+                        reward.isPinned
+                            ? Icons.push_pin
+                            : Icons.push_pin_outlined,
+                      ),
+                      color: reward.isPinned
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.onSurfaceVariant,
+                      tooltip: reward.isPinned
+                          ? l10n.rewardUnpinAction
+                          : l10n.rewardPinAction,
+                    ),
+                  ],
                 ],
               ),
               if (reward.description != null &&

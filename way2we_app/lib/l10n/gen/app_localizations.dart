@@ -1296,6 +1296,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reward enabled'**
   String get rewardEnableSuccess;
+
+  /// No description provided for @rewardPinnedSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned rewards'**
+  String get rewardPinnedSectionTitle;
+
+  /// No description provided for @rewardPinAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin'**
+  String get rewardPinAction;
+
+  /// No description provided for @rewardUnpinAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin'**
+  String get rewardUnpinAction;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

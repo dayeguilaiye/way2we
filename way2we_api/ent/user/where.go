@@ -444,6 +444,29 @@ func HasPinnedAgreementsWith(preds ...predicate.Agreement) predicate.User {
 	})
 }
 
+// HasPinnedRewards applies the HasEdge predicate on the "pinned_rewards" edge.
+func HasPinnedRewards() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, PinnedRewardsTable, PinnedRewardsPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPinnedRewardsWith applies the HasEdge predicate on the "pinned_rewards" edge with a given conditions (other predicates).
+func HasPinnedRewardsWith(preds ...predicate.Reward) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newPinnedRewardsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

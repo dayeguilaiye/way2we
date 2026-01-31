@@ -65,9 +65,9 @@ development_status:
   epic-3-retrospective: optional
 
   # Epic 4: 商品/兑换项管理
-  epic-4: backlog
+  epic-4: in-progress
   4-1-reward-management: done  # 合并了查看商品列表、创建、编辑、停用与启用商品
-  4-2-pin-reward: backlog
+  4-2-pin-reward: review
   epic-4-retrospective: optional
 
   # Epic 5: 完成约定与积分获取

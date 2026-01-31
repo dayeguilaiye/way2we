@@ -30,6 +30,7 @@ void main() {
     'group_id': 1,
     'provider_id': 2,
     'provider_nickname': 'Alice',
+    'is_pinned': false,
     'created_at': '2024-01-01T00:00:00Z',
     'updated_at': '2024-01-01T00:00:00Z',
   };
@@ -52,6 +53,34 @@ void main() {
     expect(rewards, isNotEmpty);
     expect(rewards.first.id, equals(1));
     expect(rewards.first.name, equals('Reward'));
+  });
+
+  test('listRewards supports pinnedOnly query', () async {
+    when(
+      () => mockDio.get<Map<String, dynamic>>(
+        any(),
+        queryParameters: any(named: 'queryParameters'),
+      ),
+    ).thenAnswer(
+      (_) async => Response(
+        data: {'rewards': [rewardJson]},
+        statusCode: 200,
+        requestOptions: RequestOptions(path: '/v1/groups/1/rewards'),
+      ),
+    );
+
+    await rewardProvider.listRewards(
+      groupId: 1,
+      status: 'active',
+      pinnedOnly: true,
+    );
+
+    verify(
+      () => mockDio.get<Map<String, dynamic>>(
+        '/v1/groups/1/rewards',
+        queryParameters: {'status': 'active', 'pinned_only': true},
+      ),
+    ).called(1);
   });
 
   test('createReward returns reward', () async {
@@ -98,6 +127,46 @@ void main() {
       status: 'inactive',
     );
     expect(reward.status.name, equals('inactive'));
+  });
+
+  test('pinReward sends pin request', () async {
+    when(
+      () => mockDio.post<void>(
+        any(),
+      ),
+    ).thenAnswer(
+      (_) async => Response(
+        data: null,
+        statusCode: 200,
+        requestOptions: RequestOptions(path: '/v1/groups/1/rewards/1/pin'),
+      ),
+    );
+
+    await rewardProvider.pinReward(groupId: 1, rewardId: 1);
+
+    verify(
+      () => mockDio.post<void>('/v1/groups/1/rewards/1/pin'),
+    ).called(1);
+  });
+
+  test('unpinReward sends unpin request', () async {
+    when(
+      () => mockDio.delete<void>(
+        any(),
+      ),
+    ).thenAnswer(
+      (_) async => Response(
+        data: null,
+        statusCode: 200,
+        requestOptions: RequestOptions(path: '/v1/groups/1/rewards/1/pin'),
+      ),
+    );
+
+    await rewardProvider.unpinReward(groupId: 1, rewardId: 1);
+
+    verify(
+      () => mockDio.delete<void>('/v1/groups/1/rewards/1/pin'),
+    ).called(1);
   });
 
   test('listRewards throws RewardApiException on API error', () async {

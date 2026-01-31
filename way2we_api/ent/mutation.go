@@ -2984,27 +2984,30 @@ func (m *GroupMemberMutation) ResetEdge(name string) error {
 // RewardMutation represents an operation that mutates the Reward nodes in the graph.
 type RewardMutation struct {
 	config
-	op              Op
-	typ             string
-	id              *int
-	name            *string
-	description     *string
-	cost_points     *int
-	addcost_points  *int
-	cover_image_url *string
-	status          *reward.Status
-	auto_fulfill    *bool
-	auto_complete   *bool
-	created_at      *time.Time
-	updated_at      *time.Time
-	clearedFields   map[string]struct{}
-	group           *int
-	clearedgroup    bool
-	provider        *int
-	clearedprovider bool
-	done            bool
-	oldValue        func(context.Context) (*Reward, error)
-	predicates      []predicate.Reward
+	op               Op
+	typ              string
+	id               *int
+	name             *string
+	description      *string
+	cost_points      *int
+	addcost_points   *int
+	cover_image_url  *string
+	status           *reward.Status
+	auto_fulfill     *bool
+	auto_complete    *bool
+	created_at       *time.Time
+	updated_at       *time.Time
+	clearedFields    map[string]struct{}
+	group            *int
+	clearedgroup     bool
+	provider         *int
+	clearedprovider  bool
+	pinned_by        map[int]struct{}
+	removedpinned_by map[int]struct{}
+	clearedpinned_by bool
+	done             bool
+	oldValue         func(context.Context) (*Reward, error)
+	predicates       []predicate.Reward
 }
 
 var _ ent.Mutation = (*RewardMutation)(nil)
@@ -3601,6 +3604,60 @@ func (m *RewardMutation) ResetProvider() {
 	m.clearedprovider = false
 }
 
+// AddPinnedByIDs adds the "pinned_by" edge to the User entity by ids.
+func (m *RewardMutation) AddPinnedByIDs(ids ...int) {
+	if m.pinned_by == nil {
+		m.pinned_by = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.pinned_by[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPinnedBy clears the "pinned_by" edge to the User entity.
+func (m *RewardMutation) ClearPinnedBy() {
+	m.clearedpinned_by = true
+}
+
+// PinnedByCleared reports if the "pinned_by" edge to the User entity was cleared.
+func (m *RewardMutation) PinnedByCleared() bool {
+	return m.clearedpinned_by
+}
+
+// RemovePinnedByIDs removes the "pinned_by" edge to the User entity by IDs.
+func (m *RewardMutation) RemovePinnedByIDs(ids ...int) {
+	if m.removedpinned_by == nil {
+		m.removedpinned_by = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.pinned_by, ids[i])
+		m.removedpinned_by[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPinnedBy returns the removed IDs of the "pinned_by" edge to the User entity.
+func (m *RewardMutation) RemovedPinnedByIDs() (ids []int) {
+	for id := range m.removedpinned_by {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PinnedByIDs returns the "pinned_by" edge IDs in the mutation.
+func (m *RewardMutation) PinnedByIDs() (ids []int) {
+	for id := range m.pinned_by {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPinnedBy resets all changes to the "pinned_by" edge.
+func (m *RewardMutation) ResetPinnedBy() {
+	m.pinned_by = nil
+	m.clearedpinned_by = false
+	m.removedpinned_by = nil
+}
+
 // Where appends a list predicates to the RewardMutation builder.
 func (m *RewardMutation) Where(ps ...predicate.Reward) {
 	m.predicates = append(m.predicates, ps...)
@@ -3934,12 +3991,15 @@ func (m *RewardMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *RewardMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.group != nil {
 		edges = append(edges, reward.EdgeGroup)
 	}
 	if m.provider != nil {
 		edges = append(edges, reward.EdgeProvider)
+	}
+	if m.pinned_by != nil {
+		edges = append(edges, reward.EdgePinnedBy)
 	}
 	return edges
 }
@@ -3956,30 +4016,50 @@ func (m *RewardMutation) AddedIDs(name string) []ent.Value {
 		if id := m.provider; id != nil {
 			return []ent.Value{*id}
 		}
+	case reward.EdgePinnedBy:
+		ids := make([]ent.Value, 0, len(m.pinned_by))
+		for id := range m.pinned_by {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *RewardMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
+	if m.removedpinned_by != nil {
+		edges = append(edges, reward.EdgePinnedBy)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *RewardMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case reward.EdgePinnedBy:
+		ids := make([]ent.Value, 0, len(m.removedpinned_by))
+		for id := range m.removedpinned_by {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *RewardMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedgroup {
 		edges = append(edges, reward.EdgeGroup)
 	}
 	if m.clearedprovider {
 		edges = append(edges, reward.EdgeProvider)
+	}
+	if m.clearedpinned_by {
+		edges = append(edges, reward.EdgePinnedBy)
 	}
 	return edges
 }
@@ -3992,6 +4072,8 @@ func (m *RewardMutation) EdgeCleared(name string) bool {
 		return m.clearedgroup
 	case reward.EdgeProvider:
 		return m.clearedprovider
+	case reward.EdgePinnedBy:
+		return m.clearedpinned_by
 	}
 	return false
 }
@@ -4019,6 +4101,9 @@ func (m *RewardMutation) ResetEdge(name string) error {
 		return nil
 	case reward.EdgeProvider:
 		m.ResetProvider()
+		return nil
+	case reward.EdgePinnedBy:
+		m.ResetPinnedBy()
 		return nil
 	}
 	return fmt.Errorf("unknown Reward edge %s", name)
@@ -4479,6 +4564,9 @@ type UserMutation struct {
 	pinned_agreements        map[int]struct{}
 	removedpinned_agreements map[int]struct{}
 	clearedpinned_agreements bool
+	pinned_rewards           map[int]struct{}
+	removedpinned_rewards    map[int]struct{}
+	clearedpinned_rewards    bool
 	done                     bool
 	oldValue                 func(context.Context) (*User, error)
 	predicates               []predicate.User
@@ -4950,6 +5038,60 @@ func (m *UserMutation) ResetPinnedAgreements() {
 	m.removedpinned_agreements = nil
 }
 
+// AddPinnedRewardIDs adds the "pinned_rewards" edge to the Reward entity by ids.
+func (m *UserMutation) AddPinnedRewardIDs(ids ...int) {
+	if m.pinned_rewards == nil {
+		m.pinned_rewards = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.pinned_rewards[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPinnedRewards clears the "pinned_rewards" edge to the Reward entity.
+func (m *UserMutation) ClearPinnedRewards() {
+	m.clearedpinned_rewards = true
+}
+
+// PinnedRewardsCleared reports if the "pinned_rewards" edge to the Reward entity was cleared.
+func (m *UserMutation) PinnedRewardsCleared() bool {
+	return m.clearedpinned_rewards
+}
+
+// RemovePinnedRewardIDs removes the "pinned_rewards" edge to the Reward entity by IDs.
+func (m *UserMutation) RemovePinnedRewardIDs(ids ...int) {
+	if m.removedpinned_rewards == nil {
+		m.removedpinned_rewards = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.pinned_rewards, ids[i])
+		m.removedpinned_rewards[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPinnedRewards returns the removed IDs of the "pinned_rewards" edge to the Reward entity.
+func (m *UserMutation) RemovedPinnedRewardsIDs() (ids []int) {
+	for id := range m.removedpinned_rewards {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PinnedRewardsIDs returns the "pinned_rewards" edge IDs in the mutation.
+func (m *UserMutation) PinnedRewardsIDs() (ids []int) {
+	for id := range m.pinned_rewards {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPinnedRewards resets all changes to the "pinned_rewards" edge.
+func (m *UserMutation) ResetPinnedRewards() {
+	m.pinned_rewards = nil
+	m.clearedpinned_rewards = false
+	m.removedpinned_rewards = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -5166,7 +5308,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.identities != nil {
 		edges = append(edges, user.EdgeIdentities)
 	}
@@ -5175,6 +5317,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.pinned_agreements != nil {
 		edges = append(edges, user.EdgePinnedAgreements)
+	}
+	if m.pinned_rewards != nil {
+		edges = append(edges, user.EdgePinnedRewards)
 	}
 	return edges
 }
@@ -5201,13 +5346,19 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgePinnedRewards:
+		ids := make([]ent.Value, 0, len(m.pinned_rewards))
+		for id := range m.pinned_rewards {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.removedidentities != nil {
 		edges = append(edges, user.EdgeIdentities)
 	}
@@ -5216,6 +5367,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedpinned_agreements != nil {
 		edges = append(edges, user.EdgePinnedAgreements)
+	}
+	if m.removedpinned_rewards != nil {
+		edges = append(edges, user.EdgePinnedRewards)
 	}
 	return edges
 }
@@ -5242,13 +5396,19 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgePinnedRewards:
+		ids := make([]ent.Value, 0, len(m.removedpinned_rewards))
+		for id := range m.removedpinned_rewards {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.clearedidentities {
 		edges = append(edges, user.EdgeIdentities)
 	}
@@ -5257,6 +5417,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	}
 	if m.clearedpinned_agreements {
 		edges = append(edges, user.EdgePinnedAgreements)
+	}
+	if m.clearedpinned_rewards {
+		edges = append(edges, user.EdgePinnedRewards)
 	}
 	return edges
 }
@@ -5271,6 +5434,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedgroup_memberships
 	case user.EdgePinnedAgreements:
 		return m.clearedpinned_agreements
+	case user.EdgePinnedRewards:
+		return m.clearedpinned_rewards
 	}
 	return false
 }
@@ -5295,6 +5460,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgePinnedAgreements:
 		m.ResetPinnedAgreements()
+		return nil
+	case user.EdgePinnedRewards:
+		m.ResetPinnedRewards()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

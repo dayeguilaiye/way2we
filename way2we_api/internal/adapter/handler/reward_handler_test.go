@@ -182,6 +182,128 @@ func TestRewardHandler_CreateUpdateStatus(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rec.Code)
 }
 
+func TestRewardHandler_PinReward(t *testing.T) {
+	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+	defer client.Close()
+
+	ctx := t.Context()
+
+	user, err := client.User.Create().
+		SetNickname("TestUser").
+		SetPasswordHash("hash").
+		Save(ctx)
+	require.NoError(t, err)
+
+	groupEntity, err := client.Group.Create().
+		SetName("TestGroup").
+		Save(ctx)
+	require.NoError(t, err)
+
+	_, err = client.GroupMember.Create().
+		SetUserID(user.ID).
+		SetGroupID(groupEntity.ID).
+		SetRole(groupmember.RoleMember).
+		Save(ctx)
+	require.NoError(t, err)
+
+	rewardEntity, err := client.Reward.Create().
+		SetName("Reward").
+		SetCostPoints(10).
+		SetGroupID(groupEntity.ID).
+		SetProviderID(user.ID).
+		Save(ctx)
+	require.NoError(t, err)
+
+	groupService := group.NewService(client)
+	rewardService := rewardsvc.NewService(client, groupService)
+	h := handler.NewRewardHandler(rewardService, nil)
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodPost, "/", nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.SetPath("/v1/groups/:groupId/rewards/:id/pin")
+	c.SetParamNames("groupId", "id")
+	c.SetParamValues(strconv.Itoa(groupEntity.ID), strconv.Itoa(rewardEntity.ID))
+	c.Set("user_id", user.ID)
+
+	err = h.PinReward(c)
+
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, rec.Code)
+
+	refreshedUser, err := client.User.Get(ctx, user.ID)
+	require.NoError(t, err)
+
+	pinnedIDs, err := refreshedUser.QueryPinnedRewards().IDs(ctx)
+	require.NoError(t, err)
+	require.Len(t, pinnedIDs, 1)
+	assert.Equal(t, rewardEntity.ID, pinnedIDs[0])
+}
+
+func TestRewardHandler_UnpinReward(t *testing.T) {
+	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+	defer client.Close()
+
+	ctx := t.Context()
+
+	user, err := client.User.Create().
+		SetNickname("TestUser").
+		SetPasswordHash("hash").
+		Save(ctx)
+	require.NoError(t, err)
+
+	groupEntity, err := client.Group.Create().
+		SetName("TestGroup").
+		Save(ctx)
+	require.NoError(t, err)
+
+	_, err = client.GroupMember.Create().
+		SetUserID(user.ID).
+		SetGroupID(groupEntity.ID).
+		SetRole(groupmember.RoleMember).
+		Save(ctx)
+	require.NoError(t, err)
+
+	rewardEntity, err := client.Reward.Create().
+		SetName("Reward").
+		SetCostPoints(10).
+		SetGroupID(groupEntity.ID).
+		SetProviderID(user.ID).
+		Save(ctx)
+	require.NoError(t, err)
+
+	_, err = client.User.UpdateOneID(user.ID).
+		AddPinnedRewardIDs(rewardEntity.ID).
+		Save(ctx)
+	require.NoError(t, err)
+
+	groupService := group.NewService(client)
+	rewardService := rewardsvc.NewService(client, groupService)
+	h := handler.NewRewardHandler(rewardService, nil)
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodDelete, "/", nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.SetPath("/v1/groups/:groupId/rewards/:id/pin")
+	c.SetParamNames("groupId", "id")
+	c.SetParamValues(strconv.Itoa(groupEntity.ID), strconv.Itoa(rewardEntity.ID))
+	c.Set("user_id", user.ID)
+
+	err = h.UnpinReward(c)
+
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, rec.Code)
+
+	refreshedUser, err := client.User.Get(ctx, user.ID)
+	require.NoError(t, err)
+
+	pinnedIDs, err := refreshedUser.QueryPinnedRewards().IDs(ctx)
+	require.NoError(t, err)
+	require.Empty(t, pinnedIDs)
+}
+
 func TestRewardHandler_UploadRewardCover(t *testing.T) {
 	mockStorage := &MockStorageProvider{
 		UploadFunc: func(ctx context.Context, file io.Reader, filename string) (string, error) {

@@ -628,4 +628,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rewardEnableSuccess => 'Reward enabled';
+
+  @override
+  String get rewardPinnedSectionTitle => 'Pinned rewards';
+
+  @override
+  String get rewardPinAction => 'Pin';
+
+  @override
+  String get rewardUnpinAction => 'Unpin';
 }

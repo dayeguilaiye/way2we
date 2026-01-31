@@ -103,11 +103,15 @@ class RewardProvider {
   Future<List<Reward>> listRewards({
     required int groupId,
     String? status,
+    bool pinnedOnly = false,
   }) async {
     try {
       final queryParams = <String, dynamic>{};
       if (status != null) {
         queryParams['status'] = status;
+      }
+      if (pinnedOnly) {
+        queryParams['pinned_only'] = true;
       }
 
       final response = await _dio.get<Map<String, dynamic>>(
@@ -185,6 +189,34 @@ class RewardProvider {
       }
 
       return Reward.fromJson(response.data!);
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
+  /// Pins a reward for the current user.
+  Future<void> pinReward({
+    required int groupId,
+    required int rewardId,
+  }) async {
+    try {
+      await _dio.post<void>(
+        '/v1/groups/$groupId/rewards/$rewardId/pin',
+      );
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
+  /// Unpins a reward for the current user.
+  Future<void> unpinReward({
+    required int groupId,
+    required int rewardId,
+  }) async {
+    try {
+      await _dio.delete<void>(
+        '/v1/groups/$groupId/rewards/$rewardId/pin',
+      );
     } on DioException catch (e) {
       _handleDioError(e);
     }

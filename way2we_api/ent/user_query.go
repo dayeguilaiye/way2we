@@ -15,6 +15,7 @@ import (
 	"github.com/way2we/way2we_api/ent/agreement"
 	"github.com/way2we/way2we_api/ent/groupmember"
 	"github.com/way2we/way2we_api/ent/predicate"
+	"github.com/way2we/way2we_api/ent/reward"
 	"github.com/way2we/way2we_api/ent/user"
 	"github.com/way2we/way2we_api/ent/useridentity"
 )
@@ -29,6 +30,7 @@ type UserQuery struct {
 	withIdentities       *UserIdentityQuery
 	withGroupMemberships *GroupMemberQuery
 	withPinnedAgreements *AgreementQuery
+	withPinnedRewards    *RewardQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -124,6 +126,28 @@ func (_q *UserQuery) QueryPinnedAgreements() *AgreementQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(agreement.Table, agreement.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, user.PinnedAgreementsTable, user.PinnedAgreementsPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPinnedRewards chains the current query on the "pinned_rewards" edge.
+func (_q *UserQuery) QueryPinnedRewards() *RewardQuery {
+	query := (&RewardClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(reward.Table, reward.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.PinnedRewardsTable, user.PinnedRewardsPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -326,6 +350,7 @@ func (_q *UserQuery) Clone() *UserQuery {
 		withIdentities:       _q.withIdentities.Clone(),
 		withGroupMemberships: _q.withGroupMemberships.Clone(),
 		withPinnedAgreements: _q.withPinnedAgreements.Clone(),
+		withPinnedRewards:    _q.withPinnedRewards.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -362,6 +387,17 @@ func (_q *UserQuery) WithPinnedAgreements(opts ...func(*AgreementQuery)) *UserQu
 		opt(query)
 	}
 	_q.withPinnedAgreements = query
+	return _q
+}
+
+// WithPinnedRewards tells the query-builder to eager-load the nodes that are connected to
+// the "pinned_rewards" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithPinnedRewards(opts ...func(*RewardQuery)) *UserQuery {
+	query := (&RewardClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withPinnedRewards = query
 	return _q
 }
 
@@ -443,10 +479,11 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = _q.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			_q.withIdentities != nil,
 			_q.withGroupMemberships != nil,
 			_q.withPinnedAgreements != nil,
+			_q.withPinnedRewards != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -485,6 +522,13 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := _q.loadPinnedAgreements(ctx, query, nodes,
 			func(n *User) { n.Edges.PinnedAgreements = []*Agreement{} },
 			func(n *User, e *Agreement) { n.Edges.PinnedAgreements = append(n.Edges.PinnedAgreements, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withPinnedRewards; query != nil {
+		if err := _q.loadPinnedRewards(ctx, query, nodes,
+			func(n *User) { n.Edges.PinnedRewards = []*Reward{} },
+			func(n *User, e *Reward) { n.Edges.PinnedRewards = append(n.Edges.PinnedRewards, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -606,6 +650,67 @@ func (_q *UserQuery) loadPinnedAgreements(ctx context.Context, query *AgreementQ
 		nodes, ok := nids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected "pinned_agreements" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (_q *UserQuery) loadPinnedRewards(ctx context.Context, query *RewardQuery, nodes []*User, init func(*User), assign func(*User, *Reward)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int]*User)
+	nids := make(map[int]map[*User]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(user.PinnedRewardsTable)
+		s.Join(joinT).On(s.C(reward.FieldID), joinT.C(user.PinnedRewardsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(user.PinnedRewardsPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(user.PinnedRewardsPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := int(values[0].(*sql.NullInt64).Int64)
+				inValue := int(values[1].(*sql.NullInt64).Int64)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*User]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Reward](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "pinned_rewards" node returned %v`, n.ID)
 		}
 		for kn := range nodes {
 			assign(kn, n)

@@ -743,5 +743,8 @@
     "rewardDisableAction": "Disable",
     "rewardEnableAction": "Enable",
     "rewardDisableSuccess": "Reward disabled",
-    "rewardEnableSuccess": "Reward enabled"
+    "rewardEnableSuccess": "Reward enabled",
+    "rewardPinnedSectionTitle": "Pinned rewards",
+    "rewardPinAction": "Pin",
+    "rewardUnpinAction": "Unpin"
 }

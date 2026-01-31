@@ -30,6 +30,8 @@ const (
 	EdgeGroupMemberships = "group_memberships"
 	// EdgePinnedAgreements holds the string denoting the pinned_agreements edge name in mutations.
 	EdgePinnedAgreements = "pinned_agreements"
+	// EdgePinnedRewards holds the string denoting the pinned_rewards edge name in mutations.
+	EdgePinnedRewards = "pinned_rewards"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// IdentitiesTable is the table that holds the identities relation/edge.
@@ -51,6 +53,11 @@ const (
 	// PinnedAgreementsInverseTable is the table name for the Agreement entity.
 	// It exists in this package in order to avoid circular dependency with the "agreement" package.
 	PinnedAgreementsInverseTable = "agreements"
+	// PinnedRewardsTable is the table that holds the pinned_rewards relation/edge. The primary key declared below.
+	PinnedRewardsTable = "user_pinned_rewards"
+	// PinnedRewardsInverseTable is the table name for the Reward entity.
+	// It exists in this package in order to avoid circular dependency with the "reward" package.
+	PinnedRewardsInverseTable = "rewards"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -67,6 +74,9 @@ var (
 	// PinnedAgreementsPrimaryKey and PinnedAgreementsColumn2 are the table columns denoting the
 	// primary key for the pinned_agreements relation (M2M).
 	PinnedAgreementsPrimaryKey = []string{"user_id", "agreement_id"}
+	// PinnedRewardsPrimaryKey and PinnedRewardsColumn2 are the table columns denoting the
+	// primary key for the pinned_rewards relation (M2M).
+	PinnedRewardsPrimaryKey = []string{"user_id", "reward_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -166,6 +176,20 @@ func ByPinnedAgreements(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption 
 		sqlgraph.OrderByNeighborTerms(s, newPinnedAgreementsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByPinnedRewardsCount orders the results by pinned_rewards count.
+func ByPinnedRewardsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newPinnedRewardsStep(), opts...)
+	}
+}
+
+// ByPinnedRewards orders the results by pinned_rewards terms.
+func ByPinnedRewards(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPinnedRewardsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newIdentitiesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -185,5 +209,12 @@ func newPinnedAgreementsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(PinnedAgreementsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, false, PinnedAgreementsTable, PinnedAgreementsPrimaryKey...),
+	)
+}
+func newPinnedRewardsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PinnedRewardsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, PinnedRewardsTable, PinnedRewardsPrimaryKey...),
 	)
 }

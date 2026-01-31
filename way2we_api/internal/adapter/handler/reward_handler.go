@@ -34,6 +34,7 @@ type RewardDTO struct {
 	CostPoints       int    `json:"cost_points"`
 	CoverImageURL    string `json:"cover_image_url,omitempty"`
 	Status           string `json:"status"`
+	IsPinned         bool   `json:"is_pinned"`
 	AutoFulfill      bool   `json:"auto_fulfill"`
 	AutoComplete     bool   `json:"auto_complete"`
 	GroupID          int    `json:"group_id"`
@@ -59,6 +60,8 @@ func toRewardDTO(r *ent.Reward) *RewardDTO {
 		providerNickname = r.Edges.Provider.Nickname
 	}
 
+	isPinned := len(r.Edges.PinnedBy) > 0
+
 	return &RewardDTO{
 		ID:               r.ID,
 		Name:             r.Name,
@@ -66,6 +69,7 @@ func toRewardDTO(r *ent.Reward) *RewardDTO {
 		CostPoints:       r.CostPoints,
 		CoverImageURL:    coverImageURL,
 		Status:           string(r.Status),
+		IsPinned:         isPinned,
 		AutoFulfill:      r.AutoFulfill,
 		AutoComplete:     r.AutoComplete,
 		GroupID:          r.GroupID,
@@ -102,8 +106,26 @@ func (h *RewardHandler) ListRewards(c echo.Context) error {
 
 	// Optional status filter
 	statusFilter := c.QueryParam("status")
+	pinnedOnlyParam := c.QueryParam("pinned_only")
+	pinnedOnly := false
+	if pinnedOnlyParam != "" {
+		parsed, err := strconv.ParseBool(pinnedOnlyParam)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, ErrorResponse{
+				Code:    "ERR_INVALID_PINNED_ONLY",
+				Message: "无效的置顶筛选值",
+			})
+		}
+		pinnedOnly = parsed
+	}
 
-	rewards, err := h.rewardService.ListRewards(c.Request().Context(), groupID, userID, statusFilter)
+	rewards, err := h.rewardService.ListRewards(
+		c.Request().Context(),
+		groupID,
+		userID,
+		statusFilter,
+		pinnedOnly,
+	)
 	if err != nil {
 		if errors.Is(err, reward.ErrNotGroupMember) {
 			return c.JSON(http.StatusForbidden, ErrorResponse{
@@ -471,6 +493,120 @@ func (h *RewardHandler) UpdateRewardStatus(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, toRewardDTO(r))
+}
+
+// PinReward handles POST /v1/groups/:groupId/rewards/:id/pin
+func (h *RewardHandler) PinReward(c echo.Context) error {
+	userID, ok := c.Get("user_id").(int)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, ErrorResponse{
+			Code:    "ERR_UNAUTHORIZED",
+			Message: "未授权",
+		})
+	}
+
+	groupIDStr := c.Param("groupId")
+	groupID, err := strconv.Atoi(groupIDStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "ERR_INVALID_GROUP_ID",
+			Message: "无效的群组ID",
+		})
+	}
+
+	rewardIDStr := c.Param("id")
+	rewardID, err := strconv.Atoi(rewardIDStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "ERR_INVALID_REWARD_ID",
+			Message: "无效的商品ID",
+		})
+	}
+
+	err = h.rewardService.PinReward(c.Request().Context(), groupID, userID, rewardID)
+	if err != nil {
+		if errors.Is(err, reward.ErrNotGroupMember) {
+			return c.JSON(http.StatusForbidden, ErrorResponse{
+				Code:    "ERR_PIN_REWARD_NOT_MEMBER",
+				Message: "您不是该群组的成员",
+			})
+		}
+		if errors.Is(err, reward.ErrRewardNotFound) || errors.Is(err, reward.ErrRewardNotInGroup) {
+			return c.JSON(http.StatusNotFound, ErrorResponse{
+				Code:    "ERR_PIN_REWARD_NOT_FOUND",
+				Message: "商品不存在",
+			})
+		}
+		if errors.Is(err, reward.ErrPinRewardFailed) {
+			return c.JSON(http.StatusInternalServerError, ErrorResponse{
+				Code:    "ERR_PIN_REWARD_FAILED",
+				Message: "置顶商品失败",
+			})
+		}
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Code:    "ERR_PIN_REWARD_FAILED",
+			Message: "置顶商品失败",
+		})
+	}
+
+	return c.NoContent(http.StatusOK)
+}
+
+// UnpinReward handles DELETE /v1/groups/:groupId/rewards/:id/pin
+func (h *RewardHandler) UnpinReward(c echo.Context) error {
+	userID, ok := c.Get("user_id").(int)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, ErrorResponse{
+			Code:    "ERR_UNAUTHORIZED",
+			Message: "未授权",
+		})
+	}
+
+	groupIDStr := c.Param("groupId")
+	groupID, err := strconv.Atoi(groupIDStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "ERR_INVALID_GROUP_ID",
+			Message: "无效的群组ID",
+		})
+	}
+
+	rewardIDStr := c.Param("id")
+	rewardID, err := strconv.Atoi(rewardIDStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "ERR_INVALID_REWARD_ID",
+			Message: "无效的商品ID",
+		})
+	}
+
+	err = h.rewardService.UnpinReward(c.Request().Context(), groupID, userID, rewardID)
+	if err != nil {
+		if errors.Is(err, reward.ErrNotGroupMember) {
+			return c.JSON(http.StatusForbidden, ErrorResponse{
+				Code:    "ERR_UNPIN_REWARD_NOT_MEMBER",
+				Message: "您不是该群组的成员",
+			})
+		}
+		if errors.Is(err, reward.ErrRewardNotFound) || errors.Is(err, reward.ErrRewardNotInGroup) {
+			return c.JSON(http.StatusNotFound, ErrorResponse{
+				Code:    "ERR_UNPIN_REWARD_NOT_FOUND",
+				Message: "商品不存在",
+			})
+		}
+		if errors.Is(err, reward.ErrUnpinRewardFailed) {
+			return c.JSON(http.StatusInternalServerError, ErrorResponse{
+				Code:    "ERR_UNPIN_REWARD_FAILED",
+				Message: "取消置顶失败",
+			})
+		}
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Code:    "ERR_UNPIN_REWARD_FAILED",
+			Message: "取消置顶失败",
+		})
+	}
+
+	return c.NoContent(http.StatusOK)
 }
 
 // UploadRewardCover handles POST /v1/uploads/reward-cover

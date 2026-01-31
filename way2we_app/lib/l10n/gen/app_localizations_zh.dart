@@ -628,4 +628,13 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get rewardEnableSuccess => '已启用商品';
+
+  @override
+  String get rewardPinnedSectionTitle => '置顶商品';
+
+  @override
+  String get rewardPinAction => '置顶';
+
+  @override
+  String get rewardUnpinAction => '取消置顶';
 }
