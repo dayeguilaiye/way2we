@@ -81,6 +81,18 @@ func (f PointLogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PointLogMutation", m)
 }
 
+// The RedemptionOrderFunc type is an adapter to allow the use of ordinary
+// function as RedemptionOrder mutator.
+type RedemptionOrderFunc func(context.Context, *ent.RedemptionOrderMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RedemptionOrderFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.RedemptionOrderMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RedemptionOrderMutation", m)
+}
+
 // The RewardFunc type is an adapter to allow the use of ordinary
 // function as Reward mutator.
 type RewardFunc func(context.Context, *ent.RewardMutation) (ent.Value, error)

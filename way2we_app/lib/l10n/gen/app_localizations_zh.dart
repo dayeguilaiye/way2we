@@ -691,4 +691,94 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get rewardUnpinAction => '取消置顶';
+
+  @override
+  String get redemptionOrderTabTitle => '我的订单';
+
+  @override
+  String get redemptionStatusAwaitingFulfill => '待履约';
+
+  @override
+  String get redemptionStatusAwaitingConfirm => '待确认';
+
+  @override
+  String get redemptionStatusCompleted => '已完成';
+
+  @override
+  String get redemptionStatusUnsatisfied => '不满意';
+
+  @override
+  String get redemptionOrderEmptyTitle => '暂无订单';
+
+  @override
+  String get redemptionOrderEmptySubtitle => '去兑换一个商品吧';
+
+  @override
+  String get redemptionOrderDetailTitle => '订单详情';
+
+  @override
+  String get redemptionOrderQuantityLabel => '数量';
+
+  @override
+  String get redemptionOrderUnitPointsLabel => '单价';
+
+  @override
+  String get redemptionOrderTotalPointsLabel => '总价';
+
+  @override
+  String get redemptionOrderConsumerLabel => '消费方';
+
+  @override
+  String get redemptionOrderProviderLabel => '提供方';
+
+  @override
+  String get redemptionOrderTimelineTitle => '状态时间线';
+
+  @override
+  String get redemptionOrderCreatedAtLabel => '创建时间';
+
+  @override
+  String get redemptionOrderFulfilledAtLabel => '履约时间';
+
+  @override
+  String get redemptionOrderConfirmedAtLabel => '确认时间';
+
+  @override
+  String get redemptionOrderEndedAtLabel => '结束时间';
+
+  @override
+  String get redemptionActionRedeem => '兑换';
+
+  @override
+  String get redemptionConfirmButton => '确认兑换';
+
+  @override
+  String get redemptionInsufficientPoints => '积分不足';
+
+  @override
+  String get redemptionUnsatisfiedButton => '不满意';
+
+  @override
+  String get redemptionUnsatisfiedReasonHint => '原因（可选）';
+
+  @override
+  String get redemptionFulfillButton => '已履约';
+
+  @override
+  String get redemptionConfirmSatisfiedButton => '确认满意';
+
+  @override
+  String get redemptionCreateSuccess => '兑换成功';
+
+  @override
+  String get redemptionCreateFailed => '兑换失败';
+
+  @override
+  String get redemptionBalanceLabel => '当前积分';
+
+  @override
+  String get redemptionBalanceLoading => '正在获取积分';
+
+  @override
+  String get redemptionBalanceLoadFailed => '积分获取失败';
 }

@@ -257,6 +257,76 @@ var (
 			},
 		},
 	}
+	// RedemptionOrdersColumns holds the columns for the "redemption_orders" table.
+	RedemptionOrdersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "quantity", Type: field.TypeInt},
+		{Name: "unit_cost_points", Type: field.TypeInt},
+		{Name: "total_cost_points", Type: field.TypeInt},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"awaiting_fulfill", "awaiting_confirm", "completed", "unsatisfied"}, Default: "awaiting_fulfill"},
+		{Name: "auto_fulfill", Type: field.TypeBool, Default: false},
+		{Name: "auto_complete", Type: field.TypeBool, Default: false},
+		{Name: "provider_incentive_ratio", Type: field.TypeInt, Default: 0},
+		{Name: "fulfilled_at", Type: field.TypeTime, Nullable: true},
+		{Name: "confirmed_at", Type: field.TypeTime, Nullable: true},
+		{Name: "ended_at", Type: field.TypeTime, Nullable: true},
+		{Name: "unsatisfied_reason", Type: field.TypeString, Nullable: true, Size: 200},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "group_id", Type: field.TypeInt},
+		{Name: "reward_id", Type: field.TypeInt},
+		{Name: "consumer_id", Type: field.TypeInt},
+		{Name: "provider_id", Type: field.TypeInt},
+	}
+	// RedemptionOrdersTable holds the schema information for the "redemption_orders" table.
+	RedemptionOrdersTable = &schema.Table{
+		Name:       "redemption_orders",
+		Columns:    RedemptionOrdersColumns,
+		PrimaryKey: []*schema.Column{RedemptionOrdersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "redemption_orders_groups_group",
+				Columns:    []*schema.Column{RedemptionOrdersColumns[14]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "redemption_orders_rewards_reward",
+				Columns:    []*schema.Column{RedemptionOrdersColumns[15]},
+				RefColumns: []*schema.Column{RewardsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "redemption_orders_users_consumer",
+				Columns:    []*schema.Column{RedemptionOrdersColumns[16]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "redemption_orders_users_provider",
+				Columns:    []*schema.Column{RedemptionOrdersColumns[17]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "redemptionorder_group_id_consumer_id_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{RedemptionOrdersColumns[14], RedemptionOrdersColumns[16], RedemptionOrdersColumns[12]},
+			},
+			{
+				Name:    "redemptionorder_group_id_provider_id_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{RedemptionOrdersColumns[14], RedemptionOrdersColumns[17], RedemptionOrdersColumns[12]},
+			},
+			{
+				Name:    "redemptionorder_group_id_status_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{RedemptionOrdersColumns[14], RedemptionOrdersColumns[4], RedemptionOrdersColumns[12]},
+			},
+		},
+	}
 	// RewardsColumns holds the columns for the "rewards" table.
 	RewardsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -421,6 +491,7 @@ var (
 		GroupMembersTable,
 		MemberSummariesTable,
 		PointLogsTable,
+		RedemptionOrdersTable,
 		RewardsTable,
 		TokenBlacklistsTable,
 		UsersTable,
@@ -444,6 +515,10 @@ func init() {
 	MemberSummariesTable.ForeignKeys[1].RefTable = UsersTable
 	PointLogsTable.ForeignKeys[0].RefTable = GroupsTable
 	PointLogsTable.ForeignKeys[1].RefTable = UsersTable
+	RedemptionOrdersTable.ForeignKeys[0].RefTable = GroupsTable
+	RedemptionOrdersTable.ForeignKeys[1].RefTable = RewardsTable
+	RedemptionOrdersTable.ForeignKeys[2].RefTable = UsersTable
+	RedemptionOrdersTable.ForeignKeys[3].RefTable = UsersTable
 	RewardsTable.ForeignKeys[0].RefTable = GroupsTable
 	RewardsTable.ForeignKeys[1].RefTable = UsersTable
 	UserIdentitiesTable.ForeignKeys[0].RefTable = UsersTable

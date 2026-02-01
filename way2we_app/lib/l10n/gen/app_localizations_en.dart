@@ -693,4 +693,94 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rewardUnpinAction => 'Unpin';
+
+  @override
+  String get redemptionOrderTabTitle => 'My Orders';
+
+  @override
+  String get redemptionStatusAwaitingFulfill => 'Awaiting Fulfill';
+
+  @override
+  String get redemptionStatusAwaitingConfirm => 'Awaiting Confirm';
+
+  @override
+  String get redemptionStatusCompleted => 'Completed';
+
+  @override
+  String get redemptionStatusUnsatisfied => 'Unsatisfied';
+
+  @override
+  String get redemptionOrderEmptyTitle => 'No orders yet';
+
+  @override
+  String get redemptionOrderEmptySubtitle => 'Redeem your first reward';
+
+  @override
+  String get redemptionOrderDetailTitle => 'Order Detail';
+
+  @override
+  String get redemptionOrderQuantityLabel => 'Quantity';
+
+  @override
+  String get redemptionOrderUnitPointsLabel => 'Unit points';
+
+  @override
+  String get redemptionOrderTotalPointsLabel => 'Total points';
+
+  @override
+  String get redemptionOrderConsumerLabel => 'Consumer';
+
+  @override
+  String get redemptionOrderProviderLabel => 'Provider';
+
+  @override
+  String get redemptionOrderTimelineTitle => 'Timeline';
+
+  @override
+  String get redemptionOrderCreatedAtLabel => 'Created at';
+
+  @override
+  String get redemptionOrderFulfilledAtLabel => 'Fulfilled at';
+
+  @override
+  String get redemptionOrderConfirmedAtLabel => 'Confirmed at';
+
+  @override
+  String get redemptionOrderEndedAtLabel => 'Ended at';
+
+  @override
+  String get redemptionActionRedeem => 'Redeem';
+
+  @override
+  String get redemptionConfirmButton => 'Confirm';
+
+  @override
+  String get redemptionInsufficientPoints => 'Insufficient points';
+
+  @override
+  String get redemptionUnsatisfiedButton => 'Not satisfied';
+
+  @override
+  String get redemptionUnsatisfiedReasonHint => 'Reason (optional)';
+
+  @override
+  String get redemptionFulfillButton => 'Mark fulfilled';
+
+  @override
+  String get redemptionConfirmSatisfiedButton => 'Confirm satisfied';
+
+  @override
+  String get redemptionCreateSuccess => 'Redemption created';
+
+  @override
+  String get redemptionCreateFailed => 'Redemption failed';
+
+  @override
+  String get redemptionBalanceLabel => 'Points balance';
+
+  @override
+  String get redemptionBalanceLoading => 'Loading points';
+
+  @override
+  String get redemptionBalanceLoadFailed => 'Failed to load points';
 }

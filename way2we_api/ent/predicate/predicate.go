@@ -24,6 +24,9 @@ type MemberSummary func(*sql.Selector)
 // PointLog is the predicate function for pointlog builders.
 type PointLog func(*sql.Selector)
 
+// RedemptionOrder is the predicate function for redemptionorder builders.
+type RedemptionOrder func(*sql.Selector)
+
 // Reward is the predicate function for reward builders.
 type Reward func(*sql.Selector)
 

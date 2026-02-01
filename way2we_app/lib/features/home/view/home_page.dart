@@ -18,6 +18,7 @@ import 'package:way2we_app/features/reward/data/models/reward.dart';
 import 'package:way2we_app/features/reward/data/providers/reward_provider.dart';
 import 'package:way2we_app/features/reward/view/reward_detail_page.dart';
 import 'package:way2we_app/features/reward/view/reward_list_page.dart';
+import 'package:way2we_app/features/redemption/view/redemption_order_list_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
 import 'package:way2we_app/theme/theme.dart';
 
@@ -211,6 +212,30 @@ class HomePage extends StatelessWidget {
                               const SizedBox(height: 8),
                               Text(
                                 l10n.rewardTabTitle,
+                                style: theme.textTheme.labelMedium,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.space4),
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              RedemptionOrderListPage.route(
+                                groupId: selectedGroup.id,
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.receipt_long,
+                                size: 32,
+                                color: theme.colorScheme.primary,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                l10n.redemptionOrderTabTitle,
                                 style: theme.textTheme.labelMedium,
                               ),
                             ],

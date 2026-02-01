@@ -18,6 +18,7 @@ import (
 	"github.com/way2we/way2we_api/ent/membersummary"
 	"github.com/way2we/way2we_api/ent/pointlog"
 	"github.com/way2we/way2we_api/ent/predicate"
+	"github.com/way2we/way2we_api/ent/redemptionorder"
 	"github.com/way2we/way2we_api/ent/reward"
 	"github.com/way2we/way2we_api/ent/tokenblacklist"
 	"github.com/way2we/way2we_api/ent/user"
@@ -39,6 +40,7 @@ const (
 	TypeGroupMember         = "GroupMember"
 	TypeMemberSummary       = "MemberSummary"
 	TypePointLog            = "PointLog"
+	TypeRedemptionOrder     = "RedemptionOrder"
 	TypeReward              = "Reward"
 	TypeTokenBlacklist      = "TokenBlacklist"
 	TypeUser                = "User"
@@ -6083,6 +6085,1602 @@ func (m *PointLogMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown PointLog edge %s", name)
+}
+
+// RedemptionOrderMutation represents an operation that mutates the RedemptionOrder nodes in the graph.
+type RedemptionOrderMutation struct {
+	config
+	op                          Op
+	typ                         string
+	id                          *int
+	quantity                    *int
+	addquantity                 *int
+	unit_cost_points            *int
+	addunit_cost_points         *int
+	total_cost_points           *int
+	addtotal_cost_points        *int
+	status                      *redemptionorder.Status
+	auto_fulfill                *bool
+	auto_complete               *bool
+	provider_incentive_ratio    *int
+	addprovider_incentive_ratio *int
+	fulfilled_at                *time.Time
+	confirmed_at                *time.Time
+	ended_at                    *time.Time
+	unsatisfied_reason          *string
+	created_at                  *time.Time
+	updated_at                  *time.Time
+	clearedFields               map[string]struct{}
+	group                       *int
+	clearedgroup                bool
+	reward                      *int
+	clearedreward               bool
+	consumer                    *int
+	clearedconsumer             bool
+	provider                    *int
+	clearedprovider             bool
+	done                        bool
+	oldValue                    func(context.Context) (*RedemptionOrder, error)
+	predicates                  []predicate.RedemptionOrder
+}
+
+var _ ent.Mutation = (*RedemptionOrderMutation)(nil)
+
+// redemptionorderOption allows management of the mutation configuration using functional options.
+type redemptionorderOption func(*RedemptionOrderMutation)
+
+// newRedemptionOrderMutation creates new mutation for the RedemptionOrder entity.
+func newRedemptionOrderMutation(c config, op Op, opts ...redemptionorderOption) *RedemptionOrderMutation {
+	m := &RedemptionOrderMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeRedemptionOrder,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withRedemptionOrderID sets the ID field of the mutation.
+func withRedemptionOrderID(id int) redemptionorderOption {
+	return func(m *RedemptionOrderMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *RedemptionOrder
+		)
+		m.oldValue = func(ctx context.Context) (*RedemptionOrder, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().RedemptionOrder.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withRedemptionOrder sets the old RedemptionOrder of the mutation.
+func withRedemptionOrder(node *RedemptionOrder) redemptionorderOption {
+	return func(m *RedemptionOrderMutation) {
+		m.oldValue = func(context.Context) (*RedemptionOrder, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m RedemptionOrderMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m RedemptionOrderMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *RedemptionOrderMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *RedemptionOrderMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().RedemptionOrder.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetGroupID sets the "group_id" field.
+func (m *RedemptionOrderMutation) SetGroupID(i int) {
+	m.group = &i
+}
+
+// GroupID returns the value of the "group_id" field in the mutation.
+func (m *RedemptionOrderMutation) GroupID() (r int, exists bool) {
+	v := m.group
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGroupID returns the old "group_id" field's value of the RedemptionOrder entity.
+// If the RedemptionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedemptionOrderMutation) OldGroupID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGroupID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGroupID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGroupID: %w", err)
+	}
+	return oldValue.GroupID, nil
+}
+
+// ResetGroupID resets all changes to the "group_id" field.
+func (m *RedemptionOrderMutation) ResetGroupID() {
+	m.group = nil
+}
+
+// SetRewardID sets the "reward_id" field.
+func (m *RedemptionOrderMutation) SetRewardID(i int) {
+	m.reward = &i
+}
+
+// RewardID returns the value of the "reward_id" field in the mutation.
+func (m *RedemptionOrderMutation) RewardID() (r int, exists bool) {
+	v := m.reward
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRewardID returns the old "reward_id" field's value of the RedemptionOrder entity.
+// If the RedemptionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedemptionOrderMutation) OldRewardID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRewardID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRewardID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRewardID: %w", err)
+	}
+	return oldValue.RewardID, nil
+}
+
+// ResetRewardID resets all changes to the "reward_id" field.
+func (m *RedemptionOrderMutation) ResetRewardID() {
+	m.reward = nil
+}
+
+// SetConsumerID sets the "consumer_id" field.
+func (m *RedemptionOrderMutation) SetConsumerID(i int) {
+	m.consumer = &i
+}
+
+// ConsumerID returns the value of the "consumer_id" field in the mutation.
+func (m *RedemptionOrderMutation) ConsumerID() (r int, exists bool) {
+	v := m.consumer
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldConsumerID returns the old "consumer_id" field's value of the RedemptionOrder entity.
+// If the RedemptionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedemptionOrderMutation) OldConsumerID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldConsumerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldConsumerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldConsumerID: %w", err)
+	}
+	return oldValue.ConsumerID, nil
+}
+
+// ResetConsumerID resets all changes to the "consumer_id" field.
+func (m *RedemptionOrderMutation) ResetConsumerID() {
+	m.consumer = nil
+}
+
+// SetProviderID sets the "provider_id" field.
+func (m *RedemptionOrderMutation) SetProviderID(i int) {
+	m.provider = &i
+}
+
+// ProviderID returns the value of the "provider_id" field in the mutation.
+func (m *RedemptionOrderMutation) ProviderID() (r int, exists bool) {
+	v := m.provider
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProviderID returns the old "provider_id" field's value of the RedemptionOrder entity.
+// If the RedemptionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedemptionOrderMutation) OldProviderID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProviderID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProviderID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProviderID: %w", err)
+	}
+	return oldValue.ProviderID, nil
+}
+
+// ResetProviderID resets all changes to the "provider_id" field.
+func (m *RedemptionOrderMutation) ResetProviderID() {
+	m.provider = nil
+}
+
+// SetQuantity sets the "quantity" field.
+func (m *RedemptionOrderMutation) SetQuantity(i int) {
+	m.quantity = &i
+	m.addquantity = nil
+}
+
+// Quantity returns the value of the "quantity" field in the mutation.
+func (m *RedemptionOrderMutation) Quantity() (r int, exists bool) {
+	v := m.quantity
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldQuantity returns the old "quantity" field's value of the RedemptionOrder entity.
+// If the RedemptionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedemptionOrderMutation) OldQuantity(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldQuantity is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldQuantity requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldQuantity: %w", err)
+	}
+	return oldValue.Quantity, nil
+}
+
+// AddQuantity adds i to the "quantity" field.
+func (m *RedemptionOrderMutation) AddQuantity(i int) {
+	if m.addquantity != nil {
+		*m.addquantity += i
+	} else {
+		m.addquantity = &i
+	}
+}
+
+// AddedQuantity returns the value that was added to the "quantity" field in this mutation.
+func (m *RedemptionOrderMutation) AddedQuantity() (r int, exists bool) {
+	v := m.addquantity
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetQuantity resets all changes to the "quantity" field.
+func (m *RedemptionOrderMutation) ResetQuantity() {
+	m.quantity = nil
+	m.addquantity = nil
+}
+
+// SetUnitCostPoints sets the "unit_cost_points" field.
+func (m *RedemptionOrderMutation) SetUnitCostPoints(i int) {
+	m.unit_cost_points = &i
+	m.addunit_cost_points = nil
+}
+
+// UnitCostPoints returns the value of the "unit_cost_points" field in the mutation.
+func (m *RedemptionOrderMutation) UnitCostPoints() (r int, exists bool) {
+	v := m.unit_cost_points
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUnitCostPoints returns the old "unit_cost_points" field's value of the RedemptionOrder entity.
+// If the RedemptionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedemptionOrderMutation) OldUnitCostPoints(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUnitCostPoints is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUnitCostPoints requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUnitCostPoints: %w", err)
+	}
+	return oldValue.UnitCostPoints, nil
+}
+
+// AddUnitCostPoints adds i to the "unit_cost_points" field.
+func (m *RedemptionOrderMutation) AddUnitCostPoints(i int) {
+	if m.addunit_cost_points != nil {
+		*m.addunit_cost_points += i
+	} else {
+		m.addunit_cost_points = &i
+	}
+}
+
+// AddedUnitCostPoints returns the value that was added to the "unit_cost_points" field in this mutation.
+func (m *RedemptionOrderMutation) AddedUnitCostPoints() (r int, exists bool) {
+	v := m.addunit_cost_points
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUnitCostPoints resets all changes to the "unit_cost_points" field.
+func (m *RedemptionOrderMutation) ResetUnitCostPoints() {
+	m.unit_cost_points = nil
+	m.addunit_cost_points = nil
+}
+
+// SetTotalCostPoints sets the "total_cost_points" field.
+func (m *RedemptionOrderMutation) SetTotalCostPoints(i int) {
+	m.total_cost_points = &i
+	m.addtotal_cost_points = nil
+}
+
+// TotalCostPoints returns the value of the "total_cost_points" field in the mutation.
+func (m *RedemptionOrderMutation) TotalCostPoints() (r int, exists bool) {
+	v := m.total_cost_points
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTotalCostPoints returns the old "total_cost_points" field's value of the RedemptionOrder entity.
+// If the RedemptionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedemptionOrderMutation) OldTotalCostPoints(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTotalCostPoints is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTotalCostPoints requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTotalCostPoints: %w", err)
+	}
+	return oldValue.TotalCostPoints, nil
+}
+
+// AddTotalCostPoints adds i to the "total_cost_points" field.
+func (m *RedemptionOrderMutation) AddTotalCostPoints(i int) {
+	if m.addtotal_cost_points != nil {
+		*m.addtotal_cost_points += i
+	} else {
+		m.addtotal_cost_points = &i
+	}
+}
+
+// AddedTotalCostPoints returns the value that was added to the "total_cost_points" field in this mutation.
+func (m *RedemptionOrderMutation) AddedTotalCostPoints() (r int, exists bool) {
+	v := m.addtotal_cost_points
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTotalCostPoints resets all changes to the "total_cost_points" field.
+func (m *RedemptionOrderMutation) ResetTotalCostPoints() {
+	m.total_cost_points = nil
+	m.addtotal_cost_points = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *RedemptionOrderMutation) SetStatus(r redemptionorder.Status) {
+	m.status = &r
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *RedemptionOrderMutation) Status() (r redemptionorder.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the RedemptionOrder entity.
+// If the RedemptionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedemptionOrderMutation) OldStatus(ctx context.Context) (v redemptionorder.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *RedemptionOrderMutation) ResetStatus() {
+	m.status = nil
+}
+
+// SetAutoFulfill sets the "auto_fulfill" field.
+func (m *RedemptionOrderMutation) SetAutoFulfill(b bool) {
+	m.auto_fulfill = &b
+}
+
+// AutoFulfill returns the value of the "auto_fulfill" field in the mutation.
+func (m *RedemptionOrderMutation) AutoFulfill() (r bool, exists bool) {
+	v := m.auto_fulfill
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAutoFulfill returns the old "auto_fulfill" field's value of the RedemptionOrder entity.
+// If the RedemptionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedemptionOrderMutation) OldAutoFulfill(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAutoFulfill is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAutoFulfill requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAutoFulfill: %w", err)
+	}
+	return oldValue.AutoFulfill, nil
+}
+
+// ResetAutoFulfill resets all changes to the "auto_fulfill" field.
+func (m *RedemptionOrderMutation) ResetAutoFulfill() {
+	m.auto_fulfill = nil
+}
+
+// SetAutoComplete sets the "auto_complete" field.
+func (m *RedemptionOrderMutation) SetAutoComplete(b bool) {
+	m.auto_complete = &b
+}
+
+// AutoComplete returns the value of the "auto_complete" field in the mutation.
+func (m *RedemptionOrderMutation) AutoComplete() (r bool, exists bool) {
+	v := m.auto_complete
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAutoComplete returns the old "auto_complete" field's value of the RedemptionOrder entity.
+// If the RedemptionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedemptionOrderMutation) OldAutoComplete(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAutoComplete is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAutoComplete requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAutoComplete: %w", err)
+	}
+	return oldValue.AutoComplete, nil
+}
+
+// ResetAutoComplete resets all changes to the "auto_complete" field.
+func (m *RedemptionOrderMutation) ResetAutoComplete() {
+	m.auto_complete = nil
+}
+
+// SetProviderIncentiveRatio sets the "provider_incentive_ratio" field.
+func (m *RedemptionOrderMutation) SetProviderIncentiveRatio(i int) {
+	m.provider_incentive_ratio = &i
+	m.addprovider_incentive_ratio = nil
+}
+
+// ProviderIncentiveRatio returns the value of the "provider_incentive_ratio" field in the mutation.
+func (m *RedemptionOrderMutation) ProviderIncentiveRatio() (r int, exists bool) {
+	v := m.provider_incentive_ratio
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProviderIncentiveRatio returns the old "provider_incentive_ratio" field's value of the RedemptionOrder entity.
+// If the RedemptionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedemptionOrderMutation) OldProviderIncentiveRatio(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProviderIncentiveRatio is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProviderIncentiveRatio requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProviderIncentiveRatio: %w", err)
+	}
+	return oldValue.ProviderIncentiveRatio, nil
+}
+
+// AddProviderIncentiveRatio adds i to the "provider_incentive_ratio" field.
+func (m *RedemptionOrderMutation) AddProviderIncentiveRatio(i int) {
+	if m.addprovider_incentive_ratio != nil {
+		*m.addprovider_incentive_ratio += i
+	} else {
+		m.addprovider_incentive_ratio = &i
+	}
+}
+
+// AddedProviderIncentiveRatio returns the value that was added to the "provider_incentive_ratio" field in this mutation.
+func (m *RedemptionOrderMutation) AddedProviderIncentiveRatio() (r int, exists bool) {
+	v := m.addprovider_incentive_ratio
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetProviderIncentiveRatio resets all changes to the "provider_incentive_ratio" field.
+func (m *RedemptionOrderMutation) ResetProviderIncentiveRatio() {
+	m.provider_incentive_ratio = nil
+	m.addprovider_incentive_ratio = nil
+}
+
+// SetFulfilledAt sets the "fulfilled_at" field.
+func (m *RedemptionOrderMutation) SetFulfilledAt(t time.Time) {
+	m.fulfilled_at = &t
+}
+
+// FulfilledAt returns the value of the "fulfilled_at" field in the mutation.
+func (m *RedemptionOrderMutation) FulfilledAt() (r time.Time, exists bool) {
+	v := m.fulfilled_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFulfilledAt returns the old "fulfilled_at" field's value of the RedemptionOrder entity.
+// If the RedemptionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedemptionOrderMutation) OldFulfilledAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFulfilledAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFulfilledAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFulfilledAt: %w", err)
+	}
+	return oldValue.FulfilledAt, nil
+}
+
+// ClearFulfilledAt clears the value of the "fulfilled_at" field.
+func (m *RedemptionOrderMutation) ClearFulfilledAt() {
+	m.fulfilled_at = nil
+	m.clearedFields[redemptionorder.FieldFulfilledAt] = struct{}{}
+}
+
+// FulfilledAtCleared returns if the "fulfilled_at" field was cleared in this mutation.
+func (m *RedemptionOrderMutation) FulfilledAtCleared() bool {
+	_, ok := m.clearedFields[redemptionorder.FieldFulfilledAt]
+	return ok
+}
+
+// ResetFulfilledAt resets all changes to the "fulfilled_at" field.
+func (m *RedemptionOrderMutation) ResetFulfilledAt() {
+	m.fulfilled_at = nil
+	delete(m.clearedFields, redemptionorder.FieldFulfilledAt)
+}
+
+// SetConfirmedAt sets the "confirmed_at" field.
+func (m *RedemptionOrderMutation) SetConfirmedAt(t time.Time) {
+	m.confirmed_at = &t
+}
+
+// ConfirmedAt returns the value of the "confirmed_at" field in the mutation.
+func (m *RedemptionOrderMutation) ConfirmedAt() (r time.Time, exists bool) {
+	v := m.confirmed_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldConfirmedAt returns the old "confirmed_at" field's value of the RedemptionOrder entity.
+// If the RedemptionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedemptionOrderMutation) OldConfirmedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldConfirmedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldConfirmedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldConfirmedAt: %w", err)
+	}
+	return oldValue.ConfirmedAt, nil
+}
+
+// ClearConfirmedAt clears the value of the "confirmed_at" field.
+func (m *RedemptionOrderMutation) ClearConfirmedAt() {
+	m.confirmed_at = nil
+	m.clearedFields[redemptionorder.FieldConfirmedAt] = struct{}{}
+}
+
+// ConfirmedAtCleared returns if the "confirmed_at" field was cleared in this mutation.
+func (m *RedemptionOrderMutation) ConfirmedAtCleared() bool {
+	_, ok := m.clearedFields[redemptionorder.FieldConfirmedAt]
+	return ok
+}
+
+// ResetConfirmedAt resets all changes to the "confirmed_at" field.
+func (m *RedemptionOrderMutation) ResetConfirmedAt() {
+	m.confirmed_at = nil
+	delete(m.clearedFields, redemptionorder.FieldConfirmedAt)
+}
+
+// SetEndedAt sets the "ended_at" field.
+func (m *RedemptionOrderMutation) SetEndedAt(t time.Time) {
+	m.ended_at = &t
+}
+
+// EndedAt returns the value of the "ended_at" field in the mutation.
+func (m *RedemptionOrderMutation) EndedAt() (r time.Time, exists bool) {
+	v := m.ended_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEndedAt returns the old "ended_at" field's value of the RedemptionOrder entity.
+// If the RedemptionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedemptionOrderMutation) OldEndedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEndedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEndedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEndedAt: %w", err)
+	}
+	return oldValue.EndedAt, nil
+}
+
+// ClearEndedAt clears the value of the "ended_at" field.
+func (m *RedemptionOrderMutation) ClearEndedAt() {
+	m.ended_at = nil
+	m.clearedFields[redemptionorder.FieldEndedAt] = struct{}{}
+}
+
+// EndedAtCleared returns if the "ended_at" field was cleared in this mutation.
+func (m *RedemptionOrderMutation) EndedAtCleared() bool {
+	_, ok := m.clearedFields[redemptionorder.FieldEndedAt]
+	return ok
+}
+
+// ResetEndedAt resets all changes to the "ended_at" field.
+func (m *RedemptionOrderMutation) ResetEndedAt() {
+	m.ended_at = nil
+	delete(m.clearedFields, redemptionorder.FieldEndedAt)
+}
+
+// SetUnsatisfiedReason sets the "unsatisfied_reason" field.
+func (m *RedemptionOrderMutation) SetUnsatisfiedReason(s string) {
+	m.unsatisfied_reason = &s
+}
+
+// UnsatisfiedReason returns the value of the "unsatisfied_reason" field in the mutation.
+func (m *RedemptionOrderMutation) UnsatisfiedReason() (r string, exists bool) {
+	v := m.unsatisfied_reason
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUnsatisfiedReason returns the old "unsatisfied_reason" field's value of the RedemptionOrder entity.
+// If the RedemptionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedemptionOrderMutation) OldUnsatisfiedReason(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUnsatisfiedReason is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUnsatisfiedReason requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUnsatisfiedReason: %w", err)
+	}
+	return oldValue.UnsatisfiedReason, nil
+}
+
+// ClearUnsatisfiedReason clears the value of the "unsatisfied_reason" field.
+func (m *RedemptionOrderMutation) ClearUnsatisfiedReason() {
+	m.unsatisfied_reason = nil
+	m.clearedFields[redemptionorder.FieldUnsatisfiedReason] = struct{}{}
+}
+
+// UnsatisfiedReasonCleared returns if the "unsatisfied_reason" field was cleared in this mutation.
+func (m *RedemptionOrderMutation) UnsatisfiedReasonCleared() bool {
+	_, ok := m.clearedFields[redemptionorder.FieldUnsatisfiedReason]
+	return ok
+}
+
+// ResetUnsatisfiedReason resets all changes to the "unsatisfied_reason" field.
+func (m *RedemptionOrderMutation) ResetUnsatisfiedReason() {
+	m.unsatisfied_reason = nil
+	delete(m.clearedFields, redemptionorder.FieldUnsatisfiedReason)
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *RedemptionOrderMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *RedemptionOrderMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the RedemptionOrder entity.
+// If the RedemptionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedemptionOrderMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *RedemptionOrderMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *RedemptionOrderMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *RedemptionOrderMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the RedemptionOrder entity.
+// If the RedemptionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedemptionOrderMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *RedemptionOrderMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// ClearGroup clears the "group" edge to the Group entity.
+func (m *RedemptionOrderMutation) ClearGroup() {
+	m.clearedgroup = true
+	m.clearedFields[redemptionorder.FieldGroupID] = struct{}{}
+}
+
+// GroupCleared reports if the "group" edge to the Group entity was cleared.
+func (m *RedemptionOrderMutation) GroupCleared() bool {
+	return m.clearedgroup
+}
+
+// GroupIDs returns the "group" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// GroupID instead. It exists only for internal usage by the builders.
+func (m *RedemptionOrderMutation) GroupIDs() (ids []int) {
+	if id := m.group; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetGroup resets all changes to the "group" edge.
+func (m *RedemptionOrderMutation) ResetGroup() {
+	m.group = nil
+	m.clearedgroup = false
+}
+
+// ClearReward clears the "reward" edge to the Reward entity.
+func (m *RedemptionOrderMutation) ClearReward() {
+	m.clearedreward = true
+	m.clearedFields[redemptionorder.FieldRewardID] = struct{}{}
+}
+
+// RewardCleared reports if the "reward" edge to the Reward entity was cleared.
+func (m *RedemptionOrderMutation) RewardCleared() bool {
+	return m.clearedreward
+}
+
+// RewardIDs returns the "reward" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// RewardID instead. It exists only for internal usage by the builders.
+func (m *RedemptionOrderMutation) RewardIDs() (ids []int) {
+	if id := m.reward; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetReward resets all changes to the "reward" edge.
+func (m *RedemptionOrderMutation) ResetReward() {
+	m.reward = nil
+	m.clearedreward = false
+}
+
+// ClearConsumer clears the "consumer" edge to the User entity.
+func (m *RedemptionOrderMutation) ClearConsumer() {
+	m.clearedconsumer = true
+	m.clearedFields[redemptionorder.FieldConsumerID] = struct{}{}
+}
+
+// ConsumerCleared reports if the "consumer" edge to the User entity was cleared.
+func (m *RedemptionOrderMutation) ConsumerCleared() bool {
+	return m.clearedconsumer
+}
+
+// ConsumerIDs returns the "consumer" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ConsumerID instead. It exists only for internal usage by the builders.
+func (m *RedemptionOrderMutation) ConsumerIDs() (ids []int) {
+	if id := m.consumer; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetConsumer resets all changes to the "consumer" edge.
+func (m *RedemptionOrderMutation) ResetConsumer() {
+	m.consumer = nil
+	m.clearedconsumer = false
+}
+
+// ClearProvider clears the "provider" edge to the User entity.
+func (m *RedemptionOrderMutation) ClearProvider() {
+	m.clearedprovider = true
+	m.clearedFields[redemptionorder.FieldProviderID] = struct{}{}
+}
+
+// ProviderCleared reports if the "provider" edge to the User entity was cleared.
+func (m *RedemptionOrderMutation) ProviderCleared() bool {
+	return m.clearedprovider
+}
+
+// ProviderIDs returns the "provider" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ProviderID instead. It exists only for internal usage by the builders.
+func (m *RedemptionOrderMutation) ProviderIDs() (ids []int) {
+	if id := m.provider; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetProvider resets all changes to the "provider" edge.
+func (m *RedemptionOrderMutation) ResetProvider() {
+	m.provider = nil
+	m.clearedprovider = false
+}
+
+// Where appends a list predicates to the RedemptionOrderMutation builder.
+func (m *RedemptionOrderMutation) Where(ps ...predicate.RedemptionOrder) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the RedemptionOrderMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *RedemptionOrderMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.RedemptionOrder, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *RedemptionOrderMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *RedemptionOrderMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (RedemptionOrder).
+func (m *RedemptionOrderMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *RedemptionOrderMutation) Fields() []string {
+	fields := make([]string, 0, 17)
+	if m.group != nil {
+		fields = append(fields, redemptionorder.FieldGroupID)
+	}
+	if m.reward != nil {
+		fields = append(fields, redemptionorder.FieldRewardID)
+	}
+	if m.consumer != nil {
+		fields = append(fields, redemptionorder.FieldConsumerID)
+	}
+	if m.provider != nil {
+		fields = append(fields, redemptionorder.FieldProviderID)
+	}
+	if m.quantity != nil {
+		fields = append(fields, redemptionorder.FieldQuantity)
+	}
+	if m.unit_cost_points != nil {
+		fields = append(fields, redemptionorder.FieldUnitCostPoints)
+	}
+	if m.total_cost_points != nil {
+		fields = append(fields, redemptionorder.FieldTotalCostPoints)
+	}
+	if m.status != nil {
+		fields = append(fields, redemptionorder.FieldStatus)
+	}
+	if m.auto_fulfill != nil {
+		fields = append(fields, redemptionorder.FieldAutoFulfill)
+	}
+	if m.auto_complete != nil {
+		fields = append(fields, redemptionorder.FieldAutoComplete)
+	}
+	if m.provider_incentive_ratio != nil {
+		fields = append(fields, redemptionorder.FieldProviderIncentiveRatio)
+	}
+	if m.fulfilled_at != nil {
+		fields = append(fields, redemptionorder.FieldFulfilledAt)
+	}
+	if m.confirmed_at != nil {
+		fields = append(fields, redemptionorder.FieldConfirmedAt)
+	}
+	if m.ended_at != nil {
+		fields = append(fields, redemptionorder.FieldEndedAt)
+	}
+	if m.unsatisfied_reason != nil {
+		fields = append(fields, redemptionorder.FieldUnsatisfiedReason)
+	}
+	if m.created_at != nil {
+		fields = append(fields, redemptionorder.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, redemptionorder.FieldUpdatedAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *RedemptionOrderMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case redemptionorder.FieldGroupID:
+		return m.GroupID()
+	case redemptionorder.FieldRewardID:
+		return m.RewardID()
+	case redemptionorder.FieldConsumerID:
+		return m.ConsumerID()
+	case redemptionorder.FieldProviderID:
+		return m.ProviderID()
+	case redemptionorder.FieldQuantity:
+		return m.Quantity()
+	case redemptionorder.FieldUnitCostPoints:
+		return m.UnitCostPoints()
+	case redemptionorder.FieldTotalCostPoints:
+		return m.TotalCostPoints()
+	case redemptionorder.FieldStatus:
+		return m.Status()
+	case redemptionorder.FieldAutoFulfill:
+		return m.AutoFulfill()
+	case redemptionorder.FieldAutoComplete:
+		return m.AutoComplete()
+	case redemptionorder.FieldProviderIncentiveRatio:
+		return m.ProviderIncentiveRatio()
+	case redemptionorder.FieldFulfilledAt:
+		return m.FulfilledAt()
+	case redemptionorder.FieldConfirmedAt:
+		return m.ConfirmedAt()
+	case redemptionorder.FieldEndedAt:
+		return m.EndedAt()
+	case redemptionorder.FieldUnsatisfiedReason:
+		return m.UnsatisfiedReason()
+	case redemptionorder.FieldCreatedAt:
+		return m.CreatedAt()
+	case redemptionorder.FieldUpdatedAt:
+		return m.UpdatedAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *RedemptionOrderMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case redemptionorder.FieldGroupID:
+		return m.OldGroupID(ctx)
+	case redemptionorder.FieldRewardID:
+		return m.OldRewardID(ctx)
+	case redemptionorder.FieldConsumerID:
+		return m.OldConsumerID(ctx)
+	case redemptionorder.FieldProviderID:
+		return m.OldProviderID(ctx)
+	case redemptionorder.FieldQuantity:
+		return m.OldQuantity(ctx)
+	case redemptionorder.FieldUnitCostPoints:
+		return m.OldUnitCostPoints(ctx)
+	case redemptionorder.FieldTotalCostPoints:
+		return m.OldTotalCostPoints(ctx)
+	case redemptionorder.FieldStatus:
+		return m.OldStatus(ctx)
+	case redemptionorder.FieldAutoFulfill:
+		return m.OldAutoFulfill(ctx)
+	case redemptionorder.FieldAutoComplete:
+		return m.OldAutoComplete(ctx)
+	case redemptionorder.FieldProviderIncentiveRatio:
+		return m.OldProviderIncentiveRatio(ctx)
+	case redemptionorder.FieldFulfilledAt:
+		return m.OldFulfilledAt(ctx)
+	case redemptionorder.FieldConfirmedAt:
+		return m.OldConfirmedAt(ctx)
+	case redemptionorder.FieldEndedAt:
+		return m.OldEndedAt(ctx)
+	case redemptionorder.FieldUnsatisfiedReason:
+		return m.OldUnsatisfiedReason(ctx)
+	case redemptionorder.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case redemptionorder.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown RedemptionOrder field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *RedemptionOrderMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case redemptionorder.FieldGroupID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGroupID(v)
+		return nil
+	case redemptionorder.FieldRewardID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRewardID(v)
+		return nil
+	case redemptionorder.FieldConsumerID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetConsumerID(v)
+		return nil
+	case redemptionorder.FieldProviderID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProviderID(v)
+		return nil
+	case redemptionorder.FieldQuantity:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetQuantity(v)
+		return nil
+	case redemptionorder.FieldUnitCostPoints:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUnitCostPoints(v)
+		return nil
+	case redemptionorder.FieldTotalCostPoints:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTotalCostPoints(v)
+		return nil
+	case redemptionorder.FieldStatus:
+		v, ok := value.(redemptionorder.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case redemptionorder.FieldAutoFulfill:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAutoFulfill(v)
+		return nil
+	case redemptionorder.FieldAutoComplete:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAutoComplete(v)
+		return nil
+	case redemptionorder.FieldProviderIncentiveRatio:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProviderIncentiveRatio(v)
+		return nil
+	case redemptionorder.FieldFulfilledAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFulfilledAt(v)
+		return nil
+	case redemptionorder.FieldConfirmedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetConfirmedAt(v)
+		return nil
+	case redemptionorder.FieldEndedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEndedAt(v)
+		return nil
+	case redemptionorder.FieldUnsatisfiedReason:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUnsatisfiedReason(v)
+		return nil
+	case redemptionorder.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case redemptionorder.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown RedemptionOrder field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *RedemptionOrderMutation) AddedFields() []string {
+	var fields []string
+	if m.addquantity != nil {
+		fields = append(fields, redemptionorder.FieldQuantity)
+	}
+	if m.addunit_cost_points != nil {
+		fields = append(fields, redemptionorder.FieldUnitCostPoints)
+	}
+	if m.addtotal_cost_points != nil {
+		fields = append(fields, redemptionorder.FieldTotalCostPoints)
+	}
+	if m.addprovider_incentive_ratio != nil {
+		fields = append(fields, redemptionorder.FieldProviderIncentiveRatio)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *RedemptionOrderMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case redemptionorder.FieldQuantity:
+		return m.AddedQuantity()
+	case redemptionorder.FieldUnitCostPoints:
+		return m.AddedUnitCostPoints()
+	case redemptionorder.FieldTotalCostPoints:
+		return m.AddedTotalCostPoints()
+	case redemptionorder.FieldProviderIncentiveRatio:
+		return m.AddedProviderIncentiveRatio()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *RedemptionOrderMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case redemptionorder.FieldQuantity:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddQuantity(v)
+		return nil
+	case redemptionorder.FieldUnitCostPoints:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUnitCostPoints(v)
+		return nil
+	case redemptionorder.FieldTotalCostPoints:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTotalCostPoints(v)
+		return nil
+	case redemptionorder.FieldProviderIncentiveRatio:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddProviderIncentiveRatio(v)
+		return nil
+	}
+	return fmt.Errorf("unknown RedemptionOrder numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *RedemptionOrderMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(redemptionorder.FieldFulfilledAt) {
+		fields = append(fields, redemptionorder.FieldFulfilledAt)
+	}
+	if m.FieldCleared(redemptionorder.FieldConfirmedAt) {
+		fields = append(fields, redemptionorder.FieldConfirmedAt)
+	}
+	if m.FieldCleared(redemptionorder.FieldEndedAt) {
+		fields = append(fields, redemptionorder.FieldEndedAt)
+	}
+	if m.FieldCleared(redemptionorder.FieldUnsatisfiedReason) {
+		fields = append(fields, redemptionorder.FieldUnsatisfiedReason)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *RedemptionOrderMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *RedemptionOrderMutation) ClearField(name string) error {
+	switch name {
+	case redemptionorder.FieldFulfilledAt:
+		m.ClearFulfilledAt()
+		return nil
+	case redemptionorder.FieldConfirmedAt:
+		m.ClearConfirmedAt()
+		return nil
+	case redemptionorder.FieldEndedAt:
+		m.ClearEndedAt()
+		return nil
+	case redemptionorder.FieldUnsatisfiedReason:
+		m.ClearUnsatisfiedReason()
+		return nil
+	}
+	return fmt.Errorf("unknown RedemptionOrder nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *RedemptionOrderMutation) ResetField(name string) error {
+	switch name {
+	case redemptionorder.FieldGroupID:
+		m.ResetGroupID()
+		return nil
+	case redemptionorder.FieldRewardID:
+		m.ResetRewardID()
+		return nil
+	case redemptionorder.FieldConsumerID:
+		m.ResetConsumerID()
+		return nil
+	case redemptionorder.FieldProviderID:
+		m.ResetProviderID()
+		return nil
+	case redemptionorder.FieldQuantity:
+		m.ResetQuantity()
+		return nil
+	case redemptionorder.FieldUnitCostPoints:
+		m.ResetUnitCostPoints()
+		return nil
+	case redemptionorder.FieldTotalCostPoints:
+		m.ResetTotalCostPoints()
+		return nil
+	case redemptionorder.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case redemptionorder.FieldAutoFulfill:
+		m.ResetAutoFulfill()
+		return nil
+	case redemptionorder.FieldAutoComplete:
+		m.ResetAutoComplete()
+		return nil
+	case redemptionorder.FieldProviderIncentiveRatio:
+		m.ResetProviderIncentiveRatio()
+		return nil
+	case redemptionorder.FieldFulfilledAt:
+		m.ResetFulfilledAt()
+		return nil
+	case redemptionorder.FieldConfirmedAt:
+		m.ResetConfirmedAt()
+		return nil
+	case redemptionorder.FieldEndedAt:
+		m.ResetEndedAt()
+		return nil
+	case redemptionorder.FieldUnsatisfiedReason:
+		m.ResetUnsatisfiedReason()
+		return nil
+	case redemptionorder.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case redemptionorder.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown RedemptionOrder field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *RedemptionOrderMutation) AddedEdges() []string {
+	edges := make([]string, 0, 4)
+	if m.group != nil {
+		edges = append(edges, redemptionorder.EdgeGroup)
+	}
+	if m.reward != nil {
+		edges = append(edges, redemptionorder.EdgeReward)
+	}
+	if m.consumer != nil {
+		edges = append(edges, redemptionorder.EdgeConsumer)
+	}
+	if m.provider != nil {
+		edges = append(edges, redemptionorder.EdgeProvider)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *RedemptionOrderMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case redemptionorder.EdgeGroup:
+		if id := m.group; id != nil {
+			return []ent.Value{*id}
+		}
+	case redemptionorder.EdgeReward:
+		if id := m.reward; id != nil {
+			return []ent.Value{*id}
+		}
+	case redemptionorder.EdgeConsumer:
+		if id := m.consumer; id != nil {
+			return []ent.Value{*id}
+		}
+	case redemptionorder.EdgeProvider:
+		if id := m.provider; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *RedemptionOrderMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 4)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *RedemptionOrderMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *RedemptionOrderMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 4)
+	if m.clearedgroup {
+		edges = append(edges, redemptionorder.EdgeGroup)
+	}
+	if m.clearedreward {
+		edges = append(edges, redemptionorder.EdgeReward)
+	}
+	if m.clearedconsumer {
+		edges = append(edges, redemptionorder.EdgeConsumer)
+	}
+	if m.clearedprovider {
+		edges = append(edges, redemptionorder.EdgeProvider)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *RedemptionOrderMutation) EdgeCleared(name string) bool {
+	switch name {
+	case redemptionorder.EdgeGroup:
+		return m.clearedgroup
+	case redemptionorder.EdgeReward:
+		return m.clearedreward
+	case redemptionorder.EdgeConsumer:
+		return m.clearedconsumer
+	case redemptionorder.EdgeProvider:
+		return m.clearedprovider
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *RedemptionOrderMutation) ClearEdge(name string) error {
+	switch name {
+	case redemptionorder.EdgeGroup:
+		m.ClearGroup()
+		return nil
+	case redemptionorder.EdgeReward:
+		m.ClearReward()
+		return nil
+	case redemptionorder.EdgeConsumer:
+		m.ClearConsumer()
+		return nil
+	case redemptionorder.EdgeProvider:
+		m.ClearProvider()
+		return nil
+	}
+	return fmt.Errorf("unknown RedemptionOrder unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *RedemptionOrderMutation) ResetEdge(name string) error {
+	switch name {
+	case redemptionorder.EdgeGroup:
+		m.ResetGroup()
+		return nil
+	case redemptionorder.EdgeReward:
+		m.ResetReward()
+		return nil
+	case redemptionorder.EdgeConsumer:
+		m.ResetConsumer()
+		return nil
+	case redemptionorder.EdgeProvider:
+		m.ResetProvider()
+		return nil
+	}
+	return fmt.Errorf("unknown RedemptionOrder edge %s", name)
 }
 
 // RewardMutation represents an operation that mutates the Reward nodes in the graph.

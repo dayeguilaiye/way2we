@@ -11,6 +11,7 @@ import (
 	"github.com/way2we/way2we_api/ent/groupmember"
 	"github.com/way2we/way2we_api/ent/membersummary"
 	"github.com/way2we/way2we_api/ent/pointlog"
+	"github.com/way2we/way2we_api/ent/redemptionorder"
 	"github.com/way2we/way2we_api/ent/reward"
 	"github.com/way2we/way2we_api/ent/schema"
 	"github.com/way2we/way2we_api/ent/tokenblacklist"
@@ -232,6 +233,62 @@ func init() {
 	pointlogDescCreatedAt := pointlogFields[8].Descriptor()
 	// pointlog.DefaultCreatedAt holds the default value on creation for the created_at field.
 	pointlog.DefaultCreatedAt = pointlogDescCreatedAt.Default.(func() time.Time)
+	redemptionorderFields := schema.RedemptionOrder{}.Fields()
+	_ = redemptionorderFields
+	// redemptionorderDescQuantity is the schema descriptor for quantity field.
+	redemptionorderDescQuantity := redemptionorderFields[4].Descriptor()
+	// redemptionorder.QuantityValidator is a validator for the "quantity" field. It is called by the builders before save.
+	redemptionorder.QuantityValidator = redemptionorderDescQuantity.Validators[0].(func(int) error)
+	// redemptionorderDescUnitCostPoints is the schema descriptor for unit_cost_points field.
+	redemptionorderDescUnitCostPoints := redemptionorderFields[5].Descriptor()
+	// redemptionorder.UnitCostPointsValidator is a validator for the "unit_cost_points" field. It is called by the builders before save.
+	redemptionorder.UnitCostPointsValidator = redemptionorderDescUnitCostPoints.Validators[0].(func(int) error)
+	// redemptionorderDescTotalCostPoints is the schema descriptor for total_cost_points field.
+	redemptionorderDescTotalCostPoints := redemptionorderFields[6].Descriptor()
+	// redemptionorder.TotalCostPointsValidator is a validator for the "total_cost_points" field. It is called by the builders before save.
+	redemptionorder.TotalCostPointsValidator = redemptionorderDescTotalCostPoints.Validators[0].(func(int) error)
+	// redemptionorderDescAutoFulfill is the schema descriptor for auto_fulfill field.
+	redemptionorderDescAutoFulfill := redemptionorderFields[8].Descriptor()
+	// redemptionorder.DefaultAutoFulfill holds the default value on creation for the auto_fulfill field.
+	redemptionorder.DefaultAutoFulfill = redemptionorderDescAutoFulfill.Default.(bool)
+	// redemptionorderDescAutoComplete is the schema descriptor for auto_complete field.
+	redemptionorderDescAutoComplete := redemptionorderFields[9].Descriptor()
+	// redemptionorder.DefaultAutoComplete holds the default value on creation for the auto_complete field.
+	redemptionorder.DefaultAutoComplete = redemptionorderDescAutoComplete.Default.(bool)
+	// redemptionorderDescProviderIncentiveRatio is the schema descriptor for provider_incentive_ratio field.
+	redemptionorderDescProviderIncentiveRatio := redemptionorderFields[10].Descriptor()
+	// redemptionorder.DefaultProviderIncentiveRatio holds the default value on creation for the provider_incentive_ratio field.
+	redemptionorder.DefaultProviderIncentiveRatio = redemptionorderDescProviderIncentiveRatio.Default.(int)
+	// redemptionorder.ProviderIncentiveRatioValidator is a validator for the "provider_incentive_ratio" field. It is called by the builders before save.
+	redemptionorder.ProviderIncentiveRatioValidator = func() func(int) error {
+		validators := redemptionorderDescProviderIncentiveRatio.Validators
+		fns := [...]func(int) error{
+			validators[0].(func(int) error),
+			validators[1].(func(int) error),
+		}
+		return func(provider_incentive_ratio int) error {
+			for _, fn := range fns {
+				if err := fn(provider_incentive_ratio); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// redemptionorderDescUnsatisfiedReason is the schema descriptor for unsatisfied_reason field.
+	redemptionorderDescUnsatisfiedReason := redemptionorderFields[14].Descriptor()
+	// redemptionorder.UnsatisfiedReasonValidator is a validator for the "unsatisfied_reason" field. It is called by the builders before save.
+	redemptionorder.UnsatisfiedReasonValidator = redemptionorderDescUnsatisfiedReason.Validators[0].(func(string) error)
+	// redemptionorderDescCreatedAt is the schema descriptor for created_at field.
+	redemptionorderDescCreatedAt := redemptionorderFields[15].Descriptor()
+	// redemptionorder.DefaultCreatedAt holds the default value on creation for the created_at field.
+	redemptionorder.DefaultCreatedAt = redemptionorderDescCreatedAt.Default.(func() time.Time)
+	// redemptionorderDescUpdatedAt is the schema descriptor for updated_at field.
+	redemptionorderDescUpdatedAt := redemptionorderFields[16].Descriptor()
+	// redemptionorder.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	redemptionorder.DefaultUpdatedAt = redemptionorderDescUpdatedAt.Default.(func() time.Time)
+	// redemptionorder.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	redemptionorder.UpdateDefaultUpdatedAt = redemptionorderDescUpdatedAt.UpdateDefault.(func() time.Time)
 	rewardFields := schema.Reward{}.Fields()
 	_ = rewardFields
 	// rewardDescName is the schema descriptor for name field.

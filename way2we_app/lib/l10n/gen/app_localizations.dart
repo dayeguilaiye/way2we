@@ -1333,6 +1333,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unpin'**
   String get rewardUnpinAction;
+
+  /// No description provided for @redemptionOrderTabTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Orders'**
+  String get redemptionOrderTabTitle;
+
+  /// No description provided for @redemptionStatusAwaitingFulfill.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting Fulfill'**
+  String get redemptionStatusAwaitingFulfill;
+
+  /// No description provided for @redemptionStatusAwaitingConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting Confirm'**
+  String get redemptionStatusAwaitingConfirm;
+
+  /// No description provided for @redemptionStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get redemptionStatusCompleted;
+
+  /// No description provided for @redemptionStatusUnsatisfied.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsatisfied'**
+  String get redemptionStatusUnsatisfied;
+
+  /// No description provided for @redemptionOrderEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No orders yet'**
+  String get redemptionOrderEmptyTitle;
+
+  /// No description provided for @redemptionOrderEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem your first reward'**
+  String get redemptionOrderEmptySubtitle;
+
+  /// No description provided for @redemptionOrderDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Detail'**
+  String get redemptionOrderDetailTitle;
+
+  /// No description provided for @redemptionOrderQuantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get redemptionOrderQuantityLabel;
+
+  /// No description provided for @redemptionOrderUnitPointsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit points'**
+  String get redemptionOrderUnitPointsLabel;
+
+  /// No description provided for @redemptionOrderTotalPointsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total points'**
+  String get redemptionOrderTotalPointsLabel;
+
+  /// No description provided for @redemptionOrderConsumerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Consumer'**
+  String get redemptionOrderConsumerLabel;
+
+  /// No description provided for @redemptionOrderProviderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider'**
+  String get redemptionOrderProviderLabel;
+
+  /// No description provided for @redemptionOrderTimelineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Timeline'**
+  String get redemptionOrderTimelineTitle;
+
+  /// No description provided for @redemptionOrderCreatedAtLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Created at'**
+  String get redemptionOrderCreatedAtLabel;
+
+  /// No description provided for @redemptionOrderFulfilledAtLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fulfilled at'**
+  String get redemptionOrderFulfilledAtLabel;
+
+  /// No description provided for @redemptionOrderConfirmedAtLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed at'**
+  String get redemptionOrderConfirmedAtLabel;
+
+  /// No description provided for @redemptionOrderEndedAtLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ended at'**
+  String get redemptionOrderEndedAtLabel;
+
+  /// No description provided for @redemptionActionRedeem.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem'**
+  String get redemptionActionRedeem;
+
+  /// No description provided for @redemptionConfirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get redemptionConfirmButton;
+
+  /// No description provided for @redemptionInsufficientPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Insufficient points'**
+  String get redemptionInsufficientPoints;
+
+  /// No description provided for @redemptionUnsatisfiedButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Not satisfied'**
+  String get redemptionUnsatisfiedButton;
+
+  /// No description provided for @redemptionUnsatisfiedReasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason (optional)'**
+  String get redemptionUnsatisfiedReasonHint;
+
+  /// No description provided for @redemptionFulfillButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark fulfilled'**
+  String get redemptionFulfillButton;
+
+  /// No description provided for @redemptionConfirmSatisfiedButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm satisfied'**
+  String get redemptionConfirmSatisfiedButton;
+
+  /// No description provided for @redemptionCreateSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Redemption created'**
+  String get redemptionCreateSuccess;
+
+  /// No description provided for @redemptionCreateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Redemption failed'**
+  String get redemptionCreateFailed;
+
+  /// No description provided for @redemptionBalanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Points balance'**
+  String get redemptionBalanceLabel;
+
+  /// No description provided for @redemptionBalanceLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading points'**
+  String get redemptionBalanceLoading;
+
+  /// No description provided for @redemptionBalanceLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load points'**
+  String get redemptionBalanceLoadFailed;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

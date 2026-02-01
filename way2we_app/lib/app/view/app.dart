@@ -12,6 +12,7 @@ import 'package:way2we_app/features/group/data/providers/group_provider.dart';
 import 'package:way2we_app/features/group/view/group_selection_page.dart';
 import 'package:way2we_app/features/home/view/home_page.dart';
 import 'package:way2we_app/features/reward/data/providers/reward_provider.dart';
+import 'package:way2we_app/features/redemption/data/providers/redemption_provider.dart';
 import 'package:way2we_app/features/splash/view/splash_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
 import 'package:way2we_app/theme/app_theme.dart';
@@ -37,6 +38,7 @@ class App extends StatelessWidget {
     final agreementProvider = AgreementProvider(dio: dio);
     final agreementCompletionProvider = AgreementCompletionProvider(dio: dio);
     final rewardProvider = RewardProvider(dio: dio);
+    final redemptionProvider = RedemptionProvider(dio: dio);
 
     // Create AuthenticationBloc and register with ServiceLocator
     // for 401 handling
@@ -58,6 +60,7 @@ class App extends StatelessWidget {
           value: agreementCompletionProvider,
         ),
         RepositoryProvider<RewardProvider>.value(value: rewardProvider),
+        RepositoryProvider<RedemptionProvider>.value(value: redemptionProvider),
       ],
       child: MultiBlocProvider(
         providers: [

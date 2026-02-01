@@ -77,11 +77,8 @@ development_status:
   epic-5-retrospective: optional
 
   # Epic 6: 兑换与履约流程
-  epic-6: backlog
-  6-1-request-redemption: backlog
-  6-2-view-order-list: backlog
-  6-3-fulfillment-confirmation: backlog  # 合并了提供方履约、消费方确认满意
-  6-4-order-status-tracking: backlog
+  epic-6: in-progress
+  6-1-redemption-order-lifecycle: in-progress
   epic-6-retrospective: optional
 
   # Epic 7: 特殊事件与积分调整

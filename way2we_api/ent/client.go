@@ -21,6 +21,7 @@ import (
 	"github.com/way2we/way2we_api/ent/groupmember"
 	"github.com/way2we/way2we_api/ent/membersummary"
 	"github.com/way2we/way2we_api/ent/pointlog"
+	"github.com/way2we/way2we_api/ent/redemptionorder"
 	"github.com/way2we/way2we_api/ent/reward"
 	"github.com/way2we/way2we_api/ent/tokenblacklist"
 	"github.com/way2we/way2we_api/ent/user"
@@ -44,6 +45,8 @@ type Client struct {
 	MemberSummary *MemberSummaryClient
 	// PointLog is the client for interacting with the PointLog builders.
 	PointLog *PointLogClient
+	// RedemptionOrder is the client for interacting with the RedemptionOrder builders.
+	RedemptionOrder *RedemptionOrderClient
 	// Reward is the client for interacting with the Reward builders.
 	Reward *RewardClient
 	// TokenBlacklist is the client for interacting with the TokenBlacklist builders.
@@ -69,6 +72,7 @@ func (c *Client) init() {
 	c.GroupMember = NewGroupMemberClient(c.config)
 	c.MemberSummary = NewMemberSummaryClient(c.config)
 	c.PointLog = NewPointLogClient(c.config)
+	c.RedemptionOrder = NewRedemptionOrderClient(c.config)
 	c.Reward = NewRewardClient(c.config)
 	c.TokenBlacklist = NewTokenBlacklistClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -171,6 +175,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		GroupMember:         NewGroupMemberClient(cfg),
 		MemberSummary:       NewMemberSummaryClient(cfg),
 		PointLog:            NewPointLogClient(cfg),
+		RedemptionOrder:     NewRedemptionOrderClient(cfg),
 		Reward:              NewRewardClient(cfg),
 		TokenBlacklist:      NewTokenBlacklistClient(cfg),
 		User:                NewUserClient(cfg),
@@ -200,6 +205,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		GroupMember:         NewGroupMemberClient(cfg),
 		MemberSummary:       NewMemberSummaryClient(cfg),
 		PointLog:            NewPointLogClient(cfg),
+		RedemptionOrder:     NewRedemptionOrderClient(cfg),
 		Reward:              NewRewardClient(cfg),
 		TokenBlacklist:      NewTokenBlacklistClient(cfg),
 		User:                NewUserClient(cfg),
@@ -234,7 +240,8 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Agreement, c.AgreementCompletion, c.Group, c.GroupMember, c.MemberSummary,
-		c.PointLog, c.Reward, c.TokenBlacklist, c.User, c.UserIdentity,
+		c.PointLog, c.RedemptionOrder, c.Reward, c.TokenBlacklist, c.User,
+		c.UserIdentity,
 	} {
 		n.Use(hooks...)
 	}
@@ -245,7 +252,8 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Agreement, c.AgreementCompletion, c.Group, c.GroupMember, c.MemberSummary,
-		c.PointLog, c.Reward, c.TokenBlacklist, c.User, c.UserIdentity,
+		c.PointLog, c.RedemptionOrder, c.Reward, c.TokenBlacklist, c.User,
+		c.UserIdentity,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -266,6 +274,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.MemberSummary.mutate(ctx, m)
 	case *PointLogMutation:
 		return c.PointLog.mutate(ctx, m)
+	case *RedemptionOrderMutation:
+		return c.RedemptionOrder.mutate(ctx, m)
 	case *RewardMutation:
 		return c.Reward.mutate(ctx, m)
 	case *TokenBlacklistMutation:
@@ -1381,6 +1391,203 @@ func (c *PointLogClient) mutate(ctx context.Context, m *PointLogMutation) (Value
 	}
 }
 
+// RedemptionOrderClient is a client for the RedemptionOrder schema.
+type RedemptionOrderClient struct {
+	config
+}
+
+// NewRedemptionOrderClient returns a client for the RedemptionOrder from the given config.
+func NewRedemptionOrderClient(c config) *RedemptionOrderClient {
+	return &RedemptionOrderClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `redemptionorder.Hooks(f(g(h())))`.
+func (c *RedemptionOrderClient) Use(hooks ...Hook) {
+	c.hooks.RedemptionOrder = append(c.hooks.RedemptionOrder, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `redemptionorder.Intercept(f(g(h())))`.
+func (c *RedemptionOrderClient) Intercept(interceptors ...Interceptor) {
+	c.inters.RedemptionOrder = append(c.inters.RedemptionOrder, interceptors...)
+}
+
+// Create returns a builder for creating a RedemptionOrder entity.
+func (c *RedemptionOrderClient) Create() *RedemptionOrderCreate {
+	mutation := newRedemptionOrderMutation(c.config, OpCreate)
+	return &RedemptionOrderCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of RedemptionOrder entities.
+func (c *RedemptionOrderClient) CreateBulk(builders ...*RedemptionOrderCreate) *RedemptionOrderCreateBulk {
+	return &RedemptionOrderCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *RedemptionOrderClient) MapCreateBulk(slice any, setFunc func(*RedemptionOrderCreate, int)) *RedemptionOrderCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &RedemptionOrderCreateBulk{err: fmt.Errorf("calling to RedemptionOrderClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*RedemptionOrderCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &RedemptionOrderCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for RedemptionOrder.
+func (c *RedemptionOrderClient) Update() *RedemptionOrderUpdate {
+	mutation := newRedemptionOrderMutation(c.config, OpUpdate)
+	return &RedemptionOrderUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RedemptionOrderClient) UpdateOne(_m *RedemptionOrder) *RedemptionOrderUpdateOne {
+	mutation := newRedemptionOrderMutation(c.config, OpUpdateOne, withRedemptionOrder(_m))
+	return &RedemptionOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RedemptionOrderClient) UpdateOneID(id int) *RedemptionOrderUpdateOne {
+	mutation := newRedemptionOrderMutation(c.config, OpUpdateOne, withRedemptionOrderID(id))
+	return &RedemptionOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for RedemptionOrder.
+func (c *RedemptionOrderClient) Delete() *RedemptionOrderDelete {
+	mutation := newRedemptionOrderMutation(c.config, OpDelete)
+	return &RedemptionOrderDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *RedemptionOrderClient) DeleteOne(_m *RedemptionOrder) *RedemptionOrderDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *RedemptionOrderClient) DeleteOneID(id int) *RedemptionOrderDeleteOne {
+	builder := c.Delete().Where(redemptionorder.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RedemptionOrderDeleteOne{builder}
+}
+
+// Query returns a query builder for RedemptionOrder.
+func (c *RedemptionOrderClient) Query() *RedemptionOrderQuery {
+	return &RedemptionOrderQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeRedemptionOrder},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a RedemptionOrder entity by its id.
+func (c *RedemptionOrderClient) Get(ctx context.Context, id int) (*RedemptionOrder, error) {
+	return c.Query().Where(redemptionorder.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RedemptionOrderClient) GetX(ctx context.Context, id int) *RedemptionOrder {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryGroup queries the group edge of a RedemptionOrder.
+func (c *RedemptionOrderClient) QueryGroup(_m *RedemptionOrder) *GroupQuery {
+	query := (&GroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(redemptionorder.Table, redemptionorder.FieldID, id),
+			sqlgraph.To(group.Table, group.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, redemptionorder.GroupTable, redemptionorder.GroupColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryReward queries the reward edge of a RedemptionOrder.
+func (c *RedemptionOrderClient) QueryReward(_m *RedemptionOrder) *RewardQuery {
+	query := (&RewardClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(redemptionorder.Table, redemptionorder.FieldID, id),
+			sqlgraph.To(reward.Table, reward.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, redemptionorder.RewardTable, redemptionorder.RewardColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryConsumer queries the consumer edge of a RedemptionOrder.
+func (c *RedemptionOrderClient) QueryConsumer(_m *RedemptionOrder) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(redemptionorder.Table, redemptionorder.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, redemptionorder.ConsumerTable, redemptionorder.ConsumerColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryProvider queries the provider edge of a RedemptionOrder.
+func (c *RedemptionOrderClient) QueryProvider(_m *RedemptionOrder) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(redemptionorder.Table, redemptionorder.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, redemptionorder.ProviderTable, redemptionorder.ProviderColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *RedemptionOrderClient) Hooks() []Hook {
+	return c.hooks.RedemptionOrder
+}
+
+// Interceptors returns the client interceptors.
+func (c *RedemptionOrderClient) Interceptors() []Interceptor {
+	return c.inters.RedemptionOrder
+}
+
+func (c *RedemptionOrderClient) mutate(ctx context.Context, m *RedemptionOrderMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&RedemptionOrderCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&RedemptionOrderUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&RedemptionOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&RedemptionOrderDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown RedemptionOrder mutation op: %q", m.Op())
+	}
+}
+
 // RewardClient is a client for the Reward schema.
 type RewardClient struct {
 	config
@@ -2077,10 +2284,10 @@ func (c *UserIdentityClient) mutate(ctx context.Context, m *UserIdentityMutation
 type (
 	hooks struct {
 		Agreement, AgreementCompletion, Group, GroupMember, MemberSummary, PointLog,
-		Reward, TokenBlacklist, User, UserIdentity []ent.Hook
+		RedemptionOrder, Reward, TokenBlacklist, User, UserIdentity []ent.Hook
 	}
 	inters struct {
 		Agreement, AgreementCompletion, Group, GroupMember, MemberSummary, PointLog,
-		Reward, TokenBlacklist, User, UserIdentity []ent.Interceptor
+		RedemptionOrder, Reward, TokenBlacklist, User, UserIdentity []ent.Interceptor
 	}
 )

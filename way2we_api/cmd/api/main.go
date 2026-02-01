@@ -19,6 +19,7 @@ import (
 	"github.com/way2we/way2we_api/internal/app/auth"
 	"github.com/way2we/way2we_api/internal/app/group"
 	"github.com/way2we/way2we_api/internal/app/points"
+	"github.com/way2we/way2we_api/internal/app/redemption"
 	"github.com/way2we/way2we_api/internal/app/reward"
 	"github.com/way2we/way2we_api/internal/app/user"
 	"github.com/way2we/way2we_api/internal/pkg/config"
@@ -92,6 +93,8 @@ func main() {
 	pointsService := points.NewService(client)
 	// Initialize agreement completion service
 	agreementCompletionService := agreementcompletion.NewService(client, groupService, pointsService)
+	// Initialize redemption service
+	redemptionService := redemption.NewService(client, groupService, pointsService)
 
 	// Register routes
 	authHandler := handler.NewAuthHandler(authService)
@@ -100,9 +103,10 @@ func main() {
 	agreementHandler := handler.NewAgreementHandler(agreementService)
 	agreementCompletionHandler := handler.NewAgreementCompletionHandler(agreementCompletionService)
 	rewardHandler := handler.NewRewardHandler(rewardService, storageProvider)
+	redemptionHandler := handler.NewRedemptionHandler(redemptionService)
 	pointsHandler := handler.NewPointsHandler(pointsService)
 
-	handler.RegisterRoutes(e, cfg, authService, authHandler, userHandler, groupHandler, groupService, agreementHandler, agreementCompletionHandler, rewardHandler, pointsHandler)
+	handler.RegisterRoutes(e, cfg, authService, authHandler, userHandler, groupHandler, groupService, agreementHandler, agreementCompletionHandler, rewardHandler, redemptionHandler, pointsHandler)
 
 	// Routes
 	e.GET("/", func(c echo.Context) error {

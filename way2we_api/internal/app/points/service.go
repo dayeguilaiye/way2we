@@ -23,6 +23,7 @@ var (
 	ErrPointLogNotFound    = errors.New("point log not found")
 	ErrTargetNotMember     = errors.New("target user is not a member of this group")
 	ErrPointLogDuplicate   = errors.New("point log already exists")
+	ErrInsufficientBalance = errors.New("insufficient balance")
 )
 
 const (
@@ -65,6 +66,17 @@ func (s *Service) DeductPoints(ctx context.Context, groupID int, userID int, del
 		return nil, ErrInvalidDelta
 	}
 	return s.applyPoints(ctx, groupID, userID, -delta, source)
+}
+
+// DeductPointsWithCheckTx deducts points within a transaction, enforcing non-negative balance.
+func (s *Service) DeductPointsWithCheckTx(ctx context.Context, tx *ent.Tx, groupID int, userID int, delta int, source Source) (*ent.PointLog, error) {
+	if delta <= 0 {
+		return nil, ErrInvalidDelta
+	}
+	if tx == nil {
+		return nil, fmt.Errorf("%w: tx is nil", ErrInvalidSource)
+	}
+	return s.applyPointsWithBalanceCheckTx(ctx, tx, groupID, userID, -delta, source)
 }
 
 // RevertPoints reverses a prior points change based on the original source.
@@ -335,6 +347,86 @@ func (s *Service) applyPointsInTx(ctx context.Context, tx *ent.Tx, groupID int, 
 		SetUserID(userID).
 		SetDelta(delta).
 		SetBalanceAfter(updatedSummary.Balance).
+		SetSourceType(source.SourceType).
+		SetSourceID(normalizedID)
+	if source.Reason != "" {
+		builder = builder.SetReason(source.Reason)
+	}
+	if sourceRef != "" {
+		builder = builder.SetSourceRef(sourceRef)
+	}
+
+	logEntry, err := builder.Save(ctx)
+	if err != nil {
+		if ent.IsConstraintError(err) {
+			return nil, ErrPointLogDuplicate
+		}
+		return nil, fmt.Errorf("failed to create point log: %w", err)
+	}
+
+	return logEntry, nil
+}
+
+func (s *Service) applyPointsWithBalanceCheckTx(ctx context.Context, tx *ent.Tx, groupID int, userID int, delta int, source Source) (*ent.PointLog, error) {
+	if delta == 0 {
+		return nil, ErrInvalidDelta
+	}
+	if source.SourceType == "" || source.SourceID == "" {
+		return nil, ErrInvalidSource
+	}
+	if source.GroupID != 0 && source.GroupID != groupID {
+		return nil, ErrSourceGroupMismatch
+	}
+
+	exists, err := tx.GroupMember.Query().
+		Where(
+			groupmember.GroupID(groupID),
+			groupmember.UserID(userID),
+		).
+		Exist(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check membership: %w", err)
+	}
+	if !exists {
+		return nil, ErrNotGroupMember
+	}
+
+	if delta > 0 {
+		return s.applyPointsInTx(ctx, tx, groupID, userID, delta, source)
+	}
+
+	normalizedID, sourceRef := normalizeSourceID(source.SourceID)
+
+	updated, err := tx.MemberSummary.Update().
+		Where(
+			membersummary.GroupID(groupID),
+			membersummary.UserID(userID),
+			membersummary.BalanceGTE(-delta),
+		).
+		AddBalance(delta).
+		Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to update member summary: %w", err)
+	}
+	if updated == 0 {
+		return nil, ErrInsufficientBalance
+	}
+
+	summary, err := tx.MemberSummary.Query().
+		Where(
+			membersummary.GroupID(groupID),
+			membersummary.UserID(userID),
+		).
+		Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query member summary: %w", err)
+	}
+
+	builder := tx.PointLog.Create().
+		SetGroupID(groupID).
+		SetUserID(userID).
+		SetDelta(delta).
+		SetBalanceAfter(summary.Balance).
 		SetSourceType(source.SourceType).
 		SetSourceID(normalizedID)
 	if source.Reason != "" {

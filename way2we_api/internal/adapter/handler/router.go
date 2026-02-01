@@ -9,7 +9,7 @@ import (
 )
 
 // RegisterRoutes registers all routes for the application.
-func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service, authHandler *AuthHandler, userHandler *UserHandler, groupHandler *GroupHandler, groupService *group.Service, agreementHandler *AgreementHandler, agreementCompletionHandler *AgreementCompletionHandler, rewardHandler *RewardHandler, pointsHandler *PointsHandler) {
+func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service, authHandler *AuthHandler, userHandler *UserHandler, groupHandler *GroupHandler, groupService *group.Service, agreementHandler *AgreementHandler, agreementCompletionHandler *AgreementCompletionHandler, rewardHandler *RewardHandler, redemptionHandler *RedemptionHandler, pointsHandler *PointsHandler) {
 	v1 := e.Group("/v1")
 
 	// Auth Routes (Public)
@@ -78,6 +78,14 @@ func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service,
 	groupRoutes.PUT("/:groupId/rewards/:id/status", rewardHandler.UpdateRewardStatus)
 	groupRoutes.POST("/:groupId/rewards/:id/pin", rewardHandler.PinReward)
 	groupRoutes.DELETE("/:groupId/rewards/:id/pin", rewardHandler.UnpinReward)
+
+	// Redemption Order Routes (Protected - nested under groups)
+	groupRoutes.POST("/:groupId/rewards/:rewardId/redemptions", redemptionHandler.CreateRedemption)
+	groupRoutes.GET("/:groupId/orders", redemptionHandler.ListOrders)
+	groupRoutes.GET("/:groupId/orders/:id", redemptionHandler.GetOrder)
+	groupRoutes.POST("/:groupId/orders/:id/fulfill", redemptionHandler.FulfillOrder)
+	groupRoutes.POST("/:groupId/orders/:id/confirm", redemptionHandler.ConfirmOrder)
+	groupRoutes.POST("/:groupId/orders/:id/unsatisfied", redemptionHandler.MarkUnsatisfied)
 
 	// Points Routes (Protected - nested under groups)
 	groupRoutes.GET("/:groupId/points/me", pointsHandler.GetMyPoints)
