@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:way2we_app/core/config/app_config.dart';
+import 'package:way2we_app/core/session/current_user_repository.dart';
 import 'package:way2we_app/features/auth/bloc/authentication_bloc.dart';
 
 /// Service locator for dependency injection.
@@ -15,11 +16,13 @@ class ServiceLocator {
   Dio? _dio;
   FlutterSecureStorage? _storage;
   AuthenticationBloc? _authBloc;
+  CurrentUserRepository? _currentUserRepository;
 
   /// Initialize all dependencies. Call this once during app startup.
   void init() {
     _storage = const FlutterSecureStorage();
     _dio = _createDio();
+    _currentUserRepository = CurrentUserRepository(storage: _storage);
   }
 
   /// Set the authentication bloc for 401 handling.
@@ -43,6 +46,14 @@ class ServiceLocator {
       throw StateError('ServiceLocator not initialized. Call init() first.');
     }
     return _storage!;
+  }
+
+  /// Get the shared current user repository.
+  CurrentUserRepository get currentUserRepository {
+    if (_currentUserRepository == null) {
+      throw StateError('ServiceLocator not initialized. Call init() first.');
+    }
+    return _currentUserRepository!;
   }
 
   Dio _createDio() {
@@ -92,5 +103,6 @@ class ServiceLocator {
     _dio = null;
     _storage = null;
     _authBloc = null;
+    _currentUserRepository = null;
   }
 }

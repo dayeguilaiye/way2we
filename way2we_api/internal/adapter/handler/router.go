@@ -9,7 +9,7 @@ import (
 )
 
 // RegisterRoutes registers all routes for the application.
-func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service, authHandler *AuthHandler, userHandler *UserHandler, groupHandler *GroupHandler, groupService *group.Service, agreementHandler *AgreementHandler, rewardHandler *RewardHandler, pointsHandler *PointsHandler) {
+func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service, authHandler *AuthHandler, userHandler *UserHandler, groupHandler *GroupHandler, groupService *group.Service, agreementHandler *AgreementHandler, agreementCompletionHandler *AgreementCompletionHandler, rewardHandler *RewardHandler, pointsHandler *PointsHandler) {
 	v1 := e.Group("/v1")
 
 	// Auth Routes (Public)
@@ -64,6 +64,10 @@ func RegisterRoutes(e *echo.Echo, cfg *config.Config, authService *auth.Service,
 	groupRoutes.PUT("/:groupId/agreements/:id/status", agreementHandler.UpdateAgreementStatus)
 	groupRoutes.POST("/:groupId/agreements/:agreementId/pin", agreementHandler.PinAgreement)
 	groupRoutes.DELETE("/:groupId/agreements/:agreementId/pin", agreementHandler.UnpinAgreement)
+	groupRoutes.POST("/:groupId/agreements/:agreementId/completions", agreementCompletionHandler.CreateCompletion)
+	groupRoutes.GET("/:groupId/agreement-completions", agreementCompletionHandler.ListCompletions)
+	groupRoutes.POST("/:groupId/agreement-completions/:id/confirm", agreementCompletionHandler.ConfirmCompletion)
+	groupRoutes.POST("/:groupId/agreement-completions/:id/reject", agreementCompletionHandler.RejectCompletion)
 
 	// Reward Routes (Protected - nested under groups)
 	// Permission checks handled in service layer

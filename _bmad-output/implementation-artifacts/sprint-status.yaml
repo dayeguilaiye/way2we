@@ -71,12 +71,9 @@ development_status:
   epic-4-retrospective: optional
 
   # Epic 5: 完成约定与积分获取
-  epic-5: backlog
+  epic-5: in-progress
   5-0-points-ledger-foundation: done
-  5-1-quick-record-agreement-completion: backlog
-  5-2-view-points-balance: backlog
-  5-3-confirm-reject-agreement-completion: backlog
-  5-4-record-agreement-for-others: backlog
+  5-1-agreement-completion-lifecycle: review
   epic-5-retrospective: optional
 
   # Epic 6: 兑换与履约流程

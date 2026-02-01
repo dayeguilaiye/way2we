@@ -55,6 +55,73 @@ var (
 			},
 		},
 	}
+	// AgreementCompletionsColumns holds the columns for the "agreement_completions" table.
+	AgreementCompletionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "points", Type: field.TypeInt},
+		{Name: "require_confirmation", Type: field.TypeBool, Default: true},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"pending", "confirmed", "rejected"}, Default: "pending"},
+		{Name: "rejected_reason", Type: field.TypeString, Nullable: true, Size: 200},
+		{Name: "confirmed_at", Type: field.TypeTime, Nullable: true},
+		{Name: "rejected_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "group_id", Type: field.TypeInt},
+		{Name: "agreement_id", Type: field.TypeInt},
+		{Name: "completer_id", Type: field.TypeInt},
+		{Name: "recorder_id", Type: field.TypeInt},
+		{Name: "confirmed_by", Type: field.TypeInt, Nullable: true},
+	}
+	// AgreementCompletionsTable holds the schema information for the "agreement_completions" table.
+	AgreementCompletionsTable = &schema.Table{
+		Name:       "agreement_completions",
+		Columns:    AgreementCompletionsColumns,
+		PrimaryKey: []*schema.Column{AgreementCompletionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "agreement_completions_groups_group",
+				Columns:    []*schema.Column{AgreementCompletionsColumns[9]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "agreement_completions_agreements_agreement",
+				Columns:    []*schema.Column{AgreementCompletionsColumns[10]},
+				RefColumns: []*schema.Column{AgreementsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "agreement_completions_users_completer",
+				Columns:    []*schema.Column{AgreementCompletionsColumns[11]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "agreement_completions_users_recorder",
+				Columns:    []*schema.Column{AgreementCompletionsColumns[12]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "agreement_completions_users_confirmer",
+				Columns:    []*schema.Column{AgreementCompletionsColumns[13]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "agreementcompletion_group_id_status_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{AgreementCompletionsColumns[9], AgreementCompletionsColumns[3], AgreementCompletionsColumns[7]},
+			},
+			{
+				Name:    "agreementcompletion_group_id_completer_id_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{AgreementCompletionsColumns[9], AgreementCompletionsColumns[11], AgreementCompletionsColumns[7]},
+			},
+		},
+	}
 	// GroupsColumns holds the columns for the "groups" table.
 	GroupsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -349,6 +416,7 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AgreementsTable,
+		AgreementCompletionsTable,
 		GroupsTable,
 		GroupMembersTable,
 		MemberSummariesTable,
@@ -365,6 +433,11 @@ var (
 func init() {
 	AgreementsTable.ForeignKeys[0].RefTable = UsersTable
 	AgreementsTable.ForeignKeys[1].RefTable = GroupsTable
+	AgreementCompletionsTable.ForeignKeys[0].RefTable = GroupsTable
+	AgreementCompletionsTable.ForeignKeys[1].RefTable = AgreementsTable
+	AgreementCompletionsTable.ForeignKeys[2].RefTable = UsersTable
+	AgreementCompletionsTable.ForeignKeys[3].RefTable = UsersTable
+	AgreementCompletionsTable.ForeignKeys[4].RefTable = UsersTable
 	GroupMembersTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupMembersTable.ForeignKeys[1].RefTable = UsersTable
 	MemberSummariesTable.ForeignKeys[0].RefTable = GroupsTable

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:way2we_app/app/di.dart';
+import 'package:way2we_app/features/agreement/completion/data/providers/agreement_completion_provider.dart';
 import 'package:way2we_app/features/agreement/data/providers/agreement_provider.dart';
 import 'package:way2we_app/features/auth/bloc/authentication_bloc.dart';
 import 'package:way2we_app/features/auth/data/providers/auth_provider.dart';
@@ -34,6 +35,7 @@ class App extends StatelessWidget {
     );
     final groupProvider = GroupProvider(dio: dio);
     final agreementProvider = AgreementProvider(dio: dio);
+    final agreementCompletionProvider = AgreementCompletionProvider(dio: dio);
     final rewardProvider = RewardProvider(dio: dio);
 
     // Create AuthenticationBloc and register with ServiceLocator
@@ -52,6 +54,9 @@ class App extends StatelessWidget {
         RepositoryProvider<AuthProvider>.value(value: authProvider),
         RepositoryProvider<GroupProvider>.value(value: groupProvider),
         RepositoryProvider<AgreementProvider>.value(value: agreementProvider),
+        RepositoryProvider<AgreementCompletionProvider>.value(
+          value: agreementCompletionProvider,
+        ),
         RepositoryProvider<RewardProvider>.value(value: rewardProvider),
       ],
       child: MultiBlocProvider(

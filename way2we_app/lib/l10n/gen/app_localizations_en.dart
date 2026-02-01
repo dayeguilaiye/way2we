@@ -540,6 +540,62 @@ class AppLocalizationsEn extends AppLocalizations {
   String get agreementGenericError => 'Something went wrong. Please try again.';
 
   @override
+  String get agreementCompletionPendingTitle => 'Pending';
+
+  @override
+  String get agreementCompletionPendingEmpty => 'No pending completions';
+
+  @override
+  String get agreementCompletionConfirmSuccess => 'Confirmed';
+
+  @override
+  String get agreementCompletionRejectSuccess => 'Rejected';
+
+  @override
+  String get agreementCompletionConfirmAction => 'Confirm';
+
+  @override
+  String get agreementCompletionRejectAction => 'Reject';
+
+  @override
+  String get agreementCompletionRejectReasonHint => 'Reason (optional)';
+
+  @override
+  String get agreementCompletionUnknownAgreement => 'Unknown agreement';
+
+  @override
+  String get agreementCompletionCompleterLabel => 'Completer:';
+
+  @override
+  String get agreementCompletionRecorderLabel => 'Recorder:';
+
+  @override
+  String get agreementCompletionCreatedAtLabel => 'Requested at:';
+
+  @override
+  String get agreementCompletionSubmittedMessage => 'Submitted, waiting for confirmation';
+
+  @override
+  String get agreementCompletionConfirmedMessage => 'Recorded, points granted';
+
+  @override
+  String get agreementCompletionRecordDialogTitle => 'Record Completion';
+
+  @override
+  String get agreementCompletionRecordDialogMessage =>
+      'Confirm recording this agreement completion?';
+
+  @override
+  String get agreementCompletionRequiresConfirmationHint =>
+      'This agreement requires confirmation';
+
+  @override
+  String get agreementCompletionRecordForOthersToggle => 'Record for others';
+
+  @override
+  String get agreementCompletionRecordForLabel => 'Completer';
+
+  @override
   String get rewardTabTitle => 'Rewards';
 
   @override

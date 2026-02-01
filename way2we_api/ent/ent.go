@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/way2we/way2we_api/ent/agreement"
+	"github.com/way2we/way2we_api/ent/agreementcompletion"
 	"github.com/way2we/way2we_api/ent/group"
 	"github.com/way2we/way2we_api/ent/groupmember"
 	"github.com/way2we/way2we_api/ent/membersummary"
@@ -81,15 +82,16 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			agreement.Table:      agreement.ValidColumn,
-			group.Table:          group.ValidColumn,
-			groupmember.Table:    groupmember.ValidColumn,
-			membersummary.Table:  membersummary.ValidColumn,
-			pointlog.Table:       pointlog.ValidColumn,
-			reward.Table:         reward.ValidColumn,
-			tokenblacklist.Table: tokenblacklist.ValidColumn,
-			user.Table:           user.ValidColumn,
-			useridentity.Table:   useridentity.ValidColumn,
+			agreement.Table:           agreement.ValidColumn,
+			agreementcompletion.Table: agreementcompletion.ValidColumn,
+			group.Table:               group.ValidColumn,
+			groupmember.Table:         groupmember.ValidColumn,
+			membersummary.Table:       membersummary.ValidColumn,
+			pointlog.Table:            pointlog.ValidColumn,
+			reward.Table:              reward.ValidColumn,
+			tokenblacklist.Table:      tokenblacklist.ValidColumn,
+			user.Table:                user.ValidColumn,
+			useridentity.Table:        useridentity.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

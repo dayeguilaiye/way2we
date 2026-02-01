@@ -22,6 +22,7 @@ var (
 	ErrSourceGroupMismatch = errors.New("source group mismatch")
 	ErrPointLogNotFound    = errors.New("point log not found")
 	ErrTargetNotMember     = errors.New("target user is not a member of this group")
+	ErrPointLogDuplicate   = errors.New("point log already exists")
 )
 
 const (
@@ -217,8 +218,6 @@ func (s *Service) applyPoints(ctx context.Context, groupID int, userID int, delt
 		return nil, ErrNotGroupMember
 	}
 
-	normalizedID, sourceRef := normalizeSourceID(source.SourceID)
-
 	tx, err := s.client.Tx(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to start transaction: %w", err)
@@ -229,6 +228,69 @@ func (s *Service) applyPoints(ctx context.Context, groupID int, userID int, delt
 			_ = tx.Rollback()
 		}
 	}()
+
+	logEntry, err := s.applyPointsInTx(ctx, tx, groupID, userID, delta, source)
+	if err != nil {
+		if errors.Is(err, ErrPointLogDuplicate) {
+			_ = tx.Rollback()
+			committed = true
+			normalizedID, _ := normalizeSourceID(source.SourceID)
+			existing, lookupErr := s.client.PointLog.Query().
+				Where(
+					pointlog.GroupID(groupID),
+					pointlog.SourceType(source.SourceType),
+					pointlog.SourceID(normalizedID),
+				).
+				Only(ctx)
+			if lookupErr != nil {
+				return nil, fmt.Errorf("failed to load existing point log: %w", lookupErr)
+			}
+			return existing, nil
+		}
+		return nil, fmt.Errorf("failed to create point log: %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return nil, fmt.Errorf("failed to commit transaction: %w", err)
+	}
+	committed = true
+
+	return logEntry, nil
+}
+
+// ApplyPointsTx applies a points change within an existing transaction.
+func (s *Service) ApplyPointsTx(ctx context.Context, tx *ent.Tx, groupID int, userID int, delta int, source Source) (*ent.PointLog, error) {
+	if tx == nil {
+		return nil, fmt.Errorf("%w: tx is nil", ErrInvalidSource)
+	}
+	return s.applyPointsInTx(ctx, tx, groupID, userID, delta, source)
+}
+
+func (s *Service) applyPointsInTx(ctx context.Context, tx *ent.Tx, groupID int, userID int, delta int, source Source) (*ent.PointLog, error) {
+	if delta == 0 {
+		return nil, ErrInvalidDelta
+	}
+	if source.SourceType == "" || source.SourceID == "" {
+		return nil, ErrInvalidSource
+	}
+	if source.GroupID != 0 && source.GroupID != groupID {
+		return nil, ErrSourceGroupMismatch
+	}
+
+	exists, err := tx.GroupMember.Query().
+		Where(
+			groupmember.GroupID(groupID),
+			groupmember.UserID(userID),
+		).
+		Exist(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check membership: %w", err)
+	}
+	if !exists {
+		return nil, ErrNotGroupMember
+	}
+
+	normalizedID, sourceRef := normalizeSourceID(source.SourceID)
 
 	summary, err := tx.MemberSummary.Query().
 		Where(
@@ -285,27 +347,10 @@ func (s *Service) applyPoints(ctx context.Context, groupID int, userID int, delt
 	logEntry, err := builder.Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			_ = tx.Rollback()
-			committed = true
-			existing, lookupErr := s.client.PointLog.Query().
-				Where(
-					pointlog.GroupID(groupID),
-					pointlog.SourceType(source.SourceType),
-					pointlog.SourceID(normalizedID),
-				).
-				Only(ctx)
-			if lookupErr != nil {
-				return nil, fmt.Errorf("failed to load existing point log: %w", lookupErr)
-			}
-			return existing, nil
+			return nil, ErrPointLogDuplicate
 		}
 		return nil, fmt.Errorf("failed to create point log: %w", err)
 	}
-
-	if err := tx.Commit(); err != nil {
-		return nil, fmt.Errorf("failed to commit transaction: %w", err)
-	}
-	committed = true
 
 	return logEntry, nil
 }

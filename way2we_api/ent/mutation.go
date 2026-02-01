@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/way2we/way2we_api/ent/agreement"
+	"github.com/way2we/way2we_api/ent/agreementcompletion"
 	"github.com/way2we/way2we_api/ent/group"
 	"github.com/way2we/way2we_api/ent/groupmember"
 	"github.com/way2we/way2we_api/ent/membersummary"
@@ -32,15 +33,16 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeAgreement      = "Agreement"
-	TypeGroup          = "Group"
-	TypeGroupMember    = "GroupMember"
-	TypeMemberSummary  = "MemberSummary"
-	TypePointLog       = "PointLog"
-	TypeReward         = "Reward"
-	TypeTokenBlacklist = "TokenBlacklist"
-	TypeUser           = "User"
-	TypeUserIdentity   = "UserIdentity"
+	TypeAgreement           = "Agreement"
+	TypeAgreementCompletion = "AgreementCompletion"
+	TypeGroup               = "Group"
+	TypeGroupMember         = "GroupMember"
+	TypeMemberSummary       = "MemberSummary"
+	TypePointLog            = "PointLog"
+	TypeReward              = "Reward"
+	TypeTokenBlacklist      = "TokenBlacklist"
+	TypeUser                = "User"
+	TypeUserIdentity        = "UserIdentity"
 )
 
 // AgreementMutation represents an operation that mutates the Agreement nodes in the graph.
@@ -1205,6 +1207,1346 @@ func (m *AgreementMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Agreement edge %s", name)
+}
+
+// AgreementCompletionMutation represents an operation that mutates the AgreementCompletion nodes in the graph.
+type AgreementCompletionMutation struct {
+	config
+	op                   Op
+	typ                  string
+	id                   *int
+	points               *int
+	addpoints            *int
+	require_confirmation *bool
+	status               *agreementcompletion.Status
+	rejected_reason      *string
+	confirmed_at         *time.Time
+	rejected_at          *time.Time
+	created_at           *time.Time
+	updated_at           *time.Time
+	clearedFields        map[string]struct{}
+	group                *int
+	clearedgroup         bool
+	agreement            *int
+	clearedagreement     bool
+	completer            *int
+	clearedcompleter     bool
+	recorder             *int
+	clearedrecorder      bool
+	confirmer            *int
+	clearedconfirmer     bool
+	done                 bool
+	oldValue             func(context.Context) (*AgreementCompletion, error)
+	predicates           []predicate.AgreementCompletion
+}
+
+var _ ent.Mutation = (*AgreementCompletionMutation)(nil)
+
+// agreementcompletionOption allows management of the mutation configuration using functional options.
+type agreementcompletionOption func(*AgreementCompletionMutation)
+
+// newAgreementCompletionMutation creates new mutation for the AgreementCompletion entity.
+func newAgreementCompletionMutation(c config, op Op, opts ...agreementcompletionOption) *AgreementCompletionMutation {
+	m := &AgreementCompletionMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeAgreementCompletion,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withAgreementCompletionID sets the ID field of the mutation.
+func withAgreementCompletionID(id int) agreementcompletionOption {
+	return func(m *AgreementCompletionMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *AgreementCompletion
+		)
+		m.oldValue = func(ctx context.Context) (*AgreementCompletion, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().AgreementCompletion.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withAgreementCompletion sets the old AgreementCompletion of the mutation.
+func withAgreementCompletion(node *AgreementCompletion) agreementcompletionOption {
+	return func(m *AgreementCompletionMutation) {
+		m.oldValue = func(context.Context) (*AgreementCompletion, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m AgreementCompletionMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m AgreementCompletionMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *AgreementCompletionMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *AgreementCompletionMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().AgreementCompletion.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetGroupID sets the "group_id" field.
+func (m *AgreementCompletionMutation) SetGroupID(i int) {
+	m.group = &i
+}
+
+// GroupID returns the value of the "group_id" field in the mutation.
+func (m *AgreementCompletionMutation) GroupID() (r int, exists bool) {
+	v := m.group
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGroupID returns the old "group_id" field's value of the AgreementCompletion entity.
+// If the AgreementCompletion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AgreementCompletionMutation) OldGroupID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGroupID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGroupID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGroupID: %w", err)
+	}
+	return oldValue.GroupID, nil
+}
+
+// ResetGroupID resets all changes to the "group_id" field.
+func (m *AgreementCompletionMutation) ResetGroupID() {
+	m.group = nil
+}
+
+// SetAgreementID sets the "agreement_id" field.
+func (m *AgreementCompletionMutation) SetAgreementID(i int) {
+	m.agreement = &i
+}
+
+// AgreementID returns the value of the "agreement_id" field in the mutation.
+func (m *AgreementCompletionMutation) AgreementID() (r int, exists bool) {
+	v := m.agreement
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAgreementID returns the old "agreement_id" field's value of the AgreementCompletion entity.
+// If the AgreementCompletion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AgreementCompletionMutation) OldAgreementID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAgreementID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAgreementID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAgreementID: %w", err)
+	}
+	return oldValue.AgreementID, nil
+}
+
+// ResetAgreementID resets all changes to the "agreement_id" field.
+func (m *AgreementCompletionMutation) ResetAgreementID() {
+	m.agreement = nil
+}
+
+// SetCompleterID sets the "completer_id" field.
+func (m *AgreementCompletionMutation) SetCompleterID(i int) {
+	m.completer = &i
+}
+
+// CompleterID returns the value of the "completer_id" field in the mutation.
+func (m *AgreementCompletionMutation) CompleterID() (r int, exists bool) {
+	v := m.completer
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCompleterID returns the old "completer_id" field's value of the AgreementCompletion entity.
+// If the AgreementCompletion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AgreementCompletionMutation) OldCompleterID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCompleterID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCompleterID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCompleterID: %w", err)
+	}
+	return oldValue.CompleterID, nil
+}
+
+// ResetCompleterID resets all changes to the "completer_id" field.
+func (m *AgreementCompletionMutation) ResetCompleterID() {
+	m.completer = nil
+}
+
+// SetRecorderID sets the "recorder_id" field.
+func (m *AgreementCompletionMutation) SetRecorderID(i int) {
+	m.recorder = &i
+}
+
+// RecorderID returns the value of the "recorder_id" field in the mutation.
+func (m *AgreementCompletionMutation) RecorderID() (r int, exists bool) {
+	v := m.recorder
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRecorderID returns the old "recorder_id" field's value of the AgreementCompletion entity.
+// If the AgreementCompletion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AgreementCompletionMutation) OldRecorderID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRecorderID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRecorderID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRecorderID: %w", err)
+	}
+	return oldValue.RecorderID, nil
+}
+
+// ResetRecorderID resets all changes to the "recorder_id" field.
+func (m *AgreementCompletionMutation) ResetRecorderID() {
+	m.recorder = nil
+}
+
+// SetPoints sets the "points" field.
+func (m *AgreementCompletionMutation) SetPoints(i int) {
+	m.points = &i
+	m.addpoints = nil
+}
+
+// Points returns the value of the "points" field in the mutation.
+func (m *AgreementCompletionMutation) Points() (r int, exists bool) {
+	v := m.points
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPoints returns the old "points" field's value of the AgreementCompletion entity.
+// If the AgreementCompletion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AgreementCompletionMutation) OldPoints(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPoints is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPoints requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPoints: %w", err)
+	}
+	return oldValue.Points, nil
+}
+
+// AddPoints adds i to the "points" field.
+func (m *AgreementCompletionMutation) AddPoints(i int) {
+	if m.addpoints != nil {
+		*m.addpoints += i
+	} else {
+		m.addpoints = &i
+	}
+}
+
+// AddedPoints returns the value that was added to the "points" field in this mutation.
+func (m *AgreementCompletionMutation) AddedPoints() (r int, exists bool) {
+	v := m.addpoints
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetPoints resets all changes to the "points" field.
+func (m *AgreementCompletionMutation) ResetPoints() {
+	m.points = nil
+	m.addpoints = nil
+}
+
+// SetRequireConfirmation sets the "require_confirmation" field.
+func (m *AgreementCompletionMutation) SetRequireConfirmation(b bool) {
+	m.require_confirmation = &b
+}
+
+// RequireConfirmation returns the value of the "require_confirmation" field in the mutation.
+func (m *AgreementCompletionMutation) RequireConfirmation() (r bool, exists bool) {
+	v := m.require_confirmation
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRequireConfirmation returns the old "require_confirmation" field's value of the AgreementCompletion entity.
+// If the AgreementCompletion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AgreementCompletionMutation) OldRequireConfirmation(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRequireConfirmation is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRequireConfirmation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRequireConfirmation: %w", err)
+	}
+	return oldValue.RequireConfirmation, nil
+}
+
+// ResetRequireConfirmation resets all changes to the "require_confirmation" field.
+func (m *AgreementCompletionMutation) ResetRequireConfirmation() {
+	m.require_confirmation = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *AgreementCompletionMutation) SetStatus(a agreementcompletion.Status) {
+	m.status = &a
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *AgreementCompletionMutation) Status() (r agreementcompletion.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the AgreementCompletion entity.
+// If the AgreementCompletion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AgreementCompletionMutation) OldStatus(ctx context.Context) (v agreementcompletion.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *AgreementCompletionMutation) ResetStatus() {
+	m.status = nil
+}
+
+// SetRejectedReason sets the "rejected_reason" field.
+func (m *AgreementCompletionMutation) SetRejectedReason(s string) {
+	m.rejected_reason = &s
+}
+
+// RejectedReason returns the value of the "rejected_reason" field in the mutation.
+func (m *AgreementCompletionMutation) RejectedReason() (r string, exists bool) {
+	v := m.rejected_reason
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRejectedReason returns the old "rejected_reason" field's value of the AgreementCompletion entity.
+// If the AgreementCompletion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AgreementCompletionMutation) OldRejectedReason(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRejectedReason is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRejectedReason requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRejectedReason: %w", err)
+	}
+	return oldValue.RejectedReason, nil
+}
+
+// ClearRejectedReason clears the value of the "rejected_reason" field.
+func (m *AgreementCompletionMutation) ClearRejectedReason() {
+	m.rejected_reason = nil
+	m.clearedFields[agreementcompletion.FieldRejectedReason] = struct{}{}
+}
+
+// RejectedReasonCleared returns if the "rejected_reason" field was cleared in this mutation.
+func (m *AgreementCompletionMutation) RejectedReasonCleared() bool {
+	_, ok := m.clearedFields[agreementcompletion.FieldRejectedReason]
+	return ok
+}
+
+// ResetRejectedReason resets all changes to the "rejected_reason" field.
+func (m *AgreementCompletionMutation) ResetRejectedReason() {
+	m.rejected_reason = nil
+	delete(m.clearedFields, agreementcompletion.FieldRejectedReason)
+}
+
+// SetConfirmedBy sets the "confirmed_by" field.
+func (m *AgreementCompletionMutation) SetConfirmedBy(i int) {
+	m.confirmer = &i
+}
+
+// ConfirmedBy returns the value of the "confirmed_by" field in the mutation.
+func (m *AgreementCompletionMutation) ConfirmedBy() (r int, exists bool) {
+	v := m.confirmer
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldConfirmedBy returns the old "confirmed_by" field's value of the AgreementCompletion entity.
+// If the AgreementCompletion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AgreementCompletionMutation) OldConfirmedBy(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldConfirmedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldConfirmedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldConfirmedBy: %w", err)
+	}
+	return oldValue.ConfirmedBy, nil
+}
+
+// ClearConfirmedBy clears the value of the "confirmed_by" field.
+func (m *AgreementCompletionMutation) ClearConfirmedBy() {
+	m.confirmer = nil
+	m.clearedFields[agreementcompletion.FieldConfirmedBy] = struct{}{}
+}
+
+// ConfirmedByCleared returns if the "confirmed_by" field was cleared in this mutation.
+func (m *AgreementCompletionMutation) ConfirmedByCleared() bool {
+	_, ok := m.clearedFields[agreementcompletion.FieldConfirmedBy]
+	return ok
+}
+
+// ResetConfirmedBy resets all changes to the "confirmed_by" field.
+func (m *AgreementCompletionMutation) ResetConfirmedBy() {
+	m.confirmer = nil
+	delete(m.clearedFields, agreementcompletion.FieldConfirmedBy)
+}
+
+// SetConfirmedAt sets the "confirmed_at" field.
+func (m *AgreementCompletionMutation) SetConfirmedAt(t time.Time) {
+	m.confirmed_at = &t
+}
+
+// ConfirmedAt returns the value of the "confirmed_at" field in the mutation.
+func (m *AgreementCompletionMutation) ConfirmedAt() (r time.Time, exists bool) {
+	v := m.confirmed_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldConfirmedAt returns the old "confirmed_at" field's value of the AgreementCompletion entity.
+// If the AgreementCompletion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AgreementCompletionMutation) OldConfirmedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldConfirmedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldConfirmedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldConfirmedAt: %w", err)
+	}
+	return oldValue.ConfirmedAt, nil
+}
+
+// ClearConfirmedAt clears the value of the "confirmed_at" field.
+func (m *AgreementCompletionMutation) ClearConfirmedAt() {
+	m.confirmed_at = nil
+	m.clearedFields[agreementcompletion.FieldConfirmedAt] = struct{}{}
+}
+
+// ConfirmedAtCleared returns if the "confirmed_at" field was cleared in this mutation.
+func (m *AgreementCompletionMutation) ConfirmedAtCleared() bool {
+	_, ok := m.clearedFields[agreementcompletion.FieldConfirmedAt]
+	return ok
+}
+
+// ResetConfirmedAt resets all changes to the "confirmed_at" field.
+func (m *AgreementCompletionMutation) ResetConfirmedAt() {
+	m.confirmed_at = nil
+	delete(m.clearedFields, agreementcompletion.FieldConfirmedAt)
+}
+
+// SetRejectedAt sets the "rejected_at" field.
+func (m *AgreementCompletionMutation) SetRejectedAt(t time.Time) {
+	m.rejected_at = &t
+}
+
+// RejectedAt returns the value of the "rejected_at" field in the mutation.
+func (m *AgreementCompletionMutation) RejectedAt() (r time.Time, exists bool) {
+	v := m.rejected_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRejectedAt returns the old "rejected_at" field's value of the AgreementCompletion entity.
+// If the AgreementCompletion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AgreementCompletionMutation) OldRejectedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRejectedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRejectedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRejectedAt: %w", err)
+	}
+	return oldValue.RejectedAt, nil
+}
+
+// ClearRejectedAt clears the value of the "rejected_at" field.
+func (m *AgreementCompletionMutation) ClearRejectedAt() {
+	m.rejected_at = nil
+	m.clearedFields[agreementcompletion.FieldRejectedAt] = struct{}{}
+}
+
+// RejectedAtCleared returns if the "rejected_at" field was cleared in this mutation.
+func (m *AgreementCompletionMutation) RejectedAtCleared() bool {
+	_, ok := m.clearedFields[agreementcompletion.FieldRejectedAt]
+	return ok
+}
+
+// ResetRejectedAt resets all changes to the "rejected_at" field.
+func (m *AgreementCompletionMutation) ResetRejectedAt() {
+	m.rejected_at = nil
+	delete(m.clearedFields, agreementcompletion.FieldRejectedAt)
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *AgreementCompletionMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *AgreementCompletionMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the AgreementCompletion entity.
+// If the AgreementCompletion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AgreementCompletionMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *AgreementCompletionMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *AgreementCompletionMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *AgreementCompletionMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the AgreementCompletion entity.
+// If the AgreementCompletion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AgreementCompletionMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *AgreementCompletionMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// ClearGroup clears the "group" edge to the Group entity.
+func (m *AgreementCompletionMutation) ClearGroup() {
+	m.clearedgroup = true
+	m.clearedFields[agreementcompletion.FieldGroupID] = struct{}{}
+}
+
+// GroupCleared reports if the "group" edge to the Group entity was cleared.
+func (m *AgreementCompletionMutation) GroupCleared() bool {
+	return m.clearedgroup
+}
+
+// GroupIDs returns the "group" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// GroupID instead. It exists only for internal usage by the builders.
+func (m *AgreementCompletionMutation) GroupIDs() (ids []int) {
+	if id := m.group; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetGroup resets all changes to the "group" edge.
+func (m *AgreementCompletionMutation) ResetGroup() {
+	m.group = nil
+	m.clearedgroup = false
+}
+
+// ClearAgreement clears the "agreement" edge to the Agreement entity.
+func (m *AgreementCompletionMutation) ClearAgreement() {
+	m.clearedagreement = true
+	m.clearedFields[agreementcompletion.FieldAgreementID] = struct{}{}
+}
+
+// AgreementCleared reports if the "agreement" edge to the Agreement entity was cleared.
+func (m *AgreementCompletionMutation) AgreementCleared() bool {
+	return m.clearedagreement
+}
+
+// AgreementIDs returns the "agreement" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// AgreementID instead. It exists only for internal usage by the builders.
+func (m *AgreementCompletionMutation) AgreementIDs() (ids []int) {
+	if id := m.agreement; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetAgreement resets all changes to the "agreement" edge.
+func (m *AgreementCompletionMutation) ResetAgreement() {
+	m.agreement = nil
+	m.clearedagreement = false
+}
+
+// ClearCompleter clears the "completer" edge to the User entity.
+func (m *AgreementCompletionMutation) ClearCompleter() {
+	m.clearedcompleter = true
+	m.clearedFields[agreementcompletion.FieldCompleterID] = struct{}{}
+}
+
+// CompleterCleared reports if the "completer" edge to the User entity was cleared.
+func (m *AgreementCompletionMutation) CompleterCleared() bool {
+	return m.clearedcompleter
+}
+
+// CompleterIDs returns the "completer" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// CompleterID instead. It exists only for internal usage by the builders.
+func (m *AgreementCompletionMutation) CompleterIDs() (ids []int) {
+	if id := m.completer; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetCompleter resets all changes to the "completer" edge.
+func (m *AgreementCompletionMutation) ResetCompleter() {
+	m.completer = nil
+	m.clearedcompleter = false
+}
+
+// ClearRecorder clears the "recorder" edge to the User entity.
+func (m *AgreementCompletionMutation) ClearRecorder() {
+	m.clearedrecorder = true
+	m.clearedFields[agreementcompletion.FieldRecorderID] = struct{}{}
+}
+
+// RecorderCleared reports if the "recorder" edge to the User entity was cleared.
+func (m *AgreementCompletionMutation) RecorderCleared() bool {
+	return m.clearedrecorder
+}
+
+// RecorderIDs returns the "recorder" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// RecorderID instead. It exists only for internal usage by the builders.
+func (m *AgreementCompletionMutation) RecorderIDs() (ids []int) {
+	if id := m.recorder; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetRecorder resets all changes to the "recorder" edge.
+func (m *AgreementCompletionMutation) ResetRecorder() {
+	m.recorder = nil
+	m.clearedrecorder = false
+}
+
+// SetConfirmerID sets the "confirmer" edge to the User entity by id.
+func (m *AgreementCompletionMutation) SetConfirmerID(id int) {
+	m.confirmer = &id
+}
+
+// ClearConfirmer clears the "confirmer" edge to the User entity.
+func (m *AgreementCompletionMutation) ClearConfirmer() {
+	m.clearedconfirmer = true
+	m.clearedFields[agreementcompletion.FieldConfirmedBy] = struct{}{}
+}
+
+// ConfirmerCleared reports if the "confirmer" edge to the User entity was cleared.
+func (m *AgreementCompletionMutation) ConfirmerCleared() bool {
+	return m.ConfirmedByCleared() || m.clearedconfirmer
+}
+
+// ConfirmerID returns the "confirmer" edge ID in the mutation.
+func (m *AgreementCompletionMutation) ConfirmerID() (id int, exists bool) {
+	if m.confirmer != nil {
+		return *m.confirmer, true
+	}
+	return
+}
+
+// ConfirmerIDs returns the "confirmer" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ConfirmerID instead. It exists only for internal usage by the builders.
+func (m *AgreementCompletionMutation) ConfirmerIDs() (ids []int) {
+	if id := m.confirmer; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetConfirmer resets all changes to the "confirmer" edge.
+func (m *AgreementCompletionMutation) ResetConfirmer() {
+	m.confirmer = nil
+	m.clearedconfirmer = false
+}
+
+// Where appends a list predicates to the AgreementCompletionMutation builder.
+func (m *AgreementCompletionMutation) Where(ps ...predicate.AgreementCompletion) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the AgreementCompletionMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *AgreementCompletionMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.AgreementCompletion, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *AgreementCompletionMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *AgreementCompletionMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (AgreementCompletion).
+func (m *AgreementCompletionMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *AgreementCompletionMutation) Fields() []string {
+	fields := make([]string, 0, 13)
+	if m.group != nil {
+		fields = append(fields, agreementcompletion.FieldGroupID)
+	}
+	if m.agreement != nil {
+		fields = append(fields, agreementcompletion.FieldAgreementID)
+	}
+	if m.completer != nil {
+		fields = append(fields, agreementcompletion.FieldCompleterID)
+	}
+	if m.recorder != nil {
+		fields = append(fields, agreementcompletion.FieldRecorderID)
+	}
+	if m.points != nil {
+		fields = append(fields, agreementcompletion.FieldPoints)
+	}
+	if m.require_confirmation != nil {
+		fields = append(fields, agreementcompletion.FieldRequireConfirmation)
+	}
+	if m.status != nil {
+		fields = append(fields, agreementcompletion.FieldStatus)
+	}
+	if m.rejected_reason != nil {
+		fields = append(fields, agreementcompletion.FieldRejectedReason)
+	}
+	if m.confirmer != nil {
+		fields = append(fields, agreementcompletion.FieldConfirmedBy)
+	}
+	if m.confirmed_at != nil {
+		fields = append(fields, agreementcompletion.FieldConfirmedAt)
+	}
+	if m.rejected_at != nil {
+		fields = append(fields, agreementcompletion.FieldRejectedAt)
+	}
+	if m.created_at != nil {
+		fields = append(fields, agreementcompletion.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, agreementcompletion.FieldUpdatedAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *AgreementCompletionMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case agreementcompletion.FieldGroupID:
+		return m.GroupID()
+	case agreementcompletion.FieldAgreementID:
+		return m.AgreementID()
+	case agreementcompletion.FieldCompleterID:
+		return m.CompleterID()
+	case agreementcompletion.FieldRecorderID:
+		return m.RecorderID()
+	case agreementcompletion.FieldPoints:
+		return m.Points()
+	case agreementcompletion.FieldRequireConfirmation:
+		return m.RequireConfirmation()
+	case agreementcompletion.FieldStatus:
+		return m.Status()
+	case agreementcompletion.FieldRejectedReason:
+		return m.RejectedReason()
+	case agreementcompletion.FieldConfirmedBy:
+		return m.ConfirmedBy()
+	case agreementcompletion.FieldConfirmedAt:
+		return m.ConfirmedAt()
+	case agreementcompletion.FieldRejectedAt:
+		return m.RejectedAt()
+	case agreementcompletion.FieldCreatedAt:
+		return m.CreatedAt()
+	case agreementcompletion.FieldUpdatedAt:
+		return m.UpdatedAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *AgreementCompletionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case agreementcompletion.FieldGroupID:
+		return m.OldGroupID(ctx)
+	case agreementcompletion.FieldAgreementID:
+		return m.OldAgreementID(ctx)
+	case agreementcompletion.FieldCompleterID:
+		return m.OldCompleterID(ctx)
+	case agreementcompletion.FieldRecorderID:
+		return m.OldRecorderID(ctx)
+	case agreementcompletion.FieldPoints:
+		return m.OldPoints(ctx)
+	case agreementcompletion.FieldRequireConfirmation:
+		return m.OldRequireConfirmation(ctx)
+	case agreementcompletion.FieldStatus:
+		return m.OldStatus(ctx)
+	case agreementcompletion.FieldRejectedReason:
+		return m.OldRejectedReason(ctx)
+	case agreementcompletion.FieldConfirmedBy:
+		return m.OldConfirmedBy(ctx)
+	case agreementcompletion.FieldConfirmedAt:
+		return m.OldConfirmedAt(ctx)
+	case agreementcompletion.FieldRejectedAt:
+		return m.OldRejectedAt(ctx)
+	case agreementcompletion.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case agreementcompletion.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown AgreementCompletion field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *AgreementCompletionMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case agreementcompletion.FieldGroupID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGroupID(v)
+		return nil
+	case agreementcompletion.FieldAgreementID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAgreementID(v)
+		return nil
+	case agreementcompletion.FieldCompleterID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCompleterID(v)
+		return nil
+	case agreementcompletion.FieldRecorderID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRecorderID(v)
+		return nil
+	case agreementcompletion.FieldPoints:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPoints(v)
+		return nil
+	case agreementcompletion.FieldRequireConfirmation:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRequireConfirmation(v)
+		return nil
+	case agreementcompletion.FieldStatus:
+		v, ok := value.(agreementcompletion.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case agreementcompletion.FieldRejectedReason:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRejectedReason(v)
+		return nil
+	case agreementcompletion.FieldConfirmedBy:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetConfirmedBy(v)
+		return nil
+	case agreementcompletion.FieldConfirmedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetConfirmedAt(v)
+		return nil
+	case agreementcompletion.FieldRejectedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRejectedAt(v)
+		return nil
+	case agreementcompletion.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case agreementcompletion.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown AgreementCompletion field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *AgreementCompletionMutation) AddedFields() []string {
+	var fields []string
+	if m.addpoints != nil {
+		fields = append(fields, agreementcompletion.FieldPoints)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *AgreementCompletionMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case agreementcompletion.FieldPoints:
+		return m.AddedPoints()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *AgreementCompletionMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case agreementcompletion.FieldPoints:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPoints(v)
+		return nil
+	}
+	return fmt.Errorf("unknown AgreementCompletion numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *AgreementCompletionMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(agreementcompletion.FieldRejectedReason) {
+		fields = append(fields, agreementcompletion.FieldRejectedReason)
+	}
+	if m.FieldCleared(agreementcompletion.FieldConfirmedBy) {
+		fields = append(fields, agreementcompletion.FieldConfirmedBy)
+	}
+	if m.FieldCleared(agreementcompletion.FieldConfirmedAt) {
+		fields = append(fields, agreementcompletion.FieldConfirmedAt)
+	}
+	if m.FieldCleared(agreementcompletion.FieldRejectedAt) {
+		fields = append(fields, agreementcompletion.FieldRejectedAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *AgreementCompletionMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *AgreementCompletionMutation) ClearField(name string) error {
+	switch name {
+	case agreementcompletion.FieldRejectedReason:
+		m.ClearRejectedReason()
+		return nil
+	case agreementcompletion.FieldConfirmedBy:
+		m.ClearConfirmedBy()
+		return nil
+	case agreementcompletion.FieldConfirmedAt:
+		m.ClearConfirmedAt()
+		return nil
+	case agreementcompletion.FieldRejectedAt:
+		m.ClearRejectedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown AgreementCompletion nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *AgreementCompletionMutation) ResetField(name string) error {
+	switch name {
+	case agreementcompletion.FieldGroupID:
+		m.ResetGroupID()
+		return nil
+	case agreementcompletion.FieldAgreementID:
+		m.ResetAgreementID()
+		return nil
+	case agreementcompletion.FieldCompleterID:
+		m.ResetCompleterID()
+		return nil
+	case agreementcompletion.FieldRecorderID:
+		m.ResetRecorderID()
+		return nil
+	case agreementcompletion.FieldPoints:
+		m.ResetPoints()
+		return nil
+	case agreementcompletion.FieldRequireConfirmation:
+		m.ResetRequireConfirmation()
+		return nil
+	case agreementcompletion.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case agreementcompletion.FieldRejectedReason:
+		m.ResetRejectedReason()
+		return nil
+	case agreementcompletion.FieldConfirmedBy:
+		m.ResetConfirmedBy()
+		return nil
+	case agreementcompletion.FieldConfirmedAt:
+		m.ResetConfirmedAt()
+		return nil
+	case agreementcompletion.FieldRejectedAt:
+		m.ResetRejectedAt()
+		return nil
+	case agreementcompletion.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case agreementcompletion.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown AgreementCompletion field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *AgreementCompletionMutation) AddedEdges() []string {
+	edges := make([]string, 0, 5)
+	if m.group != nil {
+		edges = append(edges, agreementcompletion.EdgeGroup)
+	}
+	if m.agreement != nil {
+		edges = append(edges, agreementcompletion.EdgeAgreement)
+	}
+	if m.completer != nil {
+		edges = append(edges, agreementcompletion.EdgeCompleter)
+	}
+	if m.recorder != nil {
+		edges = append(edges, agreementcompletion.EdgeRecorder)
+	}
+	if m.confirmer != nil {
+		edges = append(edges, agreementcompletion.EdgeConfirmer)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *AgreementCompletionMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case agreementcompletion.EdgeGroup:
+		if id := m.group; id != nil {
+			return []ent.Value{*id}
+		}
+	case agreementcompletion.EdgeAgreement:
+		if id := m.agreement; id != nil {
+			return []ent.Value{*id}
+		}
+	case agreementcompletion.EdgeCompleter:
+		if id := m.completer; id != nil {
+			return []ent.Value{*id}
+		}
+	case agreementcompletion.EdgeRecorder:
+		if id := m.recorder; id != nil {
+			return []ent.Value{*id}
+		}
+	case agreementcompletion.EdgeConfirmer:
+		if id := m.confirmer; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *AgreementCompletionMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 5)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *AgreementCompletionMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *AgreementCompletionMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 5)
+	if m.clearedgroup {
+		edges = append(edges, agreementcompletion.EdgeGroup)
+	}
+	if m.clearedagreement {
+		edges = append(edges, agreementcompletion.EdgeAgreement)
+	}
+	if m.clearedcompleter {
+		edges = append(edges, agreementcompletion.EdgeCompleter)
+	}
+	if m.clearedrecorder {
+		edges = append(edges, agreementcompletion.EdgeRecorder)
+	}
+	if m.clearedconfirmer {
+		edges = append(edges, agreementcompletion.EdgeConfirmer)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *AgreementCompletionMutation) EdgeCleared(name string) bool {
+	switch name {
+	case agreementcompletion.EdgeGroup:
+		return m.clearedgroup
+	case agreementcompletion.EdgeAgreement:
+		return m.clearedagreement
+	case agreementcompletion.EdgeCompleter:
+		return m.clearedcompleter
+	case agreementcompletion.EdgeRecorder:
+		return m.clearedrecorder
+	case agreementcompletion.EdgeConfirmer:
+		return m.clearedconfirmer
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *AgreementCompletionMutation) ClearEdge(name string) error {
+	switch name {
+	case agreementcompletion.EdgeGroup:
+		m.ClearGroup()
+		return nil
+	case agreementcompletion.EdgeAgreement:
+		m.ClearAgreement()
+		return nil
+	case agreementcompletion.EdgeCompleter:
+		m.ClearCompleter()
+		return nil
+	case agreementcompletion.EdgeRecorder:
+		m.ClearRecorder()
+		return nil
+	case agreementcompletion.EdgeConfirmer:
+		m.ClearConfirmer()
+		return nil
+	}
+	return fmt.Errorf("unknown AgreementCompletion unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *AgreementCompletionMutation) ResetEdge(name string) error {
+	switch name {
+	case agreementcompletion.EdgeGroup:
+		m.ResetGroup()
+		return nil
+	case agreementcompletion.EdgeAgreement:
+		m.ResetAgreement()
+		return nil
+	case agreementcompletion.EdgeCompleter:
+		m.ResetCompleter()
+		return nil
+	case agreementcompletion.EdgeRecorder:
+		m.ResetRecorder()
+		return nil
+	case agreementcompletion.EdgeConfirmer:
+		m.ResetConfirmer()
+		return nil
+	}
+	return fmt.Errorf("unknown AgreementCompletion edge %s", name)
 }
 
 // GroupMutation represents an operation that mutates the Group nodes in the graph.

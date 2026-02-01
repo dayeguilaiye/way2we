@@ -540,6 +540,60 @@ class AppLocalizationsZh extends AppLocalizations {
   String get agreementGenericError => '操作失败，请稍后重试';
 
   @override
+  String get agreementCompletionPendingTitle => '待确认';
+
+  @override
+  String get agreementCompletionPendingEmpty => '暂无待确认记录';
+
+  @override
+  String get agreementCompletionConfirmSuccess => '已确认';
+
+  @override
+  String get agreementCompletionRejectSuccess => '已驳回';
+
+  @override
+  String get agreementCompletionConfirmAction => '确认';
+
+  @override
+  String get agreementCompletionRejectAction => '驳回';
+
+  @override
+  String get agreementCompletionRejectReasonHint => '驳回原因（可选）';
+
+  @override
+  String get agreementCompletionUnknownAgreement => '未知约定';
+
+  @override
+  String get agreementCompletionCompleterLabel => '完成者：';
+
+  @override
+  String get agreementCompletionRecorderLabel => '记录人：';
+
+  @override
+  String get agreementCompletionCreatedAtLabel => '申请时间：';
+
+  @override
+  String get agreementCompletionSubmittedMessage => '已提交，等待确认';
+
+  @override
+  String get agreementCompletionConfirmedMessage => '记录完成，积分已入账';
+
+  @override
+  String get agreementCompletionRecordDialogTitle => '记录完成';
+
+  @override
+  String get agreementCompletionRecordDialogMessage => '确认记录该约定完成吗？';
+
+  @override
+  String get agreementCompletionRequiresConfirmationHint => '该约定需要他人确认';
+
+  @override
+  String get agreementCompletionRecordForOthersToggle => '为他人记录';
+
+  @override
+  String get agreementCompletionRecordForLabel => '完成者';
+
+  @override
   String get rewardTabTitle => '兑换/商品';
 
   @override

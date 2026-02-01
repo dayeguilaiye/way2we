@@ -15,6 +15,7 @@ import (
 	"github.com/way2we/way2we_api/internal/adapter/handler"
 	"github.com/way2we/way2we_api/internal/adapter/storage"
 	"github.com/way2we/way2we_api/internal/app/agreement"
+	"github.com/way2we/way2we_api/internal/app/agreementcompletion"
 	"github.com/way2we/way2we_api/internal/app/auth"
 	"github.com/way2we/way2we_api/internal/app/group"
 	"github.com/way2we/way2we_api/internal/app/points"
@@ -89,16 +90,19 @@ func main() {
 	rewardService := reward.NewService(client, groupService)
 	// Initialize points service
 	pointsService := points.NewService(client)
+	// Initialize agreement completion service
+	agreementCompletionService := agreementcompletion.NewService(client, groupService, pointsService)
 
 	// Register routes
 	authHandler := handler.NewAuthHandler(authService)
 	userHandler := handler.NewUserHandler(userService, storageProvider)
 	groupHandler := handler.NewGroupHandler(groupService)
 	agreementHandler := handler.NewAgreementHandler(agreementService)
+	agreementCompletionHandler := handler.NewAgreementCompletionHandler(agreementCompletionService)
 	rewardHandler := handler.NewRewardHandler(rewardService, storageProvider)
 	pointsHandler := handler.NewPointsHandler(pointsService)
 
-	handler.RegisterRoutes(e, cfg, authService, authHandler, userHandler, groupHandler, groupService, agreementHandler, rewardHandler, pointsHandler)
+	handler.RegisterRoutes(e, cfg, authService, authHandler, userHandler, groupHandler, groupService, agreementHandler, agreementCompletionHandler, rewardHandler, pointsHandler)
 
 	// Routes
 	e.GET("/", func(c echo.Context) error {

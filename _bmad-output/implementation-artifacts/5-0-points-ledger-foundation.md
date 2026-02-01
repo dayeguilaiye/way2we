@@ -131,11 +131,6 @@ so that **所有积分变动可审计、余额可快速读取并支撑兑换/撤
 - Service：幂等（重复 source 不重复入账）、事务一致性（故障回滚）、负余额允许、并发更新不丢失
 - Handler：JWT + 群组成员校验、参数校验、错误码映射、成功返回字段为 `snake_case`
 
-### Latest Tech Information
-
-- Flutter 最新稳定版发布说明显示为 3.27.0；本故事不升级版本，仅作信息参考 citeturn1search0
-- flutter_bloc 最新发布说明为 9.1.1；本故事不升级版本，仅作信息参考 citeturn1search1
-
 ### Project Context Reference
 
 - 未找到 `project-context.md`，无额外项目上下文可引用
@@ -150,11 +145,14 @@ so that **所有积分变动可审计、余额可快速读取并支撑兑换/撤
 - [Source: _bmad-output/project-planning-artifacts/ux-design-specification.md#PointsCard]
 - [Source: way2we_api/go.mod]
 - [Source: way2we_api/ent/schema/groupmember.go]
+- [Source: way2we_api/internal/app/points/service.go]
+- [Source: way2we_api/internal/adapter/handler/points_handler.go]
+- [Source: way2we_api/internal/adapter/handler/router.go]
 
 ## Story Completion Status
 
 - Status: done
-- Note: Ultimate context engine analysis completed - comprehensive developer guide created
+- Note: 积分账本与余额汇总已实现并接入 API（/points/me 与 /points/logs）
 
 ## Dev Agent Record
 

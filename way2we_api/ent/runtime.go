@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/way2we/way2we_api/ent/agreement"
+	"github.com/way2we/way2we_api/ent/agreementcompletion"
 	"github.com/way2we/way2we_api/ent/group"
 	"github.com/way2we/way2we_api/ent/groupmember"
 	"github.com/way2we/way2we_api/ent/membersummary"
@@ -77,6 +78,26 @@ func init() {
 	agreement.DefaultUpdatedAt = agreementDescUpdatedAt.Default.(func() time.Time)
 	// agreement.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	agreement.UpdateDefaultUpdatedAt = agreementDescUpdatedAt.UpdateDefault.(func() time.Time)
+	agreementcompletionFields := schema.AgreementCompletion{}.Fields()
+	_ = agreementcompletionFields
+	// agreementcompletionDescRequireConfirmation is the schema descriptor for require_confirmation field.
+	agreementcompletionDescRequireConfirmation := agreementcompletionFields[5].Descriptor()
+	// agreementcompletion.DefaultRequireConfirmation holds the default value on creation for the require_confirmation field.
+	agreementcompletion.DefaultRequireConfirmation = agreementcompletionDescRequireConfirmation.Default.(bool)
+	// agreementcompletionDescRejectedReason is the schema descriptor for rejected_reason field.
+	agreementcompletionDescRejectedReason := agreementcompletionFields[7].Descriptor()
+	// agreementcompletion.RejectedReasonValidator is a validator for the "rejected_reason" field. It is called by the builders before save.
+	agreementcompletion.RejectedReasonValidator = agreementcompletionDescRejectedReason.Validators[0].(func(string) error)
+	// agreementcompletionDescCreatedAt is the schema descriptor for created_at field.
+	agreementcompletionDescCreatedAt := agreementcompletionFields[11].Descriptor()
+	// agreementcompletion.DefaultCreatedAt holds the default value on creation for the created_at field.
+	agreementcompletion.DefaultCreatedAt = agreementcompletionDescCreatedAt.Default.(func() time.Time)
+	// agreementcompletionDescUpdatedAt is the schema descriptor for updated_at field.
+	agreementcompletionDescUpdatedAt := agreementcompletionFields[12].Descriptor()
+	// agreementcompletion.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	agreementcompletion.DefaultUpdatedAt = agreementcompletionDescUpdatedAt.Default.(func() time.Time)
+	// agreementcompletion.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	agreementcompletion.UpdateDefaultUpdatedAt = agreementcompletionDescUpdatedAt.UpdateDefault.(func() time.Time)
 	groupFields := schema.Group{}.Fields()
 	_ = groupFields
 	// groupDescName is the schema descriptor for name field.

@@ -21,6 +21,18 @@ func (f AgreementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AgreementMutation", m)
 }
 
+// The AgreementCompletionFunc type is an adapter to allow the use of ordinary
+// function as AgreementCompletion mutator.
+type AgreementCompletionFunc func(context.Context, *ent.AgreementCompletionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AgreementCompletionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AgreementCompletionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AgreementCompletionMutation", m)
+}
+
 // The GroupFunc type is an adapter to allow the use of ordinary
 // function as Group mutator.
 type GroupFunc func(context.Context, *ent.GroupMutation) (ent.Value, error)

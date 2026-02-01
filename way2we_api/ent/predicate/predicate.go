@@ -9,6 +9,9 @@ import (
 // Agreement is the predicate function for agreement builders.
 type Agreement func(*sql.Selector)
 
+// AgreementCompletion is the predicate function for agreementcompletion builders.
+type AgreementCompletion func(*sql.Selector)
+
 // Group is the predicate function for group builders.
 type Group func(*sql.Selector)
 

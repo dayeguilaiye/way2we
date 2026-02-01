@@ -1117,6 +1117,25 @@ abstract class AppLocalizations {
   /// **'Something went wrong. Please try again.'**
   String get agreementGenericError;
 
+  String get agreementCompletionPendingTitle;
+  String get agreementCompletionPendingEmpty;
+  String get agreementCompletionConfirmSuccess;
+  String get agreementCompletionRejectSuccess;
+  String get agreementCompletionConfirmAction;
+  String get agreementCompletionRejectAction;
+  String get agreementCompletionRejectReasonHint;
+  String get agreementCompletionUnknownAgreement;
+  String get agreementCompletionCompleterLabel;
+  String get agreementCompletionRecorderLabel;
+  String get agreementCompletionCreatedAtLabel;
+  String get agreementCompletionSubmittedMessage;
+  String get agreementCompletionConfirmedMessage;
+  String get agreementCompletionRecordDialogTitle;
+  String get agreementCompletionRecordDialogMessage;
+  String get agreementCompletionRequiresConfirmationHint;
+  String get agreementCompletionRecordForOthersToggle;
+  String get agreementCompletionRecordForLabel;
+
   /// No description provided for @rewardTabTitle.
   ///
   /// In en, this message translates to:

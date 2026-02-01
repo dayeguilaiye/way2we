@@ -14,6 +14,8 @@ type Tx struct {
 	config
 	// Agreement is the client for interacting with the Agreement builders.
 	Agreement *AgreementClient
+	// AgreementCompletion is the client for interacting with the AgreementCompletion builders.
+	AgreementCompletion *AgreementCompletionClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// GroupMember is the client for interacting with the GroupMember builders.
@@ -162,6 +164,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Agreement = NewAgreementClient(tx.config)
+	tx.AgreementCompletion = NewAgreementCompletionClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
 	tx.GroupMember = NewGroupMemberClient(tx.config)
 	tx.MemberSummary = NewMemberSummaryClient(tx.config)

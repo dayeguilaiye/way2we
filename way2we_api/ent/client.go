@@ -16,6 +16,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/way2we/way2we_api/ent/agreement"
+	"github.com/way2we/way2we_api/ent/agreementcompletion"
 	"github.com/way2we/way2we_api/ent/group"
 	"github.com/way2we/way2we_api/ent/groupmember"
 	"github.com/way2we/way2we_api/ent/membersummary"
@@ -33,6 +34,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// Agreement is the client for interacting with the Agreement builders.
 	Agreement *AgreementClient
+	// AgreementCompletion is the client for interacting with the AgreementCompletion builders.
+	AgreementCompletion *AgreementCompletionClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// GroupMember is the client for interacting with the GroupMember builders.
@@ -61,6 +64,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Agreement = NewAgreementClient(c.config)
+	c.AgreementCompletion = NewAgreementCompletionClient(c.config)
 	c.Group = NewGroupClient(c.config)
 	c.GroupMember = NewGroupMemberClient(c.config)
 	c.MemberSummary = NewMemberSummaryClient(c.config)
@@ -159,17 +163,18 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:            ctx,
-		config:         cfg,
-		Agreement:      NewAgreementClient(cfg),
-		Group:          NewGroupClient(cfg),
-		GroupMember:    NewGroupMemberClient(cfg),
-		MemberSummary:  NewMemberSummaryClient(cfg),
-		PointLog:       NewPointLogClient(cfg),
-		Reward:         NewRewardClient(cfg),
-		TokenBlacklist: NewTokenBlacklistClient(cfg),
-		User:           NewUserClient(cfg),
-		UserIdentity:   NewUserIdentityClient(cfg),
+		ctx:                 ctx,
+		config:              cfg,
+		Agreement:           NewAgreementClient(cfg),
+		AgreementCompletion: NewAgreementCompletionClient(cfg),
+		Group:               NewGroupClient(cfg),
+		GroupMember:         NewGroupMemberClient(cfg),
+		MemberSummary:       NewMemberSummaryClient(cfg),
+		PointLog:            NewPointLogClient(cfg),
+		Reward:              NewRewardClient(cfg),
+		TokenBlacklist:      NewTokenBlacklistClient(cfg),
+		User:                NewUserClient(cfg),
+		UserIdentity:        NewUserIdentityClient(cfg),
 	}, nil
 }
 
@@ -187,17 +192,18 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:            ctx,
-		config:         cfg,
-		Agreement:      NewAgreementClient(cfg),
-		Group:          NewGroupClient(cfg),
-		GroupMember:    NewGroupMemberClient(cfg),
-		MemberSummary:  NewMemberSummaryClient(cfg),
-		PointLog:       NewPointLogClient(cfg),
-		Reward:         NewRewardClient(cfg),
-		TokenBlacklist: NewTokenBlacklistClient(cfg),
-		User:           NewUserClient(cfg),
-		UserIdentity:   NewUserIdentityClient(cfg),
+		ctx:                 ctx,
+		config:              cfg,
+		Agreement:           NewAgreementClient(cfg),
+		AgreementCompletion: NewAgreementCompletionClient(cfg),
+		Group:               NewGroupClient(cfg),
+		GroupMember:         NewGroupMemberClient(cfg),
+		MemberSummary:       NewMemberSummaryClient(cfg),
+		PointLog:            NewPointLogClient(cfg),
+		Reward:              NewRewardClient(cfg),
+		TokenBlacklist:      NewTokenBlacklistClient(cfg),
+		User:                NewUserClient(cfg),
+		UserIdentity:        NewUserIdentityClient(cfg),
 	}, nil
 }
 
@@ -227,8 +233,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Agreement, c.Group, c.GroupMember, c.MemberSummary, c.PointLog, c.Reward,
-		c.TokenBlacklist, c.User, c.UserIdentity,
+		c.Agreement, c.AgreementCompletion, c.Group, c.GroupMember, c.MemberSummary,
+		c.PointLog, c.Reward, c.TokenBlacklist, c.User, c.UserIdentity,
 	} {
 		n.Use(hooks...)
 	}
@@ -238,8 +244,8 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Agreement, c.Group, c.GroupMember, c.MemberSummary, c.PointLog, c.Reward,
-		c.TokenBlacklist, c.User, c.UserIdentity,
+		c.Agreement, c.AgreementCompletion, c.Group, c.GroupMember, c.MemberSummary,
+		c.PointLog, c.Reward, c.TokenBlacklist, c.User, c.UserIdentity,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -250,6 +256,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *AgreementMutation:
 		return c.Agreement.mutate(ctx, m)
+	case *AgreementCompletionMutation:
+		return c.AgreementCompletion.mutate(ctx, m)
 	case *GroupMutation:
 		return c.Group.mutate(ctx, m)
 	case *GroupMemberMutation:
@@ -449,6 +457,219 @@ func (c *AgreementClient) mutate(ctx context.Context, m *AgreementMutation) (Val
 		return (&AgreementDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Agreement mutation op: %q", m.Op())
+	}
+}
+
+// AgreementCompletionClient is a client for the AgreementCompletion schema.
+type AgreementCompletionClient struct {
+	config
+}
+
+// NewAgreementCompletionClient returns a client for the AgreementCompletion from the given config.
+func NewAgreementCompletionClient(c config) *AgreementCompletionClient {
+	return &AgreementCompletionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `agreementcompletion.Hooks(f(g(h())))`.
+func (c *AgreementCompletionClient) Use(hooks ...Hook) {
+	c.hooks.AgreementCompletion = append(c.hooks.AgreementCompletion, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `agreementcompletion.Intercept(f(g(h())))`.
+func (c *AgreementCompletionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AgreementCompletion = append(c.inters.AgreementCompletion, interceptors...)
+}
+
+// Create returns a builder for creating a AgreementCompletion entity.
+func (c *AgreementCompletionClient) Create() *AgreementCompletionCreate {
+	mutation := newAgreementCompletionMutation(c.config, OpCreate)
+	return &AgreementCompletionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AgreementCompletion entities.
+func (c *AgreementCompletionClient) CreateBulk(builders ...*AgreementCompletionCreate) *AgreementCompletionCreateBulk {
+	return &AgreementCompletionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AgreementCompletionClient) MapCreateBulk(slice any, setFunc func(*AgreementCompletionCreate, int)) *AgreementCompletionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AgreementCompletionCreateBulk{err: fmt.Errorf("calling to AgreementCompletionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AgreementCompletionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AgreementCompletionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AgreementCompletion.
+func (c *AgreementCompletionClient) Update() *AgreementCompletionUpdate {
+	mutation := newAgreementCompletionMutation(c.config, OpUpdate)
+	return &AgreementCompletionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AgreementCompletionClient) UpdateOne(_m *AgreementCompletion) *AgreementCompletionUpdateOne {
+	mutation := newAgreementCompletionMutation(c.config, OpUpdateOne, withAgreementCompletion(_m))
+	return &AgreementCompletionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AgreementCompletionClient) UpdateOneID(id int) *AgreementCompletionUpdateOne {
+	mutation := newAgreementCompletionMutation(c.config, OpUpdateOne, withAgreementCompletionID(id))
+	return &AgreementCompletionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AgreementCompletion.
+func (c *AgreementCompletionClient) Delete() *AgreementCompletionDelete {
+	mutation := newAgreementCompletionMutation(c.config, OpDelete)
+	return &AgreementCompletionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AgreementCompletionClient) DeleteOne(_m *AgreementCompletion) *AgreementCompletionDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AgreementCompletionClient) DeleteOneID(id int) *AgreementCompletionDeleteOne {
+	builder := c.Delete().Where(agreementcompletion.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AgreementCompletionDeleteOne{builder}
+}
+
+// Query returns a query builder for AgreementCompletion.
+func (c *AgreementCompletionClient) Query() *AgreementCompletionQuery {
+	return &AgreementCompletionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAgreementCompletion},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a AgreementCompletion entity by its id.
+func (c *AgreementCompletionClient) Get(ctx context.Context, id int) (*AgreementCompletion, error) {
+	return c.Query().Where(agreementcompletion.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AgreementCompletionClient) GetX(ctx context.Context, id int) *AgreementCompletion {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryGroup queries the group edge of a AgreementCompletion.
+func (c *AgreementCompletionClient) QueryGroup(_m *AgreementCompletion) *GroupQuery {
+	query := (&GroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(agreementcompletion.Table, agreementcompletion.FieldID, id),
+			sqlgraph.To(group.Table, group.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, agreementcompletion.GroupTable, agreementcompletion.GroupColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAgreement queries the agreement edge of a AgreementCompletion.
+func (c *AgreementCompletionClient) QueryAgreement(_m *AgreementCompletion) *AgreementQuery {
+	query := (&AgreementClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(agreementcompletion.Table, agreementcompletion.FieldID, id),
+			sqlgraph.To(agreement.Table, agreement.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, agreementcompletion.AgreementTable, agreementcompletion.AgreementColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCompleter queries the completer edge of a AgreementCompletion.
+func (c *AgreementCompletionClient) QueryCompleter(_m *AgreementCompletion) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(agreementcompletion.Table, agreementcompletion.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, agreementcompletion.CompleterTable, agreementcompletion.CompleterColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryRecorder queries the recorder edge of a AgreementCompletion.
+func (c *AgreementCompletionClient) QueryRecorder(_m *AgreementCompletion) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(agreementcompletion.Table, agreementcompletion.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, agreementcompletion.RecorderTable, agreementcompletion.RecorderColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryConfirmer queries the confirmer edge of a AgreementCompletion.
+func (c *AgreementCompletionClient) QueryConfirmer(_m *AgreementCompletion) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(agreementcompletion.Table, agreementcompletion.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, agreementcompletion.ConfirmerTable, agreementcompletion.ConfirmerColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AgreementCompletionClient) Hooks() []Hook {
+	return c.hooks.AgreementCompletion
+}
+
+// Interceptors returns the client interceptors.
+func (c *AgreementCompletionClient) Interceptors() []Interceptor {
+	return c.inters.AgreementCompletion
+}
+
+func (c *AgreementCompletionClient) mutate(ctx context.Context, m *AgreementCompletionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AgreementCompletionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AgreementCompletionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AgreementCompletionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AgreementCompletionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown AgreementCompletion mutation op: %q", m.Op())
 	}
 }
 
@@ -1855,11 +2076,11 @@ func (c *UserIdentityClient) mutate(ctx context.Context, m *UserIdentityMutation
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Agreement, Group, GroupMember, MemberSummary, PointLog, Reward, TokenBlacklist,
-		User, UserIdentity []ent.Hook
+		Agreement, AgreementCompletion, Group, GroupMember, MemberSummary, PointLog,
+		Reward, TokenBlacklist, User, UserIdentity []ent.Hook
 	}
 	inters struct {
-		Agreement, Group, GroupMember, MemberSummary, PointLog, Reward, TokenBlacklist,
-		User, UserIdentity []ent.Interceptor
+		Agreement, AgreementCompletion, Group, GroupMember, MemberSummary, PointLog,
+		Reward, TokenBlacklist, User, UserIdentity []ent.Interceptor
 	}
 )
