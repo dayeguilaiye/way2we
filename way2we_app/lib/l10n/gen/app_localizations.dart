@@ -1117,23 +1117,112 @@ abstract class AppLocalizations {
   /// **'Something went wrong. Please try again.'**
   String get agreementGenericError;
 
+  /// No description provided for @agreementCompletionPendingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
   String get agreementCompletionPendingTitle;
+
+  /// No description provided for @agreementCompletionPendingEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending completions'**
   String get agreementCompletionPendingEmpty;
+
+  /// No description provided for @agreementCompletionConfirmSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
   String get agreementCompletionConfirmSuccess;
+
+  /// No description provided for @agreementCompletionRejectSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
   String get agreementCompletionRejectSuccess;
+
+  /// No description provided for @agreementCompletionConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
   String get agreementCompletionConfirmAction;
+
+  /// No description provided for @agreementCompletionRejectAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
   String get agreementCompletionRejectAction;
+
+  /// No description provided for @agreementCompletionRejectReasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason (optional)'**
   String get agreementCompletionRejectReasonHint;
+
+  /// No description provided for @agreementCompletionUnknownAgreement.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown agreement'**
   String get agreementCompletionUnknownAgreement;
+
+  /// No description provided for @agreementCompletionCompleterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Completer:'**
   String get agreementCompletionCompleterLabel;
+
+  /// No description provided for @agreementCompletionRecorderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorder:'**
   String get agreementCompletionRecorderLabel;
+
+  /// No description provided for @agreementCompletionCreatedAtLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested at:'**
   String get agreementCompletionCreatedAtLabel;
+
+  /// No description provided for @agreementCompletionSubmittedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted, waiting for confirmation'**
   String get agreementCompletionSubmittedMessage;
+
+  /// No description provided for @agreementCompletionConfirmedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded, points granted'**
   String get agreementCompletionConfirmedMessage;
+
+  /// No description provided for @agreementCompletionRecordDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Record Completion'**
   String get agreementCompletionRecordDialogTitle;
+
+  /// No description provided for @agreementCompletionRecordDialogMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm recording this agreement completion?'**
   String get agreementCompletionRecordDialogMessage;
+
+  /// No description provided for @agreementCompletionRequiresConfirmationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This agreement requires confirmation'**
   String get agreementCompletionRequiresConfirmationHint;
+
+  /// No description provided for @agreementCompletionRecordForOthersToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Record for others'**
   String get agreementCompletionRecordForOthersToggle;
+
+  /// No description provided for @agreementCompletionRecordForLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Completer'**
   String get agreementCompletionRecordForLabel;
 
   /// No description provided for @rewardTabTitle.

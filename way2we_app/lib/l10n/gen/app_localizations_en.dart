@@ -582,12 +582,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get agreementCompletionRecordDialogTitle => 'Record Completion';
 
   @override
-  String get agreementCompletionRecordDialogMessage =>
-      'Confirm recording this agreement completion?';
+  String get agreementCompletionRecordDialogMessage => 'Confirm recording this agreement completion?';
 
   @override
-  String get agreementCompletionRequiresConfirmationHint =>
-      'This agreement requires confirmation';
+  String get agreementCompletionRequiresConfirmationHint => 'This agreement requires confirmation';
 
   @override
   String get agreementCompletionRecordForOthersToggle => 'Record for others';
