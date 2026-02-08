@@ -8,8 +8,8 @@ part 'join_group_state.dart';
 class JoinGroupBloc extends Bloc<JoinGroupEvent, JoinGroupState> {
   JoinGroupBloc({
     required GroupProvider groupProvider,
-  })  : _groupProvider = groupProvider,
-        super(const JoinGroupState()) {
+  }) : _groupProvider = groupProvider,
+       super(const JoinGroupState()) {
     on<JoinGroupCodeChanged>(_onCodeChanged);
     on<JoinGroupPreviewRequested>(_onPreviewRequested);
     on<JoinGroupConfirmed>(_onConfirmed);
@@ -21,10 +21,12 @@ class JoinGroupBloc extends Bloc<JoinGroupEvent, JoinGroupState> {
     JoinGroupCodeChanged event,
     Emitter<JoinGroupState> emit,
   ) {
-    emit(state.copyWith(
-      invitationCode: event.code.toUpperCase(),
-      status: JoinGroupStatus.initial,
-    ));
+    emit(
+      state.copyWith(
+        invitationCode: event.code.toUpperCase(),
+        status: JoinGroupStatus.initial,
+      ),
+    );
   }
 
   Future<void> _onPreviewRequested(
@@ -39,23 +41,29 @@ class JoinGroupBloc extends Bloc<JoinGroupEvent, JoinGroupState> {
       final response = await _groupProvider.getGroupByInvitation(
         code: state.invitationCode,
       );
-      emit(state.copyWith(
-        status: JoinGroupStatus.previewLoaded,
-        groupId: response.id,
-        groupName: response.name,
-        memberCount: response.memberCount,
-      ));
+      emit(
+        state.copyWith(
+          status: JoinGroupStatus.previewLoaded,
+          groupId: response.id,
+          groupName: response.name,
+          memberCount: response.memberCount,
+        ),
+      );
     } on GroupApiException catch (e) {
-      emit(state.copyWith(
-        status: JoinGroupStatus.failure,
-        errorMessage: e.message,
-        errorCode: e.code,
-      ));
+      emit(
+        state.copyWith(
+          status: JoinGroupStatus.failure,
+          errorMessage: e.message,
+          errorCode: e.code,
+        ),
+      );
     } on Exception catch (e) {
-      emit(state.copyWith(
-        status: JoinGroupStatus.failure,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: JoinGroupStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -71,23 +79,29 @@ class JoinGroupBloc extends Bloc<JoinGroupEvent, JoinGroupState> {
       final response = await _groupProvider.joinGroup(
         invitationCode: state.invitationCode,
       );
-      emit(state.copyWith(
-        status: JoinGroupStatus.success,
-        groupId: response.groupId,
-        groupName: response.groupName,
-        memberCount: response.memberCount,
-      ));
+      emit(
+        state.copyWith(
+          status: JoinGroupStatus.success,
+          groupId: response.groupId,
+          groupName: response.groupName,
+          memberCount: response.memberCount,
+        ),
+      );
     } on GroupApiException catch (e) {
-      emit(state.copyWith(
-        status: JoinGroupStatus.failure,
-        errorMessage: e.message,
-        errorCode: e.code,
-      ));
+      emit(
+        state.copyWith(
+          status: JoinGroupStatus.failure,
+          errorMessage: e.message,
+          errorCode: e.code,
+        ),
+      );
     } on Exception catch (e) {
-      emit(state.copyWith(
-        status: JoinGroupStatus.failure,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: JoinGroupStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 }

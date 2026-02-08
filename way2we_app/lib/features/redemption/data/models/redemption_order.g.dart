@@ -23,8 +23,7 @@ RedemptionOrder _$RedemptionOrderFromJson(Map<String, dynamic> json) =>
       ),
       autoFulfill: json['auto_fulfill'] as bool,
       autoComplete: json['auto_complete'] as bool,
-      providerIncentiveRatio:
-          (json['provider_incentive_ratio'] as num).toInt(),
+      providerIncentiveRatio: (json['provider_incentive_ratio'] as num).toInt(),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       rewardName: json['reward_name'] as String?,

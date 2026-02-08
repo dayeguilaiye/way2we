@@ -8,6 +8,7 @@ import 'package:way2we_app/features/redemption/bloc/detail/redemption_detail_blo
 import 'package:way2we_app/features/redemption/data/models/redemption_order.dart';
 import 'package:way2we_app/features/redemption/data/providers/redemption_provider.dart';
 import 'package:way2we_app/l10n/l10n.dart';
+import 'package:way2we_app/shared/widgets/w2w.dart';
 import 'package:way2we_app/theme/theme.dart';
 
 class RedemptionOrderDetailPage extends StatelessWidget {
@@ -60,7 +61,13 @@ class _RedemptionOrderDetailViewState
   }
 
   Future<void> _loadCurrentUserId() async {
-    final token = await ServiceLocator.instance.storage.read(key: 'auth_token');
+    if (!ServiceLocator.instance.isInitialized) return;
+    String? token;
+    try {
+      token = await ServiceLocator.instance.storage.read(key: 'auth_token');
+    } on Object {
+      return;
+    }
     final userId = _decodeUserIdFromToken(token);
     if (!mounted) return;
     setState(() {
@@ -77,7 +84,7 @@ class _RedemptionOrderDetailViewState
       final decoded = utf8.decode(base64Url.decode(payload));
       final data = jsonDecode(decoded) as Map<String, dynamic>;
       return data['user_id'] as int?;
-    } catch (_) {
+    } on Object {
       return null;
     }
   }
@@ -96,7 +103,20 @@ class _RedemptionOrderDetailViewState
     }
   }
 
-  Future<void> _showUnsatisfiedDialog(BuildContext context) async {
+  W2WStatusType _statusType(RedemptionOrderStatus status) {
+    switch (status) {
+      case RedemptionOrderStatus.awaitingFulfill:
+        return W2WStatusType.awaiting;
+      case RedemptionOrderStatus.awaitingConfirm:
+        return W2WStatusType.pending;
+      case RedemptionOrderStatus.completed:
+        return W2WStatusType.completed;
+      case RedemptionOrderStatus.unsatisfied:
+        return W2WStatusType.rejected;
+    }
+  }
+
+  Future<void> _showUnsatisfiedDialog() async {
     final l10n = context.l10n;
     final controller = TextEditingController();
     final result = await showDialog<String?>(
@@ -125,8 +145,7 @@ class _RedemptionOrderDetailViewState
       },
     );
 
-    if (result == null) return;
-    if (!mounted) return;
+    if (result == null || !mounted) return;
     context.read<RedemptionDetailBloc>().add(
       MarkUnsatisfiedRequested(reason: result),
     );
@@ -135,7 +154,6 @@ class _RedemptionOrderDetailViewState
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -152,7 +170,7 @@ class _RedemptionOrderDetailViewState
                 l10n.redemptionUnsatisfiedButton,
             };
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('$actionMessage ✅')),
+              SnackBar(content: Text(actionMessage)),
             );
           } else if (state is RedemptionDetailActionFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -167,106 +185,164 @@ class _RedemptionOrderDetailViewState
         builder: (context, state) {
           if (state is RedemptionDetailLoading ||
               state is RedemptionDetailInitial) {
-            return const Center(child: CircularProgressIndicator());
+            return ListView(
+              padding: const EdgeInsets.all(AppSpacing.pagePaddingH),
+              children: const [
+                W2WSkeleton(height: 120),
+                SizedBox(height: AppSpacing.space4),
+                W2WSkeleton(height: 160),
+                SizedBox(height: AppSpacing.space4),
+                W2WSkeleton(height: 180),
+              ],
+            );
           }
           if (state is RedemptionDetailError) {
-            return Center(child: Text(state.message));
+            return Center(
+              child: W2WEmptyState(
+                icon: Icons.error_outline,
+                title: state.message,
+              ),
+            );
           }
           if (state is RedemptionDetailReadyState) {
             final order = state.order;
             final isProvider = _currentUserId == order.providerId;
             final isConsumer = _currentUserId == order.consumerId;
             final statusLabel = _statusLabel(context, order.status);
+            final statusType = _statusType(order.status);
 
             return ListView(
               padding: const EdgeInsets.all(AppSpacing.pagePaddingH),
               children: [
-                Text(
-                  order.rewardName ?? l10n.redemptionOrderDetailTitle,
-                  style: theme.textTheme.headlineSmall,
-                ),
-                const SizedBox(height: AppSpacing.space2),
-                Chip(label: Text(statusLabel)),
-                const SizedBox(height: AppSpacing.space4),
-                _InfoRow(
-                  label: l10n.redemptionOrderQuantityLabel,
-                  value: order.quantity.toString(),
-                ),
-                _InfoRow(
-                  label: l10n.redemptionOrderUnitPointsLabel,
-                  value: '${order.unitCostPoints} pts',
-                ),
-                _InfoRow(
-                  label: l10n.redemptionOrderTotalPointsLabel,
-                  value: '${order.totalCostPoints} pts',
-                ),
-                _InfoRow(
-                  label: l10n.redemptionOrderConsumerLabel,
-                  value: order.consumerNickname ?? order.consumerId.toString(),
-                ),
-                _InfoRow(
-                  label: l10n.redemptionOrderProviderLabel,
-                  value: order.providerNickname ?? order.providerId.toString(),
+                W2WCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        order.rewardName ?? l10n.redemptionOrderDetailTitle,
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(
+                              fontWeight: AppTypography.bold,
+                            ),
+                      ),
+                      const SizedBox(height: AppSpacing.space2),
+                      W2WStatusBadge(label: statusLabel, type: statusType),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.space4),
-                Text(
-                  l10n.redemptionOrderTimelineTitle,
-                  style: theme.textTheme.titleSmall,
+                W2WCard(
+                  showBorder: true,
+                  child: Column(
+                    children: [
+                      _InfoRow(
+                        label: l10n.redemptionOrderQuantityLabel,
+                        value: order.quantity.toString(),
+                      ),
+                      _InfoRow(
+                        label: l10n.redemptionOrderUnitPointsLabel,
+                        value: l10n.commonPoints(order.unitCostPoints),
+                      ),
+                      _InfoRow(
+                        label: l10n.redemptionOrderTotalPointsLabel,
+                        value: l10n.commonPoints(order.totalCostPoints),
+                      ),
+                      _InfoRow(
+                        label: l10n.redemptionOrderConsumerLabel,
+                        value:
+                            order.consumerNickname ??
+                            order.consumerId.toString(),
+                      ),
+                      _InfoRow(
+                        label: l10n.redemptionOrderProviderLabel,
+                        value:
+                            order.providerNickname ??
+                            order.providerId.toString(),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: AppSpacing.space2),
-                _TimelineItem(
-                  label: l10n.redemptionOrderCreatedAtLabel,
-                  value: _dateFormat.format(order.createdAt),
+                const SizedBox(height: AppSpacing.space4),
+                W2WCard(
+                  showBorder: true,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      W2WSectionHeader(
+                        title: l10n.redemptionOrderTimelineTitle,
+                      ),
+                      const SizedBox(height: AppSpacing.space2),
+                      _TimelineItem(
+                        label: l10n.redemptionOrderCreatedAtLabel,
+                        value: _dateFormat.format(order.createdAt),
+                      ),
+                      if (order.fulfilledAt != null)
+                        _TimelineItem(
+                          label: l10n.redemptionOrderFulfilledAtLabel,
+                          value: _dateFormat.format(order.fulfilledAt!),
+                        ),
+                      if (order.confirmedAt != null)
+                        _TimelineItem(
+                          label: l10n.redemptionOrderConfirmedAtLabel,
+                          value: _dateFormat.format(order.confirmedAt!),
+                        ),
+                      if (order.endedAt != null)
+                        _TimelineItem(
+                          label: l10n.redemptionOrderEndedAtLabel,
+                          value: _dateFormat.format(order.endedAt!),
+                        ),
+                    ],
+                  ),
                 ),
-                if (order.fulfilledAt != null)
-                  _TimelineItem(
-                    label: l10n.redemptionOrderFulfilledAtLabel,
-                    value: _dateFormat.format(order.fulfilledAt!),
-                  ),
-                if (order.confirmedAt != null)
-                  _TimelineItem(
-                    label: l10n.redemptionOrderConfirmedAtLabel,
-                    value: _dateFormat.format(order.confirmedAt!),
-                  ),
-                if (order.endedAt != null)
-                  _TimelineItem(
-                    label: l10n.redemptionOrderEndedAtLabel,
-                    value: _dateFormat.format(order.endedAt!),
-                  ),
                 const SizedBox(height: AppSpacing.space4),
                 if (order.isAwaitingFulfill && isProvider)
-                  FilledButton(
+                  W2WButton(
+                    label: l10n.redemptionFulfillButton,
+                    icon: Icons.task_alt_outlined,
                     onPressed: () {
                       context.read<RedemptionDetailBloc>().add(
                         const FulfillOrderRequested(),
                       );
                     },
-                    child: Text(l10n.redemptionFulfillButton),
                   ),
                 if (order.isAwaitingConfirm && isConsumer) ...[
-                  FilledButton(
+                  W2WButton(
+                    label: l10n.redemptionConfirmSatisfiedButton,
+                    icon: Icons.check_circle_outline,
                     onPressed: () {
                       context.read<RedemptionDetailBloc>().add(
                         const ConfirmOrderRequested(),
                       );
                     },
-                    child: Text(l10n.redemptionConfirmSatisfiedButton),
                   ),
                   const SizedBox(height: AppSpacing.space2),
-                  OutlinedButton(
-                    onPressed: () => _showUnsatisfiedDialog(context),
-                    child: Text(l10n.redemptionUnsatisfiedButton),
+                  W2WButton(
+                    label: l10n.redemptionUnsatisfiedButton,
+                    variant: W2WButtonVariant.ghost,
+                    icon: Icons.report_problem_outlined,
+                    onPressed: _showUnsatisfiedDialog,
                   ),
                 ],
                 if (order.unsatisfiedReason != null &&
                     order.unsatisfiedReason!.isNotEmpty) ...[
-                  const SizedBox(height: AppSpacing.space3),
-                  Text(
-                    l10n.redemptionUnsatisfiedReasonHint,
-                    style: theme.textTheme.titleSmall,
+                  const SizedBox(height: AppSpacing.space4),
+                  W2WCard(
+                    showBorder: true,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.redemptionUnsatisfiedReasonHint,
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(
+                                fontWeight: AppTypography.bold,
+                              ),
+                        ),
+                        const SizedBox(height: AppSpacing.space2),
+                        Text(order.unsatisfiedReason!),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: AppSpacing.space1),
-                  Text(order.unsatisfiedReason!),
                 ],
               ],
             );
@@ -299,7 +375,12 @@ class _InfoRow extends StatelessWidget {
               ),
             ),
           ),
-          Text(value, style: theme.textTheme.bodyMedium),
+          Text(
+            value,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: AppTypography.medium,
+            ),
+          ),
         ],
       ),
     );
@@ -319,7 +400,11 @@ class _TimelineItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.space1),
       child: Row(
         children: [
-          const Icon(Icons.circle, size: 8),
+          const Icon(
+            Icons.circle,
+            size: 8,
+            color: AppColors.primary,
+          ),
           const SizedBox(width: AppSpacing.space2),
           Expanded(
             child: Text(
@@ -329,7 +414,12 @@ class _TimelineItem extends StatelessWidget {
               ),
             ),
           ),
-          Text(value, style: theme.textTheme.bodySmall),
+          Text(
+            value,
+            style: theme.textTheme.bodySmall?.copyWith(
+              fontWeight: AppTypography.medium,
+            ),
+          ),
         ],
       ),
     );

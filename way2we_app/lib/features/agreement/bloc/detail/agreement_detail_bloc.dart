@@ -8,8 +8,8 @@ part 'agreement_detail_state.dart';
 class AgreementDetailBloc
     extends Bloc<AgreementDetailEvent, AgreementDetailState> {
   AgreementDetailBloc({required AgreementProvider agreementProvider})
-      : _agreementProvider = agreementProvider,
-        super(const AgreementDetailInitial()) {
+    : _agreementProvider = agreementProvider,
+      super(const AgreementDetailInitial()) {
     on<LoadAgreementDetail>(_onLoadAgreementDetail);
     on<UpdateAgreementStatus>(_onUpdateAgreementStatus);
     on<TogglePin>(_onTogglePin);
@@ -34,10 +34,12 @@ class AgreementDetailBloc
         agreementId: event.agreementId,
       );
 
-      emit(AgreementDetailLoaded(
-        agreement: agreement,
-        groupId: event.groupId,
-      ));
+      emit(
+        AgreementDetailLoaded(
+          agreement: agreement,
+          groupId: event.groupId,
+        ),
+      );
     } on AgreementApiException catch (e) {
       emit(AgreementDetailError(message: e.message, code: e.code));
     } on Exception catch (e) {
@@ -95,8 +97,9 @@ class AgreementDetailBloc
         );
       }
 
-      final updatedAgreement =
-          agreement.copyWith(isPinned: !event.currentPinStatus);
+      final updatedAgreement = agreement.copyWith(
+        isPinned: !event.currentPinStatus,
+      );
 
       emit(
         AgreementPinUpdateSuccess(
@@ -112,7 +115,9 @@ class AgreementDetailBloc
           code: e.code,
         ),
       );
-      emit(AgreementDetailLoaded(agreement: agreement, groupId: _currentGroupId!));
+      emit(
+        AgreementDetailLoaded(agreement: agreement, groupId: _currentGroupId!),
+      );
     } on Exception catch (e) {
       emit(
         AgreementPinUpdateFailure(
@@ -120,8 +125,9 @@ class AgreementDetailBloc
           message: e.toString(),
         ),
       );
-      emit(AgreementDetailLoaded(agreement: agreement, groupId: _currentGroupId!));
+      emit(
+        AgreementDetailLoaded(agreement: agreement, groupId: _currentGroupId!),
+      );
     }
   }
-
 }

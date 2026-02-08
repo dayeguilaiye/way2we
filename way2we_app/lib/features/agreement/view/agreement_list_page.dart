@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:way2we_app/features/agreement/bloc/list/agreement_list_bloc.dart';
 import 'package:way2we_app/features/agreement/completion/bloc/record/agreement_completion_record_bloc.dart';
 import 'package:way2we_app/features/agreement/completion/data/providers/agreement_completion_provider.dart';
 import 'package:way2we_app/features/agreement/completion/models/agreement_completion.dart';
 import 'package:way2we_app/features/agreement/completion/view/pending_completions_page.dart';
-import 'package:way2we_app/features/agreement/bloc/list/agreement_list_bloc.dart';
 import 'package:way2we_app/features/agreement/data/providers/agreement_provider.dart';
 import 'package:way2we_app/features/agreement/models/agreement.dart';
 import 'package:way2we_app/features/agreement/view/agreement_detail_page.dart';
-import 'package:way2we_app/features/agreement/view/create_agreement_page.dart';
 import 'package:way2we_app/features/agreement/view/agreement_error_mapper.dart';
+import 'package:way2we_app/features/agreement/view/create_agreement_page.dart';
 import 'package:way2we_app/features/agreement/view/widgets/agreement_card.dart';
 import 'package:way2we_app/features/group/bloc/group_control_bloc.dart';
 import 'package:way2we_app/features/group/data/providers/group_provider.dart';
 import 'package:way2we_app/features/group/models/member.dart';
 import 'package:way2we_app/l10n/l10n.dart';
+import 'package:way2we_app/shared/widgets/w2w.dart';
+import 'package:way2we_app/theme/theme.dart';
 
 class AgreementListPage extends StatelessWidget {
   const AgreementListPage({
@@ -89,12 +91,14 @@ class _AgreementListViewState extends State<AgreementListView>
     final l10n = context.l10n;
     final theme = Theme.of(context);
 
-    return BlocListener<AgreementCompletionRecordBloc,
-        AgreementCompletionRecordState>(
+    return BlocListener<
+      AgreementCompletionRecordBloc,
+      AgreementCompletionRecordState
+    >(
       listener: (context, state) {
         if (state is AgreementCompletionRecordSuccess) {
-          final message = state.completion.status ==
-                  AgreementCompletionStatus.pending
+          final message =
+              state.completion.status == AgreementCompletionStatus.pending
               ? l10n.agreementCompletionSubmittedMessage
               : l10n.agreementCompletionConfirmedMessage;
           ScaffoldMessenger.of(context).showSnackBar(
@@ -103,9 +107,9 @@ class _AgreementListViewState extends State<AgreementListView>
               backgroundColor: theme.colorScheme.primary,
             ),
           );
-          context
-              .read<AgreementCompletionRecordBloc>()
-              .add(const ResetAgreementCompletionStatus());
+          context.read<AgreementCompletionRecordBloc>().add(
+            const ResetAgreementCompletionStatus(),
+          );
         } else if (state is AgreementCompletionRecordFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -128,86 +132,76 @@ class _AgreementListViewState extends State<AgreementListView>
           actions: [
             IconButton(
               tooltip: l10n.agreementCompletionPendingTitle,
+              constraints: const BoxConstraints(
+                minWidth: AppSpacing.minTouchTarget,
+                minHeight: AppSpacing.minTouchTarget,
+              ),
               icon: const Icon(Icons.pending_actions),
               onPressed: () => _navigateToPending(context),
             ),
           ],
         ),
         body: BlocConsumer<AgreementListBloc, AgreementListState>(
-        listener: (context, state) {
-          if (state is AgreementListActionSuccess) {
-            final message = state.isPinned
-                ? l10n.agreementPinSuccess
-                : l10n.agreementUnpinSuccess;
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(message),
-                backgroundColor: theme.colorScheme.primary,
-              ),
-            );
-          } else if (state is AgreementListActionFailure) {
-            final message = agreementErrorMessage(context, state.code);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(message),
-                backgroundColor: theme.colorScheme.error,
-              ),
-            );
-          }
-        },
-        builder: (context, state) {
-          if (state is AgreementListLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+          listener: (context, state) {
+            if (state is AgreementListActionSuccess) {
+              final message = state.isPinned
+                  ? l10n.agreementPinSuccess
+                  : l10n.agreementUnpinSuccess;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(message),
+                  backgroundColor: theme.colorScheme.primary,
+                ),
+              );
+            } else if (state is AgreementListActionFailure) {
+              final message = agreementErrorMessage(context, state.code);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(message),
+                  backgroundColor: theme.colorScheme.error,
+                ),
+              );
+            }
+          },
+          builder: (context, state) {
+            if (state is AgreementListLoading) {
+              return _buildLoadingState();
+            }
 
-          if (state is AgreementListError) {
-            final message = agreementErrorMessage(context, state.code);
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+            if (state is AgreementListError) {
+              final message = agreementErrorMessage(context, state.code);
+              return W2WEmptyState(
+                icon: Icons.error_outline,
+                title: message,
+                actionLabel: l10n.retry,
+                onAction: _loadAgreements,
+              );
+            }
+
+            if (state is AgreementListReadyState) {
+              return TabBarView(
+                controller: _tabController,
                 children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: theme.colorScheme.error,
+                  // Active agreements
+                  _buildAgreementList(
+                    context,
+                    state.activeAgreements,
+                    isActive: true,
                   ),
-                  const SizedBox(height: 16),
-                  Text(message),
-                  const SizedBox(height: 16),
-                  FilledButton(
-                    onPressed: _loadAgreements,
-                    child: Text(l10n.retry),
+                  // Inactive agreements
+                  _buildAgreementList(
+                    context,
+                    state.inactiveAgreements,
+                    isActive: false,
                   ),
                 ],
-              ),
-            );
-          }
+              );
+            }
 
-          if (state is AgreementListReadyState) {
-            return TabBarView(
-              controller: _tabController,
-              children: [
-                // Active agreements
-                _buildAgreementList(
-                  context,
-                  state.activeAgreements,
-                  isActive: true,
-                ),
-                // Inactive agreements
-                _buildAgreementList(
-                  context,
-                  state.inactiveAgreements,
-                  isActive: false,
-                ),
-              ],
-            );
-          }
-
-          return const SizedBox.shrink();
-        },
+            return const SizedBox.shrink();
+          },
         ),
-        floatingActionButton:
-            BlocBuilder<GroupControlBloc, GroupControlState>(
+        floatingActionButton: BlocBuilder<GroupControlBloc, GroupControlState>(
           builder: (context, groupState) {
             if (groupState is! GroupControlLoadSuccess) {
               return const SizedBox.shrink();
@@ -237,41 +231,21 @@ class _AgreementListViewState extends State<AgreementListView>
     required bool isActive,
   }) {
     final l10n = context.l10n;
-    final theme = Theme.of(context);
 
     if (agreements.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              isActive ? Icons.assignment_outlined : Icons.archive_outlined,
-              size: 64,
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              isActive ? l10n.agreementEmptyTitle : l10n.agreementNoInactive,
-              style: theme.textTheme.titleMedium,
-            ),
-            if (isActive) ...[
-              const SizedBox(height: 8),
-              Text(
-                l10n.agreementEmptySubtitle,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ],
-        ),
+      return W2WEmptyState(
+        icon: isActive ? Icons.assignment_outlined : Icons.archive_outlined,
+        title: isActive ? l10n.agreementEmptyTitle : l10n.agreementNoInactive,
+        subtitle: isActive ? l10n.agreementEmptySubtitle : null,
       );
     }
 
-    final pinnedAgreements =
-        agreements.where((agreement) => agreement.isPinned).toList();
-    final unpinnedAgreements =
-        agreements.where((agreement) => !agreement.isPinned).toList();
+    final pinnedAgreements = agreements
+        .where((agreement) => agreement.isPinned)
+        .toList();
+    final unpinnedAgreements = agreements
+        .where((agreement) => !agreement.isPinned)
+        .toList();
     final orderedAgreements = [...pinnedAgreements, ...unpinnedAgreements];
 
     return RefreshIndicator(
@@ -279,7 +253,10 @@ class _AgreementListViewState extends State<AgreementListView>
         context.read<AgreementListBloc>().add(const RefreshAgreements());
       },
       child: ListView.builder(
-        padding: const EdgeInsets.only(top: 8, bottom: 80),
+        padding: const EdgeInsets.only(
+          top: AppSpacing.space2,
+          bottom: 80,
+        ),
         itemCount: orderedAgreements.length,
         itemBuilder: (context, index) {
           final agreement = orderedAgreements[index];
@@ -300,6 +277,28 @@ class _AgreementListViewState extends State<AgreementListView>
           );
         },
       ),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return ListView.separated(
+      padding: const EdgeInsets.all(AppSpacing.pagePaddingH),
+      itemCount: 4,
+      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.space3),
+      itemBuilder: (_, _) {
+        return const W2WCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              W2WSkeleton(height: 20, width: 180),
+              SizedBox(height: AppSpacing.space2),
+              W2WSkeleton(height: 14, width: 220),
+              SizedBox(height: AppSpacing.space2),
+              W2WSkeleton(height: 14, width: 140),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -339,6 +338,7 @@ class _AgreementListViewState extends State<AgreementListView>
   Future<void> _recordComplete(Agreement agreement) async {
     final completerId = await _showRecordDialog(agreement);
     if (completerId == null) return;
+    if (!mounted) return;
 
     final normalizedCompleterId = completerId == -1 ? null : completerId;
 
@@ -357,14 +357,13 @@ class _AgreementListViewState extends State<AgreementListView>
     final groupState = context.read<GroupControlBloc>().state;
     final canRecordForOthers =
         groupState is GroupControlLoadSuccess &&
-            (groupState.selectedGroup?.hasPermission('record_for_others') ??
-                false);
+        (groupState.selectedGroup?.hasPermission('record_for_others') ?? false);
 
     final membersFuture = canRecordForOthers
         ? context.read<GroupProvider>().listMembers(groupId: widget.groupId)
         : null;
 
-    bool recordForOthers = false;
+    var recordForOthers = false;
     int? selectedCompleterId;
 
     return showDialog<int?>(
@@ -384,16 +383,16 @@ class _AgreementListViewState extends State<AgreementListView>
                     Text(
                       l10n.agreementCompletionRequiresConfirmationHint,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurfaceVariant,
-                          ),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   if (canRecordForOthers) ...[
                     const SizedBox(height: 12),
                     SwitchListTile.adaptive(
                       contentPadding: EdgeInsets.zero,
-                      title: Text(l10n.agreementCompletionRecordForOthersToggle),
+                      title: Text(
+                        l10n.agreementCompletionRecordForOthersToggle,
+                      ),
                       value: recordForOthers,
                       onChanged: (value) {
                         setState(() {
@@ -428,8 +427,7 @@ class _AgreementListViewState extends State<AgreementListView>
                           return DropdownButtonFormField<int>(
                             value: selectedCompleterId,
                             decoration: InputDecoration(
-                              labelText:
-                                  l10n.agreementCompletionRecordForLabel,
+                              labelText: l10n.agreementCompletionRecordForLabel,
                             ),
                             items: members
                                 .map(
@@ -452,7 +450,7 @@ class _AgreementListViewState extends State<AgreementListView>
               ),
               actions: [
                 TextButton(
-                  onPressed: () => Navigator.of(context).pop(null),
+                  onPressed: () => Navigator.of(context).pop(),
                   child: Text(l10n.cancel),
                 ),
                 FilledButton(

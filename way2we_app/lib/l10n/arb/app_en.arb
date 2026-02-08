@@ -419,6 +419,10 @@
             "groupName": {"type": "String"}
         }
     },
+    "homeTabTitle": "Home",
+    "@homeTabTitle": {
+        "description": "Bottom navigation label for home tab"
+    },
     "homeInviteMembers": "Invite Members",
     "@homeInviteMembers": {
         "description": "Invite members button text"
@@ -795,5 +799,38 @@
     "redemptionCreateFailed": "Redemption failed",
     "redemptionBalanceLabel": "Points balance",
     "redemptionBalanceLoading": "Loading points",
-    "redemptionBalanceLoadFailed": "Failed to load points"
+    "redemptionBalanceLoadFailed": "Failed to load points",
+
+    "commonAppName": "Way2We",
+    "commonPointsUnit": "pts",
+    "commonPoints": "{points} pts",
+    "@commonPoints": {
+        "description": "Points with unit",
+        "placeholders": {
+            "points": {
+                "type": "int"
+            }
+        }
+    },
+    "commonPointsDelta": "+{points} pts",
+    "@commonPointsDelta": {
+        "description": "Positive points delta with unit",
+        "placeholders": {
+            "points": {
+                "type": "int"
+            }
+        }
+    },
+    "commonQuantityTimesPoints": "{quantity} × {points} pts",
+    "@commonQuantityTimesPoints": {
+        "description": "Quantity times unit points",
+        "placeholders": {
+            "quantity": {
+                "type": "int"
+            },
+            "points": {
+                "type": "int"
+            }
+        }
+    }
 }

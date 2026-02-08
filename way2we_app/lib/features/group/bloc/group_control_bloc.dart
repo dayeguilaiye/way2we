@@ -37,10 +37,11 @@ class GroupControlBloc extends Bloc<GroupControlEvent, GroupControlState> {
 
       UserGroup? selected;
       if (lastId != null) {
-        try {
-          selected = groups.firstWhere((g) => g.id == lastId);
-        } catch (_) {
-          // not found
+        for (final group in groups) {
+          if (group.id == lastId) {
+            selected = group;
+            break;
+          }
         }
       }
 
@@ -48,13 +49,10 @@ class GroupControlBloc extends Bloc<GroupControlEvent, GroupControlState> {
       if (selected == null && groups.isNotEmpty) {
         selected = groups.first;
         await prefs.setInt(_kLastSelectedGroupId, selected.id);
-      } else if (selected != null && lastId != selected.id) {
-        // Should catch cases where selected was restored but we want to ensure persistence matches?
-        // Actually logic above sets selected if found. If selected is not null, it matches lastId.
       }
 
       emit(GroupControlLoadSuccess(groups: groups, selectedGroup: selected));
-    } catch (e) {
+    } on Object catch (e) {
       emit(GroupControlLoadFailure(e.toString()));
     }
   }
@@ -66,19 +64,22 @@ class GroupControlBloc extends Bloc<GroupControlEvent, GroupControlState> {
     final currentState = state;
     if (currentState is GroupControlLoadSuccess) {
       // Validate group exists in current list
-      try {
-        final newSelection = currentState.groups.firstWhere(
-          (g) => g.id == event.groupId,
-        );
-
-        // Persist
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setInt(_kLastSelectedGroupId, event.groupId);
-
-        emit(currentState.copyWith(selectedGroup: newSelection));
-      } catch (_) {
-        // Should not happen if inputs are valid, ignore
+      UserGroup? newSelection;
+      for (final group in currentState.groups) {
+        if (group.id == event.groupId) {
+          newSelection = group;
+          break;
+        }
       }
+      if (newSelection == null) {
+        return;
+      }
+
+      // Persist
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(_kLastSelectedGroupId, event.groupId);
+
+      emit(currentState.copyWith(selectedGroup: newSelection));
     }
   }
 }

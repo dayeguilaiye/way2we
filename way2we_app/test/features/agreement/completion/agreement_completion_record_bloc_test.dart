@@ -69,10 +69,12 @@ void main() {
           agreementId: 5,
           completerId: 2,
         ),
-      ).thenThrow(const AgreementCompletionApiException(
-        'Submit failed',
-        code: 'ERR_SUBMIT',
-      ));
+      ).thenThrow(
+        const AgreementCompletionApiException(
+          'Submit failed',
+          code: 'ERR_SUBMIT',
+        ),
+      );
       return bloc;
     },
     act: (bloc) => bloc.add(

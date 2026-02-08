@@ -673,6 +673,12 @@ abstract class AppLocalizations {
   /// **'Group: {groupName}'**
   String homeGroupName(String groupName);
 
+  /// Bottom navigation label for home tab
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get homeTabTitle;
+
   /// Invite members button text
   ///
   /// In en, this message translates to:
@@ -1602,6 +1608,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to load points'**
   String get redemptionBalanceLoadFailed;
+
+  /// No description provided for @commonAppName.
+  ///
+  /// In en, this message translates to:
+  /// **'Way2We'**
+  String get commonAppName;
+
+  /// No description provided for @commonPointsUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'pts'**
+  String get commonPointsUnit;
+
+  /// Points with unit
+  ///
+  /// In en, this message translates to:
+  /// **'{points} pts'**
+  String commonPoints(int points);
+
+  /// Positive points delta with unit
+  ///
+  /// In en, this message translates to:
+  /// **'+{points} pts'**
+  String commonPointsDelta(int points);
+
+  /// Quantity times unit points
+  ///
+  /// In en, this message translates to:
+  /// **'{quantity} × {points} pts'**
+  String commonQuantityTimesPoints(int quantity, int points);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

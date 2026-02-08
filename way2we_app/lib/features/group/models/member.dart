@@ -17,19 +17,11 @@ class GroupMember extends Equatable {
     required this.id,
     required this.userId,
     required this.nickname,
-    this.avatarUrl,
     required this.role,
     required this.permissions,
     required this.joinedAt,
+    this.avatarUrl,
   });
-
-  final int id;
-  final int userId;
-  final String nickname;
-  final String? avatarUrl;
-  final GroupRole role;
-  final List<String> permissions;
-  final DateTime joinedAt;
 
   factory GroupMember.fromJson(Map<String, dynamic> json) {
     return GroupMember(
@@ -46,6 +38,14 @@ class GroupMember extends Equatable {
       joinedAt: DateTime.parse(json['joined_at'] as String),
     );
   }
+
+  final int id;
+  final int userId;
+  final String nickname;
+  final String? avatarUrl;
+  final GroupRole role;
+  final List<String> permissions;
+  final DateTime joinedAt;
 
   bool hasPermission(String permission) {
     return role == GroupRole.admin || permissions.contains(permission);

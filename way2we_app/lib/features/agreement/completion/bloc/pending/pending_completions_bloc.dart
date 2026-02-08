@@ -10,8 +10,8 @@ class PendingCompletionsBloc
     extends Bloc<PendingCompletionsEvent, PendingCompletionsState> {
   PendingCompletionsBloc({
     required AgreementCompletionProvider completionProvider,
-  })  : _completionProvider = completionProvider,
-        super(const PendingCompletionsInitial()) {
+  }) : _completionProvider = completionProvider,
+       super(const PendingCompletionsInitial()) {
     on<LoadPendingCompletions>(_onLoad);
     on<RefreshPendingCompletions>(_onRefresh);
     on<ConfirmPendingCompletion>(_onConfirm);

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:way2we_app/app/di.dart';
 import 'package:way2we_app/features/group/bloc/create_group_bloc.dart';
+import 'package:way2we_app/features/group/bloc/group_control_bloc.dart';
 import 'package:way2we_app/features/group/data/providers/group_provider.dart';
-import 'package:way2we_app/features/home/view/home_page.dart';
+import 'package:way2we_app/features/home/view/main_shell_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
+import 'package:way2we_app/shared/widgets/w2w.dart';
 import 'package:way2we_app/theme/theme.dart';
 
 /// Page for creating a new group.
@@ -68,9 +70,12 @@ class _CreateGroupViewState extends State<CreateGroupView> {
               backgroundColor: AppColors.success,
             ),
           );
+          context.read<GroupControlBloc>().add(
+            const GroupControlGroupsLoaded(),
+          );
           // Navigate to home page (UX improvement: landing first)
           Navigator.of(context).pushAndRemoveUntil(
-            HomePage.route(),
+            MainShellPage.route(),
             (route) => false,
           );
         } else if (state.status == CreateGroupStatus.failure) {
@@ -87,6 +92,11 @@ class _CreateGroupViewState extends State<CreateGroupView> {
         appBar: AppBar(
           title: Text(l10n.createGroupTitle),
           leading: IconButton(
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            constraints: const BoxConstraints(
+              minWidth: AppSpacing.minTouchTarget,
+              minHeight: AppSpacing.minTouchTarget,
+            ),
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.of(context).pop(),
           ),
@@ -126,7 +136,7 @@ class _CreateGroupViewState extends State<CreateGroupView> {
                   const SizedBox(height: AppSpacing.space8),
 
                   // Group name input
-                  _buildNameInput(theme, l10n),
+                  _buildNameInput(l10n),
                   const SizedBox(height: AppSpacing.space6),
 
                   // Character count
@@ -153,7 +163,7 @@ class _CreateGroupViewState extends State<CreateGroupView> {
                   const Spacer(),
 
                   // Submit button
-                  _buildSubmitButton(theme, l10n),
+                  _buildSubmitButton(l10n),
                   const SizedBox(height: AppSpacing.space6),
                 ],
               ),
@@ -189,84 +199,27 @@ class _CreateGroupViewState extends State<CreateGroupView> {
     );
   }
 
-  Widget _buildNameInput(ThemeData theme, AppLocalizations l10n) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(
-            left: AppSpacing.space4,
-            bottom: AppSpacing.space1 + 2,
-          ),
-          child: Text(
-            l10n.createGroupNameLabel,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: AppColors.textMutedLight,
-              fontWeight: AppTypography.bold,
-              letterSpacing: 0.5,
-            ),
-          ),
-        ),
-        BlocBuilder<CreateGroupBloc, CreateGroupState>(
-          buildWhen: (previous, current) =>
-              previous.status != current.status ||
-              previous.name != current.name,
-          builder: (context, state) {
-            final hasError = state.name.isNotEmpty && state.name.length > 30;
-
-            return Container(
-              height: AppSpacing.inputHeight,
-              decoration: BoxDecoration(
-                color: AppColors.cardLight,
-                borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
-                boxShadow: AppShadows.card,
-                border: Border.all(
-                  color: hasError ? AppColors.error : Colors.transparent,
-                  width: 2,
-                ),
-              ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.space4,
-              ),
-              child: Center(
-                child: TextField(
-                  controller: _nameController,
-                  style: theme.textTheme.bodyLarge,
-                  onChanged: (value) {
-                    context.read<CreateGroupBloc>().add(
-                      CreateGroupNameChanged(value),
-                    );
-                  },
-                  decoration: InputDecoration(
-                    isCollapsed: true,
-                    hintText: l10n.createGroupNamePlaceholder,
-                    hintStyle: theme.textTheme.bodyLarge?.copyWith(
-                      color: AppColors.textPlaceholderLight,
-                    ),
-                    prefixIcon: const Padding(
-                      padding: EdgeInsets.only(right: AppSpacing.space2),
-                      child: Icon(
-                        Icons.group,
-                        color: AppColors.textMutedLight,
-                        size: 20,
-                      ),
-                    ),
-                    prefixIconConstraints: const BoxConstraints(minWidth: 32),
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                ),
-              ),
+  Widget _buildNameInput(AppLocalizations l10n) {
+    return BlocBuilder<CreateGroupBloc, CreateGroupState>(
+      buildWhen: (previous, current) =>
+          previous.status != current.status || previous.name != current.name,
+      builder: (context, state) {
+        return W2WInput(
+          controller: _nameController,
+          label: l10n.createGroupNameLabel,
+          hintText: l10n.createGroupNamePlaceholder,
+          prefixIcon: Icons.group,
+          onChanged: (value) {
+            context.read<CreateGroupBloc>().add(
+              CreateGroupNameChanged(value),
             );
           },
-        ),
-      ],
+        );
+      },
     );
   }
 
-  Widget _buildSubmitButton(ThemeData theme, AppLocalizations l10n) {
+  Widget _buildSubmitButton(AppLocalizations l10n) {
     return BlocBuilder<CreateGroupBloc, CreateGroupState>(
       buildWhen: (previous, current) =>
           previous.canSubmit != current.canSubmit ||
@@ -274,50 +227,17 @@ class _CreateGroupViewState extends State<CreateGroupView> {
       builder: (context, state) {
         final isSubmitting = state.status == CreateGroupStatus.submitting;
 
-        return Container(
-          width: double.infinity,
-          height: AppSpacing.inputHeight,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
-            boxShadow: state.canSubmit && !isSubmitting
-                ? const [
-                    BoxShadow(
-                      color: AppColors.primaryShadow,
-                      blurRadius: 24,
-                      offset: Offset(0, 8),
-                    ),
-                  ]
-                : null,
-          ),
-          child: FilledButton(
-            onPressed: state.canSubmit && !isSubmitting
-                ? () {
-                    context.read<CreateGroupBloc>().add(
-                      const CreateGroupSubmitted(),
-                    );
-                  }
-                : null,
-            style: FilledButton.styleFrom(
-              minimumSize: const Size(double.infinity, AppSpacing.inputHeight),
-            ),
-            child: isSubmitting
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(l10n.createGroupSubmitButton),
-                      const SizedBox(width: AppSpacing.space2),
-                      const Icon(Icons.arrow_forward, size: 20),
-                    ],
-                  ),
-          ),
+        return W2WButton(
+          label: l10n.createGroupSubmitButton,
+          icon: Icons.arrow_forward,
+          isLoading: isSubmitting,
+          onPressed: state.canSubmit && !isSubmitting
+              ? () {
+                  context.read<CreateGroupBloc>().add(
+                    const CreateGroupSubmitted(),
+                  );
+                }
+              : null,
         );
       },
     );

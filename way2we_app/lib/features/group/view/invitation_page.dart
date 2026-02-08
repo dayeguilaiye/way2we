@@ -5,17 +5,11 @@ import 'package:share_plus/share_plus.dart';
 import 'package:way2we_app/app/di.dart';
 import 'package:way2we_app/features/group/bloc/invitation_bloc.dart';
 import 'package:way2we_app/features/group/data/providers/group_provider.dart';
-import 'package:way2we_app/features/home/view/home_page.dart';
+import 'package:way2we_app/features/home/view/main_shell_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
+import 'package:way2we_app/shared/widgets/w2w.dart';
 import 'package:way2we_app/theme/theme.dart';
 
-/// Page for managing group invitation code.
-///
-/// Features:
-/// - Display current invitation code (formatted for readability)
-/// - Copy invitation link to clipboard
-/// - Share invitation link via system share
-/// - Refresh invitation code (invalidates old code)
 class InvitationPage extends StatelessWidget {
   const InvitationPage({
     required this.groupId,
@@ -41,7 +35,6 @@ class InvitationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dio = ServiceLocator.instance.dio;
-
     return RepositoryProvider(
       create: (_) => GroupProvider(dio: dio),
       child: BlocProvider(
@@ -62,8 +55,8 @@ class InvitationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final l10n = context.l10n;
+    final theme = Theme.of(context);
 
     return BlocListener<InvitationBloc, InvitationState>(
       listener: (context, state) {
@@ -71,21 +64,21 @@ class InvitationView extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l10n.invitationCopied),
-              backgroundColor: AppColors.success,
+              backgroundColor: theme.semantic.success,
             ),
           );
         } else if (state.status == InvitationStatus.refreshed) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l10n.invitationRefreshed),
-              backgroundColor: AppColors.success,
+              backgroundColor: theme.semantic.success,
             ),
           );
-        } else if (state.status == InvitationStatus.failure) {
+        } else if (state.status == InvitationStatus.failure && state.hasCode) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.errorMessage ?? l10n.invitationError),
-              backgroundColor: AppColors.error,
+              backgroundColor: theme.semantic.error,
             ),
           );
         }
@@ -93,70 +86,165 @@ class InvitationView extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(l10n.invitationTitle),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              // Navigate to home, clearing the stack
-              Navigator.of(context).pushAndRemoveUntil(
-                HomePage.route(),
-                (route) => false,
-              );
-            },
+          leading: Tooltip(
+            message: MaterialLocalizations.of(context).backButtonTooltip,
+            child: IconButton(
+              constraints: const BoxConstraints(
+                minWidth: AppSpacing.minTouchTarget,
+                minHeight: AppSpacing.minTouchTarget,
+              ),
+              onPressed: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MainShellPage.route(),
+                  (route) => false,
+                );
+              },
+              icon: const Icon(Icons.arrow_back),
+            ),
           ),
         ),
         body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.pagePaddingH),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: AppSpacing.space6),
-
-                // Hero illustration
-                _buildHeroIllustration(),
-                const SizedBox(height: AppSpacing.space6),
-
-                // Title
-                Text(
-                  l10n.invitationHeadline,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: AppTypography.bold,
+          child: BlocBuilder<InvitationBloc, InvitationState>(
+            builder: (context, state) {
+              if (state.status == InvitationStatus.failure && !state.hasCode) {
+                return Padding(
+                  padding: const EdgeInsets.all(AppSpacing.pagePaddingH),
+                  child: W2WEmptyState(
+                    icon: Icons.link_off_outlined,
+                    title: state.errorMessage ?? l10n.invitationError,
+                    actionLabel: l10n.commonRetry,
+                    onAction: () {
+                      context.read<InvitationBloc>().add(
+                        const InvitationLoadRequested(),
+                      );
+                    },
                   ),
+                );
+              }
+
+              return SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.pagePaddingH,
+                  AppSpacing.pagePaddingV,
+                  AppSpacing.pagePaddingH,
+                  AppSpacing.pagePaddingV,
                 ),
-                const SizedBox(height: AppSpacing.space2),
-
-                // Subtitle
-                Text(
-                  l10n.invitationSubtitle(groupName),
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textMutedLight,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const SizedBox(height: AppSpacing.space4),
+                    const _InvitationHero(),
+                    const SizedBox(height: AppSpacing.space6),
+                    Text(
+                      l10n.invitationHeadline,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: AppTypography.bold,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.space2),
+                    Text(
+                      l10n.invitationSubtitle(groupName),
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.space8),
+                    _InvitationCodeCard(state: state, l10n: l10n),
+                    const SizedBox(height: AppSpacing.space6),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: W2WButton(
+                            label: l10n.invitationCopyButton,
+                            variant: W2WButtonVariant.secondary,
+                            expanded: false,
+                            onPressed: state.hasCode
+                                ? () async {
+                                    await Clipboard.setData(
+                                      ClipboardData(text: state.shareUrl),
+                                    );
+                                    if (!context.mounted) return;
+                                    context.read<InvitationBloc>().add(
+                                      const InvitationCopyRequested(),
+                                    );
+                                  }
+                                : null,
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.space3),
+                        Expanded(
+                          child: W2WButton(
+                            label: l10n.invitationShareButton,
+                            expanded: false,
+                            onPressed: state.hasCode
+                                ? () async {
+                                    await Share.share(
+                                      l10n.invitationShareMessage(
+                                        groupName,
+                                        state.shareUrl,
+                                      ),
+                                    );
+                                  }
+                                : null,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.space6),
+                    W2WButton(
+                      label: l10n.invitationRefreshButton,
+                      icon: Icons.refresh,
+                      variant: W2WButtonVariant.ghost,
+                      isLoading: state.status == InvitationStatus.refreshing,
+                      onPressed:
+                          state.hasCode &&
+                              state.status != InvitationStatus.refreshing
+                          ? () => _showRefreshConfirmation(context, l10n)
+                          : null,
+                    ),
+                  ],
                 ),
-                const SizedBox(height: AppSpacing.space8),
-
-                // Invitation code display
-                _buildInvitationCodeDisplay(context, theme, l10n),
-                const SizedBox(height: AppSpacing.space6),
-
-                // Action buttons
-                _buildActionButtons(context, theme, l10n),
-
-                const Spacer(),
-
-                // Refresh button
-                _buildRefreshButton(context, theme, l10n),
-                const SizedBox(height: AppSpacing.space6),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
     );
   }
 
-  Widget _buildHeroIllustration() {
+  void _showRefreshConfirmation(BuildContext context, AppLocalizations l10n) {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.invitationRefreshTitle),
+        content: Text(l10n.invitationRefreshMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              context.read<InvitationBloc>().add(
+                const InvitationRefreshRequested(),
+              );
+            },
+            child: Text(l10n.confirm),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InvitationHero extends StatelessWidget {
+  const _InvitationHero();
+
+  @override
+  Widget build(BuildContext context) {
     return Center(
       child: Container(
         width: 120,
@@ -173,209 +261,70 @@ class InvitationView extends StatelessWidget {
           ),
         ),
         child: const Icon(
-          Icons.share,
+          Icons.share_outlined,
           size: 56,
           color: AppColors.primary,
         ),
       ),
     );
   }
-
-  Widget _buildInvitationCodeDisplay(
-    BuildContext context,
-    ThemeData theme,
-    AppLocalizations l10n,
-  ) {
-    return BlocBuilder<InvitationBloc, InvitationState>(
-      builder: (context, state) {
-        if (state.isLoading && !state.hasCode) {
-          return Container(
-            height: 80,
-            decoration: BoxDecoration(
-              color: AppColors.cardLight,
-              borderRadius: BorderRadius.circular(AppSpacing.radius),
-              boxShadow: AppShadows.card,
-            ),
-            child: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-
-        return Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: AppSpacing.space4,
-            horizontal: AppSpacing.space6,
-          ),
-          decoration: BoxDecoration(
-            color: AppColors.cardLight,
-            borderRadius: BorderRadius.circular(AppSpacing.radius),
-            boxShadow: AppShadows.card,
-          ),
-          child: Column(
-            children: [
-              Text(
-                l10n.invitationCodeLabel,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: AppColors.textMutedLight,
-                  fontWeight: AppTypography.bold,
-                  letterSpacing: 0.5,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.space2),
-              Text(
-                state.formattedCode,
-                style: theme.textTheme.displaySmall?.copyWith(
-                  fontWeight: AppTypography.bold,
-                  letterSpacing: 8,
-                  color: AppColors.primary,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildActionButtons(
-    BuildContext context,
-    ThemeData theme,
-    AppLocalizations l10n,
-  ) {
-    return BlocBuilder<InvitationBloc, InvitationState>(
-      builder: (context, state) {
-        return Row(
-          children: [
-            // Copy button
-            Expanded(
-              child: _ActionButton(
-                icon: Icons.copy,
-                label: l10n.invitationCopyButton,
-                onPressed: state.hasCode
-                    ? () {
-                        Clipboard.setData(
-                          ClipboardData(text: state.shareUrl),
-                        );
-                        context
-                            .read<InvitationBloc>()
-                            .add(const InvitationCopyRequested());
-                      }
-                    : null,
-              ),
-            ),
-            const SizedBox(width: AppSpacing.space4),
-            // Share button
-            Expanded(
-              child: _ActionButton(
-                icon: Icons.share,
-                label: l10n.invitationShareButton,
-                onPressed: state.hasCode
-                    ? () {
-                        Share.share(
-                          l10n.invitationShareMessage(
-                            groupName,
-                            state.shareUrl,
-                          ),
-                        );
-                      }
-                    : null,
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildRefreshButton(
-    BuildContext context,
-    ThemeData theme,
-    AppLocalizations l10n,
-  ) {
-    return BlocBuilder<InvitationBloc, InvitationState>(
-      builder: (context, state) {
-        final isRefreshing = state.status == InvitationStatus.refreshing;
-
-        return TextButton.icon(
-          onPressed: state.hasCode && !isRefreshing
-              ? () => _showRefreshConfirmation(context, l10n)
-              : null,
-          icon: isRefreshing
-              ? const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Icon(Icons.refresh),
-          label: Text(l10n.invitationRefreshButton),
-        );
-      },
-    );
-  }
-
-  void _showRefreshConfirmation(BuildContext context, AppLocalizations l10n) {
-    showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(l10n.invitationRefreshTitle),
-        content: Text(l10n.invitationRefreshMessage),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.of(dialogContext).pop(true);
-              context
-                  .read<InvitationBloc>()
-                  .add(const InvitationRefreshRequested());
-            },
-            child: Text(l10n.confirm),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
-class _ActionButton extends StatelessWidget {
-  const _ActionButton({
-    required this.icon,
-    required this.label,
-    required this.onPressed,
+class _InvitationCodeCard extends StatelessWidget {
+  const _InvitationCodeCard({
+    required this.state,
+    required this.l10n,
   });
 
-  final IconData icon;
-  final String label;
-  final VoidCallback? onPressed;
+  final InvitationState state;
+  final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isInitialLoading =
+        !state.hasCode &&
+        (state.isLoading || state.status == InvitationStatus.initial);
 
-    return Container(
-      height: AppSpacing.inputHeight,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
-        boxShadow: onPressed != null
-            ? const [
-                BoxShadow(
-                  color: AppColors.primaryShadow,
-                  blurRadius: 16,
-                  offset: Offset(0, 4),
+    return W2WCard(
+      showBorder: true,
+      child: SizedBox(
+        height: 96,
+        child: Center(
+          child: isInitialLoading
+              ? const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.space4),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      W2WSkeleton(width: 120, height: 12),
+                      SizedBox(height: AppSpacing.space2),
+                      W2WSkeleton(width: 180, height: 36),
+                    ],
+                  ),
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      l10n.invitationCodeLabel,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                        fontWeight: AppTypography.bold,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.space1),
+                    Text(
+                      state.formattedCode,
+                      style: theme.textTheme.displaySmall?.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: AppTypography.bold,
+                        letterSpacing: 6,
+                      ),
+                    ),
+                  ],
                 ),
-              ]
-            : null,
-      ),
-      child: FilledButton.icon(
-        onPressed: onPressed,
-        icon: Icon(icon, size: 20),
-        label: Text(label),
-        style: FilledButton.styleFrom(
-          minimumSize: const Size(double.infinity, AppSpacing.inputHeight),
-          textStyle: theme.textTheme.labelLarge,
         ),
       ),
     );

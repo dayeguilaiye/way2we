@@ -81,7 +81,7 @@ void main() {
         groupProvider: mockGroupProvider,
       ),
       act: (bloc) => bloc.add(const AppLoginSucceeded()),
-      expect: () => [const AuthenticationAuthenticated(hasGroup: false)],
+      expect: () => [const AuthenticationAuthenticated()],
     );
 
     blocTest<AuthenticationBloc, AuthenticationState>(
@@ -112,13 +112,16 @@ void main() {
     );
 
     blocTest<AuthenticationBloc, AuthenticationState>(
-      'emits [AuthenticationAuthenticated] when AppLoginSucceeded with needsOnboarding (skips group check)',
+      'emits [AuthenticationAuthenticated] when AppLoginSucceeded '
+      'with needsOnboarding (skips group check)',
       build: () => AuthenticationBloc(
         authProvider: mockAuthProvider,
         groupProvider: mockGroupProvider,
       ),
       act: (bloc) => bloc.add(const AppLoginSucceeded(needsOnboarding: true)),
-      expect: () => [const AuthenticationAuthenticated(needsOnboarding: true)],
+      expect: () => [
+        const AuthenticationAuthenticated(needsOnboarding: true),
+      ],
       verify: (_) {
         verifyNever(() => mockGroupProvider.getUserGroups());
       },

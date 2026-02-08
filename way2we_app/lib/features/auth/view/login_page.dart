@@ -6,6 +6,7 @@ import 'package:way2we_app/features/auth/bloc/authentication_bloc.dart';
 import 'package:way2we_app/features/auth/bloc/verification_code_bloc.dart';
 import 'package:way2we_app/features/auth/data/providers/auth_provider.dart';
 import 'package:way2we_app/l10n/l10n.dart';
+import 'package:way2we_app/shared/widgets/w2w.dart';
 import 'package:way2we_app/theme/theme.dart';
 
 /// Auth page with Register/Login tabs based on UX Design Specification.
@@ -275,31 +276,38 @@ class _AuthViewState extends State<AuthView> {
   }
 
   Widget _buildToggleButton({
-    Key? key,
     required String label,
     required bool isSelected,
     required VoidCallback onTap,
     required ThemeData theme,
+    Key? key,
   }) {
-    return GestureDetector(
-      key: key,
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        height: 44,
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.cardLight : Colors.transparent,
-          borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
-          boxShadow: isSelected ? AppShadows.card : null,
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: theme.textTheme.labelLarge?.copyWith(
-              color: isSelected ? AppColors.primary : AppColors.textMutedLight,
-              fontWeight: isSelected
-                  ? AppTypography.bold
-                  : AppTypography.medium,
+    return Semantics(
+      button: true,
+      label: label,
+      selected: isSelected,
+      child: GestureDetector(
+        key: key,
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: AppMotion.resolve(context, AppMotion.normal),
+          height: AppSpacing.minTouchTarget,
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.cardLight : Colors.transparent,
+            borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+            boxShadow: isSelected ? AppShadows.card : null,
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: theme.textTheme.labelLarge?.copyWith(
+                color: isSelected
+                    ? AppColors.primary
+                    : AppColors.textMutedLight,
+                fontWeight: isSelected
+                    ? AppTypography.bold
+                    : AppTypography.medium,
+              ),
             ),
           ),
         ),
@@ -466,42 +474,57 @@ class _AuthViewState extends State<AuthView> {
   Widget _buildLoginModeToggle(ThemeData theme, AppLocalizations l10n) {
     return Row(
       children: [
-        _buildModeChip(
-          l10n.authPasswordLogin,
-          _isPasswordLogin,
-          () => setState(() => _isPasswordLogin = true),
+        Expanded(
+          child: _buildModeChip(
+            l10n.authPasswordLogin,
+            _isPasswordLogin,
+            () => setState(() => _isPasswordLogin = true),
+          ),
         ),
         const SizedBox(width: 12),
-        _buildModeChip(
-          l10n.authCodeLogin,
-          !_isPasswordLogin,
-          () => setState(() => _isPasswordLogin = false),
+        Expanded(
+          child: _buildModeChip(
+            l10n.authCodeLogin,
+            !_isPasswordLogin,
+            () => setState(() => _isPasswordLogin = false),
+          ),
         ),
       ],
     );
   }
 
   Widget _buildModeChip(String label, bool isSelected, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.primary.withValues(alpha: 0.1)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.borderSubtleLight,
+    return Semantics(
+      button: true,
+      label: label,
+      selected: isSelected,
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: AppMotion.resolve(context, AppMotion.normal),
+          constraints: const BoxConstraints(
+            minHeight: AppSpacing.minTouchTarget,
           ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? AppColors.primary : AppColors.textMutedLight,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            fontSize: 12,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? AppColors.primary.withValues(alpha: 0.1)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isSelected
+                  ? AppColors.primary
+                  : AppColors.borderSubtleLight,
+            ),
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isSelected ? AppColors.primary : AppColors.textMutedLight,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              fontSize: 12,
+            ),
           ),
         ),
       ),
@@ -509,16 +532,17 @@ class _AuthViewState extends State<AuthView> {
   }
 
   Widget _buildLabeledInput({
-    Key? key,
     required String label,
     required IconData icon,
     required String placeholder,
     required TextEditingController controller,
     required ThemeData theme,
+    Key? key,
     TextInputType keyboardType = TextInputType.text,
     bool obscureText = false,
     String? Function(String?)? validator,
     bool showVisibilityToggle = false,
+    String? visibilityToggleLabel,
   }) {
     return Column(
       key: key,
@@ -547,6 +571,7 @@ class _AuthViewState extends State<AuthView> {
           obscureText: obscureText,
           validator: validator,
           showVisibilityToggle: showVisibilityToggle,
+          visibilityToggleLabel: visibilityToggleLabel ?? label,
         ),
       ],
     );
@@ -558,44 +583,11 @@ class _AuthViewState extends State<AuthView> {
         ? l10n.authCreateAccountButton
         : l10n.authLoginTab;
 
-    return Container(
-      width: double.infinity,
-      height: AppSpacing.inputHeight,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
-        boxShadow: !_isSubmitting
-            ? const [
-                BoxShadow(
-                  color: AppColors.primaryShadow,
-                  blurRadius: 24,
-                  offset: Offset(0, 8),
-                ),
-              ]
-            : null,
-      ),
-      child: FilledButton(
-        onPressed: _isSubmitting ? null : _onSubmit,
-        style: FilledButton.styleFrom(
-          minimumSize: const Size(double.infinity, AppSpacing.inputHeight),
-        ),
-        child: _isSubmitting
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                  strokeWidth: 2,
-                ),
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(buttonText),
-                  const SizedBox(width: AppSpacing.space2),
-                  const Icon(Icons.arrow_forward, size: 20),
-                ],
-              ),
-      ),
+    return W2WButton(
+      label: buttonText,
+      icon: Icons.arrow_forward,
+      isLoading: _isSubmitting,
+      onPressed: _isSubmitting ? null : _onSubmit,
     );
   }
 
@@ -649,14 +641,17 @@ class _AuthViewState extends State<AuthView> {
         border: Border.all(color: AppColors.borderSubtleLight),
         boxShadow: AppShadows.card,
       ),
-      child: IconButton(
-        onPressed: () {
-          // TODO(social): Implement social login - https://github.com/way2we/way2we/issues/4
-        },
-        icon: Icon(
-          icon,
-          size: 24,
-          color: AppColors.textMainLight,
+      child: Tooltip(
+        message: label,
+        child: IconButton(
+          onPressed: () {
+            // TODO(social): Implement social login - https://github.com/way2we/way2we/issues/4
+          },
+          icon: Icon(
+            icon,
+            size: 24,
+            color: AppColors.textMainLight,
+          ),
         ),
       ),
     );
@@ -782,6 +777,7 @@ class _AuthInputField extends StatefulWidget {
     this.obscureText = false,
     this.validator,
     this.showVisibilityToggle = false,
+    this.visibilityToggleLabel,
   });
 
   final TextEditingController controller;
@@ -792,6 +788,7 @@ class _AuthInputField extends StatefulWidget {
   final bool obscureText;
   final String? Function(String?)? validator;
   final bool showVisibilityToggle;
+  final String? visibilityToggleLabel;
 
   @override
   State<_AuthInputField> createState() => _AuthInputFieldState();
@@ -838,7 +835,7 @@ class _AuthInputFieldState extends State<_AuthInputField> {
             GestureDetector(
               onTap: _focusNode.requestFocus,
               child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
+                duration: AppMotion.resolve(context, AppMotion.normal),
                 height: AppSpacing.inputHeight,
                 decoration: BoxDecoration(
                   color: AppColors.cardLight,
@@ -887,18 +884,25 @@ class _AuthInputFieldState extends State<_AuthInputField> {
                         minWidth: 32,
                       ),
                       suffixIcon: widget.showVisibilityToggle
-                          ? GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _isObscured = !_isObscured;
-                                });
-                              },
-                              child: Icon(
-                                _isObscured
-                                    ? Icons.visibility_off_outlined
-                                    : Icons.visibility_outlined,
-                                color: AppColors.textMutedLight,
-                                size: 20,
+                          ? Tooltip(
+                              message: widget.visibilityToggleLabel,
+                              child: IconButton(
+                                constraints: const BoxConstraints(
+                                  minWidth: AppSpacing.minTouchTarget,
+                                  minHeight: AppSpacing.minTouchTarget,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _isObscured = !_isObscured;
+                                  });
+                                },
+                                icon: Icon(
+                                  _isObscured
+                                      ? Icons.visibility_off_outlined
+                                      : Icons.visibility_outlined,
+                                  color: AppColors.textMutedLight,
+                                  size: 20,
+                                ),
                               ),
                             )
                           : null,

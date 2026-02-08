@@ -13,6 +13,7 @@ class AvatarPicker extends StatelessWidget {
     this.imageFile,
     this.imageUrl,
     this.onTap,
+    this.semanticLabel,
     this.size = 120,
   });
 
@@ -24,6 +25,9 @@ class AvatarPicker extends StatelessWidget {
 
   /// Callback when the avatar is tapped.
   final VoidCallback? onTap;
+
+  /// Optional accessibility label for the picker.
+  final String? semanticLabel;
 
   /// Size of the avatar (width and height).
   final double size;
@@ -40,58 +44,63 @@ class AvatarPicker extends StatelessWidget {
       imageProvider = NetworkImage(imageUrl!);
     }
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Stack(
-        children: [
-          Container(
-            width: size,
-            height: size,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.surfaceMutedLight,
-              border: Border.all(
-                color: AppColors.borderSubtleLight,
-                width: 2,
+    return Semantics(
+      button: onTap != null,
+      enabled: onTap != null,
+      label: semanticLabel,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Stack(
+          children: [
+            Container(
+              width: size,
+              height: size,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.surfaceMutedLight,
+                border: Border.all(
+                  color: AppColors.borderSubtleLight,
+                  width: 2,
+                ),
+                boxShadow: AppShadows.card,
+                image: imageProvider != null
+                    ? DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      )
+                    : null,
               ),
-              boxShadow: AppShadows.card,
-              image: imageProvider != null
-                  ? DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
+              child: imageProvider == null
+                  ? Icon(
+                      Icons.person_outline,
+                      size: size * 0.4,
+                      color: AppColors.textMutedLight,
                     )
                   : null,
             ),
-            child: imageProvider == null
-                ? Icon(
-                    Icons.person_outline,
-                    size: size * 0.4,
-                    color: AppColors.textMutedLight,
-                  )
-                : null,
-          ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: Container(
-              width: size * 0.3,
-              height: size * 0.3,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.primary,
-                border: Border.all(
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Container(
+                width: size * 0.3,
+                height: size * 0.3,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.primary,
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 2,
+                  ),
+                ),
+                child: Icon(
+                  Icons.camera_alt_outlined,
+                  size: size * 0.15,
                   color: Colors.white,
-                  width: 2,
                 ),
               ),
-              child: Icon(
-                Icons.camera_alt_outlined,
-                size: size * 0.15,
-                color: Colors.white,
-              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

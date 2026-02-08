@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:way2we_app/features/agreement/data/providers/agreement_provider.dart';
-import 'package:way2we_app/features/group/data/providers/group_provider.dart';
 import 'package:way2we_app/features/agreement/models/agreement.dart';
+import 'package:way2we_app/features/group/data/providers/group_provider.dart';
 
 part 'agreement_form_event.dart';
 part 'agreement_form_state.dart';
@@ -52,11 +52,9 @@ class AgreementFormBloc extends Bloc<AgreementFormEvent, AgreementFormState> {
         emit(
           AgreementFormState(
             requireConfirmation: settings.requireConfirmationDefault,
-            // Initialize other defaults if needed, e.g. points
-            points: 10,
           ),
         );
-      } catch (e) {
+      } on Object {
         // Fallback to defaults on error
         emit(const AgreementFormState());
       }

@@ -62,7 +62,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final context = tester.element(find.byType(AgreementCard));
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     expect(find.text(l10n.agreementPinAction), findsOneWidget);
     expect(find.text(l10n.cancel), findsOneWidget);

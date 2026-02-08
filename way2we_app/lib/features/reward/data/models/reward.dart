@@ -4,10 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'reward.g.dart';
 
 /// Reward status enum
-enum RewardStatus {
-  active,
-  inactive;
-}
+enum RewardStatus { active, inactive }
 
 /// Reward model representing a reward item
 @JsonSerializable()

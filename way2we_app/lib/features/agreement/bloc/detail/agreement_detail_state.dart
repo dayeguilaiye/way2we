@@ -41,7 +41,10 @@ final class AgreementPinUpdating extends AgreementDetailState {
 }
 
 final class AgreementPinUpdateSuccess extends AgreementDetailState {
-  const AgreementPinUpdateSuccess({required this.agreement, required this.isPinned});
+  const AgreementPinUpdateSuccess({
+    required this.agreement,
+    required this.isPinned,
+  });
 
   final Agreement agreement;
   final bool isPinned;

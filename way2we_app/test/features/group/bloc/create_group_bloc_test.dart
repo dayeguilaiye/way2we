@@ -35,19 +35,25 @@ void main() {
     blocTest<CreateGroupBloc, CreateGroupState>(
       'emits success when CreateGroupSubmitted succeeds',
       setUp: () {
-        when(() => mockGroupProvider.createGroup(name: any(named: 'name')))
-            .thenAnswer((_) async => const CreateGroupResponse(
-                  id: 1,
-                  name: '我的家庭',
-                  role: 'admin',
-                ));
+        when(
+          () => mockGroupProvider.createGroup(name: any(named: 'name')),
+        ).thenAnswer(
+          (_) async => const CreateGroupResponse(
+            id: 1,
+            name: '我的家庭',
+            role: 'admin',
+          ),
+        );
       },
       build: () => CreateGroupBloc(groupProvider: mockGroupProvider),
       seed: () => const CreateGroupState(name: '我的家庭'),
       act: (bloc) => bloc.add(const CreateGroupSubmitted()),
       expect: () => [
-        isA<CreateGroupState>()
-            .having((s) => s.status, 'status', CreateGroupStatus.submitting),
+        isA<CreateGroupState>().having(
+          (s) => s.status,
+          'status',
+          CreateGroupStatus.submitting,
+        ),
         isA<CreateGroupState>()
             .having((s) => s.status, 'status', CreateGroupStatus.success)
             .having((s) => s.groupId, 'groupId', 1),
@@ -57,15 +63,19 @@ void main() {
     blocTest<CreateGroupBloc, CreateGroupState>(
       'emits failure when CreateGroupSubmitted fails',
       setUp: () {
-        when(() => mockGroupProvider.createGroup(name: any(named: 'name')))
-            .thenThrow(const GroupApiException('创建失败'));
+        when(
+          () => mockGroupProvider.createGroup(name: any(named: 'name')),
+        ).thenThrow(const GroupApiException('创建失败'));
       },
       build: () => CreateGroupBloc(groupProvider: mockGroupProvider),
       seed: () => const CreateGroupState(name: '我的家庭'),
       act: (bloc) => bloc.add(const CreateGroupSubmitted()),
       expect: () => [
-        isA<CreateGroupState>()
-            .having((s) => s.status, 'status', CreateGroupStatus.submitting),
+        isA<CreateGroupState>().having(
+          (s) => s.status,
+          'status',
+          CreateGroupStatus.submitting,
+        ),
         isA<CreateGroupState>()
             .having((s) => s.status, 'status', CreateGroupStatus.failure)
             .having((s) => s.errorMessage, 'errorMessage', '创建失败'),
@@ -75,7 +85,7 @@ void main() {
     blocTest<CreateGroupBloc, CreateGroupState>(
       'does not submit when name is empty',
       build: () => CreateGroupBloc(groupProvider: mockGroupProvider),
-      seed: () => const CreateGroupState(name: ''),
+      seed: () => const CreateGroupState(),
       act: (bloc) => bloc.add(const CreateGroupSubmitted()),
       expect: () => <CreateGroupState>[],
       verify: (_) {
@@ -101,7 +111,7 @@ void main() {
 
   group('CreateGroupState', () {
     test('isNameValid returns false for empty name', () {
-      const state = CreateGroupState(name: '');
+      const state = CreateGroupState();
       expect(state.isNameValid, false);
     });
 

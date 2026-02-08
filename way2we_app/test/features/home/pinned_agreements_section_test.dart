@@ -88,8 +88,8 @@ void main() {
           navigatorObservers: [routeObserver],
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: _TestHome(
-            child: const PinnedAgreementsSection(groupId: 1),
+          home: const _TestHome(
+            child: PinnedAgreementsSection(groupId: 1),
           ),
         ),
       ),

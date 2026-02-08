@@ -26,11 +26,11 @@ class GroupMembersBloc extends Bloc<GroupMembersEvent, GroupMembersState> {
       final membersJson = await _groupProvider.listMembers(
         groupId: event.groupId,
       );
-      final members = membersJson.map((j) => GroupMember.fromJson(j)).toList();
+      final members = membersJson.map(GroupMember.fromJson).toList();
       emit(GroupMembersLoaded(members));
     } on GroupApiException catch (e) {
       emit(GroupMembersError(e.message));
-    } catch (e) {
+    } on Object catch (e) {
       emit(GroupMembersError(e.toString()));
     }
   }
@@ -54,14 +54,14 @@ class GroupMembersBloc extends Bloc<GroupMembersEvent, GroupMembersState> {
       final membersJson = await _groupProvider.listMembers(
         groupId: event.groupId,
       );
-      final members = membersJson.map((j) => GroupMember.fromJson(j)).toList();
+      final members = membersJson.map(GroupMember.fromJson).toList();
 
       emit(const MemberOperationSuccess('角色更新成功'));
       emit(GroupMembersLoaded(members));
     } on GroupApiException catch (e) {
       emit(MemberOperationFailure(e.message));
       emit(currentState);
-    } catch (e) {
+    } on Object catch (e) {
       emit(MemberOperationFailure(e.toString()));
       emit(currentState);
     }
@@ -86,14 +86,14 @@ class GroupMembersBloc extends Bloc<GroupMembersEvent, GroupMembersState> {
       final membersJson = await _groupProvider.listMembers(
         groupId: event.groupId,
       );
-      final members = membersJson.map((j) => GroupMember.fromJson(j)).toList();
+      final members = membersJson.map(GroupMember.fromJson).toList();
 
       emit(const MemberOperationSuccess('权限更新成功'));
       emit(GroupMembersLoaded(members));
     } on GroupApiException catch (e) {
       emit(MemberOperationFailure(e.message));
       emit(currentState);
-    } catch (e) {
+    } on Object catch (e) {
       emit(MemberOperationFailure(e.toString()));
       emit(currentState);
     }

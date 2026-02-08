@@ -10,9 +10,9 @@ import 'package:way2we_app/features/auth/view/onboarding_profile_setup_page.dart
 import 'package:way2we_app/features/group/bloc/group_control_bloc.dart';
 import 'package:way2we_app/features/group/data/providers/group_provider.dart';
 import 'package:way2we_app/features/group/view/group_selection_page.dart';
-import 'package:way2we_app/features/home/view/home_page.dart';
-import 'package:way2we_app/features/reward/data/providers/reward_provider.dart';
+import 'package:way2we_app/features/home/view/main_shell_page.dart';
 import 'package:way2we_app/features/redemption/data/providers/redemption_provider.dart';
+import 'package:way2we_app/features/reward/data/providers/reward_provider.dart';
 import 'package:way2we_app/features/splash/view/splash_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
 import 'package:way2we_app/theme/app_theme.dart';
@@ -88,6 +88,7 @@ class _AppViewState extends State<_AppView> {
       navigatorObservers: [routeObserver],
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
+      themeMode: ThemeMode.light,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       // Use builder to wrap all routes with BlocListener
@@ -124,7 +125,7 @@ class _AppViewState extends State<_AppView> {
               } else {
                 // Navigate to home and clear stack
                 navigator.pushAndRemoveUntil(
-                  HomePage.route(),
+                  MainShellPage.route(),
                   (route) => false,
                 );
               }

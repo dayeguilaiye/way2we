@@ -39,8 +39,7 @@ class AgreementFormState {
   bool get isDescriptionValid => description.length <= 200;
   bool get isPointsValid => points >= 1 && points <= 99999;
   bool get isFormValid => isNameValid && isDescriptionValid && isPointsValid;
-  bool get canSubmit =>
-      isFormValid && status != AgreementFormStatus.submitting;
+  bool get canSubmit => isFormValid && status != AgreementFormStatus.submitting;
 
   AgreementFormState copyWith({
     AgreementFormStatus? status,

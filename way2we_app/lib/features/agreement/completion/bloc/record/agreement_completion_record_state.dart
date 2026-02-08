@@ -11,7 +11,8 @@ class AgreementCompletionRecordInitial extends AgreementCompletionRecordState {
   const AgreementCompletionRecordInitial();
 }
 
-class AgreementCompletionRecordSubmitting extends AgreementCompletionRecordState {
+class AgreementCompletionRecordSubmitting
+    extends AgreementCompletionRecordState {
   const AgreementCompletionRecordSubmitting();
 }
 

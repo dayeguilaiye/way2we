@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:way2we_app/app/di.dart';
+import 'package:way2we_app/features/group/bloc/group_control_bloc.dart';
 import 'package:way2we_app/features/group/bloc/join_group_bloc.dart';
 import 'package:way2we_app/features/group/data/providers/group_provider.dart';
-import 'package:way2we_app/features/home/view/home_page.dart';
+import 'package:way2we_app/features/home/view/main_shell_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
+import 'package:way2we_app/shared/widgets/w2w.dart';
 import 'package:way2we_app/theme/theme.dart';
 
 /// Page for joining a group via invitation code.
@@ -68,8 +70,11 @@ class _JoinGroupViewState extends State<JoinGroupView> {
               backgroundColor: AppColors.success,
             ),
           );
+          context.read<GroupControlBloc>().add(
+            const GroupControlGroupsLoaded(),
+          );
           Navigator.of(context).pushAndRemoveUntil(
-            HomePage.route(),
+            MainShellPage.route(),
             (route) => false,
           );
         } else if (state.status == JoinGroupStatus.failure) {
@@ -87,6 +92,11 @@ class _JoinGroupViewState extends State<JoinGroupView> {
         appBar: AppBar(
           title: Text(l10n.joinGroupTitle),
           leading: IconButton(
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            constraints: const BoxConstraints(
+              minWidth: AppSpacing.minTouchTarget,
+              minHeight: AppSpacing.minTouchTarget,
+            ),
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.of(context).pop(),
           ),
@@ -184,72 +194,30 @@ class _JoinGroupViewState extends State<JoinGroupView> {
   }
 
   Widget _buildCodeInput(ThemeData theme, AppLocalizations l10n) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(
-            left: AppSpacing.space4,
-            bottom: AppSpacing.space1 + 2,
+    return BlocBuilder<JoinGroupBloc, JoinGroupState>(
+      builder: (context, state) {
+        return W2WInput(
+          controller: _codeController,
+          label: l10n.joinGroupCodeLabel,
+          hintText: l10n.joinGroupCodePlaceholder,
+          textAlign: TextAlign.center,
+          textCapitalization: TextCapitalization.characters,
+          style: theme.textTheme.bodyLarge?.copyWith(
+            letterSpacing: 4,
+            fontWeight: AppTypography.bold,
           ),
-          child: Text(
-            l10n.joinGroupCodeLabel,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: AppColors.textMutedLight,
-              fontWeight: AppTypography.bold,
-              letterSpacing: 0.5,
-            ),
-          ),
-        ),
-        BlocBuilder<JoinGroupBloc, JoinGroupState>(
-          builder: (context, state) {
-            return Container(
-              height: AppSpacing.inputHeight,
-              decoration: BoxDecoration(
-                color: AppColors.cardLight,
-                borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
-                boxShadow: AppShadows.card,
-              ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.space4,
-              ),
-              child: Center(
-                child: TextField(
-                  controller: _codeController,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    letterSpacing: 4,
-                    fontWeight: AppTypography.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                  textCapitalization: TextCapitalization.characters,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp('[A-Za-z0-9]')),
-                    LengthLimitingTextInputFormatter(6),
-                    UpperCaseTextFormatter(),
-                  ],
-                  onChanged: (value) {
-                    context
-                        .read<JoinGroupBloc>()
-                        .add(JoinGroupCodeChanged(value));
-                  },
-                  decoration: InputDecoration(
-                    isCollapsed: true,
-                    hintText: l10n.joinGroupCodePlaceholder,
-                    hintStyle: theme.textTheme.bodyLarge?.copyWith(
-                      color: AppColors.textPlaceholderLight,
-                      letterSpacing: 4,
-                    ),
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                ),
-              ),
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp('[A-Za-z0-9]')),
+            LengthLimitingTextInputFormatter(6),
+            UpperCaseTextFormatter(),
+          ],
+          onChanged: (value) {
+            context.read<JoinGroupBloc>().add(
+              JoinGroupCodeChanged(value),
             );
           },
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -261,15 +229,12 @@ class _JoinGroupViewState extends State<JoinGroupView> {
     return BlocBuilder<JoinGroupBloc, JoinGroupState>(
       builder: (context, state) {
         if (state.status == JoinGroupStatus.loadingPreview) {
-          return Container(
+          return const SizedBox(
             height: 100,
-            decoration: BoxDecoration(
-              color: AppColors.cardLight,
-              borderRadius: BorderRadius.circular(AppSpacing.radius),
-              boxShadow: AppShadows.card,
-            ),
-            child: const Center(
-              child: CircularProgressIndicator(),
+            child: W2WCard(
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
           );
         }
@@ -278,17 +243,8 @@ class _JoinGroupViewState extends State<JoinGroupView> {
           return const SizedBox.shrink();
         }
 
-        return Container(
-          padding: const EdgeInsets.all(AppSpacing.space4),
-          decoration: BoxDecoration(
-            color: AppColors.cardLight,
-            borderRadius: BorderRadius.circular(AppSpacing.radius),
-            boxShadow: AppShadows.card,
-            border: Border.all(
-              color: AppColors.primary.withValues(alpha: 0.3),
-              width: 2,
-            ),
-          ),
+        return W2WCard(
+          showBorder: true,
           child: Column(
             children: [
               Row(
@@ -350,102 +306,32 @@ class _JoinGroupViewState extends State<JoinGroupView> {
       builder: (context, state) {
         final isLoading = state.isLoading;
 
-        // Show different button based on state
         if (state.hasPreview) {
-          // Join button
-          return Container(
-            width: double.infinity,
-            height: AppSpacing.inputHeight,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
-              boxShadow: state.canJoin
-                  ? const [
-                      BoxShadow(
-                        color: AppColors.primaryShadow,
-                        blurRadius: 24,
-                        offset: Offset(0, 8),
-                      ),
-                    ]
-                  : null,
-            ),
-            child: FilledButton(
-              onPressed: state.canJoin
-                  ? () {
-                      context
-                          .read<JoinGroupBloc>()
-                          .add(const JoinGroupConfirmed());
-                    }
-                  : null,
-              style: FilledButton.styleFrom(
-                minimumSize:
-                    const Size(double.infinity, AppSpacing.inputHeight),
-              ),
-              child: isLoading
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                      ),
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(l10n.joinGroupConfirmButton),
-                        const SizedBox(width: AppSpacing.space2),
-                        const Icon(Icons.arrow_forward, size: 20),
-                      ],
-                    ),
-            ),
+          return W2WButton(
+            label: l10n.joinGroupConfirmButton,
+            icon: Icons.arrow_forward,
+            isLoading: isLoading,
+            onPressed: state.canJoin
+                ? () {
+                    context.read<JoinGroupBloc>().add(
+                      const JoinGroupConfirmed(),
+                    );
+                  }
+                : null,
           );
         }
 
-        // Preview button
-        return Container(
-          width: double.infinity,
-          height: AppSpacing.inputHeight,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
-            boxShadow: state.canPreview
-                ? const [
-                    BoxShadow(
-                      color: AppColors.primaryShadow,
-                      blurRadius: 24,
-                      offset: Offset(0, 8),
-                    ),
-                  ]
-                : null,
-          ),
-          child: FilledButton(
-            onPressed: state.canPreview
-                ? () {
-                    context
-                        .read<JoinGroupBloc>()
-                        .add(const JoinGroupPreviewRequested());
-                  }
-                : null,
-            style: FilledButton.styleFrom(
-              minimumSize: const Size(double.infinity, AppSpacing.inputHeight),
-            ),
-            child: isLoading
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(l10n.joinGroupPreviewButton),
-                      const SizedBox(width: AppSpacing.space2),
-                      const Icon(Icons.search, size: 20),
-                    ],
-                  ),
-          ),
+        return W2WButton(
+          label: l10n.joinGroupPreviewButton,
+          icon: Icons.search,
+          isLoading: isLoading,
+          onPressed: state.canPreview
+              ? () {
+                  context.read<JoinGroupBloc>().add(
+                    const JoinGroupPreviewRequested(),
+                  );
+                }
+              : null,
         );
       },
     );

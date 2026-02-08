@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:way2we_app/features/group/view/create_group_page.dart';
 import 'package:way2we_app/features/group/view/join_group_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
+import 'package:way2we_app/shared/widgets/w2w.dart';
 import 'package:way2we_app/theme/theme.dart';
 
 /// Page for selecting how to get into a group.
@@ -55,8 +56,8 @@ class GroupSelectionPage extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.space8),
 
-              // Create group card
               _SelectionCard(
+                semanticLabel: l10n.groupSelectionCreateTitle,
                 icon: Icons.add_circle_outline,
                 title: l10n.groupSelectionCreateTitle,
                 subtitle: l10n.groupSelectionCreateSubtitle,
@@ -66,8 +67,8 @@ class GroupSelectionPage extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.space4),
 
-              // Join group card
               _SelectionCard(
+                semanticLabel: l10n.groupSelectionJoinTitle,
                 icon: Icons.group_add_outlined,
                 title: l10n.groupSelectionJoinTitle,
                 subtitle: l10n.groupSelectionJoinSubtitle,
@@ -112,12 +113,14 @@ class GroupSelectionPage extends StatelessWidget {
 
 class _SelectionCard extends StatelessWidget {
   const _SelectionCard({
+    required this.semanticLabel,
     required this.icon,
     required this.title,
     required this.subtitle,
     required this.onTap,
   });
 
+  final String semanticLabel;
   final IconData icon;
   final String title;
   final String subtitle;
@@ -127,16 +130,12 @@ class _SelectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(AppSpacing.radius),
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.space4),
-        decoration: BoxDecoration(
-          color: AppColors.cardLight,
-          borderRadius: BorderRadius.circular(AppSpacing.radius),
-          boxShadow: AppShadows.card,
-        ),
+    return Semantics(
+      button: true,
+      label: semanticLabel,
+      child: W2WCard(
+        onTap: onTap,
+        showBorder: true,
         child: Row(
           children: [
             Container(

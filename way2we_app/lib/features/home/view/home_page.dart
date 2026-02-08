@@ -4,10 +4,10 @@ import 'package:way2we_app/app/view/app.dart';
 import 'package:way2we_app/features/agreement/bloc/list/agreement_list_bloc.dart';
 import 'package:way2we_app/features/agreement/data/providers/agreement_provider.dart';
 import 'package:way2we_app/features/agreement/view/agreement_detail_page.dart';
-import 'package:way2we_app/features/agreement/view/agreement_list_page.dart';
 import 'package:way2we_app/features/agreement/view/widgets/agreement_card.dart';
 import 'package:way2we_app/features/auth/bloc/authentication_bloc.dart';
 import 'package:way2we_app/features/group/bloc/group_control_bloc.dart';
+import 'package:way2we_app/features/group/data/providers/group_provider.dart';
 import 'package:way2we_app/features/group/view/group_default_settings_page.dart';
 import 'package:way2we_app/features/group/view/invitation_page.dart';
 import 'package:way2we_app/features/group/view/member_management_page.dart';
@@ -17,9 +17,8 @@ import 'package:way2we_app/features/reward/bloc/list/reward_list_bloc.dart';
 import 'package:way2we_app/features/reward/data/models/reward.dart';
 import 'package:way2we_app/features/reward/data/providers/reward_provider.dart';
 import 'package:way2we_app/features/reward/view/reward_detail_page.dart';
-import 'package:way2we_app/features/reward/view/reward_list_page.dart';
-import 'package:way2we_app/features/redemption/view/redemption_order_list_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
+import 'package:way2we_app/shared/widgets/w2w.dart';
 import 'package:way2we_app/theme/theme.dart';
 
 class HomePage extends StatelessWidget {
@@ -31,22 +30,10 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final l10n = context.l10n;
 
     return BlocConsumer<GroupControlBloc, GroupControlState>(
-      listener: (context, state) {
-        if (state is GroupControlLoadSuccess) {
-          // TODO: Notify other feature blocs about the group change
-          // context.read<AgreementBloc>().add(LoadAgreements(groupId: state.selectedGroup.id));
-          // context.read<RewardBloc>().add(LoadRewards(groupId: state.selectedGroup.id));
-
-          // For now, we just log it or show a snackbar if needed for debug
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   SnackBar(content: Text('Switched to ${state.selectedGroup!.name}')),
-          // );
-        }
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         final selectedGroup = state is GroupControlLoadSuccess
             ? state.selectedGroup
@@ -56,32 +43,49 @@ class HomePage extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(
-            title: GestureDetector(
-              // Option A: Disable interaction when loading
-              onTap: isLoading ? null : () => GroupSwitcherSheet.show(context),
-              child: Opacity(
-                opacity: isLoading ? 0.6 : 1.0,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        selectedGroup?.name ?? 'Way2We',
-                        overflow: TextOverflow.ellipsis,
+            title: Semantics(
+              button: true,
+              enabled: !isLoading,
+              label: l10n.groupSelectTitle,
+              child: Tooltip(
+                message: l10n.groupSelectTitle,
+                child: GestureDetector(
+                  onTap: isLoading
+                      ? null
+                      : () => GroupSwitcherSheet.show(context),
+                  child: Opacity(
+                    opacity: isLoading ? 0.6 : 1.0,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minHeight: AppSpacing.minTouchTarget,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              selectedGroup?.name ?? l10n.commonAppName,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.space1),
+                          const Icon(Icons.expand_more),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    const Icon(Icons.expand_more),
-                  ],
+                  ),
                 ),
               ),
             ),
             actions: [
-              // Invite members button (only for admins)
               if (selectedGroup != null && selectedGroup.isAdmin)
                 IconButton(
                   icon: const Icon(Icons.person_add),
                   tooltip: l10n.homeInviteMembers,
+                  constraints: const BoxConstraints(
+                    minWidth: AppSpacing.minTouchTarget,
+                    minHeight: AppSpacing.minTouchTarget,
+                  ),
                   onPressed: () {
                     Navigator.of(context).push(
                       InvitationPage.route(
@@ -91,16 +95,24 @@ class HomePage extends StatelessWidget {
                     );
                   },
                 ),
-              // Profile button
               IconButton(
                 icon: const Icon(Icons.person),
+                tooltip: l10n.profilePageTitle,
+                constraints: const BoxConstraints(
+                  minWidth: AppSpacing.minTouchTarget,
+                  minHeight: AppSpacing.minTouchTarget,
+                ),
                 onPressed: () {
                   Navigator.of(context).push(ProfilePage.route());
                 },
               ),
-              // Logout button
               IconButton(
                 icon: const Icon(Icons.logout),
+                tooltip: l10n.profileLogoutButton,
+                constraints: const BoxConstraints(
+                  minWidth: AppSpacing.minTouchTarget,
+                  minHeight: AppSpacing.minTouchTarget,
+                ),
                 onPressed: () {
                   context.read<AuthenticationBloc>().add(
                     const AppLogoutRequested(),
@@ -110,189 +122,79 @@ class HomePage extends StatelessWidget {
             ],
           ),
           body: isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? const _HomeLoadingView()
+              : selectedGroup == null
+              ? W2WEmptyState(
+                  icon: Icons.groups_outlined,
+                  title: l10n.groupSelectionTitle,
+                  subtitle: l10n.groupSelectionSubtitle,
+                  actionLabel: l10n.retry,
+                  onAction: () => context.read<GroupControlBloc>().add(
+                    const GroupControlGroupsLoaded(),
+                  ),
+                )
               : SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.pagePaddingH,
                     vertical: AppSpacing.space6,
                   ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Container(
-                        width: 120,
-                        height: 120,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              AppColors.primary.withValues(alpha: 0.1),
-                              AppColors.primary.withValues(alpha: 0.3),
-                            ],
-                          ),
-                        ),
-                        child: const Icon(
-                          Icons.home,
-                          size: 56,
-                          color: AppColors.primary,
-                        ),
-                      ),
+                      _GroupHeroCard(group: selectedGroup),
                       const SizedBox(height: AppSpacing.space6),
-                      if (selectedGroup != null) ...[
-                        Text(
-                          selectedGroup.name,
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            fontWeight: AppTypography.bold,
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.space2),
-                        Text(
-                          selectedGroup.isAdmin ? 'Admin' : 'Member',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: AppColors.textMutedLight,
-                          ),
-                        ),
-                        if (selectedGroup.description != null &&
-                            selectedGroup.description!.isNotEmpty) ...[
-                          const SizedBox(height: AppSpacing.space2),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 32),
-                            child: Text(
-                              selectedGroup.description!,
-                              textAlign: TextAlign.center,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.onSurfaceVariant,
-                              ),
+                      PinnedAgreementsSection(groupId: selectedGroup.id),
+                      const SizedBox(height: AppSpacing.space6),
+                      PinnedRewardsSection(groupId: selectedGroup.id),
+                      const SizedBox(height: AppSpacing.space6),
+                      W2WSectionHeader(title: l10n.defaultSettingsTitle),
+                      const SizedBox(height: AppSpacing.space3),
+                      GridView.count(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        crossAxisCount: 2,
+                        mainAxisSpacing: AppSpacing.space3,
+                        crossAxisSpacing: AppSpacing.space3,
+                        childAspectRatio: 2.6,
+                        children: [
+                          if (selectedGroup.isAdmin)
+                            _DashboardActionCard(
+                              icon: Icons.person_add_outlined,
+                              title: l10n.homeInviteMembers,
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  InvitationPage.route(
+                                    groupId: selectedGroup.id,
+                                    groupName: selectedGroup.name,
+                                  ),
+                                );
+                              },
                             ),
+                          _DashboardActionCard(
+                            icon: Icons.tune_outlined,
+                            title: l10n.defaultSettingsTitle,
+                            onTap: () {
+                              Navigator.of(context).push(
+                                GroupDefaultSettingsPage.route(
+                                  groupId: selectedGroup.id,
+                                ),
+                              );
+                            },
+                          ),
+                          _DashboardActionCard(
+                            icon: Icons.people_outline,
+                            title: l10n.memberManagementTitle,
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MemberManagementPage.route(
+                                  groupId: selectedGroup.id,
+                                  groupName: selectedGroup.name,
+                                ),
+                              );
+                            },
                           ),
                         ],
-                        const SizedBox(height: AppSpacing.space6),
-                        PinnedAgreementsSection(groupId: selectedGroup.id),
-                        const SizedBox(height: AppSpacing.space6),
-                        PinnedRewardsSection(groupId: selectedGroup.id),
-                        const SizedBox(height: AppSpacing.space6),
-                        // Agreements Entry
-                        InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              AgreementListPage.route(groupId: selectedGroup.id),
-                            );
-                          },
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.assignment_outlined,
-                                size: 32,
-                                color: theme.colorScheme.primary,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                l10n.agreementTabTitle,
-                                style: theme.textTheme.labelMedium,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.space4),
-                        InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              RewardListPage.route(groupId: selectedGroup.id),
-                            );
-                          },
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.card_giftcard_outlined,
-                                size: 32,
-                                color: theme.colorScheme.primary,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                l10n.rewardTabTitle,
-                                style: theme.textTheme.labelMedium,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.space4),
-                        InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              RedemptionOrderListPage.route(
-                                groupId: selectedGroup.id,
-                              ),
-                            );
-                          },
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.receipt_long,
-                                size: 32,
-                                color: theme.colorScheme.primary,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                l10n.redemptionOrderTabTitle,
-                                style: theme.textTheme.labelMedium,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.space4),
-                        // Group Settings Entry
-                        InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              GroupDefaultSettingsPage.route(
-                                groupId: selectedGroup.id,
-                              ),
-                            );
-                          },
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.tune,
-                                size: 32,
-                                color: theme.colorScheme.primary,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                l10n.defaultSettingsTitle,
-                                style: theme.textTheme.labelMedium,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.space4),
-                        // Member Management Entry
-                        InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MemberManagementPage.route(
-                                groupId: selectedGroup.id,
-                                groupName: selectedGroup.name,
-                              ),
-                            );
-                          },
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.people_outline,
-                                size: 32,
-                                color: theme.colorScheme.primary,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                l10n.memberManagementTitle,
-                                style: theme.textTheme.labelMedium,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                      ),
                     ],
                   ),
                 ),
@@ -300,24 +202,154 @@ class HomePage extends StatelessWidget {
       },
     );
   }
+}
 
-  Widget _buildFeaturePlaceholder(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-  }) {
+class _HomeLoadingView extends StatelessWidget {
+  const _HomeLoadingView();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(AppSpacing.pagePaddingH),
+      children: const [
+        W2WCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              W2WSkeleton(height: 22, width: 180),
+              SizedBox(height: AppSpacing.space2),
+              W2WSkeleton(width: 120),
+              SizedBox(height: AppSpacing.space2),
+              W2WSkeleton(width: 260),
+            ],
+          ),
+        ),
+        SizedBox(height: AppSpacing.space6),
+        W2WSkeleton(height: 160),
+        SizedBox(height: AppSpacing.space6),
+        W2WSkeleton(height: 140),
+      ],
+    );
+  }
+}
+
+class _GroupHeroCard extends StatelessWidget {
+  const _GroupHeroCard({required this.group});
+
+  final UserGroup group;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final theme = Theme.of(context);
-    return Opacity(
-      opacity: 0.5,
-      child: Column(
+
+    return W2WCard(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 32, color: theme.colorScheme.primary),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: theme.textTheme.labelMedium,
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.primary.withValues(alpha: 0.14),
+                  AppColors.primary.withValues(alpha: 0.32),
+                ],
+              ),
+            ),
+            child: const Icon(
+              Icons.groups_outlined,
+              color: AppColors.primary,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.space3),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  group.name,
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: AppTypography.bold,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: AppSpacing.space1),
+                W2WStatusBadge(
+                  label: group.isAdmin ? l10n.roleAdmin : l10n.roleMember,
+                  type: group.isAdmin
+                      ? W2WStatusType.completed
+                      : W2WStatusType.pending,
+                ),
+                if (group.description != null &&
+                    group.description!.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.space2),
+                  Text(
+                    group.description!,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _DashboardActionCard extends StatelessWidget {
+  const _DashboardActionCard({
+    required this.icon,
+    required this.title,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Semantics(
+      button: true,
+      label: title,
+      child: W2WCard(
+        variant: W2WCardVariant.compact,
+        onTap: onTap,
+        child: Row(
+          children: [
+            Container(
+              width: AppSpacing.minTouchTarget,
+              height: AppSpacing.minTouchTarget,
+              decoration: BoxDecoration(
+                color: AppColors.primaryTint,
+                borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+              ),
+              child: Icon(icon, color: AppColors.primary),
+            ),
+            const SizedBox(width: AppSpacing.space2),
+            Expanded(
+              child: Text(
+                title,
+                style: theme.textTheme.labelLarge?.copyWith(
+                  fontWeight: AppTypography.bold,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -386,14 +418,23 @@ class _PinnedAgreementsSectionState extends State<PinnedAgreementsSection>
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final theme = Theme.of(context);
 
     return BlocProvider.value(
       value: _bloc,
       child: BlocBuilder<AgreementListBloc, AgreementListState>(
         builder: (context, state) {
           if (state is AgreementListLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                W2WSectionHeader(title: l10n.agreementPinnedSectionTitle),
+                const SizedBox(height: AppSpacing.space3),
+                const SizedBox(
+                  height: 160,
+                  child: _HorizontalSkeletonList(itemWidth: 220),
+                ),
+              ],
+            );
           }
 
           if (state is AgreementListError) {
@@ -412,11 +453,8 @@ class _PinnedAgreementsSectionState extends State<PinnedAgreementsSection>
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  l10n.agreementPinnedSectionTitle,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: AppTypography.bold,
-                  ),
+                W2WSectionHeader(
+                  title: l10n.agreementPinnedSectionTitle,
                 ),
                 const SizedBox(height: AppSpacing.space3),
                 SizedBox(
@@ -424,7 +462,7 @@ class _PinnedAgreementsSectionState extends State<PinnedAgreementsSection>
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: pinnedAgreements.length,
-                    separatorBuilder: (_, __) =>
+                    separatorBuilder: (_, _) =>
                         const SizedBox(width: AppSpacing.space3),
                     itemBuilder: (context, index) {
                       final agreement = pinnedAgreements[index];
@@ -523,14 +561,23 @@ class _PinnedRewardsSectionState extends State<PinnedRewardsSection>
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final theme = Theme.of(context);
 
     return BlocProvider.value(
       value: _bloc,
       child: BlocBuilder<RewardListBloc, RewardListState>(
         builder: (context, state) {
           if (state is RewardListLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                W2WSectionHeader(title: l10n.rewardPinnedSectionTitle),
+                const SizedBox(height: AppSpacing.space3),
+                const SizedBox(
+                  height: 140,
+                  child: _HorizontalSkeletonList(itemWidth: 180),
+                ),
+              ],
+            );
           }
 
           if (state is RewardListError) {
@@ -538,8 +585,9 @@ class _PinnedRewardsSectionState extends State<PinnedRewardsSection>
           }
 
           if (state is RewardListReadyState) {
-            final pinnedRewards =
-                state.rewards.where((reward) => reward.isPinned).toList();
+            final pinnedRewards = state.rewards
+                .where((reward) => reward.isPinned)
+                .toList();
 
             if (pinnedRewards.isEmpty) {
               return const SizedBox.shrink();
@@ -548,11 +596,8 @@ class _PinnedRewardsSectionState extends State<PinnedRewardsSection>
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  l10n.rewardPinnedSectionTitle,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: AppTypography.bold,
-                  ),
+                W2WSectionHeader(
+                  title: l10n.rewardPinnedSectionTitle,
                 ),
                 const SizedBox(height: AppSpacing.space3),
                 SizedBox(
@@ -560,7 +605,7 @@ class _PinnedRewardsSectionState extends State<PinnedRewardsSection>
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: pinnedRewards.length,
-                    separatorBuilder: (_, __) =>
+                    separatorBuilder: (_, _) =>
                         const SizedBox(width: AppSpacing.space3),
                     itemBuilder: (context, index) {
                       final reward = pinnedRewards[index];
@@ -591,6 +636,39 @@ class _PinnedRewardsSectionState extends State<PinnedRewardsSection>
   }
 }
 
+class _HorizontalSkeletonList extends StatelessWidget {
+  const _HorizontalSkeletonList({required this.itemWidth});
+
+  final double itemWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      scrollDirection: Axis.horizontal,
+      itemCount: 2,
+      separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.space3),
+      itemBuilder: (_, _) {
+        return SizedBox(
+          width: itemWidth,
+          child: const W2WCard(
+            variant: W2WCardVariant.compact,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                W2WSkeleton(width: 120),
+                SizedBox(height: AppSpacing.space2),
+                W2WSkeleton(height: 14, width: 90),
+                SizedBox(height: AppSpacing.space2),
+                W2WSkeleton(height: 14, width: 140),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
 class RewardCompactCard extends StatelessWidget {
   const RewardCompactCard({required this.reward, this.onTap, super.key});
 
@@ -600,81 +678,79 @@ class RewardCompactCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     return SizedBox(
       width: 180,
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(12),
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: W2WCard(
+        variant: W2WCardVariant.compact,
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primaryContainer,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: reward.coverImageUrl != null &&
-                              reward.coverImageUrl!.isNotEmpty
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                reward.coverImageUrl!,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => Icon(
-                                  Icons.card_giftcard_outlined,
-                                  color: theme.colorScheme.onPrimaryContainer,
-                                ),
-                              ),
-                            )
-                          : Icon(
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+                  ),
+                  child:
+                      reward.coverImageUrl != null &&
+                          reward.coverImageUrl!.isNotEmpty
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                            AppSpacing.radiusLg,
+                          ),
+                          child: Image.network(
+                            reward.coverImageUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) => Icon(
                               Icons.card_giftcard_outlined,
                               color: theme.colorScheme.onPrimaryContainer,
                             ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        reward.name,
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: AppTypography.bold,
+                          ),
+                        )
+                      : Icon(
+                          Icons.card_giftcard_outlined,
+                          color: theme.colorScheme.onPrimaryContainer,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                ),
+                const SizedBox(width: AppSpacing.space2),
+                Expanded(
+                  child: Text(
+                    reward.name,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: AppTypography.bold,
                     ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '${reward.costPoints} pts',
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: theme.colorScheme.primary,
-                    fontWeight: FontWeight.bold,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                const Spacer(),
-                Text(
-                  reward.providerNickname?.isNotEmpty == true
-                      ? reward.providerNickname!
-                      : '—',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
-          ),
+            const SizedBox(height: AppSpacing.space2),
+            Text(
+              l10n.commonPoints(reward.costPoints),
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: theme.colorScheme.primary,
+                fontWeight: AppTypography.bold,
+              ),
+            ),
+            const Spacer(),
+            Text(
+              reward.providerNickname?.isNotEmpty ?? false
+                  ? reward.providerNickname!
+                  : '—',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
       ),
     );

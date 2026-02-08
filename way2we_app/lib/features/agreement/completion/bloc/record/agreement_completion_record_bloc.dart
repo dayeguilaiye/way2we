@@ -7,11 +7,12 @@ part 'agreement_completion_record_event.dart';
 part 'agreement_completion_record_state.dart';
 
 class AgreementCompletionRecordBloc
-    extends Bloc<AgreementCompletionRecordEvent, AgreementCompletionRecordState> {
+    extends
+        Bloc<AgreementCompletionRecordEvent, AgreementCompletionRecordState> {
   AgreementCompletionRecordBloc({
     required AgreementCompletionProvider completionProvider,
-  })  : _completionProvider = completionProvider,
-        super(const AgreementCompletionRecordInitial()) {
+  }) : _completionProvider = completionProvider,
+       super(const AgreementCompletionRecordInitial()) {
     on<SubmitAgreementCompletion>(_onSubmit);
     on<ResetAgreementCompletionStatus>(_onReset);
   }

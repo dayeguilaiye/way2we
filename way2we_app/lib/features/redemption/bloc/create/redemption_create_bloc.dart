@@ -32,8 +32,6 @@ class RedemptionCreateBloc
         state.copyWith(
           status: RedemptionCreateStatus.success,
           order: order,
-          message: null,
-          code: null,
         ),
       );
     } on RedemptionApiException catch (e) {
@@ -49,7 +47,6 @@ class RedemptionCreateBloc
         state.copyWith(
           status: RedemptionCreateStatus.failure,
           message: e.toString(),
-          code: null,
         ),
       );
     }

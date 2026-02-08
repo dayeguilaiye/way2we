@@ -8,7 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 /// the decoded user id in memory for fast access.
 class CurrentUserRepository {
   CurrentUserRepository({FlutterSecureStorage? storage})
-      : _storage = storage ?? const FlutterSecureStorage();
+    : _storage = storage ?? const FlutterSecureStorage();
 
   final FlutterSecureStorage _storage;
 
@@ -31,6 +31,7 @@ class CurrentUserRepository {
   }
 
   /// Overrides the in-memory cache (useful after login).
+  // ignore: use_setters_to_change_properties
   void setCachedUserId(int? userId) {
     _cachedUserId = userId;
   }
@@ -50,7 +51,7 @@ class CurrentUserRepository {
       final decoded = utf8.decode(base64Url.decode(payload));
       final data = jsonDecode(decoded) as Map<String, dynamic>;
       return data['user_id'] as int?;
-    } catch (_) {
+    } on Object catch (_) {
       return null;
     }
   }

@@ -20,9 +20,11 @@ class CreateGroupBloc extends Bloc<CreateGroupEvent, CreateGroupState> {
     CreateGroupNameChanged event,
     Emitter<CreateGroupState> emit,
   ) {
-    emit(state.copyWith(
-      name: event.name,
-    ));
+    emit(
+      state.copyWith(
+        name: event.name,
+      ),
+    );
   }
 
   Future<void> _onSubmitted(
@@ -35,20 +37,26 @@ class CreateGroupBloc extends Bloc<CreateGroupEvent, CreateGroupState> {
 
     try {
       final response = await _groupProvider.createGroup(name: state.name);
-      emit(state.copyWith(
-        status: CreateGroupStatus.success,
-        groupId: response.id,
-      ));
+      emit(
+        state.copyWith(
+          status: CreateGroupStatus.success,
+          groupId: response.id,
+        ),
+      );
     } on GroupApiException catch (e) {
-      emit(state.copyWith(
-        status: CreateGroupStatus.failure,
-        errorMessage: e.message,
-      ));
+      emit(
+        state.copyWith(
+          status: CreateGroupStatus.failure,
+          errorMessage: e.message,
+        ),
+      );
     } on Exception catch (e) {
-      emit(state.copyWith(
-        status: CreateGroupStatus.failure,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: CreateGroupStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 }

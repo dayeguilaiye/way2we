@@ -45,7 +45,6 @@ void main() {
         when(
           () => agreementProvider.listAgreements(
             groupId: 1,
-            status: null,
           ),
         ).thenAnswer((_) async => [agreement]);
         when(
@@ -56,15 +55,14 @@ void main() {
         ).thenAnswer((_) async {});
         return bloc;
       },
-      act: (bloc) {
-        bloc.add(const LoadAgreements(groupId: 1));
-        bloc.add(
+      act: (bloc) => bloc
+        ..add(const LoadAgreements(groupId: 1))
+        ..add(
           const TogglePinAgreement(
             agreementId: 1,
             currentPinStatus: false,
           ),
-        );
-      },
+        ),
       expect: () {
         final agreement = buildAgreement(isPinned: false);
         final pinnedAgreement = agreement.copyWith(isPinned: true);
@@ -96,7 +94,6 @@ void main() {
         when(
           () => agreementProvider.listAgreements(
             groupId: 1,
-            status: null,
           ),
         ).thenAnswer((_) async => [agreement]);
         when(
@@ -107,15 +104,14 @@ void main() {
         ).thenAnswer((_) async {});
         return bloc;
       },
-      act: (bloc) {
-        bloc.add(const LoadAgreements(groupId: 1));
-        bloc.add(
+      act: (bloc) => bloc
+        ..add(const LoadAgreements(groupId: 1))
+        ..add(
           const TogglePinAgreement(
             agreementId: 1,
             currentPinStatus: true,
           ),
-        );
-      },
+        ),
       expect: () {
         final agreement = buildAgreement(isPinned: true);
         final unpinnedAgreement = agreement.copyWith(isPinned: false);

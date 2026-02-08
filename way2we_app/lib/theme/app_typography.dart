@@ -55,8 +55,8 @@ class AppTypography {
   /// Body Large - 16px
   static const double bodyLargeSize = 16;
 
-  /// Body - 14px
-  static const double bodySize = 14;
+  /// Body - 16px
+  static const double bodySize = 16;
 
   /// Caption - 12px
   static const double captionSize = 12;

@@ -112,10 +112,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const ResetCooldown()),
       expect: () => [
-        const VerificationCodeState(
-          status: VerificationCodeStatus.initial,
-          countdown: 0,
-        ),
+        const VerificationCodeState(),
       ],
     );
 
@@ -142,7 +139,6 @@ void main() {
     test('canSend is true when countdown finished', () {
       const state = VerificationCodeState(
         status: VerificationCodeStatus.sent,
-        countdown: 0,
       );
       expect(state.canSend, isTrue);
     });

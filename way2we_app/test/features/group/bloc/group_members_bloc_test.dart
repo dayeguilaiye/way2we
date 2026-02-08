@@ -64,7 +64,8 @@ void main() {
     );
 
     blocTest<GroupMembersBloc, GroupMembersState>(
-      'emits [OperationInProgress, Success, Loaded] when UpdateMemberRole succeeds',
+      'emits [OperationInProgress, Success, Loaded] when '
+      'UpdateMemberRole succeeds',
       build: () {
         when(
           () => groupProvider.updateMemberRole(
@@ -97,7 +98,8 @@ void main() {
     );
 
     blocTest<GroupMembersBloc, GroupMembersState>(
-      'emits [OperationInProgress, Success, Loaded] when UpdateMemberPermissions succeeds',
+      'emits [OperationInProgress, Success, Loaded] when '
+      'UpdateMemberPermissions succeeds',
       build: () {
         when(
           () => groupProvider.updateMemberPermissions(

@@ -4,13 +4,14 @@ import 'package:way2we_app/features/group/bloc/members/group_members_bloc.dart';
 import 'package:way2we_app/features/group/data/providers/group_provider.dart';
 import 'package:way2we_app/features/group/models/member.dart';
 import 'package:way2we_app/l10n/l10n.dart';
+import 'package:way2we_app/shared/widgets/w2w.dart';
 import 'package:way2we_app/theme/theme.dart';
 
 class MemberDetailPage extends StatefulWidget {
   const MemberDetailPage({
-    super.key,
     required this.groupId,
     required this.member,
+    super.key,
     this.onUpdate,
   });
 
@@ -51,10 +52,6 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Note: l10n access will be inside builder or passed down, but for map initialization
-    // we might need to access it inside build.
-    // However, _permissionLabels is initialized in definition. We should change it to a method or access l10n in build.
-
     return BlocProvider(
       create: (context) => GroupMembersBloc(
         groupProvider: context.read<GroupProvider>(),
@@ -63,14 +60,17 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
         listener: (context, state) {
           if (state is MemberOperationSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Theme.of(context).semantic.success,
+              ),
             );
             widget.onUpdate?.call();
           } else if (state is MemberOperationFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
-                backgroundColor: Theme.of(context).colorScheme.error,
+                backgroundColor: Theme.of(context).semantic.error,
               ),
             );
           }
@@ -83,44 +83,26 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
             appBar: AppBar(
               title: Text(widget.member.nickname),
             ),
-            body: SingleChildScrollView(
-              padding: const EdgeInsets.all(AppSpacing.space4),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildProfileHeader(theme),
-                  const SizedBox(height: AppSpacing.space6),
-
-                  // Role Section
-                  Text(
-                    context.l10n.memberRoleLabel,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: AppTypography.bold,
-                    ),
+            body: ListView(
+              padding: const EdgeInsets.all(AppSpacing.pagePaddingH),
+              children: [
+                _buildProfileHeader(theme),
+                const SizedBox(height: AppSpacing.space6),
+                W2WSectionHeader(title: context.l10n.memberRoleLabel),
+                const SizedBox(height: AppSpacing.space2),
+                _buildRoleSelector(context, isLoading),
+                const SizedBox(height: AppSpacing.space6),
+                W2WSectionHeader(title: context.l10n.memberPermissionsLabel),
+                const SizedBox(height: AppSpacing.space1),
+                Text(
+                  context.l10n.memberAdminPermissionNote,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
-                  const SizedBox(height: AppSpacing.space2),
-                  _buildRoleSelector(theme, context, isLoading),
-
-                  const SizedBox(height: AppSpacing.space6),
-
-                  // Permissions Section
-                  Text(
-                    context.l10n.memberPermissionsLabel,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: AppTypography.bold,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.space1),
-                  Text(
-                    context.l10n.memberAdminPermissionNote,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.space2),
-                  _buildPermissionsList(theme, context, isLoading),
-                ],
-              ),
+                ),
+                const SizedBox(height: AppSpacing.space2),
+                _buildPermissionsList(context, isLoading),
+              ],
             ),
           );
         },
@@ -129,45 +111,50 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
   }
 
   Widget _buildProfileHeader(ThemeData theme) {
-    return Row(
-      children: [
-        _Avatar(
-          avatarUrl: widget.member.avatarUrl,
-          nickname: widget.member.nickname,
-          size: 64,
-        ),
-        const SizedBox(width: AppSpacing.space4),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.member.nickname,
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: AppTypography.bold,
-                ),
-              ),
-              Text(
-                context.l10n.memberJoinedDate(
-                  widget.member.joinedAt.toString().split(' ')[0],
-                ),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
+    return W2WCard(
+      showBorder: true,
+      child: Row(
+        children: [
+          _Avatar(
+            avatarUrl: widget.member.avatarUrl,
+            nickname: widget.member.nickname,
+            size: 64,
           ),
-        ),
-      ],
+          const SizedBox(width: AppSpacing.space4),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.member.nickname,
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: AppTypography.bold,
+                  ),
+                ),
+                Text(
+                  context.l10n.memberJoinedDate(
+                    widget.member.joinedAt.toIso8601String().split('T').first,
+                  ),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (_selectedRole == GroupRole.admin)
+            W2WStatusBadge(
+              label: context.l10n.roleAdmin,
+              type: W2WStatusType.pending,
+            ),
+        ],
+      ),
     );
   }
 
-  Widget _buildRoleSelector(
-    ThemeData theme,
-    BuildContext context,
-    bool isLoading,
-  ) {
-    return Card(
+  Widget _buildRoleSelector(BuildContext context, bool isLoading) {
+    return W2WCard(
+      showBorder: true,
       child: Column(
         children: GroupRole.values.map((role) {
           final label = role == GroupRole.admin
@@ -197,15 +184,12 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
     );
   }
 
-  Widget _buildPermissionsList(
-    ThemeData theme,
-    BuildContext context,
-    bool isLoading,
-  ) {
+  Widget _buildPermissionsList(BuildContext context, bool isLoading) {
     // If role is admin, permissions are effectively all checked and disabled
     final isAdmin = _selectedRole == GroupRole.admin;
 
-    return Card(
+    return W2WCard(
+      showBorder: true,
       child: Column(
         children:
             {
@@ -252,7 +236,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
 }
 
 class _Avatar extends StatelessWidget {
-  const _Avatar({this.avatarUrl, required this.nickname, this.size = 40});
+  const _Avatar({required this.nickname, this.avatarUrl, this.size = 40});
 
   final String? avatarUrl;
   final String nickname;

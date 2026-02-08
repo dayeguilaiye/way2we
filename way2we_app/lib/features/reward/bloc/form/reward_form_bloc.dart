@@ -57,10 +57,9 @@ class RewardFormBloc extends Bloc<RewardFormEvent, RewardFormState> {
         RewardFormState(
           autoFulfill: settings.autoFulfillRedemptionDefault,
           autoComplete: settings.autoCompleteRedemptionDefault,
-          costPoints: 10,
         ),
       );
-    } catch (_) {
+    } on Object catch (_) {
       emit(const RewardFormState());
     }
   }
@@ -104,7 +103,6 @@ class RewardFormBloc extends Bloc<RewardFormEvent, RewardFormState> {
     emit(
       state.copyWith(
         isCoverUploading: true,
-        coverUploadError: null,
       ),
     );
 
@@ -114,7 +112,6 @@ class RewardFormBloc extends Bloc<RewardFormEvent, RewardFormState> {
         state.copyWith(
           coverImageUrl: url,
           isCoverUploading: false,
-          coverUploadError: null,
         ),
       );
     } on RewardApiException catch (e) {
@@ -138,7 +135,7 @@ class RewardFormBloc extends Bloc<RewardFormEvent, RewardFormState> {
     CoverImageCleared event,
     Emitter<RewardFormState> emit,
   ) {
-    emit(state.copyWith(coverImageUrl: '', coverUploadError: null));
+    emit(state.copyWith(coverImageUrl: ''));
   }
 
   Future<void> _onSubmitReward(

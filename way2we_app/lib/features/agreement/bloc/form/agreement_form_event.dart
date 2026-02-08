@@ -30,7 +30,7 @@ final class PointsChanged extends AgreementFormEvent {
 }
 
 final class RequireConfirmationChanged extends AgreementFormEvent {
-  const RequireConfirmationChanged(this.requireConfirmation);
+  const RequireConfirmationChanged({required this.requireConfirmation});
 
   final bool requireConfirmation;
 }

@@ -9,7 +9,8 @@ class AgreementCompletionApiException implements Exception {
   final String? code;
 
   @override
-  String toString() => 'AgreementCompletionApiException: $message (code: $code)';
+  String toString() =>
+      'AgreementCompletionApiException: $message (code: $code)';
 }
 
 /// Provider for agreement completion-related API calls.
@@ -34,7 +35,8 @@ class AgreementCompletionProvider {
         throw const AgreementCompletionApiException('Unexpected null response');
       }
 
-      final completionJson = response.data!['completion'] as Map<String, dynamic>;
+      final completionJson =
+          response.data!['completion'] as Map<String, dynamic>;
       return AgreementCompletion.fromJson(completionJson);
     } on DioException catch (e) {
       _handleDioError(e);
@@ -63,7 +65,10 @@ class AgreementCompletionProvider {
 
       final list = response.data!['completions'] as List<dynamic>;
       return list
-          .map((item) => AgreementCompletion.fromJson(item as Map<String, dynamic>))
+          .map(
+            (item) =>
+                AgreementCompletion.fromJson(item as Map<String, dynamic>),
+          )
           .toList();
     } on DioException catch (e) {
       _handleDioError(e);

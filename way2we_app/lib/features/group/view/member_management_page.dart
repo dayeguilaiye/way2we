@@ -5,13 +5,14 @@ import 'package:way2we_app/features/group/data/providers/group_provider.dart';
 import 'package:way2we_app/features/group/models/member.dart';
 import 'package:way2we_app/features/group/view/member_detail_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
+import 'package:way2we_app/shared/widgets/w2w.dart';
 import 'package:way2we_app/theme/theme.dart';
 
 class MemberManagementPage extends StatelessWidget {
   const MemberManagementPage({
-    super.key,
     required this.groupId,
     required this.groupName,
+    super.key,
   });
 
   final int groupId;
@@ -51,65 +52,104 @@ class _MemberManagementView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final l10n = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('${l10n.memberManagementTitle} - $groupName'),
+        title: Text('${l10n.memberManagementTitle} · $groupName'),
       ),
       body: BlocBuilder<GroupMembersBloc, GroupMembersState>(
         builder: (context, state) {
           if (state is GroupMembersLoading || state is GroupMembersInitial) {
-            return const Center(child: CircularProgressIndicator());
+            return const _MemberListLoading();
           }
 
           if (state is GroupMembersError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(state.message, style: theme.textTheme.bodyLarge),
-                  const SizedBox(height: AppSpacing.space4),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<GroupMembersBloc>().add(
-                        LoadGroupMembers(groupId),
-                      );
-                    },
-                    child: Text(l10n.commonRetry),
-                  ),
-                ],
-              ),
+            return W2WEmptyState(
+              icon: Icons.group_off_outlined,
+              title: state.message,
+              actionLabel: l10n.commonRetry,
+              onAction: () {
+                context.read<GroupMembersBloc>().add(
+                  LoadGroupMembers(groupId),
+                );
+              },
             );
           }
 
           if (state is GroupMembersLoaded) {
             final members = state.members;
             if (members.isEmpty) {
-              return Center(child: Text(l10n.noMembersWarning));
+              return W2WEmptyState(
+                icon: Icons.groups_outlined,
+                title: l10n.noMembersWarning,
+              );
             }
 
-            return ListView.separated(
-              itemCount: members.length,
-              separatorBuilder: (context, index) => const Divider(height: 1),
-              itemBuilder: (context, index) {
-                final member = members[index];
-                return _MemberListItem(
-                  member: member,
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MemberDetailPage.route(
-                        groupId: groupId,
-                        member: member,
-                        onUpdate: () {
-                          context.read<GroupMembersBloc>().add(
-                            LoadGroupMembers(groupId),
-                          );
-                        },
-                      ),
-                    );
-                  },
+            return RefreshIndicator(
+              onRefresh: () async {
+                context.read<GroupMembersBloc>().add(
+                  LoadGroupMembers(groupId),
+                );
+              },
+              child: ListView.separated(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.pagePaddingH,
+                  AppSpacing.pagePaddingV,
+                  AppSpacing.pagePaddingH,
+                  AppSpacing.pagePaddingV,
+                ),
+                itemCount: members.length,
+                separatorBuilder: (_, _) => const SizedBox(height: 12),
+                itemBuilder: (context, index) {
+                  final member = members[index];
+                  return _MemberListItem(
+                    member: member,
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MemberDetailPage.route(
+                          groupId: groupId,
+                          member: member,
+                          onUpdate: () {
+                            context.read<GroupMembersBloc>().add(
+                              LoadGroupMembers(groupId),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            );
+          }
+
+          if (state is MemberOperationFailure) {
+            return W2WEmptyState(
+              icon: Icons.error_outline,
+              title: state.message,
+              actionLabel: l10n.commonRetry,
+              onAction: () {
+                context.read<GroupMembersBloc>().add(
+                  LoadGroupMembers(groupId),
+                );
+              },
+            );
+          }
+
+          if (state is MemberOperationInProgress) {
+            return const _MemberListLoading();
+          }
+
+          if (state is MemberOperationSuccess) {
+            return W2WEmptyState(
+              icon: Icons.check_circle_outline,
+              title: state.message,
+              actionLabel: l10n.commonRetry,
+              onAction: () {
+                context.read<GroupMembersBloc>().add(
+                  LoadGroupMembers(groupId),
                 );
               },
             );
@@ -118,6 +158,45 @@ class _MemberManagementView extends StatelessWidget {
           return const SizedBox.shrink();
         },
       ),
+    );
+  }
+}
+
+class _MemberListLoading extends StatelessWidget {
+  const _MemberListLoading();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.pagePaddingH,
+        AppSpacing.pagePaddingV,
+        AppSpacing.pagePaddingH,
+        AppSpacing.pagePaddingV,
+      ),
+      itemBuilder: (_, _) => const W2WCard(
+        showBorder: true,
+        child: Row(
+          children: [
+            W2WSkeleton(width: 44, height: 44, radius: AppSpacing.radiusFull),
+            SizedBox(width: AppSpacing.space3),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  W2WSkeleton(width: 140),
+                  SizedBox(height: AppSpacing.space2),
+                  W2WSkeleton(width: 120, height: 12),
+                ],
+              ),
+            ),
+            SizedBox(width: AppSpacing.space2),
+            W2WSkeleton(width: 18, height: 18, radius: AppSpacing.radiusFull),
+          ],
+        ),
+      ),
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
+      itemCount: 4,
     );
   }
 }
@@ -134,50 +213,62 @@ class _MemberListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final joinedDate = member.joinedAt.toIso8601String().split('T').first;
 
-    return ListTile(
-      onTap: onTap,
-      leading: _Avatar(avatarUrl: member.avatarUrl, nickname: member.nickname),
-      title: Text(
-        member.nickname,
-        style: theme.textTheme.titleMedium?.copyWith(
-          fontWeight: AppTypography.bold,
-        ),
-      ),
-      subtitle: Text(
-        context.l10n.memberJoinedDate(member.joinedAt.toString().split(' ')[0]),
-        style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (member.role == GroupRole.admin)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                context.l10n.roleAdmin,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: theme.colorScheme.onPrimaryContainer,
-                  fontWeight: AppTypography.bold,
-                ),
+    return Semantics(
+      button: true,
+      label: member.nickname,
+      child: W2WCard(
+        showBorder: true,
+        onTap: onTap,
+        child: Row(
+          children: [
+            _Avatar(
+              avatarUrl: member.avatarUrl,
+              nickname: member.nickname,
+            ),
+            const SizedBox(width: AppSpacing.space3),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    member.nickname,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: AppTypography.bold,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.space1),
+                  Text(
+                    context.l10n.memberJoinedDate(joinedDate),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
               ),
             ),
-          const SizedBox(width: 8),
-          const Icon(Icons.chevron_right, size: 20),
-        ],
+            const SizedBox(width: AppSpacing.space2),
+            if (member.role == GroupRole.admin)
+              W2WStatusBadge(
+                label: context.l10n.roleAdmin,
+                type: W2WStatusType.pending,
+              ),
+            const SizedBox(width: AppSpacing.space2),
+            const Icon(
+              Icons.chevron_right,
+              size: 18,
+              color: AppColors.textMutedLight,
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
 class _Avatar extends StatelessWidget {
-  const _Avatar({this.avatarUrl, required this.nickname});
+  const _Avatar({required this.nickname, this.avatarUrl});
 
   final String? avatarUrl;
   final String nickname;
@@ -189,11 +280,13 @@ class _Avatar extends StatelessWidget {
 
     if (avatarUrl != null && avatarUrl!.isNotEmpty) {
       return CircleAvatar(
+        radius: 22,
         backgroundImage: NetworkImage(avatarUrl!),
       );
     }
 
     return CircleAvatar(
+      radius: 22,
       backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
       child: Text(
         initials,

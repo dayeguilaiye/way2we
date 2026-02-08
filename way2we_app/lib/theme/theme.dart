@@ -9,6 +9,8 @@
 library;
 
 export 'app_colors.dart';
+export 'app_motion.dart';
+export 'app_semantics.dart';
 export 'app_shadows.dart';
 export 'app_spacing.dart';
 export 'app_theme.dart';

@@ -25,7 +25,7 @@ class GroupSettingsBloc extends Bloc<GroupSettingsEvent, GroupSettingsState> {
         groupId: event.groupId,
       );
       emit(GroupSettingsLoaded(settings));
-    } catch (e) {
+    } on Object catch (e) {
       final message = e is GroupApiException ? e.message : e.toString();
       emit(GroupSettingsError(message));
     }
@@ -52,7 +52,7 @@ class GroupSettingsBloc extends Bloc<GroupSettingsEvent, GroupSettingsState> {
         settings: event.settings,
       );
       emit(GroupSettingsUpdateSuccess(settings));
-    } catch (e) {
+    } on Object catch (e) {
       final message = e is GroupApiException ? e.message : e.toString();
       emit(GroupSettingsError(message, settings: currentSettings));
     }

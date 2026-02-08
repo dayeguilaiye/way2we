@@ -5,6 +5,8 @@ import 'package:way2we_app/features/group/data/providers/group_provider.dart';
 import 'package:way2we_app/features/reward/bloc/form/reward_form_bloc.dart';
 import 'package:way2we_app/features/reward/data/providers/reward_provider.dart';
 import 'package:way2we_app/l10n/l10n.dart';
+import 'package:way2we_app/shared/widgets/w2w.dart';
+import 'package:way2we_app/theme/theme.dart';
 
 class CreateRewardPage extends StatelessWidget {
   const CreateRewardPage({
@@ -63,7 +65,7 @@ class _CreateRewardViewState extends State<CreateRewardView> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final theme = Theme.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return BlocListener<RewardFormBloc, RewardFormState>(
       listenWhen: (previous, current) =>
@@ -78,7 +80,7 @@ class _CreateRewardViewState extends State<CreateRewardView> {
               content: Text(
                 state.coverUploadError ?? l10n.rewardCoverUploadError,
               ),
-              backgroundColor: theme.colorScheme.error,
+              backgroundColor: colorScheme.error,
             ),
           );
         }
@@ -87,7 +89,7 @@ class _CreateRewardViewState extends State<CreateRewardView> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l10n.rewardCreateSuccess),
-              backgroundColor: theme.colorScheme.primary,
+              backgroundColor: colorScheme.primary,
             ),
           );
           Navigator.of(context).pop();
@@ -95,7 +97,7 @@ class _CreateRewardViewState extends State<CreateRewardView> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.errorMessage ?? l10n.rewardCreateError),
-              backgroundColor: theme.colorScheme.error,
+              backgroundColor: colorScheme.error,
             ),
           );
         }
@@ -109,15 +111,13 @@ class _CreateRewardViewState extends State<CreateRewardView> {
             return Form(
               key: _formKey,
               child: ListView(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AppSpacing.pagePaddingH),
                 children: [
-                  TextFormField(
+                  W2WInput(
                     controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText: l10n.rewardNameLabel,
-                      hintText: l10n.rewardNamePlaceholder,
-                      border: const OutlineInputBorder(),
-                    ),
+                    label: l10n.rewardNameLabel,
+                    hintText: l10n.rewardNamePlaceholder,
+                    prefixIcon: Icons.card_giftcard_outlined,
                     maxLength: 50,
                     onChanged: (value) {
                       context.read<RewardFormBloc>().add(NameChanged(value));
@@ -129,13 +129,10 @@ class _CreateRewardViewState extends State<CreateRewardView> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16),
-                  TextFormField(
+                  const SizedBox(height: AppSpacing.space4),
+                  W2WInput(
                     controller: _descriptionController,
-                    decoration: InputDecoration(
-                      labelText: l10n.rewardDescriptionLabel,
-                      border: const OutlineInputBorder(),
-                    ),
+                    label: l10n.rewardDescriptionLabel,
                     maxLength: 200,
                     maxLines: 3,
                     onChanged: (value) {
@@ -144,14 +141,12 @@ class _CreateRewardViewState extends State<CreateRewardView> {
                       );
                     },
                   ),
-                  const SizedBox(height: 16),
-                  TextFormField(
+                  const SizedBox(height: AppSpacing.space4),
+                  W2WInput(
                     controller: _pointsController,
-                    decoration: InputDecoration(
-                      labelText: l10n.rewardCostPointsLabel,
-                      border: const OutlineInputBorder(),
-                      suffixText: 'pts',
-                    ),
+                    label: l10n.rewardCostPointsLabel,
+                    suffixText: l10n.commonPointsUnit,
+                    prefixIcon: Icons.stars_outlined,
                     keyboardType: TextInputType.number,
                     onChanged: (value) {
                       final points = int.tryParse(value) ?? 0;
@@ -167,91 +162,118 @@ class _CreateRewardViewState extends State<CreateRewardView> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16),
-                  SwitchListTile(
-                    title: Text(l10n.rewardAutoFulfillLabel),
-                    value: state.autoFulfill,
-                    onChanged: (value) {
-                      context.read<RewardFormBloc>().add(
-                        AutoFulfillChanged(value),
-                      );
-                    },
-                  ),
-                  SwitchListTile(
-                    title: Text(l10n.rewardAutoCompleteLabel),
-                    value: state.autoComplete,
-                    onChanged: (value) {
-                      context.read<RewardFormBloc>().add(
-                        AutoCompleteChanged(value),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  Text(l10n.rewardCoverImageLabel),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Container(
-                        width: 72,
-                        height: 72,
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.surfaceContainerHighest,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: state.coverImageUrl.isNotEmpty
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.network(
-                                  state.coverImageUrl,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => const Icon(
-                                    Icons.image_not_supported_outlined,
-                                  ),
+                  const SizedBox(height: AppSpacing.space4),
+                  W2WCard(
+                    showBorder: true,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            l10n.rewardAutoFulfillLabel,
+                            style: Theme.of(context).textTheme.titleSmall
+                                ?.copyWith(
+                                  fontWeight: AppTypography.bold,
                                 ),
-                              )
-                            : const Icon(Icons.image_outlined),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            OutlinedButton.icon(
-                              onPressed:
-                                  state.isCoverUploading ? null : _pickCover,
-                              icon: const Icon(Icons.upload),
-                              label: Text(
-                                state.isCoverUploading
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.space3),
+                        Switch(
+                          value: state.autoFulfill,
+                          onChanged: (value) {
+                            context.read<RewardFormBloc>().add(
+                              AutoFulfillChanged(autoFulfill: value),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.space3),
+                  W2WCard(
+                    showBorder: true,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            l10n.rewardAutoCompleteLabel,
+                            style: Theme.of(context).textTheme.titleSmall
+                                ?.copyWith(
+                                  fontWeight: AppTypography.bold,
+                                ),
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.space3),
+                        Switch(
+                          value: state.autoComplete,
+                          onChanged: (value) {
+                            context.read<RewardFormBloc>().add(
+                              AutoCompleteChanged(autoComplete: value),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.space6),
+                  W2WSectionHeader(title: l10n.rewardCoverImageLabel),
+                  const SizedBox(height: AppSpacing.space3),
+                  W2WCard(
+                    showBorder: true,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _RewardCoverPreview(coverImageUrl: state.coverImageUrl),
+                        const SizedBox(width: AppSpacing.space3),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              W2WButton(
+                                label: state.isCoverUploading
                                     ? l10n.rewardCoverUploading
                                     : l10n.rewardCoverUploadAction,
+                                icon: Icons.upload_outlined,
+                                variant: W2WButtonVariant.ghost,
+                                expanded: false,
+                                isLoading: state.isCoverUploading,
+                                onPressed: state.isCoverUploading
+                                    ? null
+                                    : _pickCover,
                               ),
-                            ),
-                            if (state.coverImageUrl.isNotEmpty ||
-                                state.coverUploadError != null)
-                              TextButton(
-                                onPressed: () {
-                                  context.read<RewardFormBloc>().add(
-                                    const CoverImageCleared(),
-                                  );
-                                },
-                                child: Text(l10n.rewardCoverRemoveAction),
-                              ),
-                          ],
+                              if (state.coverImageUrl.isNotEmpty ||
+                                  state.coverUploadError != null) ...[
+                                const SizedBox(height: AppSpacing.space2),
+                                W2WButton(
+                                  label: l10n.rewardCoverRemoveAction,
+                                  variant: W2WButtonVariant.secondary,
+                                  expanded: false,
+                                  onPressed: () {
+                                    context.read<RewardFormBloc>().add(
+                                      const CoverImageCleared(),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   if (state.coverUploadError != null) ...[
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppSpacing.space2),
                     Text(
                       state.coverUploadError ?? '',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.error,
-                      ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: colorScheme.error),
                     ),
                   ],
-                  const SizedBox(height: 24),
-                  FilledButton(
+                  const SizedBox(height: AppSpacing.space8),
+                  W2WButton(
+                    label: l10n.rewardSaveButton,
+                    icon: Icons.check_circle_outline,
+                    isLoading: state.status == RewardFormStatus.submitting,
                     onPressed: state.canSubmit
                         ? () {
                             if (_formKey.currentState!.validate()) {
@@ -261,13 +283,6 @@ class _CreateRewardViewState extends State<CreateRewardView> {
                             }
                           }
                         : null,
-                    child: state.status == RewardFormStatus.submitting
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(l10n.rewardSaveButton),
                   ),
                 ],
               ),
@@ -275,6 +290,36 @@ class _CreateRewardViewState extends State<CreateRewardView> {
           },
         ),
       ),
+    );
+  }
+}
+
+class _RewardCoverPreview extends StatelessWidget {
+  const _RewardCoverPreview({required this.coverImageUrl});
+
+  final String coverImageUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 88,
+      height: 88,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+      ),
+      child: coverImageUrl.isNotEmpty
+          ? ClipRRect(
+              borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+              child: Image.network(
+                coverImageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (_, _, _) => const Icon(
+                  Icons.image_not_supported_outlined,
+                ),
+              ),
+            )
+          : const Icon(Icons.image_outlined),
     );
   }
 }

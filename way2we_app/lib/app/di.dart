@@ -18,6 +18,9 @@ class ServiceLocator {
   AuthenticationBloc? _authBloc;
   CurrentUserRepository? _currentUserRepository;
 
+  /// Whether required dependencies have been initialized.
+  bool get isInitialized => _dio != null && _storage != null;
+
   /// Initialize all dependencies. Call this once during app startup.
   void init() {
     _storage = const FlutterSecureStorage();
@@ -86,6 +89,7 @@ class ServiceLocator {
 
           // Log errors in non-production mode
           if (!AppConfig.isProduction) {
+            // Logging in development is intentional for troubleshooting.
             // ignore: avoid_print
             print('DioError: ${error.message}');
           }

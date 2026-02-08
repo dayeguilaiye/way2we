@@ -44,8 +44,8 @@ final class RewardListActionSuccess extends RewardListReadyState {
   const RewardListActionSuccess({
     required super.rewards,
     required super.groupId,
-    super.statusFilter,
     required this.updatedStatus,
+    super.statusFilter,
   });
 
   final String updatedStatus;
@@ -58,8 +58,8 @@ final class RewardListActionFailure extends RewardListReadyState {
   const RewardListActionFailure({
     required super.rewards,
     required super.groupId,
-    super.statusFilter,
     required this.message,
+    super.statusFilter,
     this.code,
   });
 

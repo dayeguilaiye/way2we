@@ -63,9 +63,7 @@ void main() {
     act: (bloc) => bloc.add(const InitializeForm(groupId: 1)),
     expect: () => [
       const RewardFormState(
-        autoFulfill: false,
         autoComplete: true,
-        costPoints: 10,
       ),
     ],
   );
@@ -94,35 +92,21 @@ void main() {
         groupProvider: groupProvider,
       );
     },
-    act: (bloc) {
-      bloc.add(const InitializeForm(groupId: 1));
-      bloc.add(const NameChanged('Reward'));
-      bloc.add(const SubmitReward(groupId: 1));
-    },
+    act: (bloc) => bloc
+      ..add(const InitializeForm(groupId: 1))
+      ..add(const NameChanged('Reward'))
+      ..add(const SubmitReward(groupId: 1)),
     expect: () => [
+      const RewardFormState(),
       const RewardFormState(
-        autoFulfill: false,
-        autoComplete: false,
-        costPoints: 10,
+        name: 'Reward',
       ),
       const RewardFormState(
         name: 'Reward',
-        autoFulfill: false,
-        autoComplete: false,
-        costPoints: 10,
-      ),
-      const RewardFormState(
-        name: 'Reward',
-        costPoints: 10,
-        autoFulfill: false,
-        autoComplete: false,
         status: RewardFormStatus.submitting,
       ),
       const RewardFormState(
         name: 'Reward',
-        costPoints: 10,
-        autoFulfill: false,
-        autoComplete: false,
         status: RewardFormStatus.success,
       ),
     ],
@@ -146,41 +130,29 @@ void main() {
           groupId: 1,
           input: any(named: 'input'),
         ),
-      ).thenThrow(const RewardApiException('Create failed', code: 'ERR_CREATE'));
+      ).thenThrow(
+        const RewardApiException('Create failed', code: 'ERR_CREATE'),
+      );
       return RewardFormBloc(
         rewardProvider: rewardProvider,
         groupProvider: groupProvider,
       );
     },
-    act: (bloc) {
-      bloc.add(const InitializeForm(groupId: 1));
-      bloc.add(const NameChanged('Reward'));
-      bloc.add(const SubmitReward(groupId: 1));
-    },
+    act: (bloc) => bloc
+      ..add(const InitializeForm(groupId: 1))
+      ..add(const NameChanged('Reward'))
+      ..add(const SubmitReward(groupId: 1)),
     expect: () => [
+      const RewardFormState(),
       const RewardFormState(
-        autoFulfill: false,
-        autoComplete: false,
-        costPoints: 10,
+        name: 'Reward',
       ),
       const RewardFormState(
         name: 'Reward',
-        autoFulfill: false,
-        autoComplete: false,
-        costPoints: 10,
-      ),
-      const RewardFormState(
-        name: 'Reward',
-        costPoints: 10,
-        autoFulfill: false,
-        autoComplete: false,
         status: RewardFormStatus.submitting,
       ),
       const RewardFormState(
         name: 'Reward',
-        costPoints: 10,
-        autoFulfill: false,
-        autoComplete: false,
         status: RewardFormStatus.failure,
         errorMessage: 'Create failed',
         errorCode: 'ERR_CREATE',

@@ -4,13 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:way2we_app/app/di.dart';
 import 'package:way2we_app/features/group/bloc/group_control_bloc.dart';
-import 'package:way2we_app/features/reward/data/models/reward.dart';
-import 'package:way2we_app/features/reward/view/edit_reward_page.dart';
 import 'package:way2we_app/features/redemption/bloc/create/redemption_create_bloc.dart';
 import 'package:way2we_app/features/redemption/data/models/redemption_order.dart';
 import 'package:way2we_app/features/redemption/data/providers/redemption_provider.dart';
 import 'package:way2we_app/features/redemption/view/redemption_order_detail_page.dart';
+import 'package:way2we_app/features/reward/data/models/reward.dart';
+import 'package:way2we_app/features/reward/view/edit_reward_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
+import 'package:way2we_app/shared/widgets/w2w.dart';
+import 'package:way2we_app/theme/theme.dart';
 
 class RewardDetailPage extends StatefulWidget {
   const RewardDetailPage({
@@ -45,7 +47,13 @@ class _RewardDetailPageState extends State<RewardDetailPage> {
   }
 
   Future<void> _loadCurrentUserId() async {
-    final token = await ServiceLocator.instance.storage.read(key: 'auth_token');
+    if (!ServiceLocator.instance.isInitialized) return;
+    String? token;
+    try {
+      token = await ServiceLocator.instance.storage.read(key: 'auth_token');
+    } on Object {
+      return;
+    }
     final userId = _decodeUserIdFromToken(token);
     if (!mounted) return;
     setState(() {
@@ -62,12 +70,12 @@ class _RewardDetailPageState extends State<RewardDetailPage> {
       final decoded = utf8.decode(base64Url.decode(payload));
       final data = jsonDecode(decoded) as Map<String, dynamic>;
       return data['user_id'] as int?;
-    } catch (_) {
+    } on Object {
       return null;
     }
   }
 
-  Future<void> _navigateToEdit(BuildContext context) async {
+  Future<void> _navigateToEdit() async {
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => EditRewardPage(
@@ -80,7 +88,7 @@ class _RewardDetailPageState extends State<RewardDetailPage> {
     Navigator.of(context).pop(true);
   }
 
-  Future<void> _showRedeemDialog(BuildContext context) async {
+  Future<void> _showRedeemDialog() async {
     final result = await showDialog<RedemptionOrder>(
       context: context,
       builder: (context) {
@@ -97,7 +105,7 @@ class _RewardDetailPageState extends State<RewardDetailPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(context.l10n.redemptionCreateSuccess)),
     );
-    Navigator.of(context).push(
+    await Navigator.of(context).push(
       RedemptionOrderDetailPage.route(
         groupId: widget.groupId,
         orderId: result.id,
@@ -108,22 +116,26 @@ class _RewardDetailPageState extends State<RewardDetailPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final theme = Theme.of(context);
     final reward = widget.reward;
-    final statusLabel =
-        reward.isActive ? l10n.rewardStatusActive : l10n.rewardStatusInactive;
+    final statusLabel = reward.isActive
+        ? l10n.rewardStatusActive
+        : l10n.rewardStatusInactive;
+    final statusType = reward.isActive
+        ? W2WStatusType.completed
+        : W2WStatusType.pending;
 
     return BlocBuilder<GroupControlBloc, GroupControlState>(
       builder: (context, groupState) {
         final selectedGroup = groupState is GroupControlLoadSuccess
             ? groupState.selectedGroup
             : null;
-        final isAdmin = selectedGroup != null &&
-                selectedGroup.id == widget.groupId
-            ? selectedGroup.isAdmin
-            : false;
+        final isAdmin =
+            selectedGroup != null &&
+            selectedGroup.id == widget.groupId &&
+            selectedGroup.isAdmin;
         final canManage =
-            isAdmin || (_currentUserId != null && _currentUserId == reward.providerId);
+            isAdmin ||
+            (_currentUserId != null && _currentUserId == reward.providerId);
 
         return Scaffold(
           appBar: AppBar(
@@ -133,105 +145,161 @@ class _RewardDetailPageState extends State<RewardDetailPage> {
                 IconButton(
                   icon: const Icon(Icons.edit),
                   tooltip: l10n.rewardEditTitle,
-                  onPressed: () => _navigateToEdit(context),
+                  constraints: const BoxConstraints(
+                    minWidth: AppSpacing.minTouchTarget,
+                    minHeight: AppSpacing.minTouchTarget,
+                  ),
+                  onPressed: _navigateToEdit,
                 ),
             ],
           ),
           body: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AppSpacing.pagePaddingH),
             children: [
-              if (reward.coverImageUrl != null &&
-                  reward.coverImageUrl!.isNotEmpty)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Image.network(
-                    reward.coverImageUrl!,
-                    height: 200,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      height: 200,
-                      color: theme.colorScheme.surfaceContainerHighest,
-                      child: const Icon(Icons.image_not_supported_outlined),
+              W2WCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _RewardCover(coverImageUrl: reward.coverImageUrl),
+                    const SizedBox(height: AppSpacing.space4),
+                    Text(
+                      reward.name,
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(
+                            fontWeight: AppTypography.bold,
+                          ),
+                    ),
+                    const SizedBox(height: AppSpacing.space1),
+                    Text(
+                      reward.providerNickname?.isNotEmpty ?? false
+                          ? reward.providerNickname!
+                          : '—',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.space3),
+                    Wrap(
+                      spacing: AppSpacing.space2,
+                      runSpacing: AppSpacing.space2,
+                      children: [
+                        W2WStatusBadge(
+                          label: l10n.commonPoints(reward.costPoints),
+                          type: W2WStatusType.awaiting,
+                        ),
+                        W2WStatusBadge(label: statusLabel, type: statusType),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              if (reward.description != null && reward.description!.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.space4),
+                  child: W2WCard(
+                    showBorder: true,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        W2WSectionHeader(title: l10n.rewardDescriptionLabel),
+                        const SizedBox(height: AppSpacing.space2),
+                        Text(reward.description!),
+                      ],
                     ),
                   ),
-                )
-              else
-                Container(
-                  height: 200,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Icon(Icons.card_giftcard_outlined, size: 48),
                 ),
-              const SizedBox(height: 16),
-              Text(
-                reward.name,
-                style: theme.textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                reward.providerNickname?.isNotEmpty == true
-                    ? reward.providerNickname!
-                    : '—',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+              const SizedBox(height: AppSpacing.space4),
+              W2WCard(
+                showBorder: true,
+                child: Column(
+                  children: [
+                    _BoolSettingRow(
+                      title: l10n.rewardAutoFulfillLabel,
+                      enabled: reward.autoFulfill,
+                    ),
+                    const SizedBox(height: AppSpacing.space2),
+                    _BoolSettingRow(
+                      title: l10n.rewardAutoCompleteLabel,
+                      enabled: reward.autoComplete,
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 8,
-                children: [
-                  Chip(label: Text('${reward.costPoints} pts')),
-                  Chip(label: Text(statusLabel)),
-                ],
-              ),
-              if (reward.description != null &&
-                  reward.description!.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                Text(
-                  l10n.rewardDescriptionLabel,
-                  style: theme.textTheme.titleSmall,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  reward.description!,
-                  style: theme.textTheme.bodyMedium,
-                ),
-              ],
-              const SizedBox(height: 16),
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(l10n.rewardAutoFulfillLabel),
-                trailing: Icon(
-                  reward.autoFulfill ? Icons.check_circle : Icons.cancel_outlined,
-                  color: reward.autoFulfill
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(l10n.rewardAutoCompleteLabel),
-                trailing: Icon(
-                  reward.autoComplete ? Icons.check_circle : Icons.cancel_outlined,
-                  color: reward.autoComplete
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-              const SizedBox(height: 24),
-              FilledButton(
-                onPressed: reward.isActive
-                    ? () => _showRedeemDialog(context)
-                    : null,
-                child: Text(l10n.redemptionActionRedeem),
+              const SizedBox(height: AppSpacing.space8),
+              W2WButton(
+                label: l10n.redemptionActionRedeem,
+                icon: Icons.redeem_outlined,
+                onPressed: reward.isActive ? _showRedeemDialog : null,
               ),
             ],
           ),
         );
       },
+    );
+  }
+}
+
+class _RewardCover extends StatelessWidget {
+  const _RewardCover({required this.coverImageUrl});
+
+  final String? coverImageUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    if (coverImageUrl != null && coverImageUrl!.isNotEmpty) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+        child: Image.network(
+          coverImageUrl!,
+          height: 200,
+          width: double.infinity,
+          fit: BoxFit.cover,
+          errorBuilder: (_, _, _) => Container(
+            height: 200,
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            child: const Icon(Icons.image_not_supported_outlined),
+          ),
+        ),
+      );
+    }
+    return Container(
+      height: 200,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+      ),
+      child: const Icon(Icons.card_giftcard_outlined, size: 48),
+    );
+  }
+}
+
+class _BoolSettingRow extends StatelessWidget {
+  const _BoolSettingRow({required this.title, required this.enabled});
+
+  final String title;
+  final bool enabled;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            title,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: AppTypography.medium,
+            ),
+          ),
+        ),
+        Icon(
+          enabled ? Icons.check_circle : Icons.cancel_outlined,
+          color: enabled
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
+      ],
     );
   }
 }
@@ -271,7 +339,7 @@ class _RedeemDialogState extends State<RedeemDialog> {
         _balance = (response.data?['balance'] as num?)?.toInt();
         _loadingBalance = false;
       });
-    } catch (e) {
+    } on Object catch (e) {
       if (!mounted) return;
       setState(() {
         _balanceError = e.toString();
@@ -292,17 +360,17 @@ class _RedeemDialogState extends State<RedeemDialog> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final isInsufficient =
-        _balance != null && _totalCost > (_balance ?? 0);
+    final isInsufficient = _balance != null && _totalCost > (_balance ?? 0);
     final balanceUnavailable = _loadingBalance || _balanceError != null;
 
     return AlertDialog(
       title: Text(l10n.redemptionActionRedeem),
       content: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(widget.reward.name, style: theme.textTheme.titleSmall),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.space3),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -310,27 +378,47 @@ class _RedeemDialogState extends State<RedeemDialog> {
               Row(
                 children: [
                   IconButton(
+                    tooltip: '${l10n.redemptionOrderQuantityLabel} -',
                     onPressed: () => _updateQuantity(-1),
+                    constraints: const BoxConstraints(
+                      minWidth: AppSpacing.minTouchTarget,
+                      minHeight: AppSpacing.minTouchTarget,
+                    ),
                     icon: const Icon(Icons.remove_circle_outline),
                   ),
-                  Text('$_quantity'),
+                  Text(
+                    '$_quantity',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: AppTypography.bold,
+                    ),
+                  ),
                   IconButton(
+                    tooltip: '${l10n.redemptionOrderQuantityLabel} +',
                     onPressed: () => _updateQuantity(1),
+                    constraints: const BoxConstraints(
+                      minWidth: AppSpacing.minTouchTarget,
+                      minHeight: AppSpacing.minTouchTarget,
+                    ),
                     icon: const Icon(Icons.add_circle_outline),
                   ),
                 ],
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.space2),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(l10n.redemptionOrderTotalPointsLabel),
-              Text('${_totalCost} pts'),
+              Text(
+                l10n.commonPoints(_totalCost),
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: AppTypography.bold,
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.space2),
           if (_loadingBalance)
             Row(
               children: [
@@ -339,7 +427,7 @@ class _RedeemDialogState extends State<RedeemDialog> {
                   height: 16,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.space2),
                 Text(l10n.redemptionBalanceLoading),
               ],
             )
@@ -352,14 +440,15 @@ class _RedeemDialogState extends State<RedeemDialog> {
             )
           else
             Text(
-              '${l10n.redemptionBalanceLabel}: ${_balance ?? 0} pts',
+              '${l10n.redemptionBalanceLabel}: '
+              '${l10n.commonPoints(_balance ?? 0)}',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
           if (isInsufficient)
             Padding(
-              padding: const EdgeInsets.only(top: 8),
+              padding: const EdgeInsets.only(top: AppSpacing.space2),
               child: Text(
                 l10n.redemptionInsufficientPoints,
                 style: theme.textTheme.bodySmall?.copyWith(
@@ -382,14 +471,19 @@ class _RedeemDialogState extends State<RedeemDialog> {
             }
             if (state.status == RedemptionCreateStatus.failure) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message ?? l10n.redemptionCreateFailed)),
+                SnackBar(
+                  content: Text(state.message ?? l10n.redemptionCreateFailed),
+                ),
               );
             }
           },
           builder: (context, state) {
             final isSubmitting =
                 state.status == RedemptionCreateStatus.submitting;
-            return FilledButton(
+            return W2WButton(
+              label: l10n.redemptionConfirmButton,
+              expanded: false,
+              isLoading: isSubmitting,
               onPressed: isSubmitting || isInsufficient || balanceUnavailable
                   ? null
                   : () {
@@ -401,13 +495,6 @@ class _RedeemDialogState extends State<RedeemDialog> {
                         ),
                       );
                     },
-              child: isSubmitting
-                  ? const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text(l10n.redemptionConfirmButton),
             );
           },
         ),

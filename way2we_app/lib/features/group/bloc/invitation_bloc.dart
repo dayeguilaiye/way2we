@@ -9,9 +9,9 @@ class InvitationBloc extends Bloc<InvitationEvent, InvitationState> {
   InvitationBloc({
     required GroupProvider groupProvider,
     required int groupId,
-  })  : _groupProvider = groupProvider,
-        _groupId = groupId,
-        super(const InvitationState()) {
+  }) : _groupProvider = groupProvider,
+       _groupId = groupId,
+       super(const InvitationState()) {
     on<InvitationLoadRequested>(_onLoadRequested);
     on<InvitationRefreshRequested>(_onRefreshRequested);
     on<InvitationCopyRequested>(_onCopyRequested);
@@ -27,24 +27,31 @@ class InvitationBloc extends Bloc<InvitationEvent, InvitationState> {
     emit(state.copyWith(status: InvitationStatus.loading));
 
     try {
-      final response =
-          await _groupProvider.getInvitationCode(groupId: _groupId);
-      emit(state.copyWith(
-        status: InvitationStatus.loaded,
-        invitationCode: response.invitationCode,
-        shareUrl: response.shareUrl,
-      ));
+      final response = await _groupProvider.getInvitationCode(
+        groupId: _groupId,
+      );
+      emit(
+        state.copyWith(
+          status: InvitationStatus.loaded,
+          invitationCode: response.invitationCode,
+          shareUrl: response.shareUrl,
+        ),
+      );
     } on GroupApiException catch (e) {
-      emit(state.copyWith(
-        status: InvitationStatus.failure,
-        errorMessage: e.message,
-        errorCode: e.code,
-      ));
+      emit(
+        state.copyWith(
+          status: InvitationStatus.failure,
+          errorMessage: e.message,
+          errorCode: e.code,
+        ),
+      );
     } on Exception catch (e) {
-      emit(state.copyWith(
-        status: InvitationStatus.failure,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: InvitationStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -55,24 +62,31 @@ class InvitationBloc extends Bloc<InvitationEvent, InvitationState> {
     emit(state.copyWith(status: InvitationStatus.refreshing));
 
     try {
-      final response =
-          await _groupProvider.refreshInvitationCode(groupId: _groupId);
-      emit(state.copyWith(
-        status: InvitationStatus.refreshed,
-        invitationCode: response.invitationCode,
-        shareUrl: response.shareUrl,
-      ));
+      final response = await _groupProvider.refreshInvitationCode(
+        groupId: _groupId,
+      );
+      emit(
+        state.copyWith(
+          status: InvitationStatus.refreshed,
+          invitationCode: response.invitationCode,
+          shareUrl: response.shareUrl,
+        ),
+      );
     } on GroupApiException catch (e) {
-      emit(state.copyWith(
-        status: InvitationStatus.failure,
-        errorMessage: e.message,
-        errorCode: e.code,
-      ));
+      emit(
+        state.copyWith(
+          status: InvitationStatus.failure,
+          errorMessage: e.message,
+          errorCode: e.code,
+        ),
+      );
     } on Exception catch (e) {
-      emit(state.copyWith(
-        status: InvitationStatus.failure,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: InvitationStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 

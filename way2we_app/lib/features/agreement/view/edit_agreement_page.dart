@@ -5,6 +5,8 @@ import 'package:way2we_app/features/agreement/data/providers/agreement_provider.
 import 'package:way2we_app/features/agreement/models/agreement.dart';
 import 'package:way2we_app/features/group/data/providers/group_provider.dart';
 import 'package:way2we_app/l10n/l10n.dart';
+import 'package:way2we_app/shared/widgets/w2w.dart';
+import 'package:way2we_app/theme/theme.dart';
 
 class EditAgreementPage extends StatelessWidget {
   const EditAgreementPage({
@@ -60,7 +62,7 @@ class _EditAgreementViewState extends State<EditAgreementView> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final theme = Theme.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return BlocConsumer<AgreementFormBloc, AgreementFormState>(
       listenWhen: (previous, current) => previous.status != current.status,
@@ -69,7 +71,7 @@ class _EditAgreementViewState extends State<EditAgreementView> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l10n.agreementUpdateSuccess),
-              backgroundColor: theme.colorScheme.primary,
+              backgroundColor: colorScheme.primary,
             ),
           );
           Navigator.of(context).pop();
@@ -77,13 +79,12 @@ class _EditAgreementViewState extends State<EditAgreementView> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.errorMessage ?? l10n.agreementUpdateError),
-              backgroundColor: theme.colorScheme.error,
+              backgroundColor: colorScheme.error,
             ),
           );
         }
       },
       builder: (context, state) {
-        // Initialize controllers once when state is loaded
         if (!_isInitialized && state.isEditMode) {
           _nameController = TextEditingController(text: state.name);
           _descriptionController = TextEditingController(
@@ -108,16 +109,13 @@ class _EditAgreementViewState extends State<EditAgreementView> {
           body: Form(
             key: _formKey,
             child: ListView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.pagePaddingH),
               children: [
-                // Name field
-                TextFormField(
+                W2WInput(
                   controller: _nameController,
-                  decoration: InputDecoration(
-                    labelText: l10n.agreementNameLabel,
-                    border: const OutlineInputBorder(),
-                  ),
+                  label: l10n.agreementNameLabel,
                   maxLength: 50,
+                  prefixIcon: Icons.rule_folder_outlined,
                   onChanged: (value) {
                     context.read<AgreementFormBloc>().add(NameChanged(value));
                   },
@@ -128,15 +126,10 @@ class _EditAgreementViewState extends State<EditAgreementView> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
-
-                // Description field
-                TextFormField(
+                const SizedBox(height: AppSpacing.space4),
+                W2WInput(
                   controller: _descriptionController,
-                  decoration: InputDecoration(
-                    labelText: l10n.agreementDescriptionLabel,
-                    border: const OutlineInputBorder(),
-                  ),
+                  label: l10n.agreementDescriptionLabel,
                   maxLength: 200,
                   maxLines: 3,
                   onChanged: (value) {
@@ -145,16 +138,12 @@ class _EditAgreementViewState extends State<EditAgreementView> {
                     );
                   },
                 ),
-                const SizedBox(height: 16),
-
-                // Points field
-                TextFormField(
+                const SizedBox(height: AppSpacing.space4),
+                W2WInput(
                   controller: _pointsController,
-                  decoration: InputDecoration(
-                    labelText: l10n.agreementPointsLabel,
-                    border: const OutlineInputBorder(),
-                    suffixText: 'pts',
-                  ),
+                  label: l10n.agreementPointsLabel,
+                  suffixText: l10n.commonPointsUnit,
+                  prefixIcon: Icons.stars_outlined,
                   keyboardType: TextInputType.number,
                   onChanged: (value) {
                     final points = int.tryParse(value) ?? 0;
@@ -170,22 +159,39 @@ class _EditAgreementViewState extends State<EditAgreementView> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
-
-                // Require confirmation switch
-                SwitchListTile(
-                  title: Text(l10n.agreementRequireConfirmationLabel),
-                  value: state.requireConfirmation,
-                  onChanged: (value) {
-                    context.read<AgreementFormBloc>().add(
-                      RequireConfirmationChanged(value),
-                    );
-                  },
+                const SizedBox(height: AppSpacing.space4),
+                W2WCard(
+                  showBorder: true,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          l10n.agreementRequireConfirmationLabel,
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(
+                                fontWeight: AppTypography.bold,
+                              ),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.space3),
+                      Switch(
+                        value: state.requireConfirmation,
+                        onChanged: (value) {
+                          context.read<AgreementFormBloc>().add(
+                            RequireConfirmationChanged(
+                              requireConfirmation: value,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 24),
-
-                // Submit button
-                FilledButton(
+                const SizedBox(height: AppSpacing.space8),
+                W2WButton(
+                  label: l10n.agreementSaveButton,
+                  icon: Icons.check_circle_outline,
+                  isLoading: state.status == AgreementFormStatus.submitting,
                   onPressed: state.canSubmit
                       ? () {
                           if (_formKey.currentState!.validate()) {
@@ -198,13 +204,6 @@ class _EditAgreementViewState extends State<EditAgreementView> {
                           }
                         }
                       : null,
-                  child: state.status == AgreementFormStatus.submitting
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(l10n.agreementSaveButton),
                 ),
               ],
             ),

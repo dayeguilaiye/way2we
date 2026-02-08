@@ -314,6 +314,9 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get homeTabTitle => '首页';
+
+  @override
   String get homeInviteMembers => '邀请成员';
 
   @override
@@ -781,4 +784,25 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get redemptionBalanceLoadFailed => '积分获取失败';
+
+  @override
+  String get commonAppName => 'Way2We';
+
+  @override
+  String get commonPointsUnit => '积分';
+
+  @override
+  String commonPoints(int points) {
+    return '$points 积分';
+  }
+
+  @override
+  String commonPointsDelta(int points) {
+    return '+$points 积分';
+  }
+
+  @override
+  String commonQuantityTimesPoints(int quantity, int points) {
+    return '$quantity × $points 积分';
+  }
 }

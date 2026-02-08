@@ -45,7 +45,7 @@ final class CostPointsChanged extends RewardFormEvent {
 }
 
 final class AutoFulfillChanged extends RewardFormEvent {
-  const AutoFulfillChanged(this.autoFulfill);
+  const AutoFulfillChanged({required this.autoFulfill});
 
   final bool autoFulfill;
 
@@ -54,7 +54,7 @@ final class AutoFulfillChanged extends RewardFormEvent {
 }
 
 final class AutoCompleteChanged extends RewardFormEvent {
-  const AutoCompleteChanged(this.autoComplete);
+  const AutoCompleteChanged({required this.autoComplete});
 
   final bool autoComplete;
 

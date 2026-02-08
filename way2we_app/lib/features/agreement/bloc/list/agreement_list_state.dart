@@ -50,8 +50,8 @@ final class AgreementListActionSuccess extends AgreementListReadyState {
   const AgreementListActionSuccess({
     required super.agreements,
     required super.groupId,
-    super.statusFilter,
     required this.isPinned,
+    super.statusFilter,
   });
 
   final bool isPinned;
@@ -64,8 +64,8 @@ final class AgreementListActionFailure extends AgreementListReadyState {
   const AgreementListActionFailure({
     required super.agreements,
     required super.groupId,
-    super.statusFilter,
     required this.message,
+    super.statusFilter,
     this.code,
   });
 

@@ -43,13 +43,18 @@ void main() {
       ),
     ).thenAnswer(
       (_) async => Response(
-        data: {'rewards': [rewardJson]},
+        data: {
+          'rewards': [rewardJson],
+        },
         statusCode: 200,
         requestOptions: RequestOptions(path: '/v1/groups/1/rewards'),
       ),
     );
 
-    final rewards = await rewardProvider.listRewards(groupId: 1, status: 'active');
+    final rewards = await rewardProvider.listRewards(
+      groupId: 1,
+      status: 'active',
+    );
     expect(rewards, isNotEmpty);
     expect(rewards.first.id, equals(1));
     expect(rewards.first.name, equals('Reward'));
@@ -63,7 +68,9 @@ void main() {
       ),
     ).thenAnswer(
       (_) async => Response(
-        data: {'rewards': [rewardJson]},
+        data: {
+          'rewards': [rewardJson],
+        },
         statusCode: 200,
         requestOptions: RequestOptions(path: '/v1/groups/1/rewards'),
       ),
@@ -136,7 +143,6 @@ void main() {
       ),
     ).thenAnswer(
       (_) async => Response(
-        data: null,
         statusCode: 200,
         requestOptions: RequestOptions(path: '/v1/groups/1/rewards/1/pin'),
       ),
@@ -156,7 +162,6 @@ void main() {
       ),
     ).thenAnswer(
       (_) async => Response(
-        data: null,
         statusCode: 200,
         requestOptions: RequestOptions(path: '/v1/groups/1/rewards/1/pin'),
       ),

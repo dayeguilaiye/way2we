@@ -6,6 +6,7 @@ import 'package:way2we_app/features/redemption/data/models/redemption_order.dart
 import 'package:way2we_app/features/redemption/data/providers/redemption_provider.dart';
 import 'package:way2we_app/features/redemption/view/redemption_order_detail_page.dart';
 import 'package:way2we_app/l10n/l10n.dart';
+import 'package:way2we_app/shared/widgets/w2w.dart';
 import 'package:way2we_app/theme/theme.dart';
 
 class RedemptionOrderListPage extends StatelessWidget {
@@ -36,7 +37,8 @@ class RedemptionOrderListView extends StatefulWidget {
   final int groupId;
 
   @override
-  State<RedemptionOrderListView> createState() => _RedemptionOrderListViewState();
+  State<RedemptionOrderListView> createState() =>
+      _RedemptionOrderListViewState();
 }
 
 class _RedemptionOrderListViewState extends State<RedemptionOrderListView> {
@@ -60,6 +62,19 @@ class _RedemptionOrderListViewState extends State<RedemptionOrderListView> {
     }
   }
 
+  W2WStatusType _statusType(RedemptionOrderStatus status) {
+    switch (status) {
+      case RedemptionOrderStatus.awaitingFulfill:
+        return W2WStatusType.awaiting;
+      case RedemptionOrderStatus.awaitingConfirm:
+        return W2WStatusType.pending;
+      case RedemptionOrderStatus.completed:
+        return W2WStatusType.completed;
+      case RedemptionOrderStatus.unsatisfied:
+        return W2WStatusType.rejected;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -79,31 +94,24 @@ class _RedemptionOrderListViewState extends State<RedemptionOrderListView> {
         },
         builder: (context, state) {
           if (state is RedemptionListLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return _buildLoadingState();
           }
           if (state is RedemptionListError) {
-            return Center(
-              child: Text(state.message, style: theme.textTheme.bodyMedium),
+            return W2WEmptyState(
+              icon: Icons.error_outline,
+              title: state.message,
+              actionLabel: l10n.retry,
+              onAction: () => context.read<RedemptionListBloc>().add(
+                LoadOrders(groupId: widget.groupId),
+              ),
             );
           }
           if (state is RedemptionListReadyState) {
             if (state.orders.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.receipt_long, color: theme.colorScheme.primary),
-                    const SizedBox(height: AppSpacing.space2),
-                    Text(l10n.redemptionOrderEmptyTitle),
-                    const SizedBox(height: AppSpacing.space1),
-                    Text(
-                      l10n.redemptionOrderEmptySubtitle,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
+              return W2WEmptyState(
+                icon: Icons.receipt_long_outlined,
+                title: l10n.redemptionOrderEmptyTitle,
+                subtitle: l10n.redemptionOrderEmptySubtitle,
               );
             }
 
@@ -112,16 +120,17 @@ class _RedemptionOrderListViewState extends State<RedemptionOrderListView> {
               child: ListView.separated(
                 padding: const EdgeInsets.all(AppSpacing.pagePaddingH),
                 itemCount: state.orders.length,
-                separatorBuilder: (_, __) =>
+                separatorBuilder: (_, _) =>
                     const SizedBox(height: AppSpacing.space3),
                 itemBuilder: (context, index) {
                   final order = state.orders[index];
                   final rewardName = order.rewardName ?? '—';
                   final statusLabel = _statusLabel(context, order.status);
+                  final statusType = _statusType(order.status);
                   final timeLabel = _dateFormat.format(order.createdAt);
 
-                  return InkWell(
-                    borderRadius: BorderRadius.circular(12),
+                  return W2WCard(
+                    showBorder: true,
                     onTap: () {
                       Navigator.of(context).push(
                         RedemptionOrderDetailPage.route(
@@ -130,49 +139,47 @@ class _RedemptionOrderListViewState extends State<RedemptionOrderListView> {
                         ),
                       );
                     },
-                    child: Ink(
-                      padding: const EdgeInsets.all(AppSpacing.space3),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.surface,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: theme.colorScheme.outline),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            rewardName,
-                            style: theme.textTheme.titleSmall,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          rewardName,
+                          style: theme.textTheme.titleSmall,
+                        ),
+                        const SizedBox(height: AppSpacing.space1),
+                        Text(
+                          l10n.commonQuantityTimesPoints(
+                            order.quantity,
+                            order.unitCostPoints,
                           ),
-                          const SizedBox(height: AppSpacing.space1),
-                          Text(
-                            '${order.quantity} × ${order.unitCostPoints} pts',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.space2),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            W2WStatusBadge(
+                              label: statusLabel,
+                              type: statusType,
                             ),
-                          ),
-                          const SizedBox(height: AppSpacing.space2),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Chip(label: Text(statusLabel)),
-                              Text(
-                                '${order.totalCostPoints} pts',
-                                style: theme.textTheme.titleSmall?.copyWith(
-                                  color: theme.colorScheme.primary,
-                                ),
+                            Text(
+                              l10n.commonPoints(order.totalCostPoints),
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                color: theme.colorScheme.primary,
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: AppSpacing.space1),
-                          Text(
-                            timeLabel,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
                             ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.space1),
+                        Text(
+                          timeLabel,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   );
                 },
@@ -183,6 +190,28 @@ class _RedemptionOrderListViewState extends State<RedemptionOrderListView> {
           return const SizedBox.shrink();
         },
       ),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return ListView.separated(
+      padding: const EdgeInsets.all(AppSpacing.pagePaddingH),
+      itemCount: 4,
+      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.space3),
+      itemBuilder: (_, _) {
+        return const W2WCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              W2WSkeleton(height: 18, width: 200),
+              SizedBox(height: AppSpacing.space2),
+              W2WSkeleton(height: 14, width: 160),
+              SizedBox(height: AppSpacing.space2),
+              W2WSkeleton(height: 14, width: 240),
+            ],
+          ),
+        );
+      },
     );
   }
 }

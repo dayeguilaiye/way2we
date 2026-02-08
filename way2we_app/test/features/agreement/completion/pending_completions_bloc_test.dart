@@ -37,8 +37,6 @@ void main() {
       when(
         () => provider.listPendingCompletions(
           groupId: 10,
-          limit: null,
-          offset: null,
         ),
       ).thenAnswer((_) async => [buildCompletion(1)]);
       return bloc;
@@ -57,8 +55,6 @@ void main() {
       when(
         () => provider.listPendingCompletions(
           groupId: 10,
-          limit: null,
-          offset: null,
         ),
       ).thenAnswer((_) async => completions);
       when(
@@ -66,10 +62,9 @@ void main() {
       ).thenAnswer((_) async {});
       return bloc;
     },
-    act: (bloc) {
-      bloc.add(const LoadPendingCompletions(groupId: 10));
-      bloc.add(const ConfirmPendingCompletion(completionId: 1));
-    },
+    act: (bloc) => bloc
+      ..add(const LoadPendingCompletions(groupId: 10))
+      ..add(const ConfirmPendingCompletion(completionId: 1)),
     expect: () => [
       const PendingCompletionsLoading(),
       PendingCompletionsLoaded(
@@ -95,8 +90,6 @@ void main() {
       when(
         () => provider.listPendingCompletions(
           groupId: 10,
-          limit: null,
-          offset: null,
         ),
       ).thenAnswer((_) async => completions);
       when(
@@ -105,16 +98,17 @@ void main() {
           completionId: 1,
           reason: 'no',
         ),
-      ).thenThrow(const AgreementCompletionApiException(
-        'Reject failed',
-        code: 'ERR_REJECT',
-      ));
+      ).thenThrow(
+        const AgreementCompletionApiException(
+          'Reject failed',
+          code: 'ERR_REJECT',
+        ),
+      );
       return bloc;
     },
-    act: (bloc) {
-      bloc.add(const LoadPendingCompletions(groupId: 10));
-      bloc.add(const RejectPendingCompletion(completionId: 1, reason: 'no'));
-    },
+    act: (bloc) => bloc
+      ..add(const LoadPendingCompletions(groupId: 10))
+      ..add(const RejectPendingCompletion(completionId: 1, reason: 'no')),
     expect: () => [
       const PendingCompletionsLoading(),
       PendingCompletionsLoaded(

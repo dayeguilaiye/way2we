@@ -314,6 +314,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get homeTabTitle => 'Home';
+
+  @override
   String get homeInviteMembers => 'Invite Members';
 
   @override
@@ -781,4 +784,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redemptionBalanceLoadFailed => 'Failed to load points';
+
+  @override
+  String get commonAppName => 'Way2We';
+
+  @override
+  String get commonPointsUnit => 'pts';
+
+  @override
+  String commonPoints(int points) {
+    return '$points pts';
+  }
+
+  @override
+  String commonPointsDelta(int points) {
+    return '+$points pts';
+  }
+
+  @override
+  String commonQuantityTimesPoints(int quantity, int points) {
+    return '$quantity × $points pts';
+  }
 }

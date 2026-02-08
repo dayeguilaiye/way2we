@@ -251,20 +251,21 @@ class RewardListBloc extends Bloc<RewardListEvent, RewardListState> {
   ) {
     return current
         .map(
-          (reward) =>
-              reward.id == rewardId ? reward.copyWith(isPinned: isPinned) : reward,
+          (reward) => reward.id == rewardId
+              ? reward.copyWith(isPinned: isPinned)
+              : reward,
         )
         .toList();
   }
 
   List<Reward> _sortByPinned(List<Reward> rewards) {
-    final indexed = rewards.asMap().entries.toList();
-    indexed.sort((a, b) {
-      if (a.value.isPinned == b.value.isPinned) {
-        return a.key.compareTo(b.key);
-      }
-      return a.value.isPinned ? -1 : 1;
-    });
+    final indexed = rewards.asMap().entries.toList()
+      ..sort((a, b) {
+        if (a.value.isPinned == b.value.isPinned) {
+          return a.key.compareTo(b.key);
+        }
+        return a.value.isPinned ? -1 : 1;
+      });
     return indexed.map((entry) => entry.value).toList();
   }
 }

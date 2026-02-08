@@ -6,6 +6,8 @@ import 'package:way2we_app/features/agreement/completion/bloc/pending/pending_co
 import 'package:way2we_app/features/agreement/completion/data/providers/agreement_completion_provider.dart';
 import 'package:way2we_app/features/agreement/completion/models/agreement_completion.dart';
 import 'package:way2we_app/l10n/l10n.dart';
+import 'package:way2we_app/shared/widgets/w2w.dart';
+import 'package:way2we_app/theme/theme.dart';
 
 class PendingCompletionsPage extends StatelessWidget {
   const PendingCompletionsPage({required this.groupId, super.key});
@@ -75,14 +77,14 @@ class _PendingCompletionsViewState extends State<_PendingCompletionsView> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(message),
-                backgroundColor: theme.colorScheme.primary,
+                backgroundColor: theme.semantic.success,
               ),
             );
           } else if (state is PendingCompletionsActionFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
-                backgroundColor: theme.colorScheme.error,
+                backgroundColor: theme.semantic.error,
               ),
             );
           }
@@ -90,83 +92,63 @@ class _PendingCompletionsViewState extends State<_PendingCompletionsView> {
         builder: (context, state) {
           if (state is PendingCompletionsLoading ||
               state is PendingCompletionsInitial) {
-            return const Center(child: CircularProgressIndicator());
+            return const _PendingLoadingState();
           }
 
           if (state is PendingCompletionsError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: theme.colorScheme.error,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(state.message),
-                  const SizedBox(height: 16),
-                  FilledButton(
-                    onPressed: () => context
-                        .read<PendingCompletionsBloc>()
-                        .add(const RefreshPendingCompletions()),
-                    child: Text(l10n.retry),
-                  ),
-                ],
+            return W2WEmptyState(
+              icon: Icons.error_outline,
+              title: state.message,
+              actionLabel: l10n.retry,
+              onAction: () => context.read<PendingCompletionsBloc>().add(
+                const RefreshPendingCompletions(),
               ),
             );
           }
 
           if (state is PendingCompletionsReadyState) {
             if (state.completions.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.pending_actions,
-                      size: 64,
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      l10n.agreementCompletionPendingEmpty,
-                      style: theme.textTheme.titleMedium,
-                    ),
-                  ],
-                ),
+              return W2WEmptyState(
+                icon: Icons.pending_actions,
+                title: l10n.agreementCompletionPendingEmpty,
               );
             }
 
             return RefreshIndicator(
               onRefresh: () async {
-                context
-                    .read<PendingCompletionsBloc>()
-                    .add(const RefreshPendingCompletions());
+                context.read<PendingCompletionsBloc>().add(
+                  const RefreshPendingCompletions(),
+                );
               },
               child: ListView.separated(
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.pagePaddingH,
+                  AppSpacing.pagePaddingV,
+                  AppSpacing.pagePaddingH,
+                  AppSpacing.pagePaddingV,
+                ),
                 itemCount: state.completions.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 4),
+                separatorBuilder: (_, _) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
                   final completion = state.completions[index];
                   return _PendingCompletionCard(
                     completion: completion,
                     currentUserId: _currentUserId,
-                    onConfirm: () => context
-                        .read<PendingCompletionsBloc>()
-                        .add(ConfirmPendingCompletion(
-                          completionId: completion.id,
-                        )),
+                    onConfirm: () => context.read<PendingCompletionsBloc>().add(
+                      ConfirmPendingCompletion(
+                        completionId: completion.id,
+                      ),
+                    ),
                     onReject: () async {
                       final reason = await _showRejectDialog(context);
                       if (reason == null) return;
+                      if (!context.mounted) return;
                       context.read<PendingCompletionsBloc>().add(
-                            RejectPendingCompletion(
-                              completionId: completion.id,
-                              reason: reason,
-                            ),
-                          );
+                        RejectPendingCompletion(
+                          completionId: completion.id,
+                          reason: reason,
+                        ),
+                      );
                     },
                   );
                 },
@@ -198,11 +180,12 @@ class _PendingCompletionsViewState extends State<_PendingCompletionsView> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(null),
+              onPressed: () => Navigator.of(context).pop(),
               child: Text(l10n.cancel),
             ),
             FilledButton(
-              onPressed: () => Navigator.of(context).pop(controller.text.trim()),
+              onPressed: () =>
+                  Navigator.of(context).pop(controller.text.trim()),
               child: Text(l10n.confirm),
             ),
           ],
@@ -232,82 +215,127 @@ class _PendingCompletionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = context.l10n;
-    final dateText = DateFormat('yyyy-MM-dd HH:mm')
-        .format(completion.createdAt.toLocal());
+    final dateText = DateFormat(
+      'yyyy-MM-dd HH:mm',
+    ).format(completion.createdAt.toLocal());
     final isCompleter =
         currentUserId != null && currentUserId == completion.completerId;
     final canConfirm = !isCompleter;
 
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+    return W2WCard(
+      showBorder: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  completion.agreementName ??
+                      l10n.agreementCompletionUnknownAgreement,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: AppTypography.bold,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.space2,
+                  vertical: AppSpacing.space1,
+                ),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+                ),
+                child: Text(
+                  '+${completion.points}',
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: theme.colorScheme.onPrimaryContainer,
+                    fontWeight: AppTypography.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.space2),
+          Text(
+            '${l10n.agreementCompletionCompleterLabel} '
+            '${completion.completerNickname ?? completion.completerId}',
+            style: theme.textTheme.bodySmall,
+          ),
+          const SizedBox(height: AppSpacing.space1),
+          Text(
+            '${l10n.agreementCompletionRecorderLabel} '
+            '${completion.recorderNickname ?? completion.recorderId}',
+            style: theme.textTheme.bodySmall,
+          ),
+          const SizedBox(height: AppSpacing.space1),
+          Text(
+            '${l10n.agreementCompletionCreatedAtLabel} $dateText',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.space3),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              W2WButton(
+                label: l10n.agreementCompletionRejectAction,
+                variant: W2WButtonVariant.secondary,
+                expanded: false,
+                onPressed: onReject,
+              ),
+              const SizedBox(width: AppSpacing.space2),
+              W2WButton(
+                label: l10n.agreementCompletionConfirmAction,
+                expanded: false,
+                onPressed: canConfirm ? onConfirm : null,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PendingLoadingState extends StatelessWidget {
+  const _PendingLoadingState();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.pagePaddingH,
+        AppSpacing.pagePaddingV,
+        AppSpacing.pagePaddingH,
+        AppSpacing.pagePaddingV,
+      ),
+      itemBuilder: (_, _) => const W2WCard(
+        showBorder: true,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    completion.agreementName ??
-                        l10n.agreementCompletionUnknownAgreement,
-                    style: theme.textTheme.titleMedium,
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Text(
-                    '+${completion.points}',
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: theme.colorScheme.onPrimaryContainer,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${l10n.agreementCompletionCompleterLabel} ${completion.completerNickname ?? completion.completerId}',
-              style: theme.textTheme.bodySmall,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '${l10n.agreementCompletionRecorderLabel} ${completion.recorderNickname ?? completion.recorderId}',
-              style: theme.textTheme.bodySmall,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '${l10n.agreementCompletionCreatedAtLabel} $dateText',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 12),
+            W2WSkeleton(width: 180),
+            SizedBox(height: AppSpacing.space2),
+            W2WSkeleton(width: 220, height: 12),
+            SizedBox(height: AppSpacing.space1),
+            W2WSkeleton(width: 220, height: 12),
+            SizedBox(height: AppSpacing.space3),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TextButton(
-                  onPressed: onReject,
-                  child: Text(l10n.agreementCompletionRejectAction),
-                ),
-                const SizedBox(width: 8),
-                FilledButton(
-                  onPressed: canConfirm ? onConfirm : null,
-                  child: Text(l10n.agreementCompletionConfirmAction),
-                ),
+                W2WSkeleton(width: 90, height: AppSpacing.inputHeight),
+                SizedBox(width: AppSpacing.space2),
+                W2WSkeleton(width: 110, height: AppSpacing.inputHeight),
               ],
             ),
           ],
         ),
       ),
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
+      itemCount: 4,
     );
   }
 }

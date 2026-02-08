@@ -67,9 +67,13 @@ void main() {
       ),
     ).thenAnswer(
       (_) async => Response(
-        data: {'completions': [completionJson]},
+        data: {
+          'completions': [completionJson],
+        },
         statusCode: 200,
-        requestOptions: RequestOptions(path: '/v1/groups/10/agreement-completions'),
+        requestOptions: RequestOptions(
+          path: '/v1/groups/10/agreement-completions',
+        ),
       ),
     );
 
@@ -83,7 +87,6 @@ void main() {
       () => mockDio.post<void>(any()),
     ).thenAnswer(
       (_) async => Response(
-        data: null,
         statusCode: 200,
         requestOptions: RequestOptions(
           path: '/v1/groups/10/agreement-completions/1/confirm',
@@ -105,7 +108,6 @@ void main() {
       () => mockDio.post<void>(any(), data: any(named: 'data')),
     ).thenAnswer(
       (_) async => Response(
-        data: null,
         statusCode: 200,
         requestOptions: RequestOptions(
           path: '/v1/groups/10/agreement-completions/1/reject',
@@ -127,41 +129,45 @@ void main() {
     ).called(1);
   });
 
-  test('createAgreementCompletion throws AgreementCompletionApiException on API error', () async {
-    final errorResponse = Response<Map<String, dynamic>>(
-      data: {'message': 'Bad request', 'code': 'ERR_BAD_REQUEST'},
-      statusCode: 400,
-      requestOptions: RequestOptions(
-        path: '/v1/groups/10/agreements/5/completions',
-      ),
-    );
-
-    when(
-      () => mockDio.post<Map<String, dynamic>>(
-        any(),
-        data: any(named: 'data'),
-      ),
-    ).thenThrow(
-      DioException(
+  test(
+    'createAgreementCompletion throws '
+    'AgreementCompletionApiException on API error',
+    () async {
+      final errorResponse = Response<Map<String, dynamic>>(
+        data: {'message': 'Bad request', 'code': 'ERR_BAD_REQUEST'},
+        statusCode: 400,
         requestOptions: RequestOptions(
           path: '/v1/groups/10/agreements/5/completions',
         ),
-        response: errorResponse,
-        type: DioExceptionType.badResponse,
-      ),
-    );
+      );
 
-    expect(
-      () => provider.createAgreementCompletion(
-        groupId: 10,
-        agreementId: 5,
-        completerId: 2,
-      ),
-      throwsA(
-        isA<AgreementCompletionApiException>()
-            .having((e) => e.message, 'message', 'Bad request')
-            .having((e) => e.code, 'code', 'ERR_BAD_REQUEST'),
-      ),
-    );
-  });
+      when(
+        () => mockDio.post<Map<String, dynamic>>(
+          any(),
+          data: any(named: 'data'),
+        ),
+      ).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(
+            path: '/v1/groups/10/agreements/5/completions',
+          ),
+          response: errorResponse,
+          type: DioExceptionType.badResponse,
+        ),
+      );
+
+      expect(
+        () => provider.createAgreementCompletion(
+          groupId: 10,
+          agreementId: 5,
+          completerId: 2,
+        ),
+        throwsA(
+          isA<AgreementCompletionApiException>()
+              .having((e) => e.message, 'message', 'Bad request')
+              .having((e) => e.code, 'code', 'ERR_BAD_REQUEST'),
+        ),
+      );
+    },
+  );
 }

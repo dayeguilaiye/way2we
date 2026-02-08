@@ -11,6 +11,8 @@ import 'package:way2we_app/features/reward/view/create_reward_page.dart';
 import 'package:way2we_app/features/reward/view/reward_detail_page.dart';
 import 'package:way2we_app/features/reward/view/widgets/reward_card.dart';
 import 'package:way2we_app/l10n/l10n.dart';
+import 'package:way2we_app/shared/widgets/w2w.dart';
+import 'package:way2we_app/theme/theme.dart';
 
 class RewardListPage extends StatelessWidget {
   const RewardListPage({
@@ -57,24 +59,26 @@ class _RewardListViewState extends State<RewardListView>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-    _tabController.addListener(_onTabChanged);
+    _tabController = TabController(length: 2, vsync: this)
+      ..addListener(_onTabChanged);
     _loadCurrentUserId();
   }
 
   @override
   void dispose() {
-    _tabController.removeListener(_onTabChanged);
-    _tabController.dispose();
+    _tabController
+      ..removeListener(_onTabChanged)
+      ..dispose();
     super.dispose();
   }
 
   Future<void> _loadCurrentUserId() async {
+    if (!ServiceLocator.instance.isInitialized) return;
     final token = await ServiceLocator.instance.storage.read(key: 'auth_token');
-    final userId = _decodeUserIdFromToken(token);
+
     if (!mounted) return;
     setState(() {
-      _currentUserId = userId;
+      _currentUserId = _decodeUserIdFromToken(token);
     });
   }
 
@@ -87,7 +91,7 @@ class _RewardListViewState extends State<RewardListView>
       final decoded = utf8.decode(base64Url.decode(payload));
       final data = jsonDecode(decoded) as Map<String, dynamic>;
       return data['user_id'] as int?;
-    } catch (_) {
+    } on Object catch (_) {
       return null;
     }
   }
@@ -164,33 +168,24 @@ class _RewardListViewState extends State<RewardListView>
         },
         builder: (context, state) {
           if (state is RewardListLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return _buildLoadingState();
           }
 
           if (state is RewardListError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: theme.colorScheme.error,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(state.message),
-                  const SizedBox(height: 16),
-                  FilledButton(
-                    onPressed: _loadRewardsForTab,
-                    child: Text(l10n.retry),
-                  ),
-                ],
-              ),
+            return W2WEmptyState(
+              icon: Icons.error_outline,
+              title: state.message,
+              actionLabel: l10n.retry,
+              onAction: _loadRewardsForTab,
             );
           }
 
           if (state is RewardListReadyState) {
-            return _buildRewardList(context, state.rewards, state.isActiveFilter);
+            return _buildRewardList(
+              context,
+              state.rewards,
+              state.isActiveFilter,
+            );
           }
 
           return const SizedBox.shrink();
@@ -210,34 +205,12 @@ class _RewardListViewState extends State<RewardListView>
     bool isActive,
   ) {
     final l10n = context.l10n;
-    final theme = Theme.of(context);
 
     if (rewards.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              isActive ? Icons.card_giftcard_outlined : Icons.archive_outlined,
-              size: 64,
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              isActive ? l10n.rewardEmptyTitle : l10n.rewardNoInactive,
-              style: theme.textTheme.titleMedium,
-            ),
-            if (isActive) ...[
-              const SizedBox(height: 8),
-              Text(
-                l10n.rewardEmptySubtitle,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ],
-        ),
+      return W2WEmptyState(
+        icon: isActive ? Icons.card_giftcard_outlined : Icons.archive_outlined,
+        title: isActive ? l10n.rewardEmptyTitle : l10n.rewardNoInactive,
+        subtitle: isActive ? l10n.rewardEmptySubtitle : null,
       );
     }
 
@@ -247,20 +220,24 @@ class _RewardListViewState extends State<RewardListView>
             ? groupState.selectedGroup
             : null;
         final isAdmin =
-            selectedGroup != null && selectedGroup.id == widget.groupId
-                ? selectedGroup.isAdmin
-                : false;
+            selectedGroup != null &&
+            selectedGroup.id == widget.groupId &&
+            selectedGroup.isAdmin;
 
         return RefreshIndicator(
           onRefresh: () async {
             context.read<RewardListBloc>().add(const RefreshRewards());
           },
           child: ListView.builder(
-            padding: const EdgeInsets.only(top: 8, bottom: 80),
+            padding: const EdgeInsets.only(
+              top: AppSpacing.space2,
+              bottom: 80,
+            ),
             itemCount: rewards.length,
             itemBuilder: (context, index) {
               final reward = rewards[index];
-              final canManage = isAdmin ||
+              final canManage =
+                  isAdmin ||
                   (_currentUserId != null &&
                       _currentUserId == reward.providerId);
               final statusLabel = reward.isActive
@@ -291,6 +268,28 @@ class _RewardListViewState extends State<RewardListView>
                     : null,
               );
             },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return ListView.separated(
+      padding: const EdgeInsets.all(AppSpacing.pagePaddingH),
+      itemCount: 4,
+      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.space3),
+      itemBuilder: (_, _) {
+        return const W2WCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              W2WSkeleton(height: 20, width: 180),
+              SizedBox(height: AppSpacing.space2),
+              W2WSkeleton(height: 14, width: 160),
+              SizedBox(height: AppSpacing.space2),
+              W2WSkeleton(height: 14, width: 220),
+            ],
           ),
         );
       },

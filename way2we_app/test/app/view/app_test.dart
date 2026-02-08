@@ -2,7 +2,7 @@
 // complex navigation setup. The underlying AuthenticationBloc logic is tested
 // in authentication_bloc_test.dart.
 //
-// TODO: Add proper widget tests with mock AuthenticationBloc when time permits.
+// TODO(way2we): Add widget tests with a mocked AuthenticationBloc.
 
 import 'package:flutter_test/flutter_test.dart';
 

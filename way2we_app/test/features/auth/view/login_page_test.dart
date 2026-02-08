@@ -42,7 +42,8 @@ void main() {
       expect(find.text('Confirm Password'), findsNothing);
       expect(find.text('Log In'), findsWidgets); // Tab + Button
 
-      // Password field should be visible (lock icon) - default is Password Login
+      // Password field should be visible (lock icon).
+      // Default mode is Password Login.
       expect(find.byIcon(Icons.lock_outline), findsOneWidget);
     });
 

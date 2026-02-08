@@ -7,22 +7,16 @@ import 'package:way2we_app/features/profile/bloc/profile_bloc.dart';
 import 'package:way2we_app/features/profile/data/providers/profile_provider.dart';
 import 'package:way2we_app/l10n/l10n.dart';
 import 'package:way2we_app/shared/widgets/avatar_picker.dart';
+import 'package:way2we_app/shared/widgets/w2w.dart';
 import 'package:way2we_app/theme/theme.dart';
 
-/// Onboarding-specific profile setup page shown after registration.
-///
-/// This is NOT the general settings page used in the app.
-/// It's designed to guide new users through initial profile setup
-/// (nickname + avatar) before entering the main app.
 class OnboardingProfileSetupPage extends StatefulWidget {
   const OnboardingProfileSetupPage({super.key});
 
   static Route<void> route() {
     return MaterialPageRoute<void>(
       builder: (_) {
-        // Use global Dio instance from ServiceLocator
         final dio = ServiceLocator.instance.dio;
-
         return RepositoryProvider(
           create: (_) => ProfileProvider(dio: dio),
           child: BlocProvider(
@@ -61,16 +55,12 @@ class _OnboardingProfileSetupPageState
       maxHeight: 512,
       imageQuality: 80,
     );
-    if (image != null) {
-      setState(() {
-        _selectedImage = image;
-      });
-    }
+    if (!mounted || image == null) return;
+    setState(() => _selectedImage = image);
   }
 
   void _onSubmit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-
     context.read<ProfileBloc>().add(
       ProfileUpdateRequested(
         nickname: _nicknameController.text.trim(),
@@ -81,8 +71,8 @@ class _OnboardingProfileSetupPageState
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final l10n = context.l10n;
+    final theme = Theme.of(context);
 
     return BlocListener<ProfileBloc, ProfileState>(
       listener: (context, state) {
@@ -92,52 +82,96 @@ class _OnboardingProfileSetupPageState
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.errorMessage),
-              backgroundColor: theme.colorScheme.error,
+              backgroundColor: theme.semantic.error,
             ),
           );
         }
       },
       child: Scaffold(
         body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.pagePaddingH,
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.pagePaddingH,
+              AppSpacing.space8,
+              AppSpacing.pagePaddingH,
+              AppSpacing.pagePaddingV,
             ),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  const SizedBox(height: AppSpacing.space10),
-
-                  // Welcome illustration / icon
-                  _buildWelcomeHeader(theme, l10n),
-                  const SizedBox(height: AppSpacing.space8),
-
-                  // Avatar picker
-                  _buildAvatarPicker(theme),
-                  const SizedBox(height: AppSpacing.space6),
-
-                  // Nickname input
-                  _buildNicknameInput(theme, l10n),
-                  const SizedBox(height: AppSpacing.space8),
-
-                  // Submit button
-                  _buildSubmitButton(theme, l10n),
-                  const SizedBox(height: AppSpacing.space4),
-
-                  // Skip button
-                  _buildSkipButton(theme, l10n),
-                  const SizedBox(height: AppSpacing.space8),
-                ],
+            children: [
+              _OnboardingHeader(l10n: l10n),
+              const SizedBox(height: AppSpacing.space8),
+              Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Center(
+                      child: AvatarPicker(
+                        imageFile: _selectedImage,
+                        onTap: _pickImage,
+                        semanticLabel: l10n.onboardingWelcomeTitle,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.space6),
+                    W2WInput(
+                      controller: _nicknameController,
+                      label: l10n.authNicknameLabel,
+                      hintText: l10n.authNicknamePlaceholder,
+                      prefixIcon: Icons.edit_outlined,
+                      maxLength: 20,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return l10n.onboardingNicknameRequired;
+                        }
+                        if (value.length > 20) {
+                          return l10n.onboardingNicknameTooLong;
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.space6),
+                    BlocBuilder<ProfileBloc, ProfileState>(
+                      buildWhen: (previous, current) =>
+                          (previous is ProfileLoading) !=
+                          (current is ProfileLoading),
+                      builder: (context, state) {
+                        final isLoading = state is ProfileLoading;
+                        return W2WButton(
+                          label: l10n.onboardingContinueButton,
+                          icon: Icons.arrow_forward,
+                          isLoading: isLoading,
+                          onPressed: isLoading ? null : _onSubmit,
+                        );
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.space3),
+                    W2WButton(
+                      label: l10n.onboardingSkipButton,
+                      variant: W2WButtonVariant.secondary,
+                      onPressed: () {
+                        Navigator.of(
+                          context,
+                        ).pushReplacement(GroupSelectionPage.route());
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildWelcomeHeader(ThemeData theme, AppLocalizations l10n) {
+class _OnboardingHeader extends StatelessWidget {
+  const _OnboardingHeader({required this.l10n});
+
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       children: [
         Container(
@@ -177,142 +211,6 @@ class _OnboardingProfileSetupPageState
           textAlign: TextAlign.center,
         ),
       ],
-    );
-  }
-
-  Widget _buildAvatarPicker(ThemeData theme) {
-    return AvatarPicker(
-      imageFile: _selectedImage,
-      onTap: _pickImage,
-    );
-  }
-
-  Widget _buildNicknameInput(ThemeData theme, AppLocalizations l10n) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(
-            left: AppSpacing.space4,
-            bottom: AppSpacing.space1 + 2,
-          ),
-          child: Text(
-            l10n.authNicknameLabel,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: AppColors.textMutedLight,
-              fontWeight: AppTypography.bold,
-              letterSpacing: 0.5,
-            ),
-          ),
-        ),
-        Container(
-          height: AppSpacing.inputHeight,
-          decoration: BoxDecoration(
-            color: AppColors.cardLight,
-            borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
-            boxShadow: AppShadows.card,
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.space4),
-          child: Center(
-            child: TextFormField(
-              controller: _nicknameController,
-              style: theme.textTheme.bodyLarge,
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return l10n.onboardingNicknameRequired;
-                }
-                if (value.length > 20) {
-                  return l10n.onboardingNicknameTooLong;
-                }
-                return null;
-              },
-              decoration: InputDecoration(
-                isCollapsed: true,
-                hintText: l10n.authNicknamePlaceholder,
-                hintStyle: theme.textTheme.bodyLarge?.copyWith(
-                  color: AppColors.textPlaceholderLight,
-                ),
-                prefixIcon: const Padding(
-                  padding: EdgeInsets.only(right: AppSpacing.space2),
-                  child: Icon(
-                    Icons.edit_outlined,
-                    color: AppColors.textMutedLight,
-                    size: 20,
-                  ),
-                ),
-                prefixIconConstraints: const BoxConstraints(minWidth: 32),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.zero,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSubmitButton(ThemeData theme, AppLocalizations l10n) {
-    return BlocBuilder<ProfileBloc, ProfileState>(
-      buildWhen: (previous, current) =>
-          (previous is ProfileLoading) != (current is ProfileLoading),
-      builder: (context, state) {
-        final isLoading = state is ProfileLoading;
-
-        return Container(
-          width: double.infinity,
-          height: AppSpacing.inputHeight,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
-            boxShadow: !isLoading
-                ? const [
-                    BoxShadow(
-                      color: AppColors.primaryShadow,
-                      blurRadius: 24,
-                      offset: Offset(0, 8),
-                    ),
-                  ]
-                : null,
-          ),
-          child: FilledButton(
-            onPressed: isLoading ? null : _onSubmit,
-            style: FilledButton.styleFrom(
-              minimumSize: const Size(double.infinity, AppSpacing.inputHeight),
-            ),
-            child: isLoading
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(l10n.onboardingContinueButton),
-                      const SizedBox(width: AppSpacing.space2),
-                      const Icon(Icons.arrow_forward, size: 20),
-                    ],
-                  ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildSkipButton(ThemeData theme, AppLocalizations l10n) {
-    return TextButton(
-      onPressed: () async {
-        await Navigator.of(context)
-            .pushReplacement(GroupSelectionPage.route());
-      },
-      child: Text(
-        l10n.onboardingSkipButton,
-        style: theme.textTheme.bodyMedium?.copyWith(
-          color: AppColors.textMutedLight,
-        ),
-      ),
     );
   }
 }
