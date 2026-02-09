@@ -427,6 +427,18 @@
     "@homeInviteMembers": {
         "description": "Invite members button text"
     },
+    "homeManagingLabel": "Managing",
+    "@homeManagingLabel": {
+        "description": "Small label above the active group name in home top bar"
+    },
+    "homeMessageEntryLabel": "Messages",
+    "@homeMessageEntryLabel": {
+        "description": "Tooltip and semantics label for the home message entry button"
+    },
+    "homeMessageEntryHint": "Messages are coming soon.",
+    "@homeMessageEntryHint": {
+        "description": "Snackbar hint when the message entry button is tapped"
+    },
 
     "groupSelectTitle": "Switch Group",
     "@groupSelectTitle": {

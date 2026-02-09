@@ -320,6 +320,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeInviteMembers => 'Invite Members';
 
   @override
+  String get homeManagingLabel => 'Managing';
+
+  @override
+  String get homeMessageEntryLabel => 'Messages';
+
+  @override
+  String get homeMessageEntryHint => 'Messages are coming soon.';
+
+  @override
   String get groupSelectTitle => 'Switch Group';
 
   @override

@@ -9,6 +9,7 @@
 library;
 
 export 'app_colors.dart';
+export 'app_home_chrome.dart';
 export 'app_motion.dart';
 export 'app_semantics.dart';
 export 'app_shadows.dart';

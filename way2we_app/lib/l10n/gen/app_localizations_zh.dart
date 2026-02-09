@@ -320,6 +320,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeInviteMembers => '邀请成员';
 
   @override
+  String get homeManagingLabel => '管理中';
+
+  @override
+  String get homeMessageEntryLabel => '消息';
+
+  @override
+  String get homeMessageEntryHint => '消息功能即将上线。';
+
+  @override
   String get groupSelectTitle => '选择群组';
 
   @override

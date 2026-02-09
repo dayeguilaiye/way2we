@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:way2we_app/theme/app_colors.dart';
+import 'package:way2we_app/theme/app_home_chrome.dart';
 import 'package:way2we_app/theme/app_spacing.dart';
 import 'package:way2we_app/theme/app_typography.dart';
 
@@ -30,6 +31,9 @@ class AppTheme {
       colorScheme: colorScheme,
       scaffoldBackgroundColor: AppColors.backgroundLight,
       textTheme: textTheme,
+      extensions: const <ThemeExtension<dynamic>>[
+        AppHomeChrome.light,
+      ],
 
       // AppBar
       appBarTheme: AppBarTheme(
@@ -243,6 +247,9 @@ class AppTheme {
       colorScheme: colorScheme,
       scaffoldBackgroundColor: AppColors.backgroundDark,
       textTheme: textTheme,
+      extensions: const <ThemeExtension<dynamic>>[
+        AppHomeChrome.dark,
+      ],
 
       // AppBar
       appBarTheme: AppBarTheme(

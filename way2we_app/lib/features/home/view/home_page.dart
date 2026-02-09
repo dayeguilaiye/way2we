@@ -5,7 +5,6 @@ import 'package:way2we_app/features/agreement/bloc/list/agreement_list_bloc.dart
 import 'package:way2we_app/features/agreement/data/providers/agreement_provider.dart';
 import 'package:way2we_app/features/agreement/view/agreement_detail_page.dart';
 import 'package:way2we_app/features/agreement/view/widgets/agreement_card.dart';
-import 'package:way2we_app/features/auth/bloc/authentication_bloc.dart';
 import 'package:way2we_app/features/group/bloc/group_control_bloc.dart';
 import 'package:way2we_app/features/group/data/providers/group_provider.dart';
 import 'package:way2we_app/features/group/view/group_default_settings_page.dart';
@@ -40,36 +39,255 @@ class HomePage extends StatelessWidget {
             : null;
         final isLoading =
             state is GroupControlLoadInProgress || state is GroupControlInitial;
+        final chrome = Theme.of(context).homeChrome;
 
         return Scaffold(
-          appBar: AppBar(
-            title: Semantics(
+          backgroundColor: chrome.backgroundBase,
+          body: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [chrome.backgroundBase, chrome.backgroundElevated],
+              ),
+            ),
+            child: SafeArea(
+              bottom: false,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.pagePaddingH,
+                      AppSpacing.space3,
+                      AppSpacing.pagePaddingH,
+                      AppSpacing.space2,
+                    ),
+                    child: _HomeTopBar(
+                      groupName: selectedGroup?.name ?? l10n.commonAppName,
+                      onProfileTap: () {
+                        Navigator.of(context).push(ProfilePage.route());
+                      },
+                      onSettingsTap: selectedGroup == null
+                          ? null
+                          : () {
+                              Navigator.of(context).push(
+                                GroupDefaultSettingsPage.route(
+                                  groupId: selectedGroup.id,
+                                ),
+                              );
+                            },
+                      onGroupTap: isLoading || selectedGroup == null
+                          ? null
+                          : () => GroupSwitcherSheet.show(context),
+                    ),
+                  ),
+                  Expanded(
+                    child: isLoading
+                        ? const _HomeLoadingView()
+                        : selectedGroup == null
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.pagePaddingH,
+                            ),
+                            child: W2WEmptyState(
+                              icon: Icons.groups_outlined,
+                              title: l10n.groupSelectionTitle,
+                              subtitle: l10n.groupSelectionSubtitle,
+                              actionLabel: l10n.retry,
+                              onAction: () =>
+                                  context.read<GroupControlBloc>().add(
+                                    const GroupControlGroupsLoaded(),
+                                  ),
+                            ),
+                          )
+                        : SingleChildScrollView(
+                            padding: const EdgeInsets.fromLTRB(
+                              AppSpacing.pagePaddingH,
+                              AppSpacing.space2,
+                              AppSpacing.pagePaddingH,
+                              AppSpacing.space12,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                _GroupHeroCard(group: selectedGroup),
+                                const SizedBox(height: AppSpacing.space6),
+                                PinnedAgreementsSection(
+                                  groupId: selectedGroup.id,
+                                ),
+                                const SizedBox(height: AppSpacing.space6),
+                                PinnedRewardsSection(groupId: selectedGroup.id),
+                                const SizedBox(height: AppSpacing.space6),
+                                W2WSectionHeader(
+                                  title: l10n.defaultSettingsTitle,
+                                ),
+                                const SizedBox(height: AppSpacing.space3),
+                                GridView.count(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  crossAxisCount: 2,
+                                  mainAxisSpacing: AppSpacing.space3,
+                                  crossAxisSpacing: AppSpacing.space3,
+                                  childAspectRatio: 2.6,
+                                  children: [
+                                    if (selectedGroup.isAdmin)
+                                      _DashboardActionCard(
+                                        icon: Icons.person_add_outlined,
+                                        title: l10n.homeInviteMembers,
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                            InvitationPage.route(
+                                              groupId: selectedGroup.id,
+                                              groupName: selectedGroup.name,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    _DashboardActionCard(
+                                      icon: Icons.tune_outlined,
+                                      title: l10n.defaultSettingsTitle,
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          GroupDefaultSettingsPage.route(
+                                            groupId: selectedGroup.id,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    _DashboardActionCard(
+                                      icon: Icons.people_outline,
+                                      title: l10n.memberManagementTitle,
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MemberManagementPage.route(
+                                            groupId: selectedGroup.id,
+                                            groupName: selectedGroup.name,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _HomeTopBar extends StatelessWidget {
+  const _HomeTopBar({
+    required this.groupName,
+    this.onProfileTap,
+    this.onSettingsTap,
+    this.onGroupTap,
+  });
+
+  final String groupName;
+  final VoidCallback? onProfileTap;
+  final VoidCallback? onSettingsTap;
+  final VoidCallback? onGroupTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    final chrome = theme.homeChrome;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.space2,
+        vertical: AppSpacing.space2,
+      ),
+      decoration: BoxDecoration(
+        color: chrome.topBarBackground,
+        borderRadius: BorderRadius.circular(AppSpacing.radius),
+        border: Border.all(color: chrome.topBarBorder),
+      ),
+      child: Row(
+        children: [
+          Semantics(
+            button: true,
+            enabled: onProfileTap != null,
+            label: l10n.profilePageTitle,
+            child: Tooltip(
+              message: l10n.profilePageTitle,
+              child: InkWell(
+                onTap: onProfileTap,
+                borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+                child: Opacity(
+                  opacity: onProfileTap == null ? 0.6 : 1,
+                  child: _GroupBadge(label: groupName),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.space2),
+          Expanded(
+            child: Semantics(
               button: true,
-              enabled: !isLoading,
+              enabled: onGroupTap != null,
               label: l10n.groupSelectTitle,
               child: Tooltip(
                 message: l10n.groupSelectTitle,
-                child: GestureDetector(
-                  onTap: isLoading
-                      ? null
-                      : () => GroupSwitcherSheet.show(context),
+                child: InkWell(
+                  onTap: onGroupTap,
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
                   child: Opacity(
-                    opacity: isLoading ? 0.6 : 1.0,
+                    opacity: onGroupTap == null ? 0.6 : 1,
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(
                         minHeight: AppSpacing.minTouchTarget,
                       ),
                       child: Row(
-                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Flexible(
-                            child: Text(
-                              selectedGroup?.name ?? l10n.commonAppName,
-                              overflow: TextOverflow.ellipsis,
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  l10n.homeManagingLabel,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                    fontWeight: AppTypography.medium,
+                                    height: 1.2,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: AppSpacing.space1),
+                                Row(
+                                  children: [
+                                    Flexible(
+                                      child: Text(
+                                        groupName,
+                                        style: theme.textTheme.headlineSmall
+                                            ?.copyWith(
+                                              fontWeight: AppTypography.bold,
+                                              height: 1.1,
+                                            ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    const SizedBox(width: AppSpacing.space1),
+                                    Icon(
+                                      Icons.expand_more_rounded,
+                                      color: theme.colorScheme.onSurface,
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(width: AppSpacing.space1),
-                          const Icon(Icons.expand_more),
                         ],
                       ),
                     ),
@@ -77,130 +295,114 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-            actions: [
-              if (selectedGroup != null && selectedGroup.isAdmin)
-                IconButton(
-                  icon: const Icon(Icons.person_add),
-                  tooltip: l10n.homeInviteMembers,
-                  constraints: const BoxConstraints(
-                    minWidth: AppSpacing.minTouchTarget,
-                    minHeight: AppSpacing.minTouchTarget,
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      InvitationPage.route(
-                        groupId: selectedGroup.id,
-                        groupName: selectedGroup.name,
-                      ),
-                    );
-                  },
-                ),
-              IconButton(
-                icon: const Icon(Icons.person),
-                tooltip: l10n.profilePageTitle,
-                constraints: const BoxConstraints(
-                  minWidth: AppSpacing.minTouchTarget,
-                  minHeight: AppSpacing.minTouchTarget,
-                ),
-                onPressed: () {
-                  Navigator.of(context).push(ProfilePage.route());
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.logout),
-                tooltip: l10n.profileLogoutButton,
-                constraints: const BoxConstraints(
-                  minWidth: AppSpacing.minTouchTarget,
-                  minHeight: AppSpacing.minTouchTarget,
-                ),
-                onPressed: () {
-                  context.read<AuthenticationBloc>().add(
-                    const AppLogoutRequested(),
-                  );
-                },
-              ),
-            ],
           ),
-          body: isLoading
-              ? const _HomeLoadingView()
-              : selectedGroup == null
-              ? W2WEmptyState(
-                  icon: Icons.groups_outlined,
-                  title: l10n.groupSelectionTitle,
-                  subtitle: l10n.groupSelectionSubtitle,
-                  actionLabel: l10n.retry,
-                  onAction: () => context.read<GroupControlBloc>().add(
-                    const GroupControlGroupsLoaded(),
-                  ),
-                )
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.pagePaddingH,
-                    vertical: AppSpacing.space6,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _GroupHeroCard(group: selectedGroup),
-                      const SizedBox(height: AppSpacing.space6),
-                      PinnedAgreementsSection(groupId: selectedGroup.id),
-                      const SizedBox(height: AppSpacing.space6),
-                      PinnedRewardsSection(groupId: selectedGroup.id),
-                      const SizedBox(height: AppSpacing.space6),
-                      W2WSectionHeader(title: l10n.defaultSettingsTitle),
-                      const SizedBox(height: AppSpacing.space3),
-                      GridView.count(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        crossAxisCount: 2,
-                        mainAxisSpacing: AppSpacing.space3,
-                        crossAxisSpacing: AppSpacing.space3,
-                        childAspectRatio: 2.6,
-                        children: [
-                          if (selectedGroup.isAdmin)
-                            _DashboardActionCard(
-                              icon: Icons.person_add_outlined,
-                              title: l10n.homeInviteMembers,
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  InvitationPage.route(
-                                    groupId: selectedGroup.id,
-                                    groupName: selectedGroup.name,
-                                  ),
-                                );
-                              },
-                            ),
-                          _DashboardActionCard(
-                            icon: Icons.tune_outlined,
-                            title: l10n.defaultSettingsTitle,
-                            onTap: () {
-                              Navigator.of(context).push(
-                                GroupDefaultSettingsPage.route(
-                                  groupId: selectedGroup.id,
-                                ),
-                              );
-                            },
-                          ),
-                          _DashboardActionCard(
-                            icon: Icons.people_outline,
-                            title: l10n.memberManagementTitle,
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MemberManagementPage.route(
-                                  groupId: selectedGroup.id,
-                                  groupName: selectedGroup.name,
-                                ),
-                              );
-                            },
-                          ),
-                        ],
+          const SizedBox(width: AppSpacing.space2),
+          Semantics(
+            button: true,
+            label: l10n.homeMessageEntryLabel,
+            child: IconButton(
+              tooltip: l10n.homeMessageEntryLabel,
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.homeMessageEntryHint)),
+                );
+              },
+              style: IconButton.styleFrom(
+                minimumSize: const Size.square(AppSpacing.minTouchTarget),
+                backgroundColor: chrome.iconBackground,
+                foregroundColor: chrome.iconForeground,
+                shape: const CircleBorder(),
+              ),
+              icon: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  const Icon(Icons.notifications_none_rounded),
+                  Positioned(
+                    top: -1,
+                    right: -1,
+                    child: Container(
+                      width: 10,
+                      height: 10,
+                      decoration: BoxDecoration(
+                        color: chrome.notificationDot,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: chrome.notificationDotBorder,
+                          width: 1.5,
+                        ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
-        );
-      },
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.space1),
+          Semantics(
+            button: true,
+            enabled: onSettingsTap != null,
+            label: l10n.defaultSettingsTitle,
+            child: IconButton(
+              tooltip: l10n.defaultSettingsTitle,
+              onPressed: onSettingsTap,
+              style: IconButton.styleFrom(
+                minimumSize: const Size.square(AppSpacing.minTouchTarget),
+                backgroundColor: chrome.iconBackground,
+                foregroundColor: chrome.iconForeground,
+                shape: const CircleBorder(),
+              ),
+              icon: const Icon(Icons.settings_outlined),
+            ),
+          ),
+        ],
+      ),
     );
+  }
+}
+
+class _GroupBadge extends StatelessWidget {
+  const _GroupBadge({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final chrome = theme.homeChrome;
+    final initials = _extractInitials(label);
+
+    return Container(
+      width: AppSpacing.minTouchTarget,
+      height: AppSpacing.minTouchTarget,
+      decoration: BoxDecoration(
+        color: chrome.avatarBackground,
+        shape: BoxShape.circle,
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        initials,
+        style: theme.textTheme.labelMedium?.copyWith(
+          color: chrome.avatarForeground,
+          fontWeight: AppTypography.bold,
+        ),
+      ),
+    );
+  }
+
+  String _extractInitials(String name) {
+    final parts = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((part) => part.isNotEmpty)
+        .toList();
+    if (parts.isEmpty) {
+      return 'WG';
+    }
+    if (parts.length == 1) {
+      final chunk = parts.first;
+      return chunk.substring(0, chunk.length.clamp(1, 2)).toUpperCase();
+    }
+    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
   }
 }
 
@@ -210,7 +412,12 @@ class _HomeLoadingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.all(AppSpacing.pagePaddingH),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.pagePaddingH,
+        AppSpacing.space2,
+        AppSpacing.pagePaddingH,
+        AppSpacing.space12,
+      ),
       children: const [
         W2WCard(
           child: Column(

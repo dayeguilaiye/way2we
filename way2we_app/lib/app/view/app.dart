@@ -88,7 +88,6 @@ class _AppViewState extends State<_AppView> {
       navigatorObservers: [routeObserver],
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.light,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       // Use builder to wrap all routes with BlocListener

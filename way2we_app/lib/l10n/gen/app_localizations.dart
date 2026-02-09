@@ -685,6 +685,24 @@ abstract class AppLocalizations {
   /// **'Invite Members'**
   String get homeInviteMembers;
 
+  /// Small label above the active group name in home top bar
+  ///
+  /// In en, this message translates to:
+  /// **'Managing'**
+  String get homeManagingLabel;
+
+  /// Tooltip and semantics label for the home message entry button
+  ///
+  /// In en, this message translates to:
+  /// **'Messages'**
+  String get homeMessageEntryLabel;
+
+  /// Snackbar hint when the message entry button is tapped
+  ///
+  /// In en, this message translates to:
+  /// **'Messages are coming soon.'**
+  String get homeMessageEntryHint;
+
   /// Title for group switcher sheet
   ///
   /// In en, this message translates to:
