@@ -27,8 +27,8 @@ class AppHomeChrome extends ThemeExtension<AppHomeChrome> {
     avatarBackground: Color(0xFFFFE7DA),
     avatarForeground: Color(0xFFEC3713),
     iconBackground: Color(0xFFF1ECEA),
-    iconForeground: Color(0xFF181311),
-    notificationDot: Color(0xFFEC3713),
+    iconForeground: Color(0xFF09090B),
+    notificationDot: Color(0xFFDC2626),
     notificationDotBorder: Color(0xFFF8F6F6),
   );
 
@@ -40,8 +40,8 @@ class AppHomeChrome extends ThemeExtension<AppHomeChrome> {
     avatarBackground: Color(0x44EC8451),
     avatarForeground: Color(0xFFFFC3A8),
     iconBackground: Color(0xFF332620),
-    iconForeground: Color(0xFFFFFFFF),
-    notificationDot: Color(0xFFEC8451),
+    iconForeground: Color(0xFFF4F4F5),
+    notificationDot: Color(0xFFDC2626),
     notificationDotBorder: Color(0xFF211611),
   );
 
