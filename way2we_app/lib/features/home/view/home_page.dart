@@ -11,7 +11,6 @@ import 'package:way2we_app/features/group/view/group_default_settings_page.dart'
 import 'package:way2we_app/features/group/view/invitation_page.dart';
 import 'package:way2we_app/features/group/view/member_management_page.dart';
 import 'package:way2we_app/features/group/view/widgets/group_switcher_sheet.dart';
-import 'package:way2we_app/features/profile/view/profile_page.dart';
 import 'package:way2we_app/features/reward/bloc/list/reward_list_bloc.dart';
 import 'package:way2we_app/features/reward/data/models/reward.dart';
 import 'package:way2we_app/features/reward/data/providers/reward_provider.dart';
@@ -64,9 +63,6 @@ class HomePage extends StatelessWidget {
                     ),
                     child: _HomeTopBar(
                       groupName: selectedGroup?.name ?? l10n.commonAppName,
-                      onProfileTap: () {
-                        Navigator.of(context).push(ProfilePage.route());
-                      },
                       onSettingsTap: selectedGroup == null
                           ? null
                           : () {
@@ -185,13 +181,11 @@ class HomePage extends StatelessWidget {
 class _HomeTopBar extends StatelessWidget {
   const _HomeTopBar({
     required this.groupName,
-    this.onProfileTap,
     this.onSettingsTap,
     this.onGroupTap,
   });
 
   final String groupName;
-  final VoidCallback? onProfileTap;
   final VoidCallback? onSettingsTap;
   final VoidCallback? onGroupTap;
 
@@ -213,23 +207,6 @@ class _HomeTopBar extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Semantics(
-            button: true,
-            enabled: onProfileTap != null,
-            label: l10n.profilePageTitle,
-            child: Tooltip(
-              message: l10n.profilePageTitle,
-              child: InkWell(
-                onTap: onProfileTap,
-                borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
-                child: Opacity(
-                  opacity: onProfileTap == null ? 0.6 : 1,
-                  child: _GroupBadge(label: groupName),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: AppSpacing.space2),
           Expanded(
             child: Semantics(
               button: true,
@@ -248,45 +225,21 @@ class _HomeTopBar extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  l10n.homeManagingLabel,
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: theme.colorScheme.onSurfaceVariant,
-                                    fontWeight: AppTypography.medium,
-                                    height: 1.2,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: AppSpacing.space1),
-                                Row(
-                                  children: [
-                                    Flexible(
-                                      child: Text(
-                                        groupName,
-                                        style: theme.textTheme.headlineSmall
-                                            ?.copyWith(
-                                              fontWeight: AppTypography.bold,
-                                              height: 1.1,
-                                            ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    const SizedBox(width: AppSpacing.space1),
-                                    Icon(
-                                      Icons.expand_more_rounded,
-                                      color: theme.colorScheme.onSurface,
-                                    ),
-                                  ],
-                                ),
-                              ],
+                          Flexible(
+                            child: Text(
+                              groupName,
+                              style: theme.textTheme.headlineSmall?.copyWith(
+                                fontWeight: AppTypography.bold,
+                                height: 1.1,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
+                          ),
+                          const SizedBox(width: AppSpacing.space1),
+                          Icon(
+                            Icons.expand_more_rounded,
+                            color: theme.colorScheme.onSurface,
                           ),
                         ],
                       ),
@@ -309,14 +262,13 @@ class _HomeTopBar extends StatelessWidget {
               },
               style: IconButton.styleFrom(
                 minimumSize: const Size.square(AppSpacing.minTouchTarget),
-                backgroundColor: chrome.iconBackground,
                 foregroundColor: chrome.iconForeground,
                 shape: const CircleBorder(),
               ),
               icon: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  const Icon(Icons.notifications_none_rounded),
+                  const Icon(Icons.notifications_rounded),
                   Positioned(
                     top: -1,
                     right: -1,
@@ -347,62 +299,15 @@ class _HomeTopBar extends StatelessWidget {
               onPressed: onSettingsTap,
               style: IconButton.styleFrom(
                 minimumSize: const Size.square(AppSpacing.minTouchTarget),
-                backgroundColor: chrome.iconBackground,
                 foregroundColor: chrome.iconForeground,
                 shape: const CircleBorder(),
               ),
-              icon: const Icon(Icons.settings_outlined),
+              icon: const Icon(Icons.settings),
             ),
           ),
         ],
       ),
     );
-  }
-}
-
-class _GroupBadge extends StatelessWidget {
-  const _GroupBadge({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final chrome = theme.homeChrome;
-    final initials = _extractInitials(label);
-
-    return Container(
-      width: AppSpacing.minTouchTarget,
-      height: AppSpacing.minTouchTarget,
-      decoration: BoxDecoration(
-        color: chrome.avatarBackground,
-        shape: BoxShape.circle,
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        initials,
-        style: theme.textTheme.labelMedium?.copyWith(
-          color: chrome.avatarForeground,
-          fontWeight: AppTypography.bold,
-        ),
-      ),
-    );
-  }
-
-  String _extractInitials(String name) {
-    final parts = name
-        .trim()
-        .split(RegExp(r'\s+'))
-        .where((part) => part.isNotEmpty)
-        .toList();
-    if (parts.isEmpty) {
-      return 'WG';
-    }
-    if (parts.length == 1) {
-      final chunk = parts.first;
-      return chunk.substring(0, chunk.length.clamp(1, 2)).toUpperCase();
-    }
-    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
   }
 }
 
