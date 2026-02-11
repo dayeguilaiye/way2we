@@ -241,7 +241,8 @@
     "agreementCompletionRecordForOthersToggle": "为他人记录",
     "agreementCompletionRecordForLabel": "完成者",
 
-    "rewardTabTitle": "兑换/商品",
+    "rewardTabTitle": "商品",
+    "profileTabTitle": "我的",
     "rewardStatusActive": "上架中",
     "rewardStatusInactive": "已下架",
     "rewardEmptyTitle": "还没有商品，添加一个奖励",

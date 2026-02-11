@@ -748,7 +748,8 @@
     "agreementCompletionRecordForOthersToggle": "Record for others",
     "agreementCompletionRecordForLabel": "Completer",
 
-    "rewardTabTitle": "Rewards",
+    "rewardTabTitle": "Products",
+    "profileTabTitle": "Me",
     "rewardStatusActive": "Active",
     "rewardStatusInactive": "Inactive",
     "rewardEmptyTitle": "No rewards yet",

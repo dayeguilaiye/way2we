@@ -1252,8 +1252,14 @@ abstract class AppLocalizations {
   /// No description provided for @rewardTabTitle.
   ///
   /// In en, this message translates to:
-  /// **'Rewards'**
+  /// **'Products'**
   String get rewardTabTitle;
+
+  /// No description provided for @profileTabTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Me'**
+  String get profileTabTitle;
 
   /// No description provided for @rewardStatusActive.
   ///

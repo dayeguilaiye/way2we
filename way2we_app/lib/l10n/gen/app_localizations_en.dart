@@ -606,7 +606,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get agreementCompletionRecordForLabel => 'Completer';
 
   @override
-  String get rewardTabTitle => 'Rewards';
+  String get rewardTabTitle => 'Products';
+
+  @override
+  String get profileTabTitle => 'Me';
 
   @override
   String get rewardStatusActive => 'Active';

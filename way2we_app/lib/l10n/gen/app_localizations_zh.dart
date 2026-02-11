@@ -606,7 +606,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get agreementCompletionRecordForLabel => '完成者';
 
   @override
-  String get rewardTabTitle => '兑换/商品';
+  String get rewardTabTitle => '商品';
+
+  @override
+  String get profileTabTitle => '我的';
 
   @override
   String get rewardStatusActive => '上架中';
