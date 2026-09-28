@@ -33,6 +33,7 @@ class ApiClient {
         ),
       );
       final id = response.headers.value('x-request-id');
+      if (response.statusCode == 204) return {};
       final body = response.data;
       if (body is! Map<String, dynamic>) throw ProtocolFailure(requestId: id);
       final status = response.statusCode ?? 0;
@@ -58,12 +59,19 @@ class ApiClient {
       }
       final code = error['code'] as String;
       if (authenticated && status == 401 && code == 'UNAUTHENTICATED') {
-        await sessions.expire(generation);
+        try {
+          await sessions.expire(generation);
+        } catch (_) {
+          throw const StorageFailure();
+        }
       }
       throw ApiFailure(
         code: code,
         status: status,
         fields: Map.unmodifiable(fields),
+        retryAfterSeconds: int.tryParse(
+          response.headers.value('retry-after') ?? '',
+        ),
         requestId: body['request_id'] as String,
       );
     } on DioException catch (error) {

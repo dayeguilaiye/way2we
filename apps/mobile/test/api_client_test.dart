@@ -48,6 +48,20 @@ ResponseBody errorBody(String code, {int status = 401}) =>
       },
     );
 void main() {
+  test('secure deletion failure is typed and clears active identity', () async {
+    final session = SessionController(FailingDeleteStore());
+    addTearDown(session.dispose);
+    await session.set(const Session(userId: 'a', token: 'token'));
+    final dio = createDio('https://example.test');
+    addTearDown(dio.close);
+    dio.httpClientAdapter = Adapter((_) async => errorBody('UNAUTHENTICATED'));
+    await expectLater(
+      ApiClient(dio, session).request('/v1/me'),
+      throwsA(isA<StorageFailure>()),
+    );
+    expect(session.current, isNull);
+  });
+
   test(
     'multiple business 401s expire once; old responses preserve new login',
     () async {
@@ -161,4 +175,12 @@ void main() {
     }
     expect(attempts, 2);
   });
+}
+
+class FailingDeleteStore extends MemoryStore {
+  @override
+  Future<void> write(Session? session) async {
+    if (session == null) throw StateError('injected local storage failure');
+    await super.write(session);
+  }
 }

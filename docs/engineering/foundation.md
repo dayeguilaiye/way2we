@@ -2,7 +2,7 @@
 
 状态：T00 已完成。
 
-T00 建立真实客户端、服务端和隔离 PostgreSQL；当前交付范围是工程基础与开发验证页。完整业务接口按 T01—T07 实现，开发验证页用于维护者检查连接、错误反馈和主题 token。
+T00 建立真实客户端、服务端和隔离 PostgreSQL；本章记录工程基础与开发验证页，账号实现见 [T01](accounts.md)。业务接口按 T01—T07 分任务实现，开发验证页用于维护者检查连接、错误反馈和主题 token。
 
 ## 固定版本与平台
 
@@ -59,7 +59,7 @@ Android SDK 包含 `platform-tools`、`platforms;android-36`、`build-tools;36.0
 
 `app` 装配主题、路由及会话恢复。`core` 提供安全存储和 Dio；业务接口登录到期按发起请求时的会话代次协调，旧账号响应不能结束新账号会话。公开验证码接口调用声明 `authenticated: false`。错误对象保留 code、字段信息和 request_id；显示使用本地文案。
 
-开发页位于 `features/diagnostics`，按 data / application / presentation 划分。三套配色使用已采纳 token，ThemeData 与有类型扩展共享语义色。开发主题切换保持表单；T01 接入账号外观的持久化和同步。业务写操作的意图生成、未确认操作恢复与空间状态生命周期按 T02—T04 的实际业务接入。
+开发页位于 `features/diagnostics`，按 data / application / presentation 划分。三套配色使用已采纳 token，ThemeData 与有类型扩展共享语义色。开发主题切换保持表单；T01 已接入账号外观的持久化和同步，见[账号实现](accounts.md)。业务写操作的意图生成、未确认操作恢复与空间状态生命周期按 T02—T04 的实际业务接入。
 
 当前浅色主题遵循已确认视觉基准，系统深色外观下仍显示选定品牌配色。正式首页、四个业务入口、字体与植物装饰按对应业务页面实现，原型和参考图仍是视觉依据。
 

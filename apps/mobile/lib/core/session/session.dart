@@ -68,6 +68,17 @@ class SessionController extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Publish a new login only after the credential has been durably saved.
+  Future<void> establish(Session session) async {
+    final generation = ++_generation;
+    final write = _writes.then((_) => store.write(session));
+    _writes = write.then<void>((_) {}, onError: (Object _, StackTrace _) {});
+    await write;
+    if (generation != _generation) return;
+    _current = session;
+    notifyListeners();
+  }
+
   Future<void> set(Session? session) {
     _current = session;
     _generation++;

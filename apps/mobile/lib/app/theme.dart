@@ -136,23 +136,38 @@ ThemeData buildTheme(AppTheme theme) {
       backgroundColor: c.background,
       foregroundColor: c.ink,
       surfaceTintColor: Colors.transparent,
+      centerTitle: true,
+      titleTextStyle: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: c.ink,
+      ),
     ),
     dividerColor: c.divider,
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: c.primary,
+      selectionColor: c.tint,
+      selectionHandleColor: c.primary,
+    ),
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: c.ink,
+      contentTextStyle: TextStyle(color: c.surface),
+    ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: c.surface,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
         minimumSize: const Size(48, 48),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         minimumSize: const Size(48, 48),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     ),
   );

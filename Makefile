@@ -11,12 +11,12 @@ setup-contract:
 	$(PYTHON) -m pip install -r tools/contract-requirements.txt
 
 db-up:
-	docker compose up -d --wait db
+	docker compose up -d --wait db mailpit
 
 db-stop:
 	docker compose --profile test stop
 
-migrate:
+migrate: setup-local
 	./tools/local-env.sh bash -c 'cd server && $(GO) run ./cmd/migrate'
 
 dev: db-up
@@ -54,4 +54,15 @@ check-runtime:
 	API_BASE_URL=$(API_BASE_URL) $(PYTHON) tools/check_runtime_contract.py
 
 test-mobile-integration:
-	cd apps/mobile && $(FLUTTER) test integration_test/connection_test.dart -d $(DEVICE) --dart-define=API_BASE_URL=$(API_BASE_URL) --dart-define=DEV_DIAGNOSTICS=true
+	cd apps/mobile && $(FLUTTER) test integration_test/connection_test.dart -d $(DEVICE) --dart-define=API_BASE_URL=$(API_BASE_URL) --dart-define=DEV_DIAGNOSTICS=true --dart-define=START_DIAGNOSTICS=true
+
+.PHONY: setup-local
+setup-local:
+	python3 tools/setup-local.py
+
+.PHONY: check-auth-runtime test-account-device
+check-auth-runtime:
+	API_BASE_URL=$(API_BASE_URL) $(PYTHON) tools/check_auth_runtime.py
+
+test-account-device:
+	python3 tools/run-account-device.py $(DEVICE)

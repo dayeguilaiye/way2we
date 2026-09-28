@@ -1,0 +1,43 @@
+{
+  "date": "2026-09-28",
+  "capture_sources": [
+    "xcrun simctl io screenshot",
+    "adb exec-out screencap -p"
+  ],
+  "screenshots": {
+    "android-appearance-apricot.png": "769cdbfc3ab508e4983b0c72bbf44c87d08abef1b82a6c77ae46dd7aad4cb854",
+    "android-appearance-celadon.png": "960fea501018f31b9d23c0f51bf001fde90d86c1cd51230698d91e41cbd2d601",
+    "android-appearance-large.png": "7c9bb75aa36bf2aae1f56cf35c399b498d2075779855baff22e0f1b1d6ee1719",
+    "android-appearance-rose.png": "caeff973019b53bcf390a6f43973356a384ddce246ac2a234ac83d281f004c34",
+    "android-code-error.png": "799e9cac0fc47f4aff5d59a88f0ada7834b90bc5a492a2e91f1891a9bc1b3591",
+    "android-login-dark.png": "8066331f4ab6467f27400a86a548a3268188210920570197ba747aff65a6f29f",
+    "android-login.png": "1b50620620e38b30c45eedb0b3b69d9e7e3e158d6cfaa1cfb2b31bdabe76e568",
+    "android-profile.png": "4501fa5bb1fd9293396a81e8c394e51e0552097344172a3b8def5e230983287b",
+    "android-recovered.png": "ae4ce5b3223c7651848f8a84d309fb76107680f4029d28b04cac98e2d3007e44",
+    "ios-appearance-apricot.png": "f2bae8ce53504b4d25459893eb7213b34fc61ffd200ba4809d97fcc652972472",
+    "ios-appearance-celadon.png": "5f7fe09b3a55e6d90c6dd5f170178cc578075746c5314ecf5c08fce15ee76971",
+    "ios-appearance-large.png": "e492a29b13604fb8c47393c63d4d3d2a64ef189d01ba4fbaffec50c17c72e857",
+    "ios-appearance-rose.png": "206489cb1ded8a3973568437e959a6f91b77f553a37fc6844495df9161d697e0",
+    "ios-code-error.png": "632d627a66a471a8ba2f470d612c50a93b16a5346c2f5933bc565e552f4320f5",
+    "ios-login.png": "c552db6db288357f0544e464bfde00e0467bdebc6564527ee3dee52032bbdc9a",
+    "ios-profile-dark.png": "c0749f308bd526296e3c1318083870cbc378cdd8f8f33d2305c55b1caa4db6e0",
+    "ios-profile.png": "f83f3820d34f6770ecefbc4bed7c27e1a4f5c2326ac626f867b75f5dc05f85e3",
+    "ios-recovered.png": "9c3553dd7d6f87c1c48d6f16bc920c56c1053e683fb68e33e1485f6de0d8ea7d"
+  },
+  "checks": {
+    "make check": "passed; final Flutter suite 10 tests",
+    "make test-integration": "passed with race detector",
+    "make check-runtime": "5 HTTP exchanges passed",
+    "make check-auth-runtime": "15 HTTP exchanges passed",
+    "iOS account integration": "passed",
+    "Android account integration": "passed",
+    "iOS simulator debug build": "passed",
+    "Android debug APK build": "passed",
+    "raster provenance": "3 scanned, 0 missing"
+  },
+  "limits": [
+    "local Mailpit delivery only",
+    "test input via Flutter TestTextInput",
+    "no real-device/minimum-OS/accessibility-service verification"
+  ]
+}

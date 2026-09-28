@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"way2we/server/internal/account"
 	"way2we/server/internal/httpapi"
 	"way2we/server/internal/platform/config"
 	"way2we/server/internal/platform/database"
@@ -34,7 +35,16 @@ func run() int {
 		return 1
 	}
 	defer pool.Close()
-	server := &http.Server{Addr: cfg.HTTPAddr, Handler: httpapi.New(logger, pool.Ping, cfg.Diagnostics), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, WriteTimeout: 20 * time.Second, IdleTimeout: 60 * time.Second, MaxHeaderBytes: 16384}
+	accounts, err := account.NewWithLimits(pool, cfg.AuthKey, account.LocalMailpit{Address: cfg.MailpitAddress}, account.Limits{SendPerEmail: cfg.AuthSendPerEmail, SendPerSource: cfg.AuthSendPerSource, VerifyPerSource: cfg.AuthVerifyPerSource})
+	if err != nil {
+		logger.Error("account configuration invalid", "event", "startup_failed")
+		return 1
+	}
+	workerCtx, workerCancel := context.WithCancel(context.Background())
+	workerDone := make(chan struct{})
+	go func() { defer close(workerDone); accounts.RunDelivery(workerCtx, logger) }()
+	defer func() { workerCancel(); <-workerDone }()
+	server := &http.Server{Addr: cfg.HTTPAddr, Handler: httpapi.New(logger, pool.Ping, cfg.Diagnostics, accounts), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, WriteTimeout: 20 * time.Second, IdleTimeout: 60 * time.Second, MaxHeaderBytes: 16384}
 	failed := make(chan error, 1)
 	go func() { failed <- server.ListenAndServe() }()
 	logger.Info("server starting", "event", "server_starting")

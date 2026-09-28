@@ -8,10 +8,12 @@ final class ApiFailure extends AppFailure {
     required this.code,
     required this.status,
     this.fields = const {},
+    this.retryAfterSeconds,
     super.requestId,
   });
   final String code;
   final int status;
+  final int? retryAfterSeconds;
   final Map<String, String> fields;
 }
 
@@ -31,6 +33,10 @@ final class CancelledFailure extends AppFailure {
   const CancelledFailure();
 }
 
+final class StorageFailure extends AppFailure {
+  const StorageFailure();
+}
+
 String failureMessage(AppFailure failure) => switch (failure) {
   ApiFailure(:final code) => switch (code) {
     'VALIDATION_FAILED' => '请检查填写内容。',
@@ -44,6 +50,7 @@ String failureMessage(AppFailure failure) => switch (failure) {
     'RATE_LIMITED' => '操作过于频繁，请稍后重试。',
     _ => '暂时无法完成，请稍后重试。',
   },
+  StorageFailure() => '暂时无法保存本机数据，请重试。',
   NetworkFailure() => '网络连接失败，请检查网络后重试。',
   TimeoutFailure() => '请求超时，请稍后重试；已提交的操作需要核对结果。',
   ProtocolFailure() => '暂时无法读取结果，请稍后重试。',
@@ -53,6 +60,9 @@ String? fieldMessage(AppFailure? failure, String field) {
   if (failure case ApiFailure(:final fields)) {
     return switch (fields[field]) {
       'POSITIVE_INTEGER_REQUIRED' => '请输入大于 0 的整数。',
+      'INVALID_EMAIL' => '请输入有效的邮箱地址。',
+      'SIX_DIGITS_REQUIRED' => '请输入 6 位数字验证码。',
+      'NAME_LENGTH' => '昵称需要 1～60 个字。',
       null => null,
       _ => '请检查此项内容。',
     };

@@ -14,7 +14,7 @@ import (
 
 func TestResponsesAndSafeLogs(t *testing.T) {
 	var logs bytes.Buffer
-	handler := New(logging.New(&logs, "test", "test"), func(context.Context) error { return nil }, true)
+	handler := New(logging.New(&logs, "test", "test"), func(context.Context) error { return nil }, true, nil)
 	cases := []struct {
 		method, path, body, code string
 		status                   int
@@ -66,7 +66,7 @@ func TestPanicAndUnavailable(t *testing.T) {
 				panic("database password secret")
 			}
 			return fmt.Errorf("database password secret")
-		}, false)
+		}, false, nil)
 		response := httptest.NewRecorder()
 		h.ServeHTTP(response, httptest.NewRequest("GET", "/health/ready", nil))
 		expected := 503
@@ -83,7 +83,7 @@ func TestPanicAndUnavailable(t *testing.T) {
 }
 
 func TestDiagnosticsDisabled(t *testing.T) {
-	h := New(logging.New(&bytes.Buffer{}, "production", "test"), nil, false)
+	h := New(logging.New(&bytes.Buffer{}, "production", "test"), nil, false, nil)
 	r := httptest.NewRecorder()
 	h.ServeHTTP(r, httptest.NewRequest("POST", "/dev/validate", strings.NewReader(`{"quantity":1}`)))
 	if r.Code != 404 {

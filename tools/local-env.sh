@@ -5,5 +5,6 @@ cd "$(dirname "$0")/.."
 set -a
 source .env.example
 if [[ -f .env.local ]]; then source .env.local; fi
+if [[ "$AUTH_SECRET_FILE" != /* ]]; then AUTH_SECRET_FILE="$PWD/$AUTH_SECRET_FILE"; fi
 set +a
 exec "$@"

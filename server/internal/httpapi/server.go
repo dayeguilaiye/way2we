@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"time"
 
+	"way2we/server/internal/account"
 	"way2we/server/internal/platform/apperror"
 	"way2we/server/internal/platform/identifier"
 )
@@ -17,10 +18,11 @@ type Handler struct {
 	logger      *slog.Logger
 	ping        func(context.Context) error
 	diagnostics bool
+	accounts    *account.Service
 }
 
-func New(logger *slog.Logger, ping func(context.Context) error, diagnostics bool) http.Handler {
-	return &Handler{logger: logger, ping: ping, diagnostics: diagnostics}
+func New(logger *slog.Logger, ping func(context.Context) error, diagnostics bool, accounts *account.Service) http.Handler {
+	return &Handler{logger: logger, ping: ping, diagnostics: diagnostics, accounts: accounts}
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -33,6 +35,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	status := 200
 	var body any
 	var err error
+	actorID := ""
 	defer func() {
 		if recover() != nil {
 			err = fmt.Errorf("handler panic")
@@ -51,9 +54,18 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if status == 429 {
 			w.Header().Set("Retry-After", "60")
 		}
-		w.WriteHeader(status)
-		_, writeErr := w.Write(append(encoded, '\n'))
+		var writeErr error
+		if status == http.StatusNoContent {
+			w.Header().Del("Content-Type")
+			w.WriteHeader(status)
+		} else {
+			w.WriteHeader(status)
+			_, writeErr = w.Write(append(encoded, '\n'))
+		}
 		attrs := []any{"event", "http_request_completed", "request_id", requestID, "method", r.Method, "route", route, "http_status", status, "duration_ms", time.Since(start).Milliseconds()}
+		if actorID != "" {
+			attrs = append(attrs, "actor_id", actorID)
+		}
 		level := slog.LevelInfo
 		if err != nil {
 			attrs = append(attrs, "error_code", envelope.Error.Code, "error_kind", safeErrorKind(err))
@@ -105,6 +117,9 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		body = map[string]int64{"quantity": input.Quantity}
+	case h.accounts != nil && isAccountRoute(r):
+		route = r.URL.Path
+		status, body, actorID, err = h.accountRequest(ctx, w, r, requestID)
 	default:
 		err = apperror.New("NOT_FOUND")
 	}

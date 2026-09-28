@@ -7,65 +7,20 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/url"
-	"os"
 	"strings"
 	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
+	"way2we/server/internal/platform/testdb"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"way2we/server/internal/platform/apperror"
-	"way2we/server/internal/platform/database"
 	"way2we/server/internal/platform/identifier"
-	"way2we/server/migrations"
 )
 
-func testPool(t *testing.T) *pgxpool.Pool {
-	t.Helper()
-	raw := os.Getenv("TEST_DATABASE_URL")
-	u, err := url.Parse(raw)
-	if err != nil || u == nil || u.Path != "/way2we_test" || (u.Hostname() != "127.0.0.1" && u.Hostname() != "localhost") || u.Port() != "55433" {
-		t.Fatal("integration tests require the dedicated local way2we_test database on port 55433")
-	}
-	ctx := context.Background()
-	admin, err := database.Open(ctx, raw)
-	if err != nil {
-		t.Fatal("test database unavailable")
-	}
-	schema := "test_" + strings.ReplaceAll(identifier.New(), "-", "")
-	_, err = admin.Exec(ctx, "CREATE SCHEMA "+pgx.Identifier{schema}.Sanitize())
-	if err != nil {
-		admin.Close()
-		t.Fatal(err)
-	}
-	t.Cleanup(func() {
-		_, err := admin.Exec(context.Background(), "DROP SCHEMA "+pgx.Identifier{schema}.Sanitize()+" CASCADE")
-		if err != nil {
-			t.Error(err)
-		}
-		admin.Close()
-	})
-	q := u.Query()
-	q.Set("search_path", schema)
-	u.RawQuery = q.Encode()
-	for range 2 {
-		if err = migrations.Up(ctx, u.String()); err != nil {
-			t.Fatal(err)
-		}
-	}
-	pool, err := database.Open(ctx, u.String())
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Cleanup(pool.Close)
-	return pool
-}
-
 func TestCommandAtomicityReplayAndAuthorization(t *testing.T) {
-	pool := testPool(t)
+	pool := testdb.New(t)
 	ctx := context.Background()
 	actor, space, member := identifier.New(), identifier.New(), identifier.New()
 	for _, step := range []struct {
@@ -170,7 +125,7 @@ func businessCode(err error) string {
 }
 
 func TestCancelledTransactionLeavesNoWrites(t *testing.T) {
-	pool := testPool(t)
+	pool := testdb.New(t)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Nanosecond)
 	defer cancel()
 	c := Command{ActorID: identifier.New(), Key: identifier.New(), Operation: "test", SpaceID: identifier.New(), Parameters: json.RawMessage(`{}`)}

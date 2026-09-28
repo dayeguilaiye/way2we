@@ -22,3 +22,10 @@ dev_dependencies:
   flutter_lints: 6.0.0
 flutter:
   uses-material-design: true
+  assets:
+    - assets/botanicals/
+    - assets/fonts/OFL.txt
+  fonts:
+    - family: BrandSerif
+      fonts:
+        - asset: assets/fonts/brand-serif.ttf

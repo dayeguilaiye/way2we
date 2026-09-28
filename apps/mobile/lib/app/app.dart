@@ -4,6 +4,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/account/application/account_controller.dart';
+import '../features/account/presentation/login_page.dart';
+import '../features/account/presentation/profile_pages.dart';
+
 import '../features/diagnostics/presentation/diagnostics_page.dart';
 import 'theme.dart';
 import 'providers.dart';
@@ -11,10 +15,40 @@ import 'providers.dart';
 const diagnosticsEnabled =
     kDebugMode && bool.fromEnvironment('DEV_DIAGNOSTICS');
 final routerProvider = Provider<GoRouter>((ref) {
+  final sessions = ref.watch(sessionProvider);
   final router = GoRouter(
-    initialLocation: diagnosticsEnabled ? '/dev' : '/',
+    initialLocation:
+        diagnosticsEnabled && const bool.fromEnvironment('START_DIAGNOSTICS')
+        ? '/dev'
+        : '/me',
+    refreshListenable: sessions,
+    redirect: (context, state) {
+      if (diagnosticsEnabled && state.matchedLocation == '/dev') return null;
+      if (sessions.current == null) {
+        return state.matchedLocation == '/login' ? null : '/login';
+      }
+      if (state.matchedLocation == '/login' || state.matchedLocation == '/') {
+        return '/me';
+      }
+      return null;
+    },
     routes: [
-      GoRoute(path: '/', builder: (context, state) => const WelcomePage()),
+      GoRoute(path: '/', redirect: (context, state) => '/me'),
+      GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+      GoRoute(
+        path: '/me',
+        builder: (context, state) => const ProfilePage(),
+        routes: [
+          GoRoute(
+            path: 'account',
+            builder: (context, state) => const AccountInfoPage(),
+          ),
+          GoRoute(
+            path: 'appearance',
+            builder: (context, state) => const AppearancePage(),
+          ),
+        ],
+      ),
       if (diagnosticsEnabled)
         GoRoute(
           path: '/dev',
@@ -54,6 +88,7 @@ class Way2WeApp extends ConsumerWidget {
         ),
       );
     }
+    ref.watch(accountProvider);
     return MaterialApp.router(
       title: '一起的小日子',
       debugShowCheckedModeBanner: false,
@@ -65,30 +100,4 @@ class Way2WeApp extends ConsumerWidget {
       routerConfig: ref.watch(routerProvider),
     );
   }
-}
-
-class WelcomePage extends StatelessWidget {
-  const WelcomePage({super.key});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    body: SafeArea(
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('一起的小日子', style: Theme.of(context).textTheme.headlineMedium),
-              const SizedBox(height: 24),
-              Text(
-                '平凡的日常，\n也是值得好好记录的生活。',
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-            ],
-          ),
-        ),
-      ),
-    ),
-  );
 }

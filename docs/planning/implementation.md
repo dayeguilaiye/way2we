@@ -1,8 +1,8 @@
 # 首轮实施任务
 
-状态：阶段 3.2 已完成任务拆分。依据[数据模型](../engineering/data-model.md)、[OpenAPI](../../api/openapi.yaml)与[工程规范](../engineering/README.md)推进；T00 工程基础已完成，下一任务为 T01。
+状态：阶段 3.2 已完成任务拆分。依据[数据模型](../engineering/data-model.md)、[OpenAPI](../../api/openapi.yaml)与[工程规范](../engineering/README.md)推进；T00 工程基础与 T01 本地账号流程已完成，下一任务为 T02。
 
-每个任务同时交付服务端、Flutter 和对应检查，完成后保留可演示版本。通知事件从第一个空间流程开始写入，后续操作沿用同一入口。T00 已完成，T01—T07 待实施。
+每个任务同时交付服务端、Flutter 和对应检查，完成后保留可演示版本。通知事件从第一个空间流程开始写入，后续操作沿用同一入口。T00、T01 已完成本地验收，T02—T07 待实施。
 
 ## T00 工程基础与共用契约
 
@@ -17,6 +17,8 @@
 检查：iOS 与 Android 可启动并访问本地 Go；空测试库可迁移；以模拟接口错误验证字段提示、通用错误和请求编号；OpenAPI 静态检查进入统一检查入口。测试数据库与正式数据库明确隔离。
 
 ## T01 邮箱登录与个人外观
+
+状态：本地完整流程已实现并通过双端检查。详见[账号实现与验证](../engineering/accounts.md)。真实邮件供应商与发件域名按用户确认，在正式邮件接入时确定。
 
 端点：`requestEmailCode`、`createSession`、`deleteCurrentSession`、`getMe`、`updateMe`。
 
