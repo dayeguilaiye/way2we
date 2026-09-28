@@ -15,7 +15,14 @@ class ProfilePage extends ConsumerWidget {
     final user = state.user;
     final c = Theme.of(context).extension<BrandColors>()!;
     return Scaffold(
-      appBar: AppBar(title: const Text('我的')),
+      appBar: AppBar(
+        leading: IconButton(
+          tooltip: '空间列表',
+          onPressed: () => context.go('/spaces'),
+          icon: const Icon(Icons.arrow_back),
+        ),
+        title: const Text('我的'),
+      ),
       body: PageBody(
         children: [
           if (state.loading && user == null)

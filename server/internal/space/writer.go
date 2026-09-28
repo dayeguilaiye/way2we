@@ -35,9 +35,10 @@ func NewWriter(pool *pgxpool.Pool) *Writer { return &Writer{pool: pool} }
 // including target IDs. authorize runs on EVERY attempt, including replay.
 // apply must use tx for all writes, perform no external calls, and return only
 // safe public JSON. Any apply error rolls back all writes and the command.
-// Sensitive invitation results require an encrypted codec before using Run.
+// Empty SpaceID is reserved for creation; authorization still runs.
+// Invitation credentials are stored encrypted separately and never in Body.
 func (w *Writer) Run(ctx context.Context, c Command, authorize func(context.Context, pgx.Tx) error, apply func(context.Context, pgx.Tx) (Result, error)) (out Result, err error) {
-	if !identifier.Valid(c.ActorID) || !identifier.Valid(c.Key) || !identifier.Valid(c.SpaceID) || c.Operation == "" || !json.Valid(c.Parameters) || authorize == nil || apply == nil {
+	if !identifier.Valid(c.ActorID) || !identifier.Valid(c.Key) || (c.SpaceID != "" && !identifier.Valid(c.SpaceID)) || c.Operation == "" || !json.Valid(c.Parameters) || authorize == nil || apply == nil {
 		return out, apperror.New("INVALID_REQUEST")
 	}
 	normalized, err := json.Marshal(struct {
@@ -64,12 +65,14 @@ func (w *Writer) Run(ctx context.Context, c Command, authorize func(context.Cont
 		}
 	}()
 	var id string
-	err = tx.QueryRow(ctx, "SELECT id FROM spaces WHERE id=$1 FOR UPDATE", c.SpaceID).Scan(&id)
-	if errors.Is(err, pgx.ErrNoRows) {
-		return out, apperror.New("NOT_FOUND")
-	}
-	if err != nil {
-		return out, fmt.Errorf("lock space: %w", err)
+	if c.SpaceID != "" {
+		err = tx.QueryRow(ctx, "SELECT id FROM spaces WHERE id=$1 FOR UPDATE", c.SpaceID).Scan(&id)
+		if errors.Is(err, pgx.ErrNoRows) {
+			return out, apperror.New("NOT_FOUND")
+		}
+		if err != nil {
+			return out, fmt.Errorf("lock space: %w", err)
+		}
 	}
 	if err = authorize(ctx, tx); err != nil {
 		return out, err
@@ -99,7 +102,7 @@ func (w *Writer) Run(ctx context.Context, c Command, authorize func(context.Cont
 	if out.Status < 200 || out.Status >= 300 || !json.Valid(out.Body) {
 		return Result{}, fmt.Errorf("command produced invalid success result")
 	}
-	_, err = tx.Exec(ctx, `INSERT INTO commands(actor_user_id,idempotency_key,operation_name,space_id,request_hash,result_status,http_status,response_body) VALUES($1,$2,$3,$4,$5,'succeeded',$6,$7)`, c.ActorID, c.Key, c.Operation, c.SpaceID, fingerprint[:], out.Status, out.Body)
+	_, err = tx.Exec(ctx, `INSERT INTO commands(actor_user_id,idempotency_key,operation_name,space_id,request_hash,result_status,http_status,response_body) VALUES($1,$2,$3,$4,$5,'succeeded',$6,$7)`, c.ActorID, c.Key, c.Operation, optionalSpace(c.SpaceID), fingerprint[:], out.Status, out.Body)
 	if err != nil {
 		return Result{}, fmt.Errorf("store command: %w", err)
 	}
@@ -107,4 +110,11 @@ func (w *Writer) Run(ctx context.Context, c Command, authorize func(context.Cont
 		return Result{}, fmt.Errorf("commit command: %w", err)
 	}
 	return out, nil
+}
+
+func optionalSpace(id string) any {
+	if id == "" {
+		return nil
+	}
+	return id
 }

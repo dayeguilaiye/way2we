@@ -11,9 +11,11 @@ import (
 
 	"way2we/server/internal/account"
 	"way2we/server/internal/httpapi"
+	"way2we/server/internal/notification"
 	"way2we/server/internal/platform/config"
 	"way2we/server/internal/platform/database"
 	"way2we/server/internal/platform/logging"
+	"way2we/server/internal/space"
 )
 
 func main() { os.Exit(run()) }
@@ -40,11 +42,21 @@ func run() int {
 		logger.Error("account configuration invalid", "event", "startup_failed")
 		return 1
 	}
+	spaces, err := space.New(pool, cfg.AuthKey)
+	if err != nil {
+		return 1
+	}
 	workerCtx, workerCancel := context.WithCancel(context.Background())
 	workerDone := make(chan struct{})
 	go func() { defer close(workerDone); accounts.RunDelivery(workerCtx, logger) }()
-	defer func() { workerCancel(); <-workerDone }()
-	server := &http.Server{Addr: cfg.HTTPAddr, Handler: httpapi.New(logger, pool.Ping, cfg.Diagnostics, accounts), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, WriteTimeout: 20 * time.Second, IdleTimeout: 60 * time.Second, MaxHeaderBytes: 16384}
+	notificationDone := make(chan struct{})
+	go func() {
+		defer close(notificationDone)
+		worker := notification.Worker{Pool: pool}
+		worker.Run(workerCtx, logger)
+	}()
+	defer func() { workerCancel(); <-workerDone; <-notificationDone }()
+	server := &http.Server{Addr: cfg.HTTPAddr, Handler: httpapi.New(logger, pool.Ping, cfg.Diagnostics, accounts, spaces), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, WriteTimeout: 20 * time.Second, IdleTimeout: 60 * time.Second, MaxHeaderBytes: 16384}
 	failed := make(chan error, 1)
 	go func() { failed <- server.ListenAndServe() }()
 	logger.Info("server starting", "event", "server_starting")

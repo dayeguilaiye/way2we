@@ -66,3 +66,10 @@ check-auth-runtime:
 
 test-account-device:
 	python3 tools/run-account-device.py $(DEVICE)
+
+.PHONY: check-spaces-runtime test-spaces-device
+check-spaces-runtime:
+	API_BASE_URL=$(API_BASE_URL) $(PYTHON) tools/check_spaces_runtime.py
+
+test-spaces-device:
+	python3 tools/run-spaces-device.py $(DEVICE)

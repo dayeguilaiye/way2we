@@ -12,6 +12,7 @@ import (
 	"way2we/server/internal/account"
 	"way2we/server/internal/platform/apperror"
 	"way2we/server/internal/platform/identifier"
+	"way2we/server/internal/space"
 )
 
 type Handler struct {
@@ -19,10 +20,15 @@ type Handler struct {
 	ping        func(context.Context) error
 	diagnostics bool
 	accounts    *account.Service
+	spaces      *space.Service
 }
 
-func New(logger *slog.Logger, ping func(context.Context) error, diagnostics bool, accounts *account.Service) http.Handler {
-	return &Handler{logger: logger, ping: ping, diagnostics: diagnostics, accounts: accounts}
+func New(logger *slog.Logger, ping func(context.Context) error, diagnostics bool, accounts *account.Service, spaces ...*space.Service) http.Handler {
+	h := &Handler{logger: logger, ping: ping, diagnostics: diagnostics, accounts: accounts}
+	if len(spaces) > 0 {
+		h.spaces = spaces[0]
+	}
+	return h
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -120,6 +126,9 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case h.accounts != nil && isAccountRoute(r):
 		route = r.URL.Path
 		status, body, actorID, err = h.accountRequest(ctx, w, r, requestID)
+	case h.spaces != nil && spaceRoute(r) != "":
+		route = spaceRoute(r)
+		status, body, actorID, err = h.spaceRequest(ctx, w, r, requestID, route)
 	default:
 		err = apperror.New("NOT_FOUND")
 	}

@@ -108,6 +108,9 @@ void main() {
     expect(find.textContaining('验证码无效'), findsOneWidget);
     await capture('code-error');
     await signIn(code);
+    await waitFor(find.text('我的'));
+    await tester.tap(find.text('我的'));
+    await tester.pumpAndSettle();
     await waitFor(find.text('新朋友'));
     expect(find.text('新朋友'), findsOneWidget);
     final firstSession = await storage.read(key: 'way2we.session.v1');
@@ -150,6 +153,9 @@ void main() {
     await tester.pumpAndSettle();
     app.main();
     await tester.pumpAndSettle();
+    await waitFor(find.text('我的'));
+    await tester.tap(find.text('我的'));
+    await tester.pumpAndSettle();
     await waitFor(find.text('阿禾'));
     expect(find.text('阿禾'), findsOneWidget);
     expect(find.text('雾玫'), findsOneWidget);
@@ -180,6 +186,9 @@ void main() {
     await send();
     final fresh = (await tester.runAsync(receive))!;
     await signIn(fresh);
+    await waitFor(find.text('我的'));
+    await tester.tap(find.text('我的'));
+    await tester.pumpAndSettle();
     await waitFor(find.text('阿禾'));
     await waitFor(find.text('阿禾'));
     expect(find.text('阿禾'), findsOneWidget);

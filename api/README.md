@@ -22,4 +22,4 @@ python3 -m venv .venv-contract
 
 ## 服务端运行检查
 
-启动根目录 `make dev` 后执行 `make check-runtime`，检查健康响应、开发数量校验及标准错误；真实错误响应使用主契约的 Error schema 校验。开发验证端点和启用范围见[工程基础](../docs/engineering/foundation.md#开发-http-检查)。T01 已实现 `requestEmailCode`、`createSession`、`deleteCurrentSession`、`getMe` 和 `updateMe`；运行 `make check-auth-runtime`，用 Mailpit 实际收码并验证 15 次登录、资料、错误与退出响应。实现边界见[账号说明](../docs/engineering/accounts.md)。其余业务端点按 T02—T07 实现。
+启动根目录 `make dev` 后执行 `make check-runtime`，检查健康响应、开发数量校验及标准错误；真实错误响应使用主契约的 Error schema 校验。开发验证端点和启用范围见[工程基础](../docs/engineering/foundation.md#开发-http-检查)。T01 已实现 `requestEmailCode`、`createSession`、`deleteCurrentSession`、`getMe` 和 `updateMe`；运行 `make check-auth-runtime`，用 Mailpit 实际收码并验证 15 次登录、资料、错误与退出响应。实现边界见[账号说明](../docs/engineering/accounts.md)。T02 已实现空间创建／列表／详情、成员与空间昵称、邀请创建／预览／接受／列表／进度／同意、通知查询与已读；`make check-spaces-runtime` 使用三个真实邮箱账号验证这些端点及分页、权限和重放，共 30 次实际 HTTP 交换。其余业务端点按 T03—T07 实现。

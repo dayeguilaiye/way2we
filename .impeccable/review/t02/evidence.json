@@ -1,0 +1,67 @@
+{
+  "recorded_at": "2026-09-28T10:00:31.660749+00:00",
+  "capture_sources": [
+    "xcrun simctl io screenshot",
+    "adb exec-out screencap -p"
+  ],
+  "devices": {
+    "ios": "iPhone 18 Pro Max, iOS 27 simulator, 1320×2868",
+    "android": "Pixel 9 emulator, API 36, 1080×2424"
+  },
+  "screenshots": {
+    "android-approval.png": "722f3ff6664aaf13f945a7d097574c6ced63655feba85abe3fe5a64b349eb886",
+    "android-create-space.png": "a89179be1fd67be7fbacd65af2648ef60000f21b18eb6abcf3a9836cb95b0746",
+    "android-invite-preview.png": "387d649c745d1e87a115310bb1ff8fa0ece377f765a37d57fa2fcb7045cd48cf",
+    "android-invite-share.png": "6465501e995cad1aa0ddd773a44f92db482e0c1ba519c8ece4a9b351f4ff48bf",
+    "android-invite-unavailable.png": "aca89089c6ed9458522ab2b7600742274e7534ba435f1652aea8bdc729785ed1",
+    "android-joined.png": "76028fa1adb4bac621f68427c61bb2bbd55f4fe54e02e22881c9848979cce4bf",
+    "android-members-apricot.png": "cdbeac174d579688a493263865c46f5267d593712c31aef0aff4420a87dbc5f4",
+    "android-members-celadon.png": "aed7bdec682f0e2c56df2abcdfdf83d6cda7261af7642f3015baf64c7a61f6c2",
+    "android-members-dark.png": "8a568d772149094bee48a888df08274c3c7ed300d3b63fb78ec35d715c3aa965",
+    "android-members-large.png": "76732eadc9725afa3d9452de8326221b9c931464f196f105db41b1d6888c35a5",
+    "android-members-rose.png": "fd8bf1bde1f2edd16b561ffc0c5a43b7a33c68b3fcb5dda287f92afb90499c6d",
+    "android-members-three.png": "4afe74e485bc1248124b48752df928389b3d118099a130ca59f47da53d26be19",
+    "android-notifications.png": "8c6a58dcc52718690a0dad94e4a865ba5f43ee9523eaf48f7e8c1fc6912e363d",
+    "android-spaces-empty.png": "e6e250a6f79ae646611a7797e4dcfdc3b0bcd90428cc460c53b62d0c5836cde8",
+    "android-waiting.png": "a89d3f77b9ad2722c366c55d4ed1eaec34846967cc39adf965693d5f6cf97c27",
+    "ios-approval.png": "10be517ec2a20804c093386c29a2c8c959083667ea75f533cbd08bbf10df359f",
+    "ios-create-space.png": "6e3c0689319ac7e94185d0ed5712ff270eb84cdb73e4cf93a69c695885c44841",
+    "ios-invite-preview.png": "3cd89e7fd45fea05d0e02b8cd51e1704a16d8af4302ffc14013f3be4b2267d25",
+    "ios-invite-share.png": "8f0e282962f033e24a66e20cb3ef48e1b96d3eaee28a5727173886601715a0c5",
+    "ios-invite-unavailable.png": "49af6a64f95c81b0a7bf2b022579ba082f7191ea7266ccd2d520409f4d7ad612",
+    "ios-joined.png": "8954dbc948c835e03b6bcb204866a79ae632402cd63f30a49d1dba6e242c1503",
+    "ios-members-apricot.png": "546478a7fd0876c63ecefdcfca184960a32e93da9abe34015086903648f70511",
+    "ios-members-celadon.png": "ae2d1db5547aceb0424bec1057523e934fcc63c89018f468b0f717313d776038",
+    "ios-members-dark.png": "d8226eb2fb64bb81640eac1fe9ed99bfd79f1bab38a4c09fc713c41d3635e4c5",
+    "ios-members-large.png": "283425540310bf235755c2358f9b5b690e3d85838deb40366badf4b836bbdce4",
+    "ios-members-rose.png": "a98c28ae33dcf03939ccfa5a87e78290e5837a820f7028b6d73e9fea205bf585",
+    "ios-members-three.png": "d8226eb2fb64bb81640eac1fe9ed99bfd79f1bab38a4c09fc713c41d3635e4c5",
+    "ios-notifications.png": "a55c1a2f37351536ca1ac57bfdb4ff03f98311c65d21916cd51999e514aced70",
+    "ios-spaces-empty.png": "454a30c5febb156825c35a93e01d4a0deadb2f6347901302027bd9711e1ab367",
+    "ios-waiting.png": "e2bd47b551d92bbc56aa7556b4762ef65136d6fb3d1982f8a3349e8726020773"
+  },
+  "design_baseline": {
+    "PRODUCT.md": "7b3c49605346227171e36e4dc15220ef5e973af569391b9fa9bc3e5973f21dc1",
+    "DESIGN.md": "31463e54cdc1050838a336728b7dcd7fd754b4c43ddcd42aff32fe5b334eabe1",
+    ".impeccable/design.json": "7405883c94c995356d4dbd88eda786be28eddab184cd5d064a415b8541743c55"
+  },
+  "checks": {
+    "make check": "passed; Go vet/race, contract static, Flutter analyze/tests",
+    "make test-integration": "passed with race detector",
+    "make check-spaces-runtime": "30 real HTTP exchanges passed",
+    "final Flutter analyze": "no issues",
+    "final Flutter tests": "16 tests passed",
+    "iOS spaces integration": "passed",
+    "Android spaces integration": "passed",
+    "iOS simulator debug build": "passed",
+    "Android debug APK build": "passed",
+    "OS deep link": "Android cold start reached login; iOS displayed system open confirmation; authenticated/unauthenticated routing covered by unit tests"
+  },
+  "limits": [
+    "local Mailpit delivery only",
+    "native tests use Flutter TestTextInput",
+    "small-screen keyboard inset simulated in widget test",
+    "iOS system open-confirmation action not completed in OS smoke check",
+    "no hardware device/minimum OS/accessibility service/release signing verification"
+  ]
+}
