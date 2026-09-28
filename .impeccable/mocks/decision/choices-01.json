@@ -1,0 +1,180 @@
+{
+  "title": "选一个你愿意每天打开的界面",
+  "question": "六个首页方向共用已确认的业务结构。可以先比较整体气质，再告诉我想保留或调整的部分。",
+  "options": [
+    {
+      "id": "apricot",
+      "label": "A · 杏桃信笺",
+      "kicker": "视觉提案",
+      "lineage": "现代信笺与小型文具的排版",
+      "thesis": "奶油底色、杏陶色操作与细线排版，让日常记录像一封轻盈的便笺。",
+      "palette": [
+        "#FAF5ED",
+        "#C8795D",
+        "#352D29",
+        "#E9D6C6"
+      ],
+      "materials": [
+        "暖白纸面",
+        "细线与杏陶色"
+      ],
+      "viewport": "页面是一张干净的信笺，信息靠留白和细线组织，操作色集中在记一笔。",
+      "risk": "温馨感较明显，细节过多时容易显得文艺。",
+      "comp": ".impeccable/mocks/decision/apricot.png",
+      "raised": [
+        {
+          "from": "角色目录",
+          "raise": "逐个成员的信息必须辨认清楚。"
+        },
+        {
+          "from": "皮革书架",
+          "raise": "界面材质保持一致并让位于正文。"
+        },
+        {
+          "from": "鞋盒档案",
+          "raise": "每笔交易使用稳定、清楚的信息位置。"
+        },
+        {
+          "from": "纵向深潜",
+          "raise": "每个状态都有明确文字位置。"
+        },
+        {
+          "from": "光谱标尺",
+          "raise": "正负分与交易状态同时使用文字。"
+        },
+        {
+          "from": "辉光计数器",
+          "raise": "积分变化保持清楚而安静。"
+        }
+      ]
+    },
+    {
+      "id": "celadon",
+      "label": "B · 青瓷奶油",
+      "kicker": "优先推荐",
+      "lineage": "青瓷餐具与现代陶器的温润表面",
+      "thesis": "青瓷绿与奶油白搭配，圆润而利落，最适合长期日常使用。",
+      "palette": [
+        "#F8F7F0",
+        "#688879",
+        "#293D34",
+        "#E2E9E1"
+      ],
+      "materials": [
+        "温润奶油白",
+        "淡青瓷色面"
+      ],
+      "viewport": "余额区域轻轻聚合，主要操作使用青瓷绿，其余内容保持白净。",
+      "risk": "亲和且稳妥，品牌识别需要依靠比例与细节建立。",
+      "comp": ".impeccable/mocks/decision/celadon.png"
+    },
+    {
+      "id": "editorial",
+      "label": "C · 暖白画册",
+      "kicker": "视觉提案",
+      "lineage": "独立生活杂志与当代画册",
+      "thesis": "暖白、墨色和少量琥珀，把精致感放在文字层级与留白上。",
+      "palette": [
+        "#FCFAF5",
+        "#B28242",
+        "#282724",
+        "#EAE5DB"
+      ],
+      "materials": [
+        "清透暖白",
+        "编辑式留白"
+      ],
+      "viewport": "以清楚的文字层级构成首页，近况像排版克制的生活栏目。",
+      "risk": "最清爽，但温馨感较含蓄。",
+      "comp": ".impeccable/mocks/decision/editorial.png"
+    },
+    {
+      "id": "linen",
+      "label": "D · 亚麻可可",
+      "kicker": "视觉提案",
+      "lineage": "亚麻织物与温暖木质家居",
+      "thesis": "亚麻白和可可棕营造安静的居家感，靠低调材质与柔和对比显得精致。",
+      "palette": [
+        "#F4EFE7",
+        "#786253",
+        "#342D29",
+        "#DFD6CA"
+      ],
+      "materials": [
+        "极轻亚麻底色",
+        "可可棕控件"
+      ],
+      "viewport": "紧密相关的信息靠柔和底色分组，列表保持清晰，主按钮像小巧的暖棕标记。",
+      "risk": "颜色较安静，需要足够深的正文保持清爽。",
+      "comp": "/Users/zz-b191/code/way2we/.impeccable/mocks/decision/linen-display.png"
+    },
+    {
+      "id": "rose",
+      "label": "E · 雾玫瑰",
+      "kicker": "视觉提案",
+      "lineage": "当代生活品牌与克制的柔色设计",
+      "thesis": "用雾玫瑰和温灰表达亲密感，颜色轻，文字与操作保持清楚。",
+      "palette": [
+        "#FBF7F5",
+        "#9B707A",
+        "#403238",
+        "#EFE3E3"
+      ],
+      "materials": [
+        "暖白",
+        "低饱和雾玫瑰"
+      ],
+      "viewport": "少量玫瑰色用于主操作和选中状态，信息区保持大面积暖白。",
+      "risk": "柔和感更强，必须控制粉色面积和装饰。",
+      "comp": ".impeccable/mocks/decision/rose.png"
+    },
+    {
+      "id": "seaglass",
+      "label": "F · 海盐杏色",
+      "kicker": "视觉提案",
+      "lineage": "磨砂海玻璃与明亮的生活用品配色",
+      "thesis": "海盐蓝灰带来清爽，少量杏色补充温度，轻快而有辨识度。",
+      "palette": [
+        "#F8FAF7",
+        "#73969D",
+        "#2E4045",
+        "#D8AC8F"
+      ],
+      "materials": [
+        "干净盐白",
+        "海玻璃色与淡杏色"
+      ],
+      "viewport": "蓝灰承担导航和文字节奏，杏色只强调记分等关键行动。",
+      "risk": "清爽感较强，要避免蓝灰用量过大显冷。",
+      "comp": ".impeccable/mocks/decision/seaglass.png"
+    }
+  ],
+  "reroll": {
+    "registers": [
+      "safer",
+      "bolder"
+    ]
+  },
+  "buildPath": {
+    "value": "comp",
+    "toggle": true
+  },
+  "canon": true,
+  "canonCard": {
+    "label": "G · 温暖基础款",
+    "thesis": "清晰的原生控件与温白底色，日常操作一目了然。",
+    "palette": [
+      "#FCFAF7",
+      "#A27750",
+      "#292724"
+    ],
+    "materials": [
+      "温白底色",
+      "标准原生控件"
+    ],
+    "viewport": "轻暖配色的标准原生首页，完整保留所有入口和信息。",
+    "risk": "容易上手，视觉识别度较弱。",
+    "comp": ".impeccable/mocks/decision/canon.png"
+  },
+  "steer": true
+}

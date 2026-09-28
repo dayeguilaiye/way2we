@@ -1,0 +1,17 @@
+{
+  "id": "item-form-v2",
+  "name": "添加／编辑商品",
+  "theme": "apricot",
+  "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-7548cb25-7a4d-4d7a-ab5c-d9fb9338fdc8.png",
+  "file": "item-form-v2.png",
+  "prompt_file": "item-form-v2.prompt.txt",
+  "references": [
+    "item-form.png"
+  ],
+  "approved": true,
+  "status": "用户已确认",
+  "tool": "native image_gen",
+  "date": "2026-09-22",
+  "scope": "操作界面静态视觉稿；业务规则已确认，新页面视觉待评审。实际交互和设备适配在原型及实现阶段验证。",
+  "approval_evidence": "用户在退款确认字号修订后回复：好的，继续吧。按已展示的当前页面继续制作原型。"
+}

@@ -1,17 +1,8 @@
-# IDEs
-.idea/
-.vscode/
-
-# OS files
+.env
+.env.*
+!.env.example
+.venv-contract/
+__pycache__/
 .DS_Store
-Thumbs.db
-
-# Project-specific ignores in subdirectories
-**/node_modules/
-**/dist/
-**/build/
-**/.dart_tool/
-**/.packages
-**/.flutter-plugins
-**/.flutter-plugins-dependencies
-**/bin/
+.artifacts/
+server/bin/

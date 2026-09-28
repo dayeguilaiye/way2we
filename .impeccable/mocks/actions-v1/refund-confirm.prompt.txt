@@ -1,0 +1,15 @@
+Use case: ui-mockup.
+Create ONE complete high-fidelity Chinese mobile app screen, portrait approximately 851 x 1847, the same edge-to-edge screenshot framing as the references. No device frame, exterior canvas, collage or annotation.
+Input images are APPROVED STYLE AND COMPONENT REFERENCES of the same warm-apricot relationship reward app. Preserve their material, typography scale, gently rounded controls, thin warm-ink icon style and comfortable mobile spacing. Reference images are visual authority; the NEW SCREEN CONTENT below defines the page. Inherit only the chrome and visual system appropriate to this screen. Exact Chinese labels and numbers must be legible and correct.
+Colors: paper-warm background #F8F4EE, near-white surfaces #FFFCF8, ink #352D29, secondary #71685F, terracotta primary #A65A40 with white text, light apricot #F0DBCE. Gain/success #4F754D, loss/error #AF493B. Quiet textured warmth as reference, no noisy grain. Elegant Chinese serif for page or sheet headings; clear sans-serif for fields, instructions, buttons and values. One flat surface for forms, clear filled/outlined controls and fine dividers, no nested card composition. Content-first with readable type and comfortable tap areas.
+Status bar 9:41 and home indicator in consistent positions. Respect top and bottom safe areas. Keep the same reference avatars and product photos if used: 阿禾 woman at sunset; 小满 ginger-white cat; breakfast on ceramic plate with toast, egg and cup. All names/data are illustrative. No invented slogans, fields, dates, extra business features or filler.
+
+NEW SCREEN: cancel-and-refund confirmation bottom sheet opened over Image 1's pending breakfast purchase detail. Current account is buyer 阿禾, original transaction 准备一份早餐 × 2, paid 20 points. Image 1 is the precise dimmed backdrop; Image 2 anchors the sheet's shape and spacing.
+Retain the top part of the purchase detail dimmed (back title 购买详情, pending status 待完成, breakfast thumbnail), with ONE opaque warm-white confirmation sheet rising from the lower portion. The active sheet occupies roughly half to two-thirds of the screen and fully covers the background action buttons. Subtle centered grab handle, generous padding. No warning triangle or frightening giant red area.
+Exact active-sheet text, fully readable:
+- Heading 取消这笔购买？ ; top right 关闭.
+- Item line 准备一份早餐 × 2.
+- Main message 向阿禾退还实际支付的 20 分。
+- Supporting two-line message 整笔取消，已提供部分内容也全额退款。
+- Two clearly tappable actions near the safe-area bottom, ideally equal height in a row: outlined secondary 保留购买 on the left and solid terracotta 取消并退款 on the right.
+Refund amount 20 must be prominent in the sentence, but not a separate invented balance forecast. This is an explicit whole-transaction confirmation, no refund amount input, no per-item checkboxes, no reason form or partial refund. Same exact avatars, image and screen proportions as reference. No success message before confirmation.

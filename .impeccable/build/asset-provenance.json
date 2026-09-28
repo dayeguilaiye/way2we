@@ -1,0 +1,67 @@
+{
+  "generatedAt": "2026-09-22",
+  "method": "native image_gen.imagegen",
+  "alphaInspection": "/Users/zz-b191/code/way2we/.impeccable/build/asset-alpha-qa.png",
+  "assets": [
+    {
+      "id": "my-avatar",
+      "asset": "/Users/zz-b191/code/way2we/assets/plates/my-avatar.png",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0c7c4-347e-7021-b2b7-aad69512762a/exec-b95e6398-037b-4b36-bee2-795cc4a8e63f.png",
+      "prompt": "/Users/zz-b191/code/way2we/assets/plates/my-avatar.prompt.txt"
+    },
+    {
+      "id": "avatar-a",
+      "asset": "/Users/zz-b191/code/way2we/assets/plates/avatar-a.png",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0c7c4-347e-7021-b2b7-aad69512762a/exec-4de93d62-627d-4435-bd79-74efe019488c.png",
+      "prompt": "/Users/zz-b191/code/way2we/assets/plates/avatar-a.prompt.txt"
+    },
+    {
+      "id": "avatar-b",
+      "asset": "/Users/zz-b191/code/way2we/assets/plates/avatar-b.png",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0c7c4-347e-7021-b2b7-aad69512762a/exec-0b4f2749-fbc9-4473-8a32-fcbf3295980f.png",
+      "prompt": "/Users/zz-b191/code/way2we/assets/plates/avatar-b.prompt.txt"
+    },
+    {
+      "id": "botanical",
+      "asset": "/Users/zz-b191/code/way2we/assets/plates/botanical.png",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0c7c4-347e-7021-b2b7-aad69512762a/exec-801f5d20-2ba3-4d95-afbe-28ba7ca1fa43.png",
+      "prompt": "/Users/zz-b191/code/way2we/assets/plates/botanical.prompt.txt"
+    },
+    {
+      "id": "activity-a",
+      "asset": "/Users/zz-b191/code/way2we/assets/plates/activity-a.png",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0c7c4-347e-7021-b2b7-aad69512762a/exec-4de93d62-627d-4435-bd79-74efe019488c.png",
+      "reusedFrom": "/Users/zz-b191/code/way2we/assets/plates/avatar-a.png"
+    },
+    {
+      "id": "activity-b",
+      "asset": "/Users/zz-b191/code/way2we/assets/plates/activity-b.png",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0c7c4-347e-7021-b2b7-aad69512762a/exec-0b4f2749-fbc9-4473-8a32-fcbf3295980f.png",
+      "reusedFrom": "/Users/zz-b191/code/way2we/assets/plates/avatar-b.png"
+    },
+    {
+      "id": "botanical-rose",
+      "asset": "/Users/zz-b191/code/way2we/prototype/assets/botanical-rose.png",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0c7c4-347e-7021-b2b7-aad69512762a/exec-2fde1937-b1e0-4572-bf6b-6549d681eaeb.png",
+      "prompt": "/Users/zz-b191/code/way2we/prototype/assets/botanical-rose.prompt.txt"
+    },
+    {
+      "id": "botanical-celadon",
+      "asset": "/Users/zz-b191/code/way2we/prototype/assets/botanical-celadon.png",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0c7c4-347e-7021-b2b7-aad69512762a/exec-0780eff0-4ab3-4925-b4ff-dec76f90c033.png",
+      "prompt": "/Users/zz-b191/code/way2we/prototype/assets/botanical-celadon.prompt.txt"
+    },
+    {
+      "id": "breakfast",
+      "asset": "/Users/zz-b191/code/way2we/prototype/assets/breakfast.png",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0c7c4-347e-7021-b2b7-aad69512762a/exec-85e2b8de-9d7e-4ce3-8b1f-04afe1ec9ece.png",
+      "prompt": "/Users/zz-b191/code/way2we/prototype/assets/breakfast.prompt.txt"
+    },
+    {
+      "id": "movie",
+      "asset": "/Users/zz-b191/code/way2we/prototype/assets/movie.png",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0c7c4-347e-7021-b2b7-aad69512762a/exec-10f8f494-adc2-4072-8192-53a9fe79f405.png",
+      "prompt": "/Users/zz-b191/code/way2we/prototype/assets/movie.prompt.txt"
+    }
+  ]
+}

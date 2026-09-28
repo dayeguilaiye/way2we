@@ -1,0 +1,18 @@
+{
+  "name": "购买详情",
+  "date": "2026-09-22",
+  "theme": "apricot",
+  "tool": "native image_gen",
+  "file": "purchase.png",
+  "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-3d345170-cd85-4808-8fe4-4e8ce910a251.png",
+  "references": [
+    "../themes/apricot-reference.png",
+    "shop.png"
+  ],
+  "prompt_file": "purchase.prompt.txt",
+  "approved": true,
+  "status": "用户已确认",
+  "scope": "关键页面静态视觉稿；已确认业务规则与所选首页风格的页面延展。实际交互、文字缩放与可访问性在原型和实现阶段验证。",
+  "approval_evidence": "用户在四张关键页面设计图展示后回复：可以，继续吧。",
+  "approval_scope": "页面视觉方向与布局，延续已确认业务流程；实际代码与移动端适配在后续验证。"
+}

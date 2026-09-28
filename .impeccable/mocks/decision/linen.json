@@ -1,0 +1,29 @@
+{
+  "direction": "D · 亚麻可可",
+  "prompt": "Generate ONE exquisitely crafted high-fidelity mobile app HOME SCREEN design proposal. Use case ui-mockup. This is a functional Chinese-language iOS/Android app for partners and family sharing agreements, reward points and personal shops. User preference: refined, fresh, warm, tasteful; welcoming grown-up warmth. Portrait aspect ratio approximately 9:19.5, one screen only, high resolution, full-bleed screenshot with small OS status bar and home indicator; no phone hardware frame, no scene behind device, no proposal captions outside the app. This is a single visual-direction proposal, not a collage.\nPreserve exactly this established app information architecture, top to bottom:\n1. Quiet status bar 9:41.\n2. Header: small circular personal avatar with visible label 我的 on the LEFT; centered/current space selector 一起的小日子 with small chevron; bell icon on RIGHT. Balanced spacing, clear touch areas.\n3. Restrained, beautifully aligned member-balance summary: 阿禾（我） 10 分 and 小满 0 分; small links 查看积分明细 and 查看成员. Points should read as usable balance, not giant dashboard statistics. Simple circular avatars or initial avatars are appropriate.\n4. A clear primary action labeled 记一笔, with a consistent small drawn plus/pen icon.\n5. Section heading 待处理 and modest 查看全部 on right. ONE clean transaction row: 准备一份早餐 × 2, subline 小满提供 · 我已支付 20 分. On its RIGHT, two always-visible easy-to-tap buttons 完成 and 取消. Keep row content and these buttons neatly aligned and comfortably readable.\n6. Section 空间近况 with 全部记录 on right. TWO activity rows, precise hierarchy and thin separators as suitable: 今天 08:40 / 阿禾购买小满的早餐 × 2 / −20 分; 今天 08:30 / 阿禾为自己记录「散步 30 分钟」 / +10 分. Small understated avatars. One row can wrap naturally. No extra invented events.\n7. Four-item bottom navigation: 近况, 约定, 小卖部, 记录, each with a consistent finely drawn icon. 近况 selected. Native proportions, generous safe area, no fifth nav item.\nThe frame contains real app UI, readable Chinese text, convincing professional typography, comfortable body size, deliberate whitespace and aligned labels. Restrict decorative material to subtle details; functional text and controls dominate. Maintain strong text contrast and calm hierarchy. No hearts, couple silhouettes, childish mascots, pink gradient washes, glossy 3D ornaments, stickers, gold luxury ornaments, nested card piles, charts, progress rings, ranking, streaks, coins or gamification badges. No lorem ipsum, fake testimonials or invented brand logo. Every element should feel designed by an excellent mobile product designer. All numerical values above are synthetic demonstration data and must stay exactly as specified.\nVISUAL DIRECTION:\nRefined contemporary linen-and-cocoa home-living visual grammar, never rustic or antique. Smooth linen white #F4EFE7, medium cocoa #786253 primary, espresso #342D29 text, faint oat #DFD6CA grouping. Optional extraordinarily subtle natural linen grain only in a narrow header/balance surface; all text areas clean and smooth. Humanist Chinese sans, 16px-equivalent readable labels, quiet soft rounded geometry, compact warm brown primary control with generous touch area. Restrained tactile softness, layered white/linen surfaces with very subtle low elevation, no heavy shadows, no actual fabric photos or wooden objects. Calm intimate home feeling with excellent functional hierarchy.\n",
+  "provenance": "native imagegen",
+  "approved": false,
+  "source": "/Users/zz-b191/.codex/generated_images/01a0b337-7c8c-7c91-b50b-611efe09208c/exec-b0a8f451-4b35-4846-b2b0-388d1f8ed8ac.png",
+  "asset": "/Users/zz-b191/code/way2we/.impeccable/mocks/decision/linen.png",
+  "inspection": {
+    "bottom_navigation": [
+      "近况",
+      "约定",
+      "小卖部",
+      "记录"
+    ],
+    "right_side_pending_actions": [
+      "完成",
+      "取消"
+    ],
+    "portrait_full_ui": true,
+    "readable_chinese_ui": true,
+    "limitations": [
+      "静态方向概念稿；中文标签经目视检查，真实设备触控、响应式和可访问性尚待实现验证。"
+    ],
+    "cleanBalancePanel": true
+  },
+  "initialSource": "/Users/zz-b191/.codex/generated_images/01a0b337-7c8c-7c91-b50b-611efe09208c/exec-1e9814db-b6b5-4148-96bb-976351b901e5.png",
+  "revisionPrompt": "Edit this exact mobile app direction image. Make one targeted correction ONLY to the member balance panel below the header: remove the plant/leaf illustration and the handwritten decorative phrase 平凡的日子也很珍贵 completely. Keep a clean quiet linen balance surface with only the two member summaries 阿禾（我）10 分 and 小满 0 分 plus 查看积分明细 and 查看成员. Balance the two member summaries across the available width with comfortable whitespace. Do not replace the removed decoration with any other illustration, promotional phrase, banner, icon, or flourish. Preserve the header, all other UI, exact Chinese functional text, numbers, full portrait framing, warm cocoa-and-linen palette, right-side 完成 and 取消 actions, and the exact bottom navigation 近况 / 约定 / 小卖部 / 记录. Keep everything else unchanged.",
+  "revisionCount": 1
+}

@@ -1,0 +1,140 @@
+{
+  "tool": "build-phase",
+  "version": 2,
+  "startedAt": "2026-09-22T06:12:28.855Z",
+  "comp": ".impeccable/mocks/themes/apricot-reference.png",
+  "direction": null,
+  "breakpoint": "851x1847",
+  "artifact": null,
+  "phase": "plates",
+  "phases": {
+    "comps": {
+      "status": "skipped",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [
+        {
+          "at": "2026-09-22T06:12:28.855Z",
+          "text": "started with an approved comp; the comp round happened before this state (surface round or manual)"
+        }
+      ],
+      "gate": null,
+      "forced": null
+    },
+    "spec": {
+      "status": "closed",
+      "openedAt": "2026-09-22T06:12:28.854Z",
+      "closedAt": "2026-09-22T06:21:03.102Z",
+      "attempts": 3,
+      "notes": [],
+      "gate": {
+        "ok": true,
+        "reasons": [],
+        "summary": "34 regions, 6 plates, 13 text regions measured",
+        "at": "2026-09-22T06:21:03.102Z"
+      },
+      "forced": null
+    },
+    "plates": {
+      "status": "open",
+      "openedAt": "2026-09-22T06:21:03.102Z",
+      "closedAt": null,
+      "attempts": 3,
+      "notes": [
+        {
+          "at": "2026-09-22T07:29:03.656Z",
+          "text": "Parent visual review: generated photos and native transparent artwork are usable and preserve the selected design. The plate detail-density heuristic still rejects my-avatar (68%) and avatar-b (46%) after two generations. Original unmasked crops and generated assets were viewed. Numeric gate remains unpassed; no threshold, comp or approval was altered. Continue the authorized interactive prototype with these independently generated demonstration avatars and report this limitation in its review packet."
+        }
+      ],
+      "gate": {
+        "ok": false,
+        "reasons": [
+          "plate assets/plates/my-avatar.png: carries detail the comp region my-avatar does not have (added-detail 68% of cells): noise, grain, or a busier subject where the comp is calm; regenerate from the crop reference without adding texture",
+          "plate assets/plates/avatar-b.png: carries detail the comp region avatar-b does not have (added-detail 46% of cells): noise, grain, or a busier subject where the comp is calm; regenerate from the crop reference without adding texture"
+        ],
+        "summary": "6/6 plates",
+        "at": "2026-09-22T07:23:21.987Z"
+      },
+      "forced": null
+    },
+    "hero": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "sections": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "motion": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "responsive": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "review": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    }
+  },
+  "finish": null,
+  "plates": {
+    "my-avatar": {
+      "status": "ok",
+      "score": 0.6461,
+      "size": "1254x1254"
+    },
+    "botanical": {
+      "status": "ok",
+      "score": 0.7999,
+      "size": "1329x1183"
+    },
+    "avatar-a": {
+      "status": "ok",
+      "score": 0.5837,
+      "size": "1254x1254"
+    },
+    "avatar-b": {
+      "status": "ok",
+      "score": 0.7394,
+      "size": "1254x1254"
+    },
+    "activity-a": {
+      "status": "ok",
+      "score": 0.5926,
+      "size": "1254x1254"
+    },
+    "activity-b": {
+      "status": "ok",
+      "score": 0.7523,
+      "size": "1254x1254"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "my-avatar",
+  "file": "assets/plates/my-avatar.png",
+  "generatedBy": "image_gen.imagegen (native)",
+  "sourceImage": "/Users/zz-b191/.codex/generated_images/01a0c7c4-347e-7021-b2b7-aad69512762a/exec-b95e6398-037b-4b36-bee2-795cc4a8e63f.png",
+  "referenceImage": ".impeccable/build/crops/my-avatar-ref.png",
+  "promptFile": "assets/plates/my-avatar.prompt.txt",
+  "width": 1254,
+  "height": 1254,
+  "format": "PNG",
+  "alpha": true,
+  "generatedAt": "2026-09-22",
+  "visualCheck": "Composition, palette, scale, subject inspected; natural photographic material matches approved reference.",
+  "alphaCheck": "Real alpha verified; inspected on light and dark backgrounds in .impeccable/build/asset-alpha-qa.png.",
+  "gate": "needs_parent_review: added-detail threshold (my-avatar 68%, avatar-b 46%)"
+}

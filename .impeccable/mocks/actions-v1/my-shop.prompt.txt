@@ -1,0 +1,15 @@
+Use case: ui-mockup.
+Create ONE complete high-fidelity Chinese mobile app screen, portrait approximately 851 x 1847, the same edge-to-edge screenshot framing as the references. No device frame, exterior canvas, collage or annotation.
+Input images are APPROVED STYLE AND COMPONENT REFERENCES of the same warm-apricot relationship reward app. Preserve their material, typography scale, gently rounded controls, thin warm-ink icon style and comfortable mobile spacing. Reference images are visual authority; the NEW SCREEN CONTENT below defines the page. Inherit only the chrome and visual system appropriate to this screen. Exact Chinese labels and numbers must be legible and correct.
+Colors: paper-warm background #F8F4EE, near-white surfaces #FFFCF8, ink #352D29, secondary #71685F, terracotta primary #A65A40 with white text, light apricot #F0DBCE. Gain/success #4F754D, loss/error #AF493B. Quiet textured warmth as reference, no noisy grain. Elegant Chinese serif for page or sheet headings; clear sans-serif for fields, instructions, buttons and values. One flat surface for forms, clear filled/outlined controls and fine dividers, no nested card composition. Content-first with readable type and comfortable tap areas.
+Status bar 9:41 and home indicator in consistent positions. Respect top and bottom safe areas. Keep the same reference avatars and product photos if used: 阿禾 woman at sunset; 小满 ginger-white cat; breakfast on ceramic plate with toast, egg and cup. All names/data are illustrative. No invented slogans, fields, dates, extra business features or filler.
+
+NEW SCREEN: 小卖部 with 我的店铺 selected, this time logged in as 小满, the shop owner. Image 1 anchors the exact two product images and browsing screen chrome; Image 2 anchors compact actions in a list.
+Root navigation same positions as Image 1, left current-account cat avatar with 我的, center 一起的小日子 with chevron, right notification bell. Page heading 小卖部, top right a compact plus 添加 action, same character as 新建 in Image 2. Below, two-option selector 逛小卖部 (unselected) / 我的店铺 (selected).
+Owner heading 小满的小卖部 with a small cat avatar, no slogan, no revenue totals.
+Two clean near-white list rows/cards with the same photographs as Image 1, moderately sized to leave readable management controls. Each row has title, price, literal listing status and two clear action buttons at the right or bottom-right inside the row:
+First 准备一份早餐 ; 10 分 / 份 ; status 已上架 in a restrained green label ; buttons 编辑 (outlined) and 下架 (quiet outlined).
+Second 陪你看一场电影 ; 20 分 / 份 ; status 已下架 in neutral gray-brown label ; buttons 编辑 (outlined) and 上架 (filled terracotta).
+The second product's photo remains visible and natural in color; only its state is unavailable for new purchases.
+Exactly four bottom tabs 近况 / 约定 / 小卖部 / 记录 with 小卖部 selected. No wallet income, seller point earnings, order badges, stock counts, ratings, storefront description, paid subscriptions or extra copy.
+This is the owner's separate viewpoint. Both manage actions must be readable, comfortably tappable, and fully visible without requiring detail navigation. Match the approved shop's layout language closely.

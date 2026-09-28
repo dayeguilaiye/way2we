@@ -1,0 +1,13 @@
+Use case: style-transfer.
+Image 1 is the EDIT TARGET: the REVISED compact Chinese cancellation/refund sheet. Its understated typography and flat fact rows are now the design authority.
+Image 2 is the old rose-colored screen and is a COLOR REFERENCE ONLY. Do not copy its oversized type, amount, image or layout.
+Apply the rose theme to Image 1 while preserving EVERY position, dimension, type size, type weight, line break, thumbnail size and layout exactly.
+Palette: background #FAF4F2, sheet/surfaces #FFFBF8, main ink #3D3034, secondary #79676C, primary controls and emphasized 20 分 #935D69, white button text, outlines #A0878E, quiet divider #E3D6D8. Keep the dimming overlay neutral and the pending-state badge warm amber. Do not recolor the breakfast photo or avatars.
+Keep exact active-sheet content:
+取消这笔购买？ / 关闭
+small breakfast thumbnail and 准备一份早餐 × 2
+退款对象 with 阿禾 aligned right
+退还积分 with 20 分 aligned right
+整笔取消，已提供部分内容也全额退款。
+保留购买 / 取消并退款
+Crucial: title remains a restrained sans-serif medium-weight small heading. Product line and factual rows remain normal body-sized sans-serif. 20 分 stays body-scale, not a hero metric. No large serif message, no giant centered number, no extra text or graphic, no layout redesign. Output same full portrait screenshot size as Image 1, status bar and home indicator included.

@@ -1,0 +1,552 @@
+{
+  "description": "仅为契约示例和预期状态，真实事务行为在服务实现后验证。邮箱、验证码与令牌均为虚构值。",
+  "exchanges": [
+    {
+      "name": "申请验证码",
+      "operation_id": "requestEmailCode",
+      "actor": "a",
+      "response_status": 202,
+      "response": {
+        "resend_after_seconds": 60,
+        "expires_in_seconds": 600
+      },
+      "request": {
+        "email": "a@example.com"
+      }
+    },
+    {
+      "name": "登录或恢复账号",
+      "operation_id": "createSession",
+      "actor": "a",
+      "response_status": 201,
+      "response": {
+        "access_token": "example-token-only",
+        "token_type": "Bearer",
+        "expires_at": "2026-10-28T08:00:00Z",
+        "user": {
+          "id": "00000000-0000-4000-8000-000000000001",
+          "display_name": "阿禾",
+          "theme": "apricot",
+          "created_at": "2026-09-28T08:00:00Z"
+        }
+      },
+      "request": {
+        "email": "a@example.com",
+        "code": "123456"
+      }
+    },
+    {
+      "name": "甲建立空间",
+      "operation_id": "createSpace",
+      "actor": "a",
+      "response_status": 201,
+      "response": {
+        "space": {
+          "id": "00000000-0000-4000-8000-000000000010",
+          "name": "一起的小日子",
+          "created_at": "2026-09-28T08:00:00Z"
+        },
+        "member": {
+          "id": "00000000-0000-4000-8000-000000000011",
+          "space_id": "00000000-0000-4000-8000-000000000010",
+          "user_id": "00000000-0000-4000-8000-000000000001",
+          "nickname": "阿禾",
+          "status": "active",
+          "balance": 0,
+          "joined_at": "2026-09-28T08:00:00Z",
+          "left_at": null
+        }
+      },
+      "request": {
+        "name": "一起的小日子",
+        "nickname": "阿禾"
+      },
+      "idempotency_key": "00000000-0000-4000-8000-000000000101",
+      "expected_business_state": {
+        "a_balance": 0
+      }
+    },
+    {
+      "name": "甲分享邀请码",
+      "operation_id": "createInvitation",
+      "actor": "a",
+      "response_status": 201,
+      "response": {
+        "invitation": {
+          "id": "00000000-0000-4000-8000-000000000015",
+          "space_id": "00000000-0000-4000-8000-000000000010",
+          "space_name": "一起的小日子",
+          "inviter_nickname": "阿禾",
+          "candidate_user_id": null,
+          "candidate_display_name": null,
+          "status": "waiting",
+          "accepted_at": null,
+          "expires_at": "2026-10-05T08:00:00Z",
+          "required_member_ids": [
+            "00000000-0000-4000-8000-000000000011"
+          ],
+          "approved_member_ids": [
+            "00000000-0000-4000-8000-000000000011"
+          ]
+        },
+        "invite_code": "ABCDEFGHIJKLMNOPQRST"
+      },
+      "idempotency_key": "00000000-0000-4000-8000-000000000102"
+    },
+    {
+      "name": "乙接受后加入",
+      "operation_id": "acceptInvitation",
+      "actor": "b",
+      "response_status": 200,
+      "response": {
+        "id": "00000000-0000-4000-8000-000000000015",
+        "space_id": "00000000-0000-4000-8000-000000000010",
+        "space_name": "一起的小日子",
+        "inviter_nickname": "阿禾",
+        "candidate_user_id": "00000000-0000-4000-8000-000000000002",
+        "candidate_display_name": "小满",
+        "status": "joined",
+        "accepted_at": "2026-09-28T08:00:00Z",
+        "expires_at": "2026-10-05T08:00:00Z",
+        "required_member_ids": [
+          "00000000-0000-4000-8000-000000000011"
+        ],
+        "approved_member_ids": [
+          "00000000-0000-4000-8000-000000000011"
+        ]
+      },
+      "request": {
+        "invite_code": "ABCDEFGHIJKLMNOPQRST",
+        "nickname": "小满"
+      },
+      "idempotency_key": "00000000-0000-4000-8000-000000000103",
+      "expected_business_state": {
+        "a_balance": 0,
+        "b_balance": 0
+      }
+    },
+    {
+      "name": "创建可重复约定",
+      "operation_id": "createAgreement",
+      "actor": "a",
+      "response_status": 201,
+      "response": {
+        "id": "00000000-0000-4000-8000-000000000020",
+        "space_id": "00000000-0000-4000-8000-000000000010",
+        "revision": 1,
+        "title": "散步 30 分钟",
+        "description": "一起出门走走。",
+        "points_delta": 10,
+        "member_ids": [
+          "00000000-0000-4000-8000-000000000011",
+          "00000000-0000-4000-8000-000000000012"
+        ],
+        "status": "active",
+        "created_at": "2026-09-28T08:00:00Z",
+        "updated_at": "2026-09-28T08:00:00Z"
+      },
+      "request": {
+        "title": "散步 30 分钟",
+        "description": "一起出门走走。",
+        "points_delta": 10,
+        "member_ids": [
+          "00000000-0000-4000-8000-000000000011",
+          "00000000-0000-4000-8000-000000000012"
+        ],
+        "status": "active"
+      },
+      "idempotency_key": "00000000-0000-4000-8000-000000000104"
+    },
+    {
+      "name": "甲第一次记分",
+      "operation_id": "recordScore",
+      "actor": "a",
+      "response_status": 201,
+      "response": {
+        "id": "00000000-0000-4000-8000-000000000021",
+        "space_id": "00000000-0000-4000-8000-000000000010",
+        "agreement_id": "00000000-0000-4000-8000-000000000020",
+        "agreement_revision": 1,
+        "agreement_title": "散步 30 分钟",
+        "member_id": "00000000-0000-4000-8000-000000000011",
+        "actor_member_id": "00000000-0000-4000-8000-000000000011",
+        "points_delta": 10,
+        "status": "recorded",
+        "created_at": "2026-09-28T08:00:00Z",
+        "revoked_at": null,
+        "revoked_by_member_id": null
+      },
+      "request": {
+        "agreement_id": "00000000-0000-4000-8000-000000000020",
+        "member_id": "00000000-0000-4000-8000-000000000011"
+      },
+      "idempotency_key": "00000000-0000-4000-8000-000000000105",
+      "expected_business_state": {
+        "a_balance": 10,
+        "b_balance": 0
+      }
+    },
+    {
+      "name": "甲第二次记分",
+      "operation_id": "recordScore",
+      "actor": "a",
+      "response_status": 201,
+      "response": {
+        "id": "00000000-0000-4000-8000-000000000022",
+        "space_id": "00000000-0000-4000-8000-000000000010",
+        "agreement_id": "00000000-0000-4000-8000-000000000020",
+        "agreement_revision": 1,
+        "agreement_title": "散步 30 分钟",
+        "member_id": "00000000-0000-4000-8000-000000000011",
+        "actor_member_id": "00000000-0000-4000-8000-000000000011",
+        "points_delta": 10,
+        "status": "recorded",
+        "created_at": "2026-09-28T08:00:00Z",
+        "revoked_at": null,
+        "revoked_by_member_id": null
+      },
+      "request": {
+        "agreement_id": "00000000-0000-4000-8000-000000000020",
+        "member_id": "00000000-0000-4000-8000-000000000011"
+      },
+      "idempotency_key": "00000000-0000-4000-8000-000000000106",
+      "expected_business_state": {
+        "a_balance": 20,
+        "b_balance": 0
+      }
+    },
+    {
+      "name": "乙上架早餐",
+      "operation_id": "createItem",
+      "actor": "b",
+      "response_status": 201,
+      "response": {
+        "id": "00000000-0000-4000-8000-000000000030",
+        "space_id": "00000000-0000-4000-8000-000000000010",
+        "owner_member_id": "00000000-0000-4000-8000-000000000012",
+        "version": 1,
+        "title": "准备一份早餐",
+        "description": "一份热乎乎的早餐。",
+        "kind": "service",
+        "unit_points": 10,
+        "media_id": null,
+        "status": "listed",
+        "is_purchasable": true,
+        "created_at": "2026-09-28T08:00:00Z",
+        "updated_at": "2026-09-28T08:00:00Z"
+      },
+      "request": {
+        "title": "准备一份早餐",
+        "description": "一份热乎乎的早餐。",
+        "kind": "service",
+        "unit_points": 10,
+        "media_id": null,
+        "status": "listed"
+      },
+      "idempotency_key": "00000000-0000-4000-8000-000000000107"
+    },
+    {
+      "name": "甲买两份早餐",
+      "operation_id": "createPurchase",
+      "actor": "a",
+      "response_status": 201,
+      "response": {
+        "id": "00000000-0000-4000-8000-000000000040",
+        "space_id": "00000000-0000-4000-8000-000000000010",
+        "buyer_member_id": "00000000-0000-4000-8000-000000000011",
+        "seller_member_id": "00000000-0000-4000-8000-000000000012",
+        "item_id": "00000000-0000-4000-8000-000000000030",
+        "item_snapshot": {
+          "title": "准备一份早餐",
+          "description": "一份热乎乎的早餐。",
+          "kind": "service",
+          "media_id": null
+        },
+        "unit_points": 10,
+        "quantity": 2,
+        "paid_points": 20,
+        "status": "pending",
+        "created_at": "2026-09-28T08:00:00Z",
+        "completed_at": null,
+        "completed_by_member_id": null,
+        "cancelled_at": null,
+        "cancelled_by_member_id": null,
+        "cancel_reason": null
+      },
+      "request": {
+        "item_id": "00000000-0000-4000-8000-000000000030",
+        "quantity": 2,
+        "expected_item_version": 1
+      },
+      "idempotency_key": "00000000-0000-4000-8000-000000000108",
+      "expected_business_state": {
+        "a_balance": 0,
+        "b_balance": 0,
+        "purchase_count": 1
+      }
+    },
+    {
+      "name": "相同操作超时重试",
+      "operation_id": "createPurchase",
+      "actor": "a",
+      "response_status": 201,
+      "response": {
+        "id": "00000000-0000-4000-8000-000000000040",
+        "space_id": "00000000-0000-4000-8000-000000000010",
+        "buyer_member_id": "00000000-0000-4000-8000-000000000011",
+        "seller_member_id": "00000000-0000-4000-8000-000000000012",
+        "item_id": "00000000-0000-4000-8000-000000000030",
+        "item_snapshot": {
+          "title": "准备一份早餐",
+          "description": "一份热乎乎的早餐。",
+          "kind": "service",
+          "media_id": null
+        },
+        "unit_points": 10,
+        "quantity": 2,
+        "paid_points": 20,
+        "status": "pending",
+        "created_at": "2026-09-28T08:00:00Z",
+        "completed_at": null,
+        "completed_by_member_id": null,
+        "cancelled_at": null,
+        "cancelled_by_member_id": null,
+        "cancel_reason": null
+      },
+      "request": {
+        "item_id": "00000000-0000-4000-8000-000000000030",
+        "quantity": 2,
+        "expected_item_version": 1
+      },
+      "idempotency_key": "00000000-0000-4000-8000-000000000108",
+      "expected_business_state": {
+        "a_balance": 0,
+        "b_balance": 0,
+        "purchase_count": 1
+      }
+    },
+    {
+      "name": "乙确认完成",
+      "operation_id": "completePurchase",
+      "actor": "b",
+      "response_status": 200,
+      "response": {
+        "id": "00000000-0000-4000-8000-000000000040",
+        "space_id": "00000000-0000-4000-8000-000000000010",
+        "buyer_member_id": "00000000-0000-4000-8000-000000000011",
+        "seller_member_id": "00000000-0000-4000-8000-000000000012",
+        "item_id": "00000000-0000-4000-8000-000000000030",
+        "item_snapshot": {
+          "title": "准备一份早餐",
+          "description": "一份热乎乎的早餐。",
+          "kind": "service",
+          "media_id": null
+        },
+        "unit_points": 10,
+        "quantity": 2,
+        "paid_points": 20,
+        "status": "completed",
+        "created_at": "2026-09-28T08:00:00Z",
+        "completed_at": "2026-09-28T08:00:00Z",
+        "completed_by_member_id": "00000000-0000-4000-8000-000000000012",
+        "cancelled_at": null,
+        "cancelled_by_member_id": null,
+        "cancel_reason": null
+      },
+      "idempotency_key": "00000000-0000-4000-8000-000000000109",
+      "expected_business_state": {
+        "a_balance": 0,
+        "b_balance": 0
+      }
+    },
+    {
+      "name": "乙取消已完成购买",
+      "operation_id": "cancelPurchase",
+      "actor": "b",
+      "response_status": 200,
+      "response": {
+        "id": "00000000-0000-4000-8000-000000000040",
+        "space_id": "00000000-0000-4000-8000-000000000010",
+        "buyer_member_id": "00000000-0000-4000-8000-000000000011",
+        "seller_member_id": "00000000-0000-4000-8000-000000000012",
+        "item_id": "00000000-0000-4000-8000-000000000030",
+        "item_snapshot": {
+          "title": "准备一份早餐",
+          "description": "一份热乎乎的早餐。",
+          "kind": "service",
+          "media_id": null
+        },
+        "unit_points": 10,
+        "quantity": 2,
+        "paid_points": 20,
+        "status": "cancelled",
+        "created_at": "2026-09-28T08:00:00Z",
+        "completed_at": "2026-09-28T08:00:00Z",
+        "completed_by_member_id": "00000000-0000-4000-8000-000000000012",
+        "cancelled_at": "2026-09-28T08:00:00Z",
+        "cancelled_by_member_id": "00000000-0000-4000-8000-000000000012",
+        "cancel_reason": "manual"
+      },
+      "idempotency_key": "00000000-0000-4000-8000-000000000110",
+      "expected_business_state": {
+        "a_balance": 20,
+        "b_balance": 0,
+        "refund_count": 1
+      }
+    },
+    {
+      "name": "甲再次取消同一购买",
+      "operation_id": "cancelPurchase",
+      "actor": "a",
+      "response_status": 200,
+      "response": {
+        "id": "00000000-0000-4000-8000-000000000040",
+        "space_id": "00000000-0000-4000-8000-000000000010",
+        "buyer_member_id": "00000000-0000-4000-8000-000000000011",
+        "seller_member_id": "00000000-0000-4000-8000-000000000012",
+        "item_id": "00000000-0000-4000-8000-000000000030",
+        "item_snapshot": {
+          "title": "准备一份早餐",
+          "description": "一份热乎乎的早餐。",
+          "kind": "service",
+          "media_id": null
+        },
+        "unit_points": 10,
+        "quantity": 2,
+        "paid_points": 20,
+        "status": "cancelled",
+        "created_at": "2026-09-28T08:00:00Z",
+        "completed_at": "2026-09-28T08:00:00Z",
+        "completed_by_member_id": "00000000-0000-4000-8000-000000000012",
+        "cancelled_at": "2026-09-28T08:00:00Z",
+        "cancelled_by_member_id": "00000000-0000-4000-8000-000000000012",
+        "cancel_reason": "manual"
+      },
+      "idempotency_key": "00000000-0000-4000-8000-000000000111",
+      "expected_business_state": {
+        "a_balance": 20,
+        "b_balance": 0,
+        "refund_count": 1
+      }
+    },
+    {
+      "name": "余额不足",
+      "operation_id": "createPurchase",
+      "actor": "a",
+      "response_status": 409,
+      "response": {
+        "error": {
+          "code": "INSUFFICIENT_POINTS",
+          "message": "积分不足，请调整数量或稍后再试。",
+          "field_errors": []
+        },
+        "request_id": "req_example_failure"
+      },
+      "request": {
+        "item_id": "00000000-0000-4000-8000-000000000030",
+        "quantity": 5,
+        "expected_item_version": 1
+      },
+      "idempotency_key": "00000000-0000-4000-8000-000000000112",
+      "expected_business_state": {
+        "a_balance": 20,
+        "b_balance": 0
+      }
+    },
+    {
+      "name": "核对取消结果",
+      "operation_id": "getOperation",
+      "actor": "b",
+      "response_status": 200,
+      "response": {
+        "idempotency_key": "00000000-0000-4000-8000-000000000110",
+        "operation_id": "cancelPurchase",
+        "status": "succeeded",
+        "original_http_status": 200,
+        "result": {
+          "id": "00000000-0000-4000-8000-000000000040",
+          "space_id": "00000000-0000-4000-8000-000000000010",
+          "buyer_member_id": "00000000-0000-4000-8000-000000000011",
+          "seller_member_id": "00000000-0000-4000-8000-000000000012",
+          "item_id": "00000000-0000-4000-8000-000000000030",
+          "item_snapshot": {
+            "title": "准备一份早餐",
+            "description": "一份热乎乎的早餐。",
+            "kind": "service",
+            "media_id": null
+          },
+          "unit_points": 10,
+          "quantity": 2,
+          "paid_points": 20,
+          "status": "cancelled",
+          "created_at": "2026-09-28T08:00:00Z",
+          "completed_at": "2026-09-28T08:00:00Z",
+          "completed_by_member_id": "00000000-0000-4000-8000-000000000012",
+          "cancelled_at": "2026-09-28T08:00:00Z",
+          "cancelled_by_member_id": "00000000-0000-4000-8000-000000000012",
+          "cancel_reason": "manual"
+        },
+        "created_at": "2026-09-28T08:00:00Z"
+      }
+    },
+    {
+      "name": "乙撤销甲第一次记分",
+      "operation_id": "revokeScore",
+      "actor": "b",
+      "response_status": 200,
+      "response": {
+        "id": "00000000-0000-4000-8000-000000000021",
+        "space_id": "00000000-0000-4000-8000-000000000010",
+        "agreement_id": "00000000-0000-4000-8000-000000000020",
+        "agreement_revision": 1,
+        "agreement_title": "散步 30 分钟",
+        "member_id": "00000000-0000-4000-8000-000000000011",
+        "actor_member_id": "00000000-0000-4000-8000-000000000011",
+        "points_delta": 10,
+        "status": "revoked",
+        "created_at": "2026-09-28T08:00:00Z",
+        "revoked_at": "2026-09-28T08:00:00Z",
+        "revoked_by_member_id": "00000000-0000-4000-8000-000000000012"
+      },
+      "idempotency_key": "00000000-0000-4000-8000-000000000113",
+      "expected_business_state": {
+        "a_balance": 10,
+        "b_balance": 0
+      }
+    }
+  ],
+  "invalid_requests": [
+    {
+      "operation_id": "createPurchase",
+      "request": {
+        "item_id": "00000000-0000-4000-8000-000000000030",
+        "quantity": 0,
+        "expected_item_version": 1
+      },
+      "reason": "数量须为正整数"
+    },
+    {
+      "operation_id": "createAgreement",
+      "request": {
+        "title": "散步 30 分钟",
+        "description": "一起出门走走。",
+        "points_delta": 0,
+        "member_ids": [
+          "00000000-0000-4000-8000-000000000011",
+          "00000000-0000-4000-8000-000000000012"
+        ],
+        "status": "active"
+      },
+      "reason": "约定分值不能为零"
+    },
+    {
+      "operation_id": "recordScore",
+      "request": {
+        "agreement_id": "00000000-0000-4000-8000-000000000020",
+        "member_id": "00000000-0000-4000-8000-000000000011",
+        "points_delta": 1000
+      },
+      "reason": "分值由服务端取当前约定"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+Use case: ui-mockup.
+Create ONE complete high-fidelity Chinese mobile app screen, portrait approximately 851 x 1847, the same edge-to-edge screenshot framing as the references. No device frame, exterior canvas, collage or annotation.
+Input images are APPROVED STYLE AND COMPONENT REFERENCES of the same warm-apricot relationship reward app. Preserve their material, typography scale, gently rounded controls, thin warm-ink icon style and comfortable mobile spacing. Reference images are visual authority; the NEW SCREEN CONTENT below defines the page. Inherit only the chrome and visual system appropriate to this screen. Exact Chinese labels and numbers must be legible and correct.
+Colors: paper-warm background #F8F4EE, near-white surfaces #FFFCF8, ink #352D29, secondary #71685F, terracotta primary #A65A40 with white text, light apricot #F0DBCE. Gain/success #4F754D, loss/error #AF493B. Quiet textured warmth as reference, no noisy grain. Elegant Chinese serif for page or sheet headings; clear sans-serif for fields, instructions, buttons and values. One flat surface for forms, clear filled/outlined controls and fine dividers, no nested card composition. Content-first with readable type and comfortable tap areas.
+Status bar 9:41 and home indicator in consistent positions. Respect top and bottom safe areas. Keep the same reference avatars and product photos if used: 阿禾 woman at sunset; 小满 ginger-white cat; breakfast on ceramic plate with toast, egg and cup. All names/data are illustrative. No invented slogans, fields, dates, extra business features or filler.
+
+NEW SCREEN: fully filled 新建约定 form, current account 阿禾. This form layout will also be reused for editing, so show concrete editable controls.
+Navigation at top: back chevron at left and centered title 新建约定. No root tab bar, space row, quote, botanical hero or floating action buttons.
+Use a calm full-page form with standard field labels above near-white editable areas. All content and bottom Save action visible without a keyboard. Exact field order:
+1. 约定名称 ; text input containing 散步 30 分钟.
+2. 说明（选填） ; multiline input containing 一起出门散步，累计满 30 分钟。.
+3. 适用成员 ; two separate selectable options with reference avatars and CLEAR CHECKBOXES, both checked: 阿禾（我） and 小满. Multiple members can be selected; no dropdown that implies a single choice.
+4. 积分变化 ; two-option segmented control 加分 (selected with terracotta background and white text) / 扣分 (unselected).
+5. 分值 ; numeric input containing 10 with a 分 suffix. This is a positive integer magnitude with the separate 加分/扣分 switch defining sign; do not put a negative sign in the input.
+Below fields a quiet short note 保存后立即生效，修改会保留记录。
+Near bottom above home safe area, full-width terracotta primary button 保存约定.
+Carefully match form row height and type size to the approved score sheet, clear focusable field boundaries, elegant but functional. No recurrence scheduler, approval workflow, deadline, public/private switch, reset options or per-member points.

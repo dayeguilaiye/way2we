@@ -1,0 +1,37 @@
+{
+  "id": "editorial",
+  "name": "C · 暖白画册",
+  "approved": false,
+  "artifact_type": "ui-mockup",
+  "provenance": {
+    "provider": "native image_gen__imagegen",
+    "mode": "built-in",
+    "initial_source": "/Users/zz-b191/.codex/generated_images/01a0b330-e535-7f70-84b9-c74d3b159c93/exec-57cb9fbb-436d-489a-a1c0-c0fdd3416437.png",
+    "source": "/Users/zz-b191/.codex/generated_images/01a0b330-e535-7f70-84b9-c74d3b159c93/exec-29afd14d-a254-4be9-b349-7dec12e21e0c.png",
+    "native_original_preserved": true,
+    "targeted_revisions": 1
+  },
+  "prompt": "Generate ONE exquisitely crafted high-fidelity mobile app HOME SCREEN design proposal. Use case ui-mockup. This is a functional Chinese-language iOS/Android app for partners and family sharing agreements, reward points and personal shops. User preference: refined, fresh, warm, tasteful; welcoming grown-up warmth. Portrait aspect ratio approximately 9:19.5, one screen only, high resolution, full-bleed screenshot with small OS status bar and home indicator; no phone hardware frame, no scene behind device, no proposal captions outside the app. This is a single visual-direction proposal, not a collage.\nPreserve exactly this established app information architecture, top to bottom:\n1. Quiet status bar 9:41.\n2. Header: small circular personal avatar with visible label 我的 on the LEFT; centered/current space selector 一起的小日子 with small chevron; bell icon on RIGHT. Balanced spacing, clear touch areas.\n3. Restrained, beautifully aligned member-balance summary: 阿禾（我） 10 分 and 小满 0 分; small links 查看积分明细 and 查看成员. Points should read as usable balance, not giant dashboard statistics. Simple circular avatars or initial avatars are appropriate.\n4. A clear primary action labeled 记一笔, with a consistent small drawn plus/pen icon.\n5. Section heading 待处理 and modest 查看全部 on right. ONE clean transaction row: 准备一份早餐 × 2, subline 小满提供 · 我已支付 20 分. On its RIGHT, two always-visible easy-to-tap buttons 完成 and 取消. Keep row content and these buttons neatly aligned and comfortably readable.\n6. Section 空间近况 with 全部记录 on right. TWO activity rows, precise hierarchy and thin separators as suitable: 今天 08:40 / 阿禾购买小满的早餐 × 2 / −20 分; 今天 08:30 / 阿禾为自己记录「散步 30 分钟」 / +10 分. Small understated avatars. One row can wrap naturally. No extra invented events.\n7. Four-item bottom navigation: 近况, 约定, 小卖部, 记录, each with a consistent finely drawn icon. 近况 selected. Native proportions, generous safe area, no fifth nav item.\nThe frame contains real app UI, readable Chinese text, convincing professional typography, comfortable body size, deliberate whitespace and aligned labels. Restrict decorative material to subtle details; functional text and controls dominate. Maintain strong text contrast and calm hierarchy. No hearts, couple silhouettes, childish mascots, pink gradient washes, glossy 3D ornaments, stickers, gold luxury ornaments, nested card piles, charts, progress rings, ranking, streaks, coins or gamification badges. No lorem ipsum, fake testimonials or invented brand logo. Every element should feel designed by an excellent mobile product designer. All numerical values above are synthetic demonstration data and must stay exactly as specified.\nVISUAL DIRECTION:\nContemporary independent lifestyle editorial translated into a highly usable Chinese mobile app. Luminous warm white #FCFAF5, rich soft ink #282724, sparing muted amber #B28242 accents, light warm-gray rules #EAE5DB. Almost entirely flat, no panel clutter, generous but efficient whitespace, exquisitely aligned text. Sophisticated Chinese sans body, discreet refined serif ONLY for two section titles if it improves finesse. Balanced small typography scale, no huge headlines. Primary action has dark warm-ink fill; amber marks selected nav and subtle highlights. Crisp 10-12px control radii, delicate line icons, strongest typographic precision of all directions. Feels premium, light and humane, not a financial app, not an editorial poster.\n",
+  "revision_prompt": "Edit the supplied UI mockup with ONE targeted layout correction: remove the entire large decorative lifestyle photographic banner between the 记一笔 primary button and the 待处理 section, including cup, furniture, plants, handwriting and all invented slogans. Close that gap by moving 待处理 and 空间近况 up; redistribute only a modest amount of whitespace to keep the complete portrait app screen balanced. Absolutely no replacement illustration, photograph, decorative plant, promotional copy or empty banner. Preserve the warm-white editorial palette, precise Chinese typography, all existing specified app labels, numbers, member summary, full-width 记一笔 primary action, transaction row with 完成 and 取消 on the RIGHT, both activity rows, OS status bar, bottom safe area, and exactly four bottom tabs 近况、约定、小卖部、记录. Keep the entire app screenshot full-bleed in portrait with no hardware frame. All app information and controls should remain readable. The final layout is header, member balances, 记一笔, 待处理 with transaction, 空间近况 with two activity rows, then bottom navigation. Do not add other content.",
+  "prompt_embedded": true,
+  "checks": {
+    "portrait_full_app_ui": true,
+    "bottom_navigation": [
+      "近况",
+      "约定",
+      "小卖部",
+      "记录"
+    ],
+    "transaction_buttons": [
+      "完成",
+      "取消"
+    ],
+    "transaction_buttons_position": "right",
+    "values_match_requested": true,
+    "decorative_banner_removed": true
+  },
+  "limitations": [
+    "Static direction mockup; app interactions are not implemented.",
+    "Generous blank space remains below the two activity rows."
+  ]
+}

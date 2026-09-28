@@ -1,0 +1,15 @@
+{
+  "id": "breakfast",
+  "file": "prototype/assets/breakfast.png",
+  "generatedBy": "image_gen.imagegen (native)",
+  "sourceImage": "/Users/zz-b191/.codex/generated_images/01a0c7c4-347e-7021-b2b7-aad69512762a/exec-85e2b8de-9d7e-4ce3-8b1f-04afe1ec9ece.png",
+  "referenceImage": ".impeccable/build/crops/breakfast-ref.png",
+  "promptFile": "prototype/assets/breakfast.prompt.txt",
+  "width": 1254,
+  "height": 1254,
+  "format": "PNG",
+  "alpha": false,
+  "generatedAt": "2026-09-22",
+  "visualCheck": "Reference subject, composition, visual weight and palette inspected.",
+  "alphaCheck": null
+}

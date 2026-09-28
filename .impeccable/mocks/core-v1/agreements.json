@@ -1,0 +1,17 @@
+{
+  "name": "约定列表",
+  "date": "2026-09-22",
+  "theme": "apricot",
+  "tool": "native image_gen",
+  "file": "agreements.png",
+  "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-d3127a86-0803-4f47-934b-56c517bfba6f.png",
+  "references": [
+    "../themes/apricot-reference.png"
+  ],
+  "prompt_file": "agreements.prompt.txt",
+  "approved": true,
+  "status": "用户已确认",
+  "scope": "关键页面静态视觉稿；已确认业务规则与所选首页风格的页面延展。实际交互、文字缩放与可访问性在原型和实现阶段验证。",
+  "approval_evidence": "用户在四张关键页面设计图展示后回复：可以，继续吧。",
+  "approval_scope": "页面视觉方向与布局，延续已确认业务流程；实际代码与移动端适配在后续验证。"
+}

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Scaffold reference: apricot-reference.png</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400&display=swap">
+  <link rel="stylesheet" href="layout.css">
+  <style>html,body{margin:0}body{background:#f7f7ef}.region{box-sizing:border-box}.region.text p{white-space:pre-wrap}</style>
+</head>
+<body>
+<!-- Reference only. Every region sits at its measured box inside a comp-aspect frame. Take the boxes (layout.css), keep your own semantic structure. -->
+<main class="comp-frame" style="max-width:851px">
+  <div class="r-status region chrome" data-region="status"><!-- Native-style time, signal, Wi-Fi and battery icons rendered as code --></div>
+  <figure class="r-my-avatar region plate" data-region="my-avatar"><img src="../../../assets/plates/my-avatar.png" alt="" style="width:100%;height:100%;object-fit:contain;object-position:center"></figure>
+  <div class="r-my-label region text" data-region="my-label"><!-- 我的 label --><p style="line-height:1.05;margin:0">my-label</p></div>
+  <div class="r-space-title region text" data-region="space-title"><!-- 一起的小日子 with dropdown chevron --><p style="font-size:var(--r-space-title-font);line-height:1.05;margin:0">space-title</p></div>
+  <div class="r-notification region control" data-region="notification"><!-- Outline bell button: rebuild the control's chrome from the crop (comp-spec.mjs --crop notification); its ink box, border, fill, radius, and label size are the comp's --></div>
+  <div class="r-hero-quote region text" data-region="hero-quote"><!-- Two lines of elegant Chinese serif text 平凡的日常，也是值得好好记录的生活。 --><p style="font-size:var(--r-hero-quote-font);font-family:var(--r-hero-quote-family),sans-serif;font-weight:var(--r-hero-quote-weight);line-height:1.05;margin:0">hero-quote</p></div>
+  <figure class="r-botanical region plate" data-region="botanical"><img src="../../../assets/plates/botanical.png" alt="" style="width:100%;height:100%;object-fit:contain;object-position:top left"></figure>
+  <div class="r-hero-caption region text" data-region="hero-caption"><!-- Together life gentler caption 一起，让日子更温柔一点。 --><p style="font-size:var(--r-hero-caption-font);line-height:1.05;margin:0">hero-caption</p></div>
+  <div class="r-balances-surface region chrome" data-region="balances-surface"><!-- Warm-white rounded balance surface --></div>
+  <figure class="r-avatar-a region plate" data-region="avatar-a"><img src="../../../assets/plates/avatar-a.png" alt="" style="width:100%;height:100%;object-fit:contain;object-position:center"></figure>
+  <div class="r-balance-a region text" data-region="balance-a"><!-- 阿禾（我）, 10 分, 查看积分明细 --><p style="font-size:var(--r-balance-a-font);line-height:1.05;margin:0">balance-a</p></div>
+  <figure class="r-avatar-b region plate" data-region="avatar-b"><img src="../../../assets/plates/avatar-b.png" alt="" style="width:100%;height:100%;object-fit:contain;object-position:center"></figure>
+  <div class="r-balance-b region text" data-region="balance-b"><!-- 小满, 0 分, 查看成员 --><p style="font-size:var(--r-balance-b-font);line-height:1.05;margin:0">balance-b</p></div>
+  <div class="r-score-button region control" data-region="score-button"><!-- Full-width warm terracotta button with plus icon and 记一笔: rebuild the control's chrome from the crop (comp-spec.mjs --crop score-button); its ink box, border, fill, radius, and label size are the comp's --></div>
+  <div class="r-pending-title region text" data-region="pending-title"><!-- Serif section title 待处理 --><p style="font-size:var(--r-pending-title-font);font-family:var(--r-pending-title-family),sans-serif;font-weight:var(--r-pending-title-weight);line-height:1.05;margin:0">pending-title</p></div>
+  <div class="r-pending-all region control" data-region="pending-all"><!-- 查看全部 chevron: rebuild the control's chrome from the crop (comp-spec.mjs --crop pending-all); its ink box, border, fill, radius, and label size are the comp's --></div>
+  <div class="r-pending-row region chrome" data-region="pending-row"><!-- Near-white pending transaction row with small cup icon at left --></div>
+  <div class="r-pending-copy region text" data-region="pending-copy"><!-- 准备一份早餐 × 2, 小满提供 · 我已支付 20 分 --><p style="font-size:var(--r-pending-copy-font);line-height:1.05;margin:0">pending-copy</p></div>
+  <div class="r-complete-button region control" data-region="complete-button"><!-- Filled terracotta 完成 button: rebuild the control's chrome from the crop (comp-spec.mjs --crop complete-button); its ink box, border, fill, radius, and label size are the comp's --></div>
+  <div class="r-cancel-button region control" data-region="cancel-button"><!-- Outlined 取消 button: rebuild the control's chrome from the crop (comp-spec.mjs --crop cancel-button); its ink box, border, fill, radius, and label size are the comp's --></div>
+  <div class="r-activity-title region text" data-region="activity-title"><!-- Serif section title 空间近况 --><p style="font-size:var(--r-activity-title-font);line-height:1.05;margin:0">activity-title</p></div>
+  <div class="r-activity-all region control" data-region="activity-all"><!-- 全部记录 chevron: rebuild the control's chrome from the crop (comp-spec.mjs --crop activity-all); its ink box, border, fill, radius, and label size are the comp's --></div>
+  <div class="r-activity-surface region chrome" data-region="activity-surface"><!-- Near-white activity list with thin separator --></div>
+  <figure class="r-activity-a region plate" data-region="activity-a"><img src="../../../assets/plates/activity-a.png" alt="" style="width:100%;height:100%;object-fit:contain;object-position:center"></figure>
+  <div class="r-activity-copy-a region text" data-region="activity-copy-a"><!-- 今天 08:40 and 阿禾购买小满的早餐 × 2 --><p style="font-size:var(--r-activity-copy-a-font);line-height:1.05;margin:0">activity-copy-a</p></div>
+  <div class="r-activity-delta-a region text" data-region="activity-delta-a"><!-- −20 分 in brick red --><p style="font-size:var(--r-activity-delta-a-font);line-height:1.05;margin:0">activity-delta-a</p></div>
+  <figure class="r-activity-b region plate" data-region="activity-b"><img src="../../../assets/plates/activity-b.png" alt="" style="width:100%;height:100%;object-fit:contain;object-position:center"></figure>
+  <div class="r-activity-copy-b region text" data-region="activity-copy-b"><!-- 今天 08:30 and 阿禾为自己记录「散步 30 分钟」 --><p style="font-size:var(--r-activity-copy-b-font);line-height:1.05;margin:0">activity-copy-b</p></div>
+  <div class="r-activity-delta-b region text" data-region="activity-delta-b"><!-- +10 分 in green --><p style="font-size:var(--r-activity-delta-b-font);line-height:1.05;margin:0">activity-delta-b</p></div>
+  <div class="r-bottom-nav region chrome" data-region="bottom-nav"><!-- Four tab icons and labels 近况 约定 小卖部 记录; home selected --></div>
+  <div class="r-home-indicator region chrome" data-region="home-indicator"><!-- Black system home indicator --></div>
+  <div class="r-header-ground region chrome" data-region="header-ground"><!-- Single flat warm background of the header; all header contents individually named --></div>
+  <div class="r-quote-ground region chrome" data-region="quote-ground"><!-- Flat warm ground behind quote, lettering measured separately --></div>
+  <div class="r-pending-heading-ground region chrome" data-region="pending-heading-ground"><!-- Flat background around the pending heading and lower edge of the score control; each element measured separately --></div>
+</main>
+</body>
+</html>

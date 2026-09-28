@@ -1,0 +1,638 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-22T07:58:52.623844+00:00",
+  "title": "Design System: way2we · 日常信笺",
+  "extensions": {
+    "colorMeta": {
+      "bg": {
+        "role": "neutral",
+        "displayName": "暖杏 · 纸面",
+        "tonalRamp": [
+          "oklch(15% 0.00905 78.28)",
+          "oklch(27% 0.00905 78.28)",
+          "oklch(39% 0.00905 78.28)",
+          "oklch(51% 0.00905 78.28)",
+          "oklch(63% 0.00905 78.28)",
+          "oklch(75% 0.00905 78.28)",
+          "oklch(87% 0.00905 78.28)",
+          "oklch(95% 0.00905 78.28)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "暖杏 · 内容表面",
+        "tonalRamp": [
+          "oklch(15% 0.00619 75.41)",
+          "oklch(27% 0.00619 75.41)",
+          "oklch(39% 0.00619 75.41)",
+          "oklch(51% 0.00619 75.41)",
+          "oklch(63% 0.00619 75.41)",
+          "oklch(75% 0.00619 75.41)",
+          "oklch(87% 0.00619 75.41)",
+          "oklch(95% 0.00619 75.41)"
+        ]
+      },
+      "tint": {
+        "role": "secondary",
+        "displayName": "暖杏 · 浅衬底",
+        "tonalRamp": [
+          "oklch(15% 0.02919 53.96)",
+          "oklch(27% 0.02919 53.96)",
+          "oklch(39% 0.02919 53.96)",
+          "oklch(51% 0.02919 53.96)",
+          "oklch(63% 0.02919 53.96)",
+          "oklch(75% 0.02919 53.96)",
+          "oklch(87% 0.02919 53.96)",
+          "oklch(95% 0.02919 53.96)"
+        ]
+      },
+      "primary": {
+        "role": "primary",
+        "displayName": "暖杏 · 主色",
+        "tonalRamp": [
+          "oklch(15% 0.10712 39.48)",
+          "oklch(27% 0.10712 39.48)",
+          "oklch(39% 0.10712 39.48)",
+          "oklch(51% 0.10712 39.48)",
+          "oklch(63% 0.10712 39.48)",
+          "oklch(75% 0.10712 39.48)",
+          "oklch(87% 0.10712 39.48)",
+          "oklch(95% 0.10712 39.48)"
+        ]
+      },
+      "pressed": {
+        "role": "primary",
+        "displayName": "暖杏 · 按下主色",
+        "tonalRamp": [
+          "oklch(15% 0.10061 38.82)",
+          "oklch(27% 0.10061 38.82)",
+          "oklch(39% 0.10061 38.82)",
+          "oklch(51% 0.10061 38.82)",
+          "oklch(63% 0.10061 38.82)",
+          "oklch(75% 0.10061 38.82)",
+          "oklch(87% 0.10061 38.82)",
+          "oklch(95% 0.10061 38.82)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "暖杏 · 正文墨色",
+        "tonalRamp": [
+          "oklch(15% 0.01373 48.25)",
+          "oklch(27% 0.01373 48.25)",
+          "oklch(39% 0.01373 48.25)",
+          "oklch(51% 0.01373 48.25)",
+          "oklch(63% 0.01373 48.25)",
+          "oklch(75% 0.01373 48.25)",
+          "oklch(87% 0.01373 48.25)",
+          "oklch(95% 0.01373 48.25)"
+        ]
+      },
+      "secondary": {
+        "role": "neutral",
+        "displayName": "暖杏 · 次要文字",
+        "tonalRamp": [
+          "oklch(15% 0.01793 67.42)",
+          "oklch(27% 0.01793 67.42)",
+          "oklch(39% 0.01793 67.42)",
+          "oklch(51% 0.01793 67.42)",
+          "oklch(63% 0.01793 67.42)",
+          "oklch(75% 0.01793 67.42)",
+          "oklch(87% 0.01793 67.42)",
+          "oklch(95% 0.01793 67.42)"
+        ]
+      },
+      "divider": {
+        "role": "neutral",
+        "displayName": "暖杏 · 分隔线",
+        "tonalRamp": [
+          "oklch(15% 0.01820 64.91)",
+          "oklch(27% 0.01820 64.91)",
+          "oklch(39% 0.01820 64.91)",
+          "oklch(51% 0.01820 64.91)",
+          "oklch(63% 0.01820 64.91)",
+          "oklch(75% 0.01820 64.91)",
+          "oklch(87% 0.01820 64.91)",
+          "oklch(95% 0.01820 64.91)"
+        ]
+      },
+      "outline": {
+        "role": "neutral",
+        "displayName": "暖杏 · 控件边界",
+        "tonalRamp": [
+          "oklch(15% 0.02822 63.49)",
+          "oklch(27% 0.02822 63.49)",
+          "oklch(39% 0.02822 63.49)",
+          "oklch(51% 0.02822 63.49)",
+          "oklch(63% 0.02822 63.49)",
+          "oklch(75% 0.02822 63.49)",
+          "oklch(87% 0.02822 63.49)",
+          "oklch(95% 0.02822 63.49)"
+        ]
+      },
+      "celadon-bg": {
+        "role": "neutral",
+        "displayName": "青瓷 · 纸面",
+        "tonalRamp": [
+          "oklch(15% 0.00930 113.16)",
+          "oklch(27% 0.00930 113.16)",
+          "oklch(39% 0.00930 113.16)",
+          "oklch(51% 0.00930 113.16)",
+          "oklch(63% 0.00930 113.16)",
+          "oklch(75% 0.00930 113.16)",
+          "oklch(87% 0.00930 113.16)",
+          "oklch(95% 0.00930 113.16)"
+        ]
+      },
+      "celadon-surface": {
+        "role": "neutral",
+        "displayName": "青瓷 · 内容表面",
+        "tonalRamp": [
+          "oklch(15% 0.00658 106.52)",
+          "oklch(27% 0.00658 106.52)",
+          "oklch(39% 0.00658 106.52)",
+          "oklch(51% 0.00658 106.52)",
+          "oklch(63% 0.00658 106.52)",
+          "oklch(75% 0.00658 106.52)",
+          "oklch(87% 0.00658 106.52)",
+          "oklch(95% 0.00658 106.52)"
+        ]
+      },
+      "celadon-tint": {
+        "role": "secondary",
+        "displayName": "青瓷 · 浅衬底",
+        "tonalRamp": [
+          "oklch(15% 0.01648 133.83)",
+          "oklch(27% 0.01648 133.83)",
+          "oklch(39% 0.01648 133.83)",
+          "oklch(51% 0.01648 133.83)",
+          "oklch(63% 0.01648 133.83)",
+          "oklch(75% 0.01648 133.83)",
+          "oklch(87% 0.01648 133.83)",
+          "oklch(95% 0.01648 133.83)"
+        ]
+      },
+      "celadon-primary": {
+        "role": "primary",
+        "displayName": "青瓷 · 主色",
+        "tonalRamp": [
+          "oklch(15% 0.04241 160.27)",
+          "oklch(27% 0.04241 160.27)",
+          "oklch(39% 0.04241 160.27)",
+          "oklch(51% 0.04241 160.27)",
+          "oklch(63% 0.04241 160.27)",
+          "oklch(75% 0.04241 160.27)",
+          "oklch(87% 0.04241 160.27)",
+          "oklch(95% 0.04241 160.27)"
+        ]
+      },
+      "celadon-pressed": {
+        "role": "primary",
+        "displayName": "青瓷 · 按下主色",
+        "tonalRamp": [
+          "oklch(15% 0.03708 161.72)",
+          "oklch(27% 0.03708 161.72)",
+          "oklch(39% 0.03708 161.72)",
+          "oklch(51% 0.03708 161.72)",
+          "oklch(63% 0.03708 161.72)",
+          "oklch(75% 0.03708 161.72)",
+          "oklch(87% 0.03708 161.72)",
+          "oklch(95% 0.03708 161.72)"
+        ]
+      },
+      "celadon-ink": {
+        "role": "neutral",
+        "displayName": "青瓷 · 正文墨色",
+        "tonalRamp": [
+          "oklch(15% 0.02125 155.88)",
+          "oklch(27% 0.02125 155.88)",
+          "oklch(39% 0.02125 155.88)",
+          "oklch(51% 0.02125 155.88)",
+          "oklch(63% 0.02125 155.88)",
+          "oklch(75% 0.02125 155.88)",
+          "oklch(87% 0.02125 155.88)",
+          "oklch(95% 0.02125 155.88)"
+        ]
+      },
+      "celadon-secondary": {
+        "role": "neutral",
+        "displayName": "青瓷 · 次要文字",
+        "tonalRamp": [
+          "oklch(15% 0.02437 147.37)",
+          "oklch(27% 0.02437 147.37)",
+          "oklch(39% 0.02437 147.37)",
+          "oklch(51% 0.02437 147.37)",
+          "oklch(63% 0.02437 147.37)",
+          "oklch(75% 0.02437 147.37)",
+          "oklch(87% 0.02437 147.37)",
+          "oklch(95% 0.02437 147.37)"
+        ]
+      },
+      "celadon-divider": {
+        "role": "neutral",
+        "displayName": "青瓷 · 分隔线",
+        "tonalRamp": [
+          "oklch(15% 0.01781 131.89)",
+          "oklch(27% 0.01781 131.89)",
+          "oklch(39% 0.01781 131.89)",
+          "oklch(51% 0.01781 131.89)",
+          "oklch(63% 0.01781 131.89)",
+          "oklch(75% 0.01781 131.89)",
+          "oklch(87% 0.01781 131.89)",
+          "oklch(95% 0.01781 131.89)"
+        ]
+      },
+      "celadon-outline": {
+        "role": "neutral",
+        "displayName": "青瓷 · 控件边界",
+        "tonalRamp": [
+          "oklch(15% 0.03218 142.10)",
+          "oklch(27% 0.03218 142.10)",
+          "oklch(39% 0.03218 142.10)",
+          "oklch(51% 0.03218 142.10)",
+          "oklch(63% 0.03218 142.10)",
+          "oklch(75% 0.03218 142.10)",
+          "oklch(87% 0.03218 142.10)",
+          "oklch(95% 0.03218 142.10)"
+        ]
+      },
+      "rose-bg": {
+        "role": "neutral",
+        "displayName": "雾玫 · 纸面",
+        "tonalRamp": [
+          "oklch(15% 0.00700 39.46)",
+          "oklch(27% 0.00700 39.46)",
+          "oklch(39% 0.00700 39.46)",
+          "oklch(51% 0.00700 39.46)",
+          "oklch(63% 0.00700 39.46)",
+          "oklch(75% 0.00700 39.46)",
+          "oklch(87% 0.00700 39.46)",
+          "oklch(95% 0.00700 39.46)"
+        ]
+      },
+      "rose-surface": {
+        "role": "neutral",
+        "displayName": "雾玫 · 内容表面",
+        "tonalRamp": [
+          "oklch(15% 0.00585 59.65)",
+          "oklch(27% 0.00585 59.65)",
+          "oklch(39% 0.00585 59.65)",
+          "oklch(51% 0.00585 59.65)",
+          "oklch(63% 0.00585 59.65)",
+          "oklch(75% 0.00585 59.65)",
+          "oklch(87% 0.00585 59.65)",
+          "oklch(95% 0.00585 59.65)"
+        ]
+      },
+      "rose-tint": {
+        "role": "secondary",
+        "displayName": "雾玫 · 浅衬底",
+        "tonalRamp": [
+          "oklch(15% 0.01796 4.55)",
+          "oklch(27% 0.01796 4.55)",
+          "oklch(39% 0.01796 4.55)",
+          "oklch(51% 0.01796 4.55)",
+          "oklch(63% 0.01796 4.55)",
+          "oklch(75% 0.01796 4.55)",
+          "oklch(87% 0.01796 4.55)",
+          "oklch(95% 0.01796 4.55)"
+        ]
+      },
+      "rose-primary": {
+        "role": "primary",
+        "displayName": "雾玫 · 主色",
+        "tonalRamp": [
+          "oklch(15% 0.07226 5.30)",
+          "oklch(27% 0.07226 5.30)",
+          "oklch(39% 0.07226 5.30)",
+          "oklch(51% 0.07226 5.30)",
+          "oklch(63% 0.07226 5.30)",
+          "oklch(75% 0.07226 5.30)",
+          "oklch(87% 0.07226 5.30)",
+          "oklch(95% 0.07226 5.30)"
+        ]
+      },
+      "rose-pressed": {
+        "role": "primary",
+        "displayName": "雾玫 · 按下主色",
+        "tonalRamp": [
+          "oklch(15% 0.06832 4.17)",
+          "oklch(27% 0.06832 4.17)",
+          "oklch(39% 0.06832 4.17)",
+          "oklch(51% 0.06832 4.17)",
+          "oklch(63% 0.06832 4.17)",
+          "oklch(75% 0.06832 4.17)",
+          "oklch(87% 0.06832 4.17)",
+          "oklch(95% 0.06832 4.17)"
+        ]
+      },
+      "rose-ink": {
+        "role": "neutral",
+        "displayName": "雾玫 · 正文墨色",
+        "tonalRamp": [
+          "oklch(15% 0.01994 357.88)",
+          "oklch(27% 0.01994 357.88)",
+          "oklch(39% 0.01994 357.88)",
+          "oklch(51% 0.01994 357.88)",
+          "oklch(63% 0.01994 357.88)",
+          "oklch(75% 0.01994 357.88)",
+          "oklch(87% 0.01994 357.88)",
+          "oklch(95% 0.01994 357.88)"
+        ]
+      },
+      "rose-secondary": {
+        "role": "neutral",
+        "displayName": "雾玫 · 次要文字",
+        "tonalRamp": [
+          "oklch(15% 0.02403 359.33)",
+          "oklch(27% 0.02403 359.33)",
+          "oklch(39% 0.02403 359.33)",
+          "oklch(51% 0.02403 359.33)",
+          "oklch(63% 0.02403 359.33)",
+          "oklch(75% 0.02403 359.33)",
+          "oklch(87% 0.02403 359.33)",
+          "oklch(95% 0.02403 359.33)"
+        ]
+      },
+      "rose-divider": {
+        "role": "neutral",
+        "displayName": "雾玫 · 分隔线",
+        "tonalRamp": [
+          "oklch(15% 0.01458 6.75)",
+          "oklch(27% 0.01458 6.75)",
+          "oklch(39% 0.01458 6.75)",
+          "oklch(51% 0.01458 6.75)",
+          "oklch(63% 0.01458 6.75)",
+          "oklch(75% 0.01458 6.75)",
+          "oklch(87% 0.01458 6.75)",
+          "oklch(95% 0.01458 6.75)"
+        ]
+      },
+      "rose-outline": {
+        "role": "neutral",
+        "displayName": "雾玫 · 控件边界",
+        "tonalRamp": [
+          "oklch(15% 0.03184 359.29)",
+          "oklch(27% 0.03184 359.29)",
+          "oklch(39% 0.03184 359.29)",
+          "oklch(51% 0.03184 359.29)",
+          "oklch(63% 0.03184 359.29)",
+          "oklch(75% 0.03184 359.29)",
+          "oklch(87% 0.03184 359.29)",
+          "oklch(95% 0.03184 359.29)"
+        ]
+      },
+      "on-primary": {
+        "role": "neutral",
+        "displayName": "共用 · 主操作文字",
+        "tonalRamp": [
+          "oklch(15% 0.00000 0.00)",
+          "oklch(27% 0.00000 0.00)",
+          "oklch(39% 0.00000 0.00)",
+          "oklch(51% 0.00000 0.00)",
+          "oklch(63% 0.00000 0.00)",
+          "oklch(75% 0.00000 0.00)",
+          "oklch(87% 0.00000 0.00)",
+          "oklch(95% 0.00000 0.00)"
+        ]
+      },
+      "positive": {
+        "role": "semantic",
+        "displayName": "共用 · 积分增加",
+        "tonalRamp": [
+          "oklch(15% 0.07518 143.25)",
+          "oklch(27% 0.07518 143.25)",
+          "oklch(39% 0.07518 143.25)",
+          "oklch(51% 0.07518 143.25)",
+          "oklch(63% 0.07518 143.25)",
+          "oklch(75% 0.07518 143.25)",
+          "oklch(87% 0.07518 143.25)",
+          "oklch(95% 0.07518 143.25)"
+        ]
+      },
+      "negative": {
+        "role": "semantic",
+        "displayName": "共用 · 积分减少与错误",
+        "tonalRamp": [
+          "oklch(15% 0.13655 30.07)",
+          "oklch(27% 0.13655 30.07)",
+          "oklch(39% 0.13655 30.07)",
+          "oklch(51% 0.13655 30.07)",
+          "oklch(63% 0.13655 30.07)",
+          "oklch(75% 0.13655 30.07)",
+          "oklch(87% 0.13655 30.07)",
+          "oklch(95% 0.13655 30.07)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "页面标题",
+        "purpose": "约定、小卖部和记录页面的宋体标题。"
+      },
+      "headline": {
+        "displayName": "首页分区",
+        "purpose": "首页待处理与空间近况分区。"
+      },
+      "hero": {
+        "displayName": "生活文案",
+        "purpose": "首页两行宋体文案，放大字号时随布局调整。"
+      },
+      "title": {
+        "displayName": "确认标题",
+        "purpose": "短确认弹层的无衬线小标题。"
+      },
+      "body": {
+        "displayName": "页面正文",
+        "purpose": "默认业务页面与继承字号的控件。"
+      },
+      "sheet-body": {
+        "displayName": "弹层正文",
+        "purpose": "商品摘要、对象与金额信息行。"
+      },
+      "label": {
+        "displayName": "操作文字",
+        "purpose": "继承所在页面或弹层的文字尺度。"
+      },
+      "balance": {
+        "displayName": "余额",
+        "purpose": "使用 tabular-nums 的重点数值。"
+      }
+    },
+    "shadows": [
+      {
+        "name": "toast",
+        "value": "0 5px 18px #352d291f",
+        "purpose": "短暂文字反馈。"
+      },
+      {
+        "name": "preview-shell",
+        "value": "0 18px 55px #44342821",
+        "purpose": "仅桌面浏览器演示外壳。"
+      }
+    ],
+    "motion": [
+      {
+        "name": "sheet-enter",
+        "value": "240ms cubic-bezier(.16,1,.3,1)",
+        "purpose": "translateY(20px) / opacity .65 到 translateY(0) / opacity 1。"
+      },
+      {
+        "name": "toast-fade",
+        "value": "150ms ease",
+        "purpose": "反馈文字的透明度过渡。"
+      },
+      {
+        "name": "toast-visible",
+        "value": "2600ms",
+        "purpose": "交互脚本中的反馈保留时间。"
+      },
+      {
+        "name": "button-press",
+        "value": "translateY(1px)",
+        "purpose": "按下时的即时位置反馈。"
+      },
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "关闭动画、过渡与平滑滚动。"
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "browser-fullscreen",
+        "value": "760px"
+      },
+      {
+        "name": "narrow-phone",
+        "value": "360px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "主要按钮",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "保存、确认等主要操作；按下和键盘焦点沿用原型。",
+      "html": "<button class=\"ds-button ds-primary\">保存约定</button>",
+      "css": ".ds-button{font-family:-apple-system, BlinkMacSystemFont, \"PingFang SC\", \"Microsoft YaHei\", sans-serif;font-size:calc(.875rem * var(--zoom,1));line-height:1.45;min-height:2.75rem;border-radius:8px;border:1px solid var(--outline,#978779);background:transparent;color:var(--ink,#352D29);padding:.55rem .85rem;display:inline-flex;gap:.35rem;align-items:center;justify-content:center;text-align:center;cursor:pointer;}.ds-primary,.ds-primary:hover{color:white;background:var(--primary,#A65A40);border-color:var(--primary,#A65A40)}.ds-primary:active{background:var(--pressed,#934D36)}.ds-button:focus-visible{outline:2px solid var(--primary,#A65A40);outline-offset:3px;}.ds-button:active{transform:translateY(1px)}.ds-button:disabled{cursor:default;opacity:.45}"
+    },
+    {
+      "name": "描边按钮",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "保留、取消入口等次要操作。",
+      "html": "<button class=\"ds-button\">保留购买</button>",
+      "css": ".ds-button,.ds-button:hover{font-family:-apple-system, BlinkMacSystemFont, \"PingFang SC\", \"Microsoft YaHei\", sans-serif;font-size:calc(.875rem * var(--zoom,1));line-height:1.45;min-height:2.75rem;border-radius:8px;border:1px solid var(--outline,#978779);background:transparent;color:var(--ink,#352D29);padding:.55rem .85rem;display:inline-flex;gap:.35rem;align-items:center;justify-content:center;text-align:center;cursor:pointer;}.ds-button:focus-visible{outline:2px solid var(--primary,#A65A40);outline-offset:3px;}.ds-button:active{transform:translateY(1px)}.ds-button:disabled{cursor:default;opacity:.45}"
+    },
+    {
+      "name": "文字按钮",
+      "kind": "button",
+      "refersTo": "button-text",
+      "description": "查看详情或补充操作。",
+      "html": "<button class=\"ds-button ds-text\">查看详情</button>",
+      "css": ".ds-button{font-family:-apple-system, BlinkMacSystemFont, \"PingFang SC\", \"Microsoft YaHei\", sans-serif;font-size:calc(.875rem * var(--zoom,1));line-height:1.45;min-height:2.75rem;border-radius:8px;border:1px solid var(--outline,#978779);background:transparent;color:var(--ink,#352D29);padding:.55rem .85rem;display:inline-flex;gap:.35rem;align-items:center;justify-content:center;text-align:center;cursor:pointer;}.ds-text,.ds-text:hover{border-color:transparent;color:var(--primary,#A65A40)}.ds-button:focus-visible{outline:2px solid var(--primary,#A65A40);outline-offset:3px;}.ds-button:active{transform:translateY(1px)}.ds-button:disabled{cursor:default;opacity:.45}"
+    },
+    {
+      "name": "文本输入",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "标签在上，错误信息紧邻输入；键盘焦点使用主色。",
+      "html": "<label class=\"ds-field\"><span>约定名称</span><input class=\"ds-input\" type=\"text\" placeholder=\"例如：散步 30 分钟\"></label>",
+      "css": ".ds-field{display:block;font-family:-apple-system, BlinkMacSystemFont, \"PingFang SC\", \"Microsoft YaHei\", sans-serif;font-size:calc(.875rem * var(--zoom,1));line-height:1.45;line-height:1.5;color:var(--ink,#352D29)}.ds-field>span{display:block;margin-bottom:.5rem;font-weight:500}.ds-input{font:inherit;width:100%;background:var(--surface,#FFFCF8);color:var(--ink,#352D29);border:1px solid var(--outline,#978779);border-radius:8px;padding:.85rem;caret-color:var(--primary,#A65A40)}.ds-input::placeholder{color:var(--secondary,#71685F);opacity:1}.ds-input:focus-visible{outline:2px solid var(--primary,#A65A40);outline-offset:3px;}"
+    },
+    {
+      "name": "状态标记",
+      "kind": "chip",
+      "refersTo": "badge",
+      "description": "用清楚文字表达参与或交易状态。",
+      "html": "<span class=\"ds-badge\">已参与</span>",
+      "css": ".ds-badge{font-family:-apple-system, BlinkMacSystemFont, \"PingFang SC\", \"Microsoft YaHei\", sans-serif;font-size:calc(.875rem * var(--zoom,1) * .87);line-height:1.5;display:inline-block;padding:.18rem .65rem;border-radius:20px;background:var(--tint,#F0DBCE);color:var(--primary,#A65A40)}"
+    },
+    {
+      "name": "分段选择",
+      "kind": "custom",
+      "refersTo": "segmented-selected",
+      "description": "生效状态、店铺视角或记录类型切换。",
+      "html": "<div class=\"ds-segmented\"><button class=\"ds-selected\">生效中</button><button>已停用</button></div>",
+      "css": ".ds-segmented{display:flex;border:1px solid var(--divider,#E4D9CF);padding:2px;border-radius:9px;gap:2px}.ds-segmented button{font-family:-apple-system, BlinkMacSystemFont, \"PingFang SC\", \"Microsoft YaHei\", sans-serif;font-size:calc(.875rem * var(--zoom,1));line-height:1.45;color:var(--ink,#352D29);min-height:2.5rem;padding:.45rem .8rem;border:0;background:transparent;border-radius:7px;flex:1;white-space:nowrap;cursor:pointer}.ds-segmented button.ds-selected,.ds-segmented button.ds-selected:hover{background:var(--primary,#A65A40);color:white}.ds-segmented button:focus-visible{outline:2px solid var(--primary,#A65A40);outline-offset:3px;}"
+    },
+    {
+      "name": "底部导航",
+      "kind": "nav",
+      "refersTo": "bottom-nav",
+      "description": "四个等宽入口，当前项以主色、文字与短线表达。",
+      "html": "<nav class=\"ds-nav\" aria-label=\"主导航\"><button class=\"ds-active\" aria-current=\"page\"><svg aria-hidden=\"true\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.65\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m3 10 9-8 9 8v11h-6v-7H9v7H3Z\"/></svg><span>近况</span></button><button><svg aria-hidden=\"true\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.65\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 2h10l4 4v16H5Z M15 2v5h4 M8 11h8 M8 15h6\"/></svg><span>约定</span></button><button><svg aria-hidden=\"true\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.65\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 10v11h18V10 M2 9l3-6h14l3 6c0 4-5 4-5 1 0 3-5 3-5 0 0 3-5 3-5 0-1 3-5 3-5-1Z\"/></svg><span>小卖部</span></button><button><svg aria-hidden=\"true\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.65\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 3H3v18h15v-8 M7 7h5 M7 11h3 M11 17l2-5 7-7 3 3-7 7-5 2Z\"/></svg><span>记录</span></button></nav>",
+      "css": ".ds-nav{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--divider,#E4D9CF);min-height:4.1rem;padding:.55rem .4rem .3rem;background:var(--bg,#F8F4EE)}.ds-nav button{font-family:-apple-system, BlinkMacSystemFont, \"PingFang SC\", \"Microsoft YaHei\", sans-serif;font-size:calc(.875rem * var(--zoom,1) * .82);color:var(--ink,#352D29);border:0;background:transparent;padding:0;display:flex;flex-direction:column;align-items:center;gap:.3rem;min-height:3.2rem;cursor:pointer}.ds-nav svg{width:1.55rem;height:1.55rem}.ds-nav .ds-active,.ds-nav .ds-active:hover{color:var(--primary,#A65A40)}.ds-nav .ds-active:after{content:\"\";width:1.35rem;height:2px;border-radius:2px;background:var(--primary,#A65A40);margin-top:.1rem}.ds-nav button:focus-visible{outline:2px solid var(--primary,#A65A40);outline-offset:3px;}"
+    },
+    {
+      "name": "约定卡片",
+      "kind": "card",
+      "refersTo": "agreement-card",
+      "description": "标题与积分同排，适用成员和记分动作靠近。",
+      "html": "<article class=\"ds-card\"><button class=\"ds-top\"><h2>一起散步 30 分钟</h2><span class=\"ds-positive\">+10 分</span></button><div class=\"ds-bottom\"><p>适用于 阿禾、小满</p><button class=\"ds-button ds-primary\">记一笔</button></div></article>",
+      "css": ".ds-card{font-family:-apple-system, BlinkMacSystemFont, \"PingFang SC\", \"Microsoft YaHei\", sans-serif;font-size:calc(.875rem * var(--zoom,1));line-height:1.45;line-height:1.5;background:var(--surface,#FFFCF8);color:var(--ink,#352D29);border-radius:12px;padding:1.2rem 1rem}.ds-top{font:inherit;color:inherit;display:flex;justify-content:space-between;gap:.8rem;align-items:flex-start;text-align:left;width:100%;border:0;padding:0;background:transparent;cursor:pointer}.ds-top h2{font-size:1.3em;font-weight:500;margin:0;overflow-wrap:anywhere}.ds-positive{color:var(--positive,#4F754D);font-size:1.18em;font-weight:500;white-space:nowrap;font-variant-numeric:tabular-nums}.ds-bottom{display:flex;gap:.7rem;justify-content:space-between;align-items:center;margin-top:1rem}.ds-bottom p{margin:0;flex:1;color:var(--secondary,#71685F);font-size:.86em}.ds-button{font-family:-apple-system, BlinkMacSystemFont, \"PingFang SC\", \"Microsoft YaHei\", sans-serif;font-size:calc(.875rem * var(--zoom,1));line-height:1.45;min-height:2.75rem;border-radius:8px;border:1px solid var(--outline,#978779);background:transparent;color:var(--ink,#352D29);padding:.55rem .85rem;display:inline-flex;gap:.35rem;align-items:center;justify-content:center;text-align:center;cursor:pointer;min-height:2.2rem;padding:.4rem .7rem}.ds-primary,.ds-primary:hover{color:white;background:var(--primary,#A65A40);border-color:var(--primary,#A65A40)}.ds-primary:active{background:var(--pressed,#934D36)}.ds-top:focus-visible{outline:2px solid var(--primary,#A65A40);outline-offset:3px;}.ds-button:focus-visible{outline:2px solid var(--primary,#A65A40);outline-offset:3px;}.ds-button:active{transform:translateY(1px)}.ds-button:disabled{cursor:default;opacity:.45}"
+    },
+    {
+      "name": "紧凑确认弹层",
+      "kind": "custom",
+      "refersTo": "sheet",
+      "description": "小标题、正文信息行与双操作；示例不携带业务行为。",
+      "html": "<section class=\"ds-sheet\" aria-labelledby=\"ds-sheet-title\"><div class=\"ds-handle\"></div><div class=\"ds-sheet-header\"><h2 id=\"ds-sheet-title\">取消这笔购买？</h2><button class=\"ds-close\">关闭</button></div><div class=\"ds-sheet-body\"><div class=\"ds-info\"><span>退款对象</span><span>阿禾</span></div><div class=\"ds-info\"><span>退还积分</span><strong>20 分</strong></div><p class=\"ds-note\">整笔取消，已提供部分内容也全额退款。</p><div class=\"ds-actions\"><button class=\"ds-button\">保留购买</button><button class=\"ds-button ds-primary\">取消并退款</button></div></div></section>",
+      "css": ".ds-sheet{font-family:-apple-system, BlinkMacSystemFont, \"PingFang SC\", \"Microsoft YaHei\", sans-serif;color:var(--ink,#352D29);background:var(--surface,#FFFCF8);border-radius:17px 17px 0 0;padding:.55rem 1.2rem 1.8rem;max-height:90%;overflow:auto;animation:ds-sheet-in .24s cubic-bezier(.16,1,.3,1)}.ds-handle{width:2.8rem;height:4px;border-radius:5px;background:var(--divider,#E4D9CF);margin:0 auto 1rem}.ds-sheet-header{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:1rem}.ds-sheet-header h2{margin:0;font-size:calc(1.2rem * var(--zoom,1));font-weight:600;line-height:1.4}.ds-close{font:inherit;font-size:calc(.875rem * var(--zoom,1) * .95);color:inherit;background:transparent;border:0;padding:0;min-height:2.75rem;cursor:pointer}.ds-sheet-body{font-size:calc(1rem * var(--zoom,1));line-height:1.5}.ds-info{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;padding:.6rem 0}.ds-info>span:first-child{color:var(--secondary,#71685F);flex-shrink:0}.ds-info>span:last-child{text-align:right;overflow-wrap:anywhere}.ds-info strong{color:var(--primary,#A65A40);font-weight:600}.ds-note{color:var(--secondary,#71685F);font-size:.875em;line-height:1.6;padding-top:1rem;margin:.7rem 0 1.25rem;border-top:1px solid var(--divider,#E4D9CF)}.ds-actions{display:flex;gap:.65rem}.ds-button{font-family:-apple-system, BlinkMacSystemFont, \"PingFang SC\", \"Microsoft YaHei\", sans-serif;font-size:calc(.875rem * var(--zoom,1));line-height:1.45;min-height:2.75rem;border-radius:8px;border:1px solid var(--outline,#978779);background:transparent;color:var(--ink,#352D29);padding:.55rem .85rem;display:inline-flex;gap:.35rem;align-items:center;justify-content:center;text-align:center;cursor:pointer;font-size:1em;min-height:3.1rem;flex:1}.ds-primary,.ds-primary:hover{color:white;background:var(--primary,#A65A40);border-color:var(--primary,#A65A40)}.ds-primary:active{background:var(--pressed,#934D36)}.ds-close:focus-visible{outline:2px solid var(--primary,#A65A40);outline-offset:3px;}@keyframes ds-sheet-in{from{transform:translateY(20px);opacity:.65}to{transform:translateY(0);opacity:1}}@media(prefers-reduced-motion:reduce){.ds-sheet{animation:none}}.ds-button:focus-visible{outline:2px solid var(--primary,#A65A40);outline-offset:3px;}.ds-button:active{transform:translateY(1px)}.ds-button:disabled{cursor:default;opacity:.45}"
+    },
+    {
+      "name": "记一笔",
+      "kind": "button",
+      "refersTo": "score-action",
+      "description": "首页的宽主要动作，沿用独立线性 SVG。",
+      "html": "<button class=\"ds-button ds-score\"><svg aria-hidden=\"true\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.65\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 6v12 M6 12h12\"/></svg><span>记一笔</span></button>",
+      "css": ".ds-button{font-family:-apple-system, BlinkMacSystemFont, \"PingFang SC\", \"Microsoft YaHei\", sans-serif;font-size:calc(.875rem * var(--zoom,1));line-height:1.45;min-height:2.75rem;border-radius:8px;border:1px solid var(--outline,#978779);background:transparent;color:var(--ink,#352D29);padding:.55rem .85rem;display:inline-flex;gap:.35rem;align-items:center;justify-content:center;text-align:center;cursor:pointer;}.ds-score,.ds-score:hover{display:flex;width:100%;height:3.72rem;border-radius:11px;font-size:1.35rem;letter-spacing:.08em;gap:.7rem;color:white;background:var(--primary,#A65A40);border-color:var(--primary,#A65A40)}.ds-score svg{width:1.65rem;height:1.65rem}.ds-score:active{background:var(--pressed,#934D36)}.ds-button:focus-visible{outline:2px solid var(--primary,#A65A40);outline-offset:3px;}.ds-button:active{transform:translateY(1px)}.ds-button:disabled{cursor:default;opacity:.45}"
+    }
+  ],
+  "narrative": {
+    "northStar": "日常信笺",
+    "overview": "视觉方向以用户选中的[暖杏枝叶首页](.impeccable/mocks/themes/apricot-reference.png)为依据：精致、清爽、温馨而有分寸。暖色纸面、带书卷感的标题、清楚的业务文字与柔和的植物光影共同构成识别度。装饰停留在内容周围的留白，文字与操作落在清楚的底面上。\n\n本文件从阶段 2.3 的[浏览器原型](prototype/index.html)、[样式](prototype/style.css)、[交互](prototype/app.js)与[字体资源](prototype/assets/fonts/fonts.css)提取当前实现，保留已确认的视觉方向。前置 token 记录浏览器使用值，组件与响应规则用于继续验证原型和移植设计；正式客户端使用 Flutter，原生字号、键盘、返回与安全区域按真实设备验证。\n\n具体页面构图与业务流程分别见[原型说明](docs/design/prototype-brief.md)和[操作界面设计](docs/design/action-pages.md)。参考图片及评审状态见[视觉基准索引](docs/design/visual-reference.md)，运行和视觉验证边界见[原型验证记录](docs/design/prototype-validation.md)。",
+    "keyCharacteristics": [
+      "明亮的纸面层次与三套完整主题角色。",
+      "宋体标题、无衬线业务文字与稳定数字宽度。",
+      "柔和圆角、线性图标和就近的交易操作。",
+      "真实文字、独立植物图片与简短状态反馈。"
+    ],
+    "rules": [
+      {
+        "name": "Complete Theme",
+        "body": "主题按同名角色整体映射到页面、表面、文字、控件和装饰图；个人选择沿用到本人参与的每个空间。",
+        "section": "colors"
+      },
+      {
+        "name": "Readable Ground",
+        "body": "植物的视觉重量留在空白区域，文案与操作需要连续、清晰的底面。",
+        "section": "colors"
+      },
+      {
+        "name": "Two Voices",
+        "body": "宋体承担展示与分区，业务正文、表单、导航和短确认使用无衬线；金额通过字重、主题色或加减语义强调。",
+        "section": "typography"
+      },
+      {
+        "name": "Quiet Paper",
+        "body": "业务表面以底色明度和细分隔建立层次，投影仅用于浮起反馈与桌面预览外壳。",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do 保留精致、清爽、温馨的日常信笺气质，让独立植物图片围绕文字留白。",
+      "Do 以同一角色映射覆盖按钮、导航、弹层、表单与反馈，并分别检查三套主题。",
+      "Do 保持头像和商品图片原始内容，使用真实文字、独立 SVG 与可访问控件。",
+      "Do 用正负号、状态文字及选中标记补充颜色，用长内容与放大字号检查换行和滚动。",
+      "Do 在 Flutter 中延续语义层级与主题关系，并验证原生安全区域、系统字号和触控。"
+    ],
+    "donts": [
+      "Don't 将生成概念图中的文字、数值和控件作为整张界面图片交付。",
+      "Don't 把短确认的商品摘要和退款金额扩大成展示标题。",
+      "Don't 用主题滤镜修改头像或商品图片的内容。"
+    ]
+  }
+}

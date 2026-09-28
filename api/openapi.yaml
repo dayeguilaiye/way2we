@@ -1,0 +1,3643 @@
+openapi: 3.1.0
+info:
+  title: way2we 首轮业务接口
+  version: 0.1.0
+  description: 阶段 3.2 实施契约；工程规则见 docs/engineering/api.md。所有时间 UTC，错误采用项目 JSON 格式，权限由服务端验证。
+servers:
+- url: http://127.0.0.1:8080
+  description: 本地开发；测试和正式环境配置 HTTPS 地址
+security:
+- BearerAuth: []
+paths:
+  /v1/auth/email-codes:
+    post:
+      operationId: requestEmailCode
+      summary: 申请邮箱验证码
+      tags:
+      - auth
+      x-access-rule: auth:public
+      description: 统一返回已受理。邮箱按规范化规则处理；每邮箱至少间隔 60 秒。未收到邮件可按间隔重新申请。发送成功不代表已有账号。
+      parameters: []
+      responses:
+        '202':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmailCodeAccepted'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailCodeRequest'
+  /v1/auth/sessions:
+    post:
+      operationId: createSession
+      summary: 验证邮箱并登录
+      tags:
+      - auth
+      x-access-rule: auth:public
+      description: 验证码一次性消费，原子取得或创建账号并签发会话。401 CODE_INVALID_OR_EXPIRED 用于验证码错误、过期或已用尽；此公开接口不会触发客户端会话到期引导。
+      parameters: []
+      responses:
+        '201':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      x-business-error-codes:
+      - CODE_INVALID_OR_EXPIRED
+  /v1/auth/session:
+    delete:
+      operationId: deleteCurrentSession
+      summary: 退出当前登录
+      tags:
+      - auth
+      x-access-rule: auth:self
+      description: 撤销当前会话。凭据已失效时返回 401，客户端同样完成本机退出。空间成员身份保持原值。
+      parameters: []
+      responses:
+        '204':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /v1/me:
+    get:
+      operationId: getMe
+      summary: 读取本人资料
+      tags:
+      - account
+      x-access-rule: account:self
+      description: 读取本人资料
+      parameters: []
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+    patch:
+      operationId: updateMe
+      summary: 更新本人昵称与主题
+      tags:
+      - account
+      x-access-rule: account:self
+      description: 更新本人昵称与主题
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-idempotency: required
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileUpdate'
+  /v1/spaces:
+    get:
+      operationId: listMySpaces
+      summary: 列出本人参与过的空间
+      tags:
+      - space
+      x-access-rule: space:self-history
+      description: 包含 active 与 left 的本人空间摘要；left 仅用于识别及恢复参与，不包含业务内容。
+      parameters:
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpacePage'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+    post:
+      operationId: createSpace
+      summary: 创建空间并加入
+      tags:
+      - space
+      x-access-rule: space:authenticated
+      description: 创建空间并加入
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '201':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateSpaceResult'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-idempotency: required
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSpaceRequest'
+  /v1/spaces/{space_id}:
+    get:
+      operationId: getSpace
+      summary: 读取空间
+      tags:
+      - space
+      x-access-rule: space:active-member
+      description: 读取空间
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Space'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /v1/spaces/{space_id}/overview:
+    get:
+      operationId: getOverview
+      summary: 读取首页近况
+      tags:
+      - space
+      x-access-rule: space:active-member
+      description: 一致读取本人余额、其他成员摘要、最多 3 笔本人可处理的 pending 购买和最多 10 条近况；完整列表分别分页查询。
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Overview'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /v1/spaces/{space_id}/members:
+    get:
+      operationId: listMembers
+      summary: 读取成员和余额
+      tags:
+      - space
+      x-access-rule: space:active-member
+      description: 读取成员和余额
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberPage'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /v1/spaces/{space_id}/members/me:
+    patch:
+      operationId: updateMyNickname
+      summary: 更新我的空间昵称
+      tags:
+      - space
+      x-access-rule: space:active-member
+      description: 更新我的空间昵称
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-idempotency: required
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NicknameRequest'
+  /v1/spaces/{space_id}/members/me/leave:
+    post:
+      operationId: leaveSpace
+      summary: 退出并取消全部相关待完成购买
+      tags:
+      - space
+      x-access-rule: space:self-membership
+      description: 原子取消本人作为买方或卖方的 pending 购买并退款，最后置为 left。已退出返回 left；本人历史成员允许核对此命令的最小结果。
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembershipResult'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-idempotency: required
+  /v1/spaces/{space_id}/members/me/restore:
+    post:
+      operationId: restoreMembership
+      summary: 恢复历史成员参与
+      tags:
+      - space
+      x-access-rule: space:self-membership
+      description: 历史成员直接恢复，沿用原余额和历史；已 active 返回 active。新账号返回 404。
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembershipResult'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-idempotency: required
+  /v1/spaces/{space_id}/invitations:
+    get:
+      operationId: listInvitations
+      summary: 查看加入进度
+      tags:
+      - invitation
+      x-access-rule: invitation:active-member
+      description: 查看加入进度
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvitationPage'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+    post:
+      operationId: createInvitation
+      summary: 创建可分享邀请码
+      tags:
+      - invitation
+      x-access-rule: invitation:active-member
+      description: 创建 7 天有效的一次性邀请码；发起人视为同意。服务端返回凭据，客户端用配置的分享域名组成链接。
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '201':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvitationCreated'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-idempotency: required
+  /v1/invitations/preview:
+    post:
+      operationId: previewInvitation
+      summary: 查看邀请码摘要
+      tags:
+      - invitation
+      x-access-rule: invitation:authenticated-code-holder
+      description: 只返回空间名称、邀请人昵称和过期时间；错误或已绑定其他人的凭据返回 404。只读操作。
+      parameters: []
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvitationPreview'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteCodeRequest'
+  /v1/invitations/accept:
+    post:
+      operationId: acceptInvitation
+      summary: 接受邀请并等待全员同意
+      tags:
+      - invitation
+      x-access-rule: invitation:authenticated-code-holder
+      description: 空间锁内绑定候选账号并记录昵称，首次加入需当前成员全部同意。历史成员可直接恢复。不存在或不可使用的凭据返回 404；同一候选重复接受返回已有进度。
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invitation'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-idempotency: required
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteAcceptRequest'
+  /v1/invitations/{invitation_id}:
+    get:
+      operationId: getInvitation
+      summary: 查看本人的申请或空间加入进度
+      tags:
+      - invitation
+      x-access-rule: invitation:candidate-or-active-member
+      description: 查看本人的申请或空间加入进度
+      parameters:
+      - name: invitation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invitation'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /v1/spaces/{space_id}/invitations/{invitation_id}/approve:
+    post:
+      operationId: approveInvitation
+      summary: 同意新人加入
+      tags:
+      - invitation
+      x-access-rule: invitation:active-member
+      description: 记录本人的同意；依据当前 active 成员核验。未接受仍可记录同意，所有成员退出时申请保持等待。已 joined 返回已加入结果。
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: invitation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invitation'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-idempotency: required
+  /v1/spaces/{space_id}/agreements:
+    get:
+      operationId: listAgreements
+      summary: 列出约定
+      tags:
+      - agreement
+      x-access-rule: agreement:active-member
+      description: 列出约定
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - active
+          - disabled
+        description: ''
+      - name: member_id
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+        description: ''
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgreementPage'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+    post:
+      operationId: createAgreement
+      summary: 创建约定
+      tags:
+      - agreement
+      x-access-rule: agreement:active-member
+      description: 创建首个版本，适用成员至少一人且属于当前空间参与成员；非零固定分值。
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '201':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agreement'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-idempotency: required
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgreementInput'
+  /v1/spaces/{space_id}/agreements/{agreement_id}:
+    get:
+      operationId: getAgreement
+      summary: 读取约定
+      tags:
+      - agreement
+      x-access-rule: agreement:active-member
+      description: 读取约定
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: agreement_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agreement'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+    put:
+      operationId: updateAgreement
+      summary: 编辑或停用约定
+      tags:
+      - agreement
+      x-access-rule: agreement:active-member
+      description: 提交完整当前定义，按空间事务顺序保存并生成修订历史。旧记分继续引用原版本。至少一名适用成员，新增目标须为当前成员；可以保留原有已退出目标，记分时仍需其恢复参与。
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: agreement_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agreement'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-idempotency: required
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgreementInput'
+  /v1/spaces/{space_id}/agreements/{agreement_id}/revisions:
+    get:
+      operationId: listAgreementRevisions
+      summary: 查看约定修订历史
+      tags:
+      - agreement
+      x-access-rule: agreement:active-member
+      description: 查看约定修订历史
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: agreement_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgreementRevisionPage'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /v1/spaces/{space_id}/scores:
+    get:
+      operationId: listScores
+      summary: 列出记分记录
+      tags:
+      - score
+      x-access-rule: score:active-member
+      description: 列出记分记录
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      - name: member_id
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+        description: ''
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScorePage'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+    post:
+      operationId: recordScore
+      summary: 按当前约定为一名成员记分
+      tags:
+      - score
+      x-access-rule: score:active-member
+      description: 服务端取得保存时有效的约定版本和分值；对象必须是当前参与且适用的成员。分值、余额和操作者均由服务端确定。
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '201':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Score'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-idempotency: required
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScoreInput'
+  /v1/spaces/{space_id}/scores/{score_id}:
+    get:
+      operationId: getScore
+      summary: 查看原记分与撤销经过
+      tags:
+      - score
+      x-access-rule: score:active-member
+      description: 查看原记分与撤销经过
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: score_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Score'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /v1/spaces/{space_id}/scores/{score_id}/revoke:
+    post:
+      operationId: revokeScore
+      summary: 撤销一次原记分
+      tags:
+      - score
+      x-access-rule: score:active-member
+      description: 按原分值反向记账，允许对象已退出及余额变负。已撤销返回现有结果。
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: score_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Score'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-idempotency: required
+  /v1/spaces/{space_id}/members/{member_id}/point-entries:
+    get:
+      operationId: listPointEntries
+      summary: 查看成员积分明细
+      tags:
+      - ledger
+      x-access-rule: ledger:active-member
+      description: 查看成员积分明细
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: member_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PointEntryPage'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /v1/spaces/{space_id}/items:
+    get:
+      operationId: listItems
+      summary: 列出空间小卖部商品
+      tags:
+      - shop
+      x-access-rule: shop:active-member
+      description: 当前成员可查看空间内全部商品；可购买性同时由上下架及店主参与状态决定。
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      - name: owner_member_id
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+        description: ''
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - listed
+          - unlisted
+        description: ''
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemPage'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+    post:
+      operationId: createItem
+      summary: 在我的小卖部创建商品或服务
+      tags:
+      - shop
+      x-access-rule: shop:active-owner
+      description: 在我的小卖部创建商品或服务
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '201':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-idempotency: required
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ItemInput'
+  /v1/spaces/{space_id}/items/{item_id}:
+    get:
+      operationId: getItem
+      summary: 查看商品或服务
+      tags:
+      - shop
+      x-access-rule: shop:active-member
+      description: 查看商品或服务
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: item_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+    put:
+      operationId: updateItem
+      summary: 编辑或上下架我的商品
+      tags:
+      - shop
+      x-access-rule: shop:active-owner
+      description: 编辑或上下架我的商品
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: item_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-idempotency: required
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ItemInput'
+  /v1/spaces/{space_id}/purchases:
+    get:
+      operationId: listPurchases
+      summary: 列出购买记录
+      tags:
+      - purchase
+      x-access-rule: purchase:active-member
+      description: 列出购买记录
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - pending
+          - completed
+          - cancelled
+        description: ''
+      - name: actionable_by_me
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: true 时只返回本人为买方或卖方的 pending 记录；与非 pending 状态组合返回 422。
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchasePage'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+    post:
+      operationId: createPurchase
+      summary: 购买多份商品或服务并立即扣分
+      tags:
+      - purchase
+      x-access-rule: purchase:active-buyer
+      description: 买方从会话确定；卖方须为不同的当前成员。取得当前商品、校验所见版本和上架状态，整数计算总额，在同一事务中扣分并保存快照。
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '201':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Purchase'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-idempotency: required
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseInput'
+      x-business-error-codes:
+      - INSUFFICIENT_POINTS
+      - ITEM_CHANGED
+      - ITEM_UNAVAILABLE
+      - RESOURCE_STATE_CONFLICT
+  /v1/spaces/{space_id}/purchases/{purchase_id}:
+    get:
+      operationId: getPurchase
+      summary: 查看购买快照和处理经过
+      tags:
+      - purchase
+      x-access-rule: purchase:active-member
+      description: 查看购买快照和处理经过
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: purchase_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Purchase'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /v1/spaces/{space_id}/purchases/{purchase_id}/complete:
+    post:
+      operationId: completePurchase
+      summary: 整笔确认完成
+      tags:
+      - purchase
+      x-access-rule: purchase:active-buyer-or-seller
+      description: 双方任意一方可执行。pending 转 completed，completed 重复返回成功，cancelled 返回 409。
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: purchase_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Purchase'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-idempotency: required
+  /v1/spaces/{space_id}/purchases/{purchase_id}/cancel:
+    post:
+      operationId: cancelPurchase
+      summary: 整笔取消并全额退款
+      tags:
+      - purchase
+      x-access-rule: purchase:active-buyer-or-seller
+      description: pending 和 completed 均可取消，退回原 paid_points。买方已退出时当前卖方仍可操作；已取消返回原结果，保持一次退款。
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: purchase_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Purchase'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-idempotency: required
+  /v1/spaces/{space_id}/activity:
+    get:
+      operationId: listActivity
+      summary: 查看空间近况与审计记录
+      tags:
+      - activity
+      x-access-rule: activity:active-member
+      description: 查看空间近况与审计记录
+      parameters:
+      - name: space_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      - name: resource_id
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+        description: ''
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityPage'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /v1/notifications:
+    get:
+      operationId: listNotifications
+      summary: 查看本人站内通知
+      tags:
+      - notification
+      x-access-rule: notification:self-visible
+      description: 只返回当前账号且当前有权访问的通知；待加入者可见自己的邀请进度。退出空间后相关业务通知隐藏。
+      parameters:
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      - name: unread_only
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: ''
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPage'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /v1/notifications/{notification_id}/read:
+    put:
+      operationId: markNotificationRead
+      summary: 标记本人通知已读
+      tags:
+      - notification
+      x-access-rule: notification:self-visible
+      description: 标记本人通知已读
+      parameters:
+      - name: notification_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-idempotency: required
+  /v1/operations/{idempotency_key}:
+    get:
+      operationId: getOperation
+      summary: 核对本人业务操作结果
+      tags:
+      - operation
+      x-access-rule: operation:self-authorized
+      description: 仅查询当前账号下的标识，并重新核验资源权限。404 OPERATION_NOT_FOUND 表示尚无已提交结果，原请求可能仍在执行。本人退出／恢复命令允许读取最小参与状态；其他空间命令要求当前参与。
+      parameters:
+      - name: idempotency_key
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationResult'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-business-error-codes:
+      - OPERATION_NOT_FOUND
+  /v1/media/uploads:
+    post:
+      operationId: createMediaUpload
+      summary: 申请商品图片上传
+      tags:
+      - media
+      x-access-rule: media:active-member
+      description: 返回短期签名 PUT 地址及所需头。限制 5 MiB，上传后调用完成接口验证。过期后重放原申请仍返回原过期地址；应以新标识申请新上传记录。
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '201':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Upload'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-idempotency: required
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadInput'
+  /v1/media/{media_id}/complete:
+    post:
+      operationId: completeMediaUpload
+      summary: 校验已上传图片
+      tags:
+      - media
+      x-access-rule: media:active-uploader
+      description: 读取对象并验证实际类型、尺寸、大小及解码结果，去除无关元数据后标记 ready。外部 IO 在事务外执行，提交前再次验证权限。尚未上传返回 409 UPLOAD_NOT_READY，用户可按新意图重试。
+      parameters:
+      - name: media_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Media'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      x-idempotency: required
+      x-business-error-codes:
+      - UPLOAD_NOT_READY
+      - INVALID_MEDIA
+  /v1/media/{media_id}/access:
+    get:
+      operationId: getMediaAccess
+      summary: 取得图片临时访问地址
+      tags:
+      - media
+      x-access-rule: media:authorized-resource-reader
+      description: 必须给出 resource_kind 和 resource_id，验证该资源确实引用此图片且当前可读。历史购买图片依历史资源授权。
+      parameters:
+      - name: media_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: resource_kind
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - item
+          - purchase
+        description: ''
+      - name: resource_id
+        in: query
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: ''
+      responses:
+        '200':
+          description: 成功
+          headers:
+            X-Request-ID:
+              description: 当前请求唯一编号；重放和核对产生新编号。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaAccess'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque session token
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: 同一业务意图及重试沿用同一 UUID；改参数或下一笔操作生成新值。
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    Cursor:
+      name: cursor
+      in: query
+      schema:
+        type: string
+      description: 与筛选条件绑定的不透明分页游标。
+  responses:
+    Error400:
+      description: 请求格式无法识别。
+      headers:
+        X-Request-ID:
+          description: 当前请求唯一编号；重放和核对产生新编号。
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: INVALID_REQUEST
+              message: 请求格式无法识别。
+              field_errors: []
+            request_id: req_example
+    Error401:
+      description: 请重新登录。
+      headers:
+        X-Request-ID:
+          description: 当前请求唯一编号；重放和核对产生新编号。
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: UNAUTHENTICATED
+              message: 请重新登录。
+              field_errors: []
+            request_id: req_example
+    Error403:
+      description: 当前操作不可用。
+      headers:
+        X-Request-ID:
+          description: 当前请求唯一编号；重放和核对产生新编号。
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: FORBIDDEN
+              message: 当前操作不可用。
+              field_errors: []
+            request_id: req_example
+    Error404:
+      description: 内容不可用。
+      headers:
+        X-Request-ID:
+          description: 当前请求唯一编号；重放和核对产生新编号。
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: NOT_FOUND
+              message: 内容不可用。
+              field_errors: []
+            request_id: req_example
+    Error409:
+      description: 记录状态已变化，请刷新。
+      headers:
+        X-Request-ID:
+          description: 当前请求唯一编号；重放和核对产生新编号。
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: RESOURCE_STATE_CONFLICT
+              message: 记录状态已变化，请刷新。
+              field_errors: []
+            request_id: req_example
+    Error422:
+      description: 请检查填写内容。
+      headers:
+        X-Request-ID:
+          description: 当前请求唯一编号；重放和核对产生新编号。
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: VALIDATION_FAILED
+              message: 请检查填写内容。
+              field_errors:
+              - field: quantity
+                code: POSITIVE_INTEGER_REQUIRED
+            request_id: req_example
+    Error429:
+      description: 操作过于频繁，请稍后再试。
+      headers:
+        X-Request-ID:
+          description: 当前请求唯一编号；重放和核对产生新编号。
+          schema:
+            type: string
+        Retry-After:
+          description: 再次尝试前需要等待的秒数。
+          schema:
+            type: integer
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: RATE_LIMITED
+              message: 操作过于频繁，请稍后再试。
+              field_errors: []
+            request_id: req_example
+    Error500:
+      description: 暂时无法完成，请稍后核对。
+      headers:
+        X-Request-ID:
+          description: 当前请求唯一编号；重放和核对产生新编号。
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: INTERNAL_ERROR
+              message: 暂时无法完成，请稍后核对。
+              field_errors: []
+            request_id: req_example
+    Error503:
+      description: 服务暂时不可用，请稍后核对。
+      headers:
+        X-Request-ID:
+          description: 当前请求唯一编号；重放和核对产生新编号。
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: SERVICE_UNAVAILABLE
+              message: 服务暂时不可用，请稍后核对。
+              field_errors: []
+            request_id: req_example
+  schemas:
+    FieldError:
+      type: object
+      properties:
+        field:
+          type: string
+        code:
+          type: string
+      required:
+      - field
+      - code
+    ErrorDetail:
+      type: object
+      properties:
+        code:
+          type: string
+          pattern: ^[A-Z][A-Z0-9_]+$
+        message:
+          type: string
+        field_errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldError'
+      required:
+      - code
+      - message
+      - field_errors
+    Error:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorDetail'
+        request_id:
+          type: string
+      required:
+      - error
+      - request_id
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        display_name:
+          type: string
+          minLength: 1
+          maxLength: 60
+        theme:
+          type: string
+          enum:
+          - apricot
+          - celadon
+          - rose
+        created_at:
+          type: string
+          format: date-time
+          pattern: Z$
+      required:
+      - id
+      - display_name
+      - theme
+      - created_at
+    EmailCodeRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 254
+      required:
+      - email
+      additionalProperties: false
+    EmailCodeAccepted:
+      type: object
+      properties:
+        resend_after_seconds:
+          type: integer
+          minimum: 0
+        expires_in_seconds:
+          type: integer
+          minimum: 1
+      required:
+      - resend_after_seconds
+      - expires_in_seconds
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        code:
+          type: string
+          pattern: ^[0-9]{6}$
+      required:
+      - email
+      - code
+      additionalProperties: false
+    Session:
+      type: object
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+          const: Bearer
+        expires_at:
+          type: string
+          format: date-time
+          pattern: Z$
+        user:
+          $ref: '#/components/schemas/User'
+      required:
+      - access_token
+      - token_type
+      - expires_at
+      - user
+    ProfileUpdate:
+      type: object
+      properties:
+        display_name:
+          type: string
+          minLength: 1
+          maxLength: 60
+        theme:
+          type: string
+          enum:
+          - apricot
+          - celadon
+          - rose
+      required: []
+      additionalProperties: false
+      minProperties: 1
+    Member:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        space_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        nickname:
+          type: string
+          minLength: 1
+          maxLength: 60
+        status:
+          type: string
+          enum:
+          - active
+          - left
+        balance:
+          type: integer
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+        joined_at:
+          type: string
+          format: date-time
+          pattern: Z$
+        left_at:
+          anyOf:
+          - type: string
+            format: date-time
+            pattern: Z$
+          - type: 'null'
+      required:
+      - id
+      - space_id
+      - user_id
+      - nickname
+      - status
+      - balance
+      - joined_at
+      - left_at
+    Space:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 60
+        created_at:
+          type: string
+          format: date-time
+          pattern: Z$
+      required:
+      - id
+      - name
+      - created_at
+    SpaceSummary:
+      type: object
+      properties:
+        space:
+          $ref: '#/components/schemas/Space'
+        my_member_id:
+          type: string
+          format: uuid
+        my_status:
+          type: string
+          enum:
+          - active
+          - left
+      required:
+      - space
+      - my_member_id
+      - my_status
+    CreateSpaceRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 60
+        nickname:
+          type: string
+          minLength: 1
+          maxLength: 60
+      required:
+      - name
+      - nickname
+      additionalProperties: false
+    CreateSpaceResult:
+      type: object
+      properties:
+        space:
+          $ref: '#/components/schemas/Space'
+        member:
+          $ref: '#/components/schemas/Member'
+      required:
+      - space
+      - member
+    NicknameRequest:
+      type: object
+      properties:
+        nickname:
+          type: string
+          minLength: 1
+          maxLength: 60
+      required:
+      - nickname
+      additionalProperties: false
+    MembershipResult:
+      type: object
+      properties:
+        space_id:
+          type: string
+          format: uuid
+        member_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - active
+          - left
+      required:
+      - space_id
+      - member_id
+      - status
+    SpacePage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpaceSummary'
+        next_cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - items
+      - next_cursor
+    MemberPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Member'
+        next_cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - items
+      - next_cursor
+    Invitation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        space_id:
+          type: string
+          format: uuid
+        space_name:
+          type: string
+          minLength: 1
+          maxLength: 60
+        inviter_nickname:
+          type: string
+          minLength: 1
+          maxLength: 60
+        candidate_user_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+        candidate_display_name:
+          anyOf:
+          - type: string
+            minLength: 1
+            maxLength: 60
+          - type: 'null'
+        status:
+          type: string
+          enum:
+          - waiting
+          - joined
+          - expired
+        accepted_at:
+          anyOf:
+          - type: string
+            format: date-time
+            pattern: Z$
+          - type: 'null'
+        expires_at:
+          type: string
+          format: date-time
+          pattern: Z$
+        required_member_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: waiting 按当前 active 成员计算，joined 返回入场时的核验快照。
+        approved_member_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+      required:
+      - id
+      - space_id
+      - space_name
+      - inviter_nickname
+      - candidate_user_id
+      - candidate_display_name
+      - status
+      - accepted_at
+      - expires_at
+      - required_member_ids
+      - approved_member_ids
+    InvitationCreated:
+      type: object
+      properties:
+        invitation:
+          $ref: '#/components/schemas/Invitation'
+        invite_code:
+          type: string
+          pattern: ^[A-Z2-7]{20}$
+      required:
+      - invitation
+      - invite_code
+    InviteCodeRequest:
+      type: object
+      properties:
+        invite_code:
+          type: string
+          pattern: ^[A-Z2-7]{20}$
+      required:
+      - invite_code
+      additionalProperties: false
+    InviteAcceptRequest:
+      type: object
+      properties:
+        invite_code:
+          type: string
+          pattern: ^[A-Z2-7]{20}$
+        nickname:
+          type: string
+          minLength: 1
+          maxLength: 60
+      required:
+      - invite_code
+      - nickname
+      additionalProperties: false
+    InvitationPreview:
+      type: object
+      properties:
+        space_name:
+          type: string
+          minLength: 1
+          maxLength: 60
+        inviter_nickname:
+          type: string
+          minLength: 1
+          maxLength: 60
+        expires_at:
+          type: string
+          format: date-time
+          pattern: Z$
+      required:
+      - space_name
+      - inviter_nickname
+      - expires_at
+    InvitationPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Invitation'
+        next_cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - items
+      - next_cursor
+    AgreementInput:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 60
+        description:
+          type: string
+          maxLength: 2000
+        points_delta:
+          type: integer
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+          not:
+            const: 0
+        member_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          minItems: 1
+          uniqueItems: true
+        status:
+          type: string
+          enum:
+          - active
+          - disabled
+      required:
+      - title
+      - description
+      - points_delta
+      - member_ids
+      - status
+      additionalProperties: false
+    Agreement:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        space_id:
+          type: string
+          format: uuid
+        revision:
+          type: integer
+          minimum: 1
+        title:
+          type: string
+          minLength: 1
+          maxLength: 60
+        description:
+          type: string
+          maxLength: 2000
+        points_delta:
+          type: integer
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+          not:
+            const: 0
+        member_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          minItems: 1
+          uniqueItems: true
+        status:
+          type: string
+          enum:
+          - active
+          - disabled
+        created_at:
+          type: string
+          format: date-time
+          pattern: Z$
+        updated_at:
+          type: string
+          format: date-time
+          pattern: Z$
+      required:
+      - id
+      - space_id
+      - revision
+      - title
+      - description
+      - points_delta
+      - member_ids
+      - status
+      - created_at
+      - updated_at
+    AgreementRevision:
+      type: object
+      properties:
+        agreement_id:
+          type: string
+          format: uuid
+        revision:
+          type: integer
+          minimum: 1
+        title:
+          type: string
+          minLength: 1
+          maxLength: 60
+        description:
+          type: string
+          maxLength: 2000
+        points_delta:
+          type: integer
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+          not:
+            const: 0
+        member_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          minItems: 1
+          uniqueItems: true
+        changed_by_member_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+          pattern: Z$
+      required:
+      - agreement_id
+      - revision
+      - title
+      - description
+      - points_delta
+      - member_ids
+      - changed_by_member_id
+      - created_at
+    AgreementPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Agreement'
+        next_cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - items
+      - next_cursor
+    AgreementRevisionPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgreementRevision'
+        next_cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - items
+      - next_cursor
+    ScoreInput:
+      type: object
+      properties:
+        agreement_id:
+          type: string
+          format: uuid
+        member_id:
+          type: string
+          format: uuid
+      required:
+      - agreement_id
+      - member_id
+      additionalProperties: false
+    Score:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        space_id:
+          type: string
+          format: uuid
+        agreement_id:
+          type: string
+          format: uuid
+        agreement_revision:
+          type: integer
+          minimum: 1
+        agreement_title:
+          type: string
+          minLength: 1
+          maxLength: 60
+        member_id:
+          type: string
+          format: uuid
+        actor_member_id:
+          type: string
+          format: uuid
+        points_delta:
+          type: integer
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+          not:
+            const: 0
+        status:
+          type: string
+          enum:
+          - recorded
+          - revoked
+        created_at:
+          type: string
+          format: date-time
+          pattern: Z$
+        revoked_at:
+          anyOf:
+          - type: string
+            format: date-time
+            pattern: Z$
+          - type: 'null'
+        revoked_by_member_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+      required:
+      - id
+      - space_id
+      - agreement_id
+      - agreement_revision
+      - agreement_title
+      - member_id
+      - actor_member_id
+      - points_delta
+      - status
+      - created_at
+      - revoked_at
+      - revoked_by_member_id
+    ScorePage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Score'
+        next_cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - items
+      - next_cursor
+    PointEntry:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        space_id:
+          type: string
+          format: uuid
+        member_id:
+          type: string
+          format: uuid
+        kind:
+          type: string
+          enum:
+          - score
+          - score_reversal
+          - purchase_debit
+          - purchase_refund
+        delta:
+          type: integer
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+          not:
+            const: 0
+        balance_after:
+          type: integer
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+          not:
+            const: 0
+        score_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+        purchase_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+        reverses_entry_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+        actor_member_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+          pattern: Z$
+      required:
+      - id
+      - space_id
+      - member_id
+      - kind
+      - delta
+      - balance_after
+      - score_id
+      - purchase_id
+      - reverses_entry_id
+      - actor_member_id
+      - created_at
+    PointEntryPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PointEntry'
+        next_cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - items
+      - next_cursor
+    ItemInput:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 60
+        description:
+          type: string
+          maxLength: 2000
+        kind:
+          type: string
+          enum:
+          - goods
+          - service
+        unit_points:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        media_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          description: 可为空；有值时必须引用当前店主上传的同空间 ready 图片。
+        status:
+          type: string
+          enum:
+          - listed
+          - unlisted
+      required:
+      - title
+      - description
+      - kind
+      - unit_points
+      - media_id
+      - status
+      additionalProperties: false
+    Item:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        space_id:
+          type: string
+          format: uuid
+        owner_member_id:
+          type: string
+          format: uuid
+        version:
+          type: integer
+          minimum: 1
+        title:
+          type: string
+          minLength: 1
+          maxLength: 60
+        description:
+          type: string
+          maxLength: 2000
+        kind:
+          type: string
+          enum:
+          - goods
+          - service
+        unit_points:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        media_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+        status:
+          type: string
+          enum:
+          - listed
+          - unlisted
+        is_purchasable:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          pattern: Z$
+        updated_at:
+          type: string
+          format: date-time
+          pattern: Z$
+      required:
+      - id
+      - space_id
+      - owner_member_id
+      - version
+      - title
+      - description
+      - kind
+      - unit_points
+      - media_id
+      - status
+      - is_purchasable
+      - created_at
+      - updated_at
+    ItemSnapshot:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 60
+        description:
+          type: string
+          maxLength: 2000
+        kind:
+          type: string
+          enum:
+          - goods
+          - service
+        media_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+      required:
+      - title
+      - description
+      - kind
+      - media_id
+    ItemPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
+        next_cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - items
+      - next_cursor
+    PurchaseInput:
+      type: object
+      properties:
+        item_id:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        expected_item_version:
+          type: integer
+          minimum: 1
+      required:
+      - item_id
+      - quantity
+      - expected_item_version
+      additionalProperties: false
+      description: 客户端提交所见商品版本；内容或价格变化返回 ITEM_CHANGED，用户查看最新内容后以新操作标识确认。
+    Purchase:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        space_id:
+          type: string
+          format: uuid
+        buyer_member_id:
+          type: string
+          format: uuid
+        seller_member_id:
+          type: string
+          format: uuid
+        item_id:
+          type: string
+          format: uuid
+        item_snapshot:
+          $ref: '#/components/schemas/ItemSnapshot'
+        unit_points:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        quantity:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        paid_points:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        status:
+          type: string
+          enum:
+          - pending
+          - completed
+          - cancelled
+        created_at:
+          type: string
+          format: date-time
+          pattern: Z$
+        completed_at:
+          anyOf:
+          - type: string
+            format: date-time
+            pattern: Z$
+          - type: 'null'
+        completed_by_member_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+        cancelled_at:
+          anyOf:
+          - type: string
+            format: date-time
+            pattern: Z$
+          - type: 'null'
+        cancelled_by_member_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+        cancel_reason:
+          anyOf:
+          - type: string
+            enum:
+            - manual
+            - member_left
+          - type: 'null'
+      required:
+      - id
+      - space_id
+      - buyer_member_id
+      - seller_member_id
+      - item_id
+      - item_snapshot
+      - unit_points
+      - quantity
+      - paid_points
+      - status
+      - created_at
+      - completed_at
+      - completed_by_member_id
+      - cancelled_at
+      - cancelled_by_member_id
+      - cancel_reason
+    PurchasePage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Purchase'
+        next_cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - items
+      - next_cursor
+    ResourceRef:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+          - space
+          - invitation
+          - agreement
+          - score
+          - item
+          - purchase
+        id:
+          type: string
+          format: uuid
+        space_id:
+          type: string
+          format: uuid
+      required:
+      - kind
+      - id
+      - space_id
+    Activity:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        space_id:
+          type: string
+          format: uuid
+        actor_member_id:
+          type: string
+          format: uuid
+        event_type:
+          type: string
+        resource:
+          $ref: '#/components/schemas/ResourceRef'
+        summary:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          pattern: Z$
+      required:
+      - id
+      - space_id
+      - actor_member_id
+      - event_type
+      - resource
+      - summary
+      - created_at
+    ActivityPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Activity'
+        next_cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - items
+      - next_cursor
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        event_type:
+          type: string
+        resource:
+          $ref: '#/components/schemas/ResourceRef'
+        summary:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          pattern: Z$
+        read_at:
+          anyOf:
+          - type: string
+            format: date-time
+            pattern: Z$
+          - type: 'null'
+      required:
+      - id
+      - event_type
+      - resource
+      - summary
+      - created_at
+      - read_at
+    NotificationPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+        next_cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - items
+      - next_cursor
+    Overview:
+      type: object
+      properties:
+        space:
+          $ref: '#/components/schemas/Space'
+        me:
+          $ref: '#/components/schemas/Member'
+        active_member_count:
+          type: integer
+          minimum: 1
+        featured_member:
+          anyOf:
+          - $ref: '#/components/schemas/Member'
+          - type: 'null'
+        pending_purchases:
+          type: array
+          items:
+            $ref: '#/components/schemas/Purchase'
+          maxItems: 3
+        recent_activity:
+          type: array
+          items:
+            $ref: '#/components/schemas/Activity'
+          maxItems: 10
+        unread_notification_count:
+          type: integer
+          minimum: 0
+      required:
+      - space
+      - me
+      - active_member_count
+      - featured_member
+      - pending_purchases
+      - recent_activity
+      - unread_notification_count
+    OperationResult:
+      type: object
+      properties:
+        idempotency_key:
+          type: string
+          format: uuid
+        operation_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - succeeded
+          - rejected
+        original_http_status:
+          type: integer
+          minimum: 200
+          maximum: 499
+        result:
+          type: object
+          description: 结构与 operation_id 对应操作的原成功或错误响应一致。错误响应中的 request_id 替换为本次核对请求编号。
+        created_at:
+          type: string
+          format: date-time
+          pattern: Z$
+      required:
+      - idempotency_key
+      - operation_id
+      - status
+      - original_http_status
+      - result
+      - created_at
+    UploadInput:
+      type: object
+      properties:
+        space_id:
+          type: string
+          format: uuid
+        purpose:
+          type: string
+          enum:
+          - item_image
+        content_type:
+          type: string
+          enum:
+          - image/jpeg
+          - image/png
+          - image/webp
+        size_bytes:
+          type: integer
+          minimum: 1
+          maximum: 5242880
+      required:
+      - space_id
+      - purpose
+      - content_type
+      - size_bytes
+      additionalProperties: false
+    Upload:
+      type: object
+      properties:
+        media_id:
+          type: string
+          format: uuid
+        upload_url:
+          type: string
+          format: uri
+        method:
+          type: string
+          const: PUT
+        headers:
+          type: object
+          additionalProperties:
+            type: string
+        expires_at:
+          type: string
+          format: date-time
+          pattern: Z$
+      required:
+      - media_id
+      - upload_url
+      - method
+      - headers
+      - expires_at
+    Media:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        space_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - pending
+          - ready
+          - rejected
+        content_type:
+          type: string
+        size_bytes:
+          type: integer
+          minimum: 1
+        width:
+          type: integer
+          minimum: 1
+        height:
+          type: integer
+          minimum: 1
+      required:
+      - id
+      - space_id
+      - status
+      - content_type
+      - size_bytes
+      - width
+      - height
+    MediaAccess:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+        expires_at:
+          type: string
+          format: date-time
+          pattern: Z$
+      required:
+      - url
+      - expires_at

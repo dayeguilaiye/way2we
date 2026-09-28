@@ -1,0 +1,6 @@
+Use case: precise-object-edit.
+Image 1 is the EDIT TARGET, a complete warm-apricot mobile app purchase-confirmation sheet screenshot.
+Make exactly two local changes:
+1. In the active sheet row 购买后余额, change only the green 10 分 to the same terracotta used by 合计支付 20 分. This is a remaining balance, not a gain. Preserve its size and position.
+2. Remove the three-dot overflow icon at the far top-right of the DIMMED background 商品详情 page. Fill with matching dimmed background.
+Preserve absolutely every other part, including all Chinese text, typography, photos, shadows, layout, stepper 2, 单价 10 分 / 份, 合计支付 20 分, 当前余额 30 分, 购买后余额 10 分, and 支付 20 分购买. Keep the full portrait screenshot, status bar and home indicator. No other content or style changes.

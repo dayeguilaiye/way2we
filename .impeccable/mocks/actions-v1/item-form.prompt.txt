@@ -1,0 +1,17 @@
+Use case: ui-mockup.
+Create ONE complete high-fidelity Chinese mobile app screen, portrait approximately 851 x 1847, the same edge-to-edge screenshot framing as the references. No device frame, exterior canvas, collage or annotation.
+Input images are APPROVED STYLE AND COMPONENT REFERENCES of the same warm-apricot relationship reward app. Preserve their material, typography scale, gently rounded controls, thin warm-ink icon style and comfortable mobile spacing. Reference images are visual authority; the NEW SCREEN CONTENT below defines the page. Inherit only the chrome and visual system appropriate to this screen. Exact Chinese labels and numbers must be legible and correct.
+Colors: paper-warm background #F8F4EE, near-white surfaces #FFFCF8, ink #352D29, secondary #71685F, terracotta primary #A65A40 with white text, light apricot #F0DBCE. Gain/success #4F754D, loss/error #AF493B. Quiet textured warmth as reference, no noisy grain. Elegant Chinese serif for page or sheet headings; clear sans-serif for fields, instructions, buttons and values. One flat surface for forms, clear filled/outlined controls and fine dividers, no nested card composition. Content-first with readable type and comfortable tap areas.
+Status bar 9:41 and home indicator in consistent positions. Respect top and bottom safe areas. Keep the same reference avatars and product photos if used: 阿禾 woman at sunset; 小满 ginger-white cat; breakfast on ceramic plate with toast, egg and cup. All names/data are illustrative. No invented slogans, fields, dates, extra business features or filler.
+
+NEW SCREEN: 添加商品或服务, a fully filled sample creation form for 小满 adding breakfast to their shop. Image 1 is the form layout/field style reference, Image 2 provides the exact breakfast photo.
+Top navigation: back chevron left, centered 添加商品或服务. No root tabs, space row or large hero.
+One clean continuous full-page form, same margins/field styling as Image 1, with all fields and save action fully on screen, no keyboard.
+Exact fields in order:
+名称 ; text input 准备一份早餐.
+说明（选填） ; multiline input 一份热乎的早餐，时间一起商量。.
+图片（选填） ; one bounded moderate square thumbnail with the SAME breakfast photo from Image 2, at left. Readable image actions 更换图片 and 移除 beside it, with ample touch area. A single image, not a multi-image grid or upload gallery. Thumbnail should not dominate the form.
+积分单价 ; numerical input 10 with 分 / 份 as suffix.
+Quiet explanatory line 保存后即可被空间成员购买。
+Bottom full-width terracotta primary action 保存并上架, above home safe area. Same controls as the approved flow; warm paper surface, legible sans-serif fields, restrained serif title.
+This creation form is also reused for editing in implementation, but show only the creation state and its exact button text. No shipping address, inventory, duration, category, payment money, approval, date/time or sales analytics.

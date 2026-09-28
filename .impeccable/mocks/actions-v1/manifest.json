@@ -1,0 +1,176 @@
+{
+  "date": "2026-09-22",
+  "screens": [
+    {
+      "id": "purchase-confirm",
+      "name": "购买确认",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-b033403c-e257-44fd-b564-e1f1991ca63a.png",
+      "file": "purchase-confirm.png",
+      "prompt_file": "purchase-confirm.prompt.txt",
+      "references": [
+        ".impeccable/mocks/core-v1/score.png",
+        ".impeccable/mocks/core-v1/shop-v2.png"
+      ],
+      "approved": false,
+      "status": "过程稿",
+      "tool": "native image_gen",
+      "theme": "apricot",
+      "current_version": "purchase-confirm-v2.png"
+    },
+    {
+      "id": "refund-confirm",
+      "name": "退款确认",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-242f5e47-7e72-4936-91c3-6fb66b2beab9.png",
+      "file": "refund-confirm.png",
+      "prompt_file": "refund-confirm.prompt.txt",
+      "references": [
+        ".impeccable/mocks/core-v1/purchase.png",
+        ".impeccable/mocks/core-v1/score.png"
+      ],
+      "approved": false,
+      "status": "过程稿",
+      "tool": "native image_gen",
+      "theme": "apricot",
+      "current_version": "refund-confirm-v2.png"
+    },
+    {
+      "id": "agreement-form",
+      "name": "新建／编辑约定",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-110d4ad6-f340-49a7-af9b-b5f893d39670.png",
+      "file": "agreement-form.png",
+      "prompt_file": "agreement-form.prompt.txt",
+      "references": [
+        ".impeccable/mocks/core-v1/agreements.png",
+        ".impeccable/mocks/core-v1/score.png"
+      ],
+      "approved": true,
+      "status": "用户已确认",
+      "tool": "native image_gen",
+      "theme": "apricot"
+    },
+    {
+      "id": "my-shop",
+      "name": "我的店铺",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-a204adaf-09b4-48b0-bed4-33325b0985cd.png",
+      "file": "my-shop.png",
+      "prompt_file": "my-shop.prompt.txt",
+      "references": [
+        ".impeccable/mocks/core-v1/shop-v2.png",
+        ".impeccable/mocks/core-v1/agreements.png"
+      ],
+      "approved": true,
+      "status": "用户已确认",
+      "tool": "native image_gen",
+      "theme": "apricot"
+    },
+    {
+      "id": "item-form",
+      "name": "添加／编辑商品",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-5ca0a89b-447b-4342-97ec-18a4c2b8cf58.png",
+      "file": "item-form.png",
+      "prompt_file": "item-form.prompt.txt",
+      "references": [
+        ".impeccable/mocks/actions-v1/agreement-form.png",
+        ".impeccable/mocks/core-v1/shop-v2.png"
+      ],
+      "approved": false,
+      "status": "过程稿",
+      "tool": "native image_gen",
+      "theme": "apricot",
+      "current_version": "item-form-v2.png"
+    },
+    {
+      "id": "purchase-confirm-v2",
+      "name": "购买确认",
+      "theme": "apricot",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-669d3205-e7d4-4b44-8a13-179efa5e6690.png",
+      "file": "purchase-confirm-v2.png",
+      "prompt_file": "purchase-confirm-v2.prompt.txt",
+      "references": [
+        ".impeccable/mocks/actions-v1/purchase-confirm.png"
+      ],
+      "approved": true,
+      "status": "用户已确认",
+      "tool": "native image_gen"
+    },
+    {
+      "id": "item-form-v2",
+      "name": "添加／编辑商品",
+      "theme": "apricot",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-7548cb25-7a4d-4d7a-ab5c-d9fb9338fdc8.png",
+      "file": "item-form-v2.png",
+      "prompt_file": "item-form-v2.prompt.txt",
+      "references": [
+        ".impeccable/mocks/actions-v1/item-form.png"
+      ],
+      "approved": true,
+      "status": "用户已确认",
+      "tool": "native image_gen"
+    },
+    {
+      "id": "agreement-celadon",
+      "name": "青瓷主题 · 约定表单",
+      "theme": "celadon",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-8b3d8468-4f1b-4585-8e00-395421485a51.png",
+      "file": "agreement-celadon.png",
+      "prompt_file": "agreement-celadon.prompt.txt",
+      "references": [
+        ".impeccable/mocks/actions-v1/agreement-form.png",
+        ".impeccable/mocks/themes/celadon.png"
+      ],
+      "approved": true,
+      "status": "用户已确认",
+      "tool": "native image_gen"
+    },
+    {
+      "id": "refund-rose",
+      "name": "雾玫主题 · 退款确认",
+      "theme": "rose",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-111b39ef-7f58-4282-9d25-45d47c824f0c.png",
+      "file": "refund-rose.png",
+      "prompt_file": "refund-rose.prompt.txt",
+      "references": [
+        ".impeccable/mocks/actions-v1/refund-confirm.png",
+        ".impeccable/mocks/themes/rose.png"
+      ],
+      "approved": false,
+      "status": "过程稿",
+      "tool": "native image_gen",
+      "current_version": "refund-rose-v2.png"
+    },
+    {
+      "id": "refund-confirm-v2",
+      "name": "退款确认",
+      "theme": "apricot",
+      "file": "refund-confirm-v2.png",
+      "prompt_file": "refund-confirm-v2.prompt.txt",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-b72d3032-e606-44f8-a076-d01ea715ae52.png",
+      "references": [
+        ".impeccable/mocks/actions-v1/refund-confirm.png",
+        ".impeccable/mocks/actions-v1/purchase-confirm-v2.png"
+      ],
+      "tool": "native image_gen",
+      "approved": true,
+      "status": "用户已确认",
+      "date": "2026-09-22",
+      "scope": "退款确认字号与信息层级修订；短标题、商品摘要及退款信息行；原有交易语义和操作保留。"
+    },
+    {
+      "id": "refund-rose-v2",
+      "name": "雾玫主题 · 退款确认",
+      "theme": "rose",
+      "file": "refund-rose-v2.png",
+      "prompt_file": "refund-rose-v2.prompt.txt",
+      "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-7696c57a-cc43-441f-bb3b-e6774a47ccfb.png",
+      "references": [
+        ".impeccable/mocks/actions-v1/refund-confirm-v2.png",
+        ".impeccable/mocks/actions-v1/refund-rose.png"
+      ],
+      "tool": "native image_gen",
+      "approved": true,
+      "status": "用户已确认",
+      "date": "2026-09-22",
+      "scope": "退款确认字号与信息层级修订；短标题、商品摘要及退款信息行；原有交易语义和操作保留。"
+    }
+  ]
+}

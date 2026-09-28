@@ -1,0 +1,22 @@
+[
+  {
+    "id": "apricot",
+    "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-2c6dee76-e5c8-488a-8edd-b1b40ac3c06b.png",
+    "target": "/Users/zz-b191/code/way2we/.impeccable/mocks/decision/apricot.png"
+  },
+  {
+    "id": "rose",
+    "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-006bc5da-673c-43de-bc11-9d388fa96aa1.png",
+    "target": "/Users/zz-b191/code/way2we/.impeccable/mocks/decision/rose.png"
+  },
+  {
+    "id": "seaglass",
+    "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-b76cd7ef-51d5-4def-9e63-af1fb8abef11.png",
+    "target": "/Users/zz-b191/code/way2we/.impeccable/mocks/decision/seaglass.png"
+  },
+  {
+    "id": "canon",
+    "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-f75b429c-25a1-4076-bbc6-d9e8e2a1253c.png",
+    "target": "/Users/zz-b191/code/way2we/.impeccable/mocks/decision/canon.png"
+  }
+]

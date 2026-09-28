@@ -1,0 +1,17 @@
+Use case: precise-object-edit.
+Image 1 is the EDIT TARGET: a Chinese warm-apricot cancellation/refund bottom sheet over purchase detail. Image 2 is a SIBLING SCREEN STYLE REFERENCE, the same app's purchase-confirmation sheet. The user finds Image 1's many giant bold headings and giant refund number ugly and inconsistent. Refine ONLY the active refund sheet's density and typography. Preserve the exact dimmed purchase-detail backdrop, screen ratio, images, warm palette, transaction data and all actions.
+Output one complete edge-to-edge portrait screenshot matching Image 1 (851 x 1847). No new phone frame or presentation board.
+REBUILD THE ACTIVE SHEET AS A COMPACT NATIVE CONFIRMATION, occupying roughly the bottom 36–39% of the screen, starting around y=1140–1190. Preserve the white-warm surface, 16dp top corners, small grab handle, bottom home safe area. This is a quiet confirmation, not a promotional hero. Keep all controls comfortably tappable.
+TYPOGRAPHY MUST BE MUCH CALMER:
+At logical 390dp width, use 20sp medium sans-serif for the sheet title; 15sp regular sans-serif for product and normal information; 14sp for secondary labels; 13sp for explanatory note; 16sp medium for button labels and refund value. At the 851px raster these correspond to approximately 44, 33, 30, 28 and 35 pixels. No heavy Song/serif display type inside this short confirmation. No giant number, no entire bold refund sentence. Do not shrink all copy into unreadability. Only the title and buttons carry moderate weight.
+Exact layout and content in order:
+1. Header row: 取消这笔购买？ left (20sp), 关闭 right (15sp), aligned baseline with generous right tap area.
+2. Compact product summary: SAME breakfast photo in a SMALL 44–48dp square thumbnail at left; single-line 15sp text 准备一份早餐 × 2 at right. No second giant product title.
+3. One light divider. TWO compact flat fact rows (not a card or grid):
+   退款对象 on left, 阿禾 right.
+   退还积分 on left, 20 分 right.
+   Use secondary text for labels. 阿禾 standard dark ink. 20 分 is 16sp medium terracotta, only slightly emphasized, same size scale as body, never oversized. These rows communicate the same original full actual-paid refund, not an editable amount.
+4. Short secondary explanatory copy, regular 13sp, comfortable line height: 整笔取消，已提供部分内容也全额退款。
+5. Two equal-height side-by-side buttons at the bottom: left outlined 保留购买 ; right filled terracotta 取消并退款. Each around 48dp tall, 16sp labels, 12dp gap, ordinary corners matching the app. Clear safe-area spacing below.
+Use approximately 20dp horizontal inset, coherent 12–16dp internal gaps, section spacing controlled. The smaller image, orderly fact rows and normal body text should make the sheet feel calm and visually coherent with the app. Remove the old gigantic sentence 向阿禾退还实际支付的 20 分。 from the active sheet because its exact facts are now represented in the two compact rows.
+Preserve background 待完成, prepared breakfast ×2, same 阿禾 and 小满 identities. Preserve all transaction meaning and both actions. No warning icon, decorative picture, checkboxes, reason field, refund editing, extra buttons or new wording.

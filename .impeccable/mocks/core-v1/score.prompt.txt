@@ -1,0 +1,18 @@
+Use case: ui-mockup.
+Asset type: one complete mobile app screen, high-fidelity visual design proposal, portrait 851 x 1847 proportion.
+Image 1 is the USER-APPROVED HOME SCREEN STYLE REFERENCE. Inherit its quietly refined warm-white paper surface, restrained apricot/terracotta accents, airy spacing, elegant Chinese Song-style serif section headings, clean sans-serif body/control text, gentle corners, thin warm-ink icons and native mobile proportions. This is another screen of exactly the same app, not a redesign of its visual identity. Do not reproduce the home screen quote or botanical hero on these task screens; inherit the color, typography and component character. Business content below defines the new screen.
+Keep sharp, comfortably readable Chinese type. Exact content and numbers matter. Large body text, clear hierarchy, comfortable touch areas, restrained surfaces, no nested card grid. Portrait edge-to-edge screenshot, no device frame, no presentation canvas, no multiple screens, no watermark or external annotations. Include 9:41 native status bar and bottom home indicator, both positioned like reference.
+Palette candidate: background #F8F4EE, surface #FFFCF8, dark ink #352D29, secondary text #71685F, primary control color #A65A40 with white text (deeper apricot for readability), light apricot #F0DBCE, quiet decorative apricot #C98262, divider #E4D9CF. Rewards #4F754D and penalties #AF493B with +/− symbols. Very subtle warm paper feel only, no heavy texture behind content, no colored glows or thick shadows.
+Use the same reference avatars whenever visible: 阿禾 woman at sunset, 小满 ginger-white cat, small plant photo at 我的. All names are fictional demo data.
+Image 2 is the new AGREEMENTS SCREEN REFERENCE from this same app. Reuse it dimmed behind the active sheet, with the original warm page, top chrome and selected agreement. Image 1 supplies the overall visual identity.
+Screen: 记一笔, opened from the agreement 散步 30 分钟. Current member 阿禾. This is a short focused bottom sheet over the agreement page, not a navigation page. Do not show a keyboard.
+Composition: native status bar remains at top; the upper approximately 20–25% of screen shows a subtly dimmed part of the agreement screen. A large opaque warm-white rounded-top sheet occupies the rest down to the safe-area home indicator. Sheet content uses one continuous surface with clean rows and fine dividers, no cards nested in cards. Small centered grab handle. Generous mobile margins.
+Exact visible sheet content in order:
+- Heading 记一笔 at top left, 关闭 at top right with a clear tap area.
+- Field label 按哪条约定; row 散步 30 分钟, right-hand action 更换. This is a selected agreement, not an editable title.
+- Field label 给谁记分; row with 阿禾's reference woman avatar, 阿禾（我）, and down-chevron indicating member selection.
+- Calm summary block separated by fine lines, label 本次积分变化 and +10 分, green #4F754D.
+- Label 阿禾的余额 and the exact before/after values 20 → 30 分, with clear hierarchy and large readable numerals.
+- Subtle explanatory line 提交后立即生效。
+- Near bottom with safe-area room, one full-width deep-apricot primary button: 给阿禾加 10 分. White label, same shape and surface character as reference 记一笔 button.
+There is no new points input, no sign toggle, no reviewer, no due date, no extra confirmation, no balance 10 or 0 on the active sheet. The chosen agreement defines +10. Keep enough whitespace between rows to feel calm but do not produce a mostly empty giant sheet. All specified content, especially the before/after balance and primary action, fully visible. The background bottom tabs are covered by the sheet and should not become a second active navigation bar.

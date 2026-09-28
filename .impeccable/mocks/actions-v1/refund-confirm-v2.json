@@ -1,0 +1,18 @@
+{
+  "id": "refund-confirm-v2",
+  "name": "退款确认",
+  "theme": "apricot",
+  "file": "refund-confirm-v2.png",
+  "prompt_file": "refund-confirm-v2.prompt.txt",
+  "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-b72d3032-e606-44f8-a076-d01ea715ae52.png",
+  "references": [
+    "refund-confirm.png",
+    "purchase-confirm-v2.png"
+  ],
+  "tool": "native image_gen",
+  "approved": true,
+  "status": "用户已确认",
+  "date": "2026-09-22",
+  "scope": "退款确认字号与信息层级修订；短标题、商品摘要及退款信息行；原有交易语义和操作保留。",
+  "approval_evidence": "用户在退款确认字号修订后回复：好的，继续吧。按已展示的当前页面继续制作原型。"
+}

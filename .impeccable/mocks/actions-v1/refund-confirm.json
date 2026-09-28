@@ -1,0 +1,18 @@
+{
+  "id": "refund-confirm",
+  "name": "退款确认",
+  "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-242f5e47-7e72-4936-91c3-6fb66b2beab9.png",
+  "file": "refund-confirm.png",
+  "prompt_file": "refund-confirm.prompt.txt",
+  "references": [
+    "../core-v1/purchase.png",
+    "../core-v1/score.png"
+  ],
+  "approved": false,
+  "status": "过程稿",
+  "tool": "native image_gen",
+  "theme": "apricot",
+  "date": "2026-09-22",
+  "scope": "操作界面静态视觉稿；业务规则已确认，新页面视觉待评审。实际交互和设备适配在原型及实现阶段验证。",
+  "current_version": "refund-confirm-v2.png"
+}

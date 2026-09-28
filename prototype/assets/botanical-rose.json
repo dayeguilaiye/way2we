@@ -1,0 +1,15 @@
+{
+  "id": "botanical-rose",
+  "file": "prototype/assets/botanical-rose.png",
+  "generatedBy": "image_gen.imagegen (native)",
+  "sourceImage": "/Users/zz-b191/.codex/generated_images/01a0c7c4-347e-7021-b2b7-aad69512762a/exec-2fde1937-b1e0-4572-bf6b-6549d681eaeb.png",
+  "referenceImage": ".impeccable/build/crops/botanical-rose-ref.png",
+  "promptFile": "prototype/assets/botanical-rose.prompt.txt",
+  "width": 1328,
+  "height": 1184,
+  "format": "PNG",
+  "alpha": true,
+  "generatedAt": "2026-09-22",
+  "visualCheck": "Reference subject, composition, visual weight and palette inspected.",
+  "alphaCheck": "Genuine alpha verified; light and dark composites inspected. Delicate colored shadow is intended for current light themes."
+}

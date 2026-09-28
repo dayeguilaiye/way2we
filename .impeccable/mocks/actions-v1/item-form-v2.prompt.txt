@@ -1,0 +1,3 @@
+Use case: precise-object-edit.
+Image 1 is the EDIT TARGET, an approved-style warm-apricot Chinese mobile creation form.
+One exact local edit only: in the first text input under 名称, change 准备一份早餐。 to 准备一份早餐 by removing just its final full stop. Keep all other text punctuation, positions, sizes, typography, input bounds, photos, colors, controls and full-screen layout exactly unchanged. In particular preserve the description 一份热乎的早餐，时间一起商量。 and bottom button 保存并上架. Output one complete portrait screenshot with the original status bar and home indicator.

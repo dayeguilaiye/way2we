@@ -1,0 +1,17 @@
+Use case: ui-mockup.
+Create ONE complete high-fidelity Chinese mobile app screen, portrait approximately 851 x 1847, the same edge-to-edge screenshot framing as the references. No device frame, exterior canvas, collage or annotation.
+Input images are APPROVED STYLE AND COMPONENT REFERENCES of the same warm-apricot relationship reward app. Preserve their material, typography scale, gently rounded controls, thin warm-ink icon style and comfortable mobile spacing. Reference images are visual authority; the NEW SCREEN CONTENT below defines the page. Inherit only the chrome and visual system appropriate to this screen. Exact Chinese labels and numbers must be legible and correct.
+Colors: paper-warm background #F8F4EE, near-white surfaces #FFFCF8, ink #352D29, secondary #71685F, terracotta primary #A65A40 with white text, light apricot #F0DBCE. Gain/success #4F754D, loss/error #AF493B. Quiet textured warmth as reference, no noisy grain. Elegant Chinese serif for page or sheet headings; clear sans-serif for fields, instructions, buttons and values. One flat surface for forms, clear filled/outlined controls and fine dividers, no nested card composition. Content-first with readable type and comfortable tap areas.
+Status bar 9:41 and home indicator in consistent positions. Respect top and bottom safe areas. Keep the same reference avatars and product photos if used: 阿禾 woman at sunset; 小满 ginger-white cat; breakfast on ceramic plate with toast, egg and cup. All names/data are illustrative. No invented slogans, fields, dates, extra business features or filler.
+
+NEW SCREEN: 购买确认 bottom sheet over the breakfast 商品详情, current account 阿禾 has 30 points and is buying from 小满. Image 1 anchors sheet styling; Image 2 anchors breakfast product content/photography. Compose this as a focused sheet, not a post-purchase transaction.
+At top, approximately one-quarter to one-third of the screen is a subtly dimmed product detail backdrop, with back navigation 商品详情 and a partial photo/title of 准备一份早餐. Behind the sheet there is no order status, no 已支付 and no bottom tabs. The sheet is opaque warm white, softly rounded at its upper edge, extends to the bottom home safe area, with a subtle centered grab handle. Use broad comfortable side margins.
+Exact active-sheet content in reading order:
+- Heading 购买确认, right 关闭.
+- Compact product identity row: matching breakfast thumbnail; 准备一份早餐; 小满提供.
+- Single row 单价 on left and 10 分 / 份 on right.
+- Row 数量 with an easy-to-tap segmented stepper showing minus button, number 2, plus button. Number visible and editable. Both minus and plus enabled because quantity is 2. No second quantity.
+- Fine divider.
+- Summary rows: 合计支付 20 分 ; 当前余额 30 分 ; 购买后余额 10 分. Emphasize total and after-balance appropriately, not enormous dashboard metrics.
+- Full-width terracotta primary button near the bottom, exactly 支付 20 分购买.
+All content fully visible without keyboard. No shipping/payment method/money/order notes/stock. This is the single confirmation before spending points; no extra Next step. Keep the full screen calm and consistent with approved score sheet.

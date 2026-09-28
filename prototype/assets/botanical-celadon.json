@@ -1,0 +1,15 @@
+{
+  "id": "botanical-celadon",
+  "file": "prototype/assets/botanical-celadon.png",
+  "generatedBy": "image_gen.imagegen (native)",
+  "sourceImage": "/Users/zz-b191/.codex/generated_images/01a0c7c4-347e-7021-b2b7-aad69512762a/exec-0780eff0-4ab3-4925-b4ff-dec76f90c033.png",
+  "referenceImage": ".impeccable/build/crops/botanical-celadon-ref.png",
+  "promptFile": "prototype/assets/botanical-celadon.prompt.txt",
+  "width": 1328,
+  "height": 1184,
+  "format": "PNG",
+  "alpha": true,
+  "generatedAt": "2026-09-22",
+  "visualCheck": "Reference subject, composition, visual weight and palette inspected.",
+  "alphaCheck": "Genuine alpha verified; light and dark composites inspected. Delicate colored shadow is intended for current light themes."
+}

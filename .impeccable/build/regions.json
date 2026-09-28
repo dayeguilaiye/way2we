@@ -1,0 +1,460 @@
+{
+  "regions": [
+    {
+      "id": "status",
+      "kind": "chrome",
+      "note": "Native-style time, signal, Wi-Fi and battery icons rendered as code",
+      "codeDrawn": true,
+      "grid": "A0:J0",
+      "box": {
+        "x": 0.07638072855464159,
+        "y": 0.016242555495397944,
+        "w": 0.881316098707403,
+        "h": 0.026529507309149974
+      },
+      "snap": false
+    },
+    {
+      "id": "my-avatar",
+      "kind": "image",
+      "note": "Small sunlit indoor potted plant photograph, circular avatar",
+      "bleed": true,
+      "grid": "A0:B0",
+      "box": {
+        "x": 0.0399529964747356,
+        "y": 0.05901461829994586,
+        "w": 0.08695652173913043,
+        "h": 0.04006497022198159
+      },
+      "snap": false
+    },
+    {
+      "id": "my-label",
+      "kind": "text",
+      "note": "我的 label",
+      "codeDrawn": true,
+      "grid": "B0:C0",
+      "box": {
+        "x": 0.1398354876615746,
+        "y": 0.06876015159718463,
+        "w": 0.07050528789659224,
+        "h": 0.021115322144017325
+      },
+      "snap": false
+    },
+    {
+      "id": "space-title",
+      "kind": "text",
+      "note": "一起的小日子 with dropdown chevron",
+      "codeDrawn": true,
+      "grid": "D0:G0",
+      "box": {
+        "x": 0.3572267920094007,
+        "y": 0.06551164049810504,
+        "w": 0.2878965922444183,
+        "h": 0.025446670276123445
+      },
+      "snap": false
+    },
+    {
+      "id": "notification",
+      "kind": "control",
+      "note": "Outline bell button",
+      "codeDrawn": true,
+      "grid": "J0:J0",
+      "box": {
+        "x": 0.9024676850763808,
+        "y": 0.06497022198159177,
+        "w": 0.0564042303172738,
+        "h": 0.03086085544125609
+      },
+      "snap": false
+    },
+    {
+      "id": "hero-quote",
+      "kind": "text",
+      "note": "Two lines of elegant Chinese serif text 平凡的日常，也是值得好好记录的生活。",
+      "codeDrawn": true,
+      "grid": "A1:G1",
+      "box": {
+        "x": 0.05875440658049354,
+        "y": 0.13318895506226314,
+        "w": 0.564042303172738,
+        "h": 0.05576610720086627
+      },
+      "snap": false
+    },
+    {
+      "id": "botanical",
+      "kind": "plate",
+      "note": "Sparse olive-green leafy branch at right edge with warm natural light and soft botanical shadow, isolate foliage and shadow with transparent background, no text",
+      "bleed": true,
+      "grid": "G0:J2",
+      "box": {
+        "x": 0.6039952996474736,
+        "y": 0.09962100703844072,
+        "w": 0.39600470035252644,
+        "h": 0.1613427179209529
+      },
+      "snap": false
+    },
+    {
+      "id": "hero-caption",
+      "kind": "text",
+      "note": "Together life gentler caption 一起，让日子更温柔一点。",
+      "codeDrawn": true,
+      "grid": "H1:J2",
+      "box": {
+        "x": 0.7790834312573442,
+        "y": 0.19653492149431512,
+        "w": 0.1598119858989424,
+        "h": 0.029236599891716297
+      },
+      "snap": false
+    },
+    {
+      "id": "balances-surface",
+      "kind": "chrome",
+      "note": "Warm-white rounded balance surface",
+      "codeDrawn": true,
+      "grid": "A2:J3",
+      "box": {
+        "x": 0.03407755581668625,
+        "y": 0.23714131023280996,
+        "w": 0.9318448883666275,
+        "h": 0.12723335138061723
+      },
+      "snap": false
+    },
+    {
+      "id": "avatar-a",
+      "kind": "image",
+      "note": "Woman with dark hair viewed from side at a beach sunset, warm photo avatar",
+      "bleed": true,
+      "grid": "A2:C3",
+      "box": {
+        "x": 0.08343125734430082,
+        "y": 0.26475365457498645,
+        "w": 0.13748531139835488,
+        "h": 0.06388738494856525
+      },
+      "snap": false
+    },
+    {
+      "id": "balance-a",
+      "kind": "text",
+      "note": "阿禾（我）, 10 分, 查看积分明细",
+      "codeDrawn": true,
+      "grid": "C2:E3",
+      "box": {
+        "x": 0.2444183313748531,
+        "y": 0.2642122360584732,
+        "w": 0.20681551116333724,
+        "h": 0.0752571737953438
+      },
+      "snap": false
+    },
+    {
+      "id": "avatar-b",
+      "kind": "image",
+      "note": "Ginger-and-white cat portrait with neutral pale backdrop",
+      "bleed": true,
+      "grid": "F2:G3",
+      "box": {
+        "x": 0.5581668625146886,
+        "y": 0.26475365457498645,
+        "w": 0.13866039952996476,
+        "h": 0.06388738494856525
+      },
+      "snap": false
+    },
+    {
+      "id": "balance-b",
+      "kind": "text",
+      "note": "小满, 0 分, 查看成员",
+      "codeDrawn": true,
+      "grid": "H2:I3",
+      "box": {
+        "x": 0.7226792009400705,
+        "y": 0.2642122360584732,
+        "w": 0.14806110458284372,
+        "h": 0.0752571737953438
+      },
+      "snap": false
+    },
+    {
+      "id": "score-button",
+      "kind": "control",
+      "note": "Full-width warm terracotta button with plus icon and 记一笔",
+      "codeDrawn": true,
+      "grid": "A3:J4",
+      "box": {
+        "x": 0.03407755581668625,
+        "y": 0.3779101245262588,
+        "w": 0.9318448883666275,
+        "h": 0.07038440714672442
+      },
+      "snap": false
+    },
+    {
+      "id": "pending-title",
+      "kind": "text",
+      "note": "Serif section title 待处理",
+      "codeDrawn": true,
+      "grid": "A4:C5",
+      "box": {
+        "x": 0.03760282021151586,
+        "y": 0.4813210611802924,
+        "w": 0.2056404230317274,
+        "h": 0.028695181375203032
+      },
+      "snap": false
+    },
+    {
+      "id": "pending-all",
+      "kind": "control",
+      "note": "查看全部 chevron",
+      "codeDrawn": true,
+      "grid": "I4:J5",
+      "box": {
+        "x": 0.8108108108108109,
+        "y": 0.48619382782891174,
+        "w": 0.15158636897767333,
+        "h": 0.021115322144017325
+      },
+      "snap": false
+    },
+    {
+      "id": "pending-row",
+      "kind": "chrome",
+      "note": "Near-white pending transaction row with small cup icon at left",
+      "codeDrawn": true,
+      "grid": "A5:J6",
+      "box": {
+        "x": 0.03407755581668625,
+        "y": 0.5208446128857607,
+        "w": 0.9318448883666275,
+        "h": 0.08716838115863562
+      },
+      "snap": false
+    },
+    {
+      "id": "pending-copy",
+      "kind": "text",
+      "note": "准备一份早餐 × 2, 小满提供 · 我已支付 20 分",
+      "codeDrawn": true,
+      "grid": "B5:F5",
+      "box": {
+        "x": 0.19741480611045828,
+        "y": 0.5430427720628046,
+        "w": 0.37602820211515864,
+        "h": 0.042772062804547914
+      },
+      "snap": false
+    },
+    {
+      "id": "complete-button",
+      "kind": "control",
+      "note": "Filled terracotta 完成 button",
+      "codeDrawn": true,
+      "grid": "G5:H5",
+      "box": {
+        "x": 0.6251468860164512,
+        "y": 0.5430427720628046,
+        "w": 0.15041128084606345,
+        "h": 0.04223064428803465
+      },
+      "snap": false
+    },
+    {
+      "id": "cancel-button",
+      "kind": "control",
+      "note": "Outlined 取消 button",
+      "codeDrawn": true,
+      "grid": "H5:J5",
+      "box": {
+        "x": 0.7955346650998825,
+        "y": 0.5430427720628046,
+        "w": 0.1492361927144536,
+        "h": 0.04223064428803465
+      },
+      "snap": false
+    },
+    {
+      "id": "activity-title",
+      "kind": "text",
+      "note": "Serif section title 空间近况",
+      "codeDrawn": true,
+      "grid": "A6:C6",
+      "box": {
+        "x": 0.03760282021151586,
+        "y": 0.6410395235517055,
+        "w": 0.2608695652173913,
+        "h": 0.02977801840822956
+      },
+      "snap": false
+    },
+    {
+      "id": "activity-all",
+      "kind": "control",
+      "note": "全部记录 chevron",
+      "codeDrawn": true,
+      "grid": "I6:J6",
+      "box": {
+        "x": 0.8108108108108109,
+        "y": 0.6464537087168382,
+        "w": 0.15276145710928318,
+        "h": 0.021115322144017325
+      },
+      "snap": false
+    },
+    {
+      "id": "activity-surface",
+      "kind": "chrome",
+      "note": "Near-white activity list with thin separator",
+      "codeDrawn": true,
+      "grid": "A6:J8",
+      "container": true,
+      "box": {
+        "x": 0.03407755581668625,
+        "y": 0.678938819707634,
+        "w": 0.9318448883666275,
+        "h": 0.17325392528424471
+      },
+      "snap": false
+    },
+    {
+      "id": "activity-a",
+      "kind": "image",
+      "note": "Same sunset woman avatar as avatar-a",
+      "bleed": true,
+      "grid": "A6:B7",
+      "box": {
+        "x": 0.06462984723854288,
+        "y": 0.697347049269085,
+        "w": 0.10928319623971798,
+        "h": 0.05089334055224689
+      },
+      "snap": false
+    },
+    {
+      "id": "activity-copy-a",
+      "kind": "text",
+      "note": "今天 08:40 and 阿禾购买小满的早餐 × 2",
+      "codeDrawn": true,
+      "grid": "C7:H7",
+      "box": {
+        "x": 0.20681551116333724,
+        "y": 0.7005955603681646,
+        "w": 0.5757931844888367,
+        "h": 0.04114780725500812
+      },
+      "snap": false
+    },
+    {
+      "id": "activity-delta-a",
+      "kind": "text",
+      "note": "−20 分 in brick red",
+      "codeDrawn": true,
+      "grid": "I7:J7",
+      "box": {
+        "x": 0.8131609870740305,
+        "y": 0.7092582566323768,
+        "w": 0.12573443008225618,
+        "h": 0.024363833243096916
+      },
+      "snap": false
+    },
+    {
+      "id": "activity-b",
+      "kind": "image",
+      "note": "Same ginger-white cat avatar as avatar-b",
+      "bleed": true,
+      "grid": "A7:B8",
+      "box": {
+        "x": 0.06462984723854288,
+        "y": 0.7828911748781808,
+        "w": 0.10928319623971798,
+        "h": 0.05089334055224689
+      },
+      "snap": false
+    },
+    {
+      "id": "activity-copy-b",
+      "kind": "text",
+      "note": "今天 08:30 and 阿禾为自己记录「散步 30 分钟」",
+      "codeDrawn": true,
+      "grid": "C7:H8",
+      "box": {
+        "x": 0.20681551116333724,
+        "y": 0.7866811044937737,
+        "w": 0.5757931844888367,
+        "h": 0.04114780725500812
+      },
+      "snap": false
+    },
+    {
+      "id": "activity-delta-b",
+      "kind": "text",
+      "note": "+10 分 in green",
+      "codeDrawn": true,
+      "grid": "I7:J8",
+      "box": {
+        "x": 0.8131609870740305,
+        "y": 0.7953438007579859,
+        "w": 0.12573443008225618,
+        "h": 0.024363833243096916
+      },
+      "snap": false
+    },
+    {
+      "id": "bottom-nav",
+      "kind": "chrome",
+      "note": "Four tab icons and labels 近况 约定 小卖部 记录; home selected",
+      "codeDrawn": true,
+      "grid": "A8:J9",
+      "box": {
+        "x": 0.0,
+        "y": 0.8933405522468868,
+        "w": 1.0,
+        "h": 0.08121277747698971
+      },
+      "snap": false
+    },
+    {
+      "id": "home-indicator",
+      "kind": "chrome",
+      "note": "Black system home indicator",
+      "codeDrawn": true,
+      "grid": "D9:G9",
+      "box": {
+        "x": 0.3219741480611046,
+        "y": 0.9826746074715755,
+        "w": 0.3572267920094007,
+        "h": 0.007579859231185706
+      },
+      "snap": false
+    },
+    {
+      "id": "header-ground",
+      "kind": "chrome",
+      "grid": "A0:J0",
+      "note": "Single flat warm background of the header; all header contents individually named",
+      "codeDrawn": true
+    },
+    {
+      "id": "quote-ground",
+      "kind": "chrome",
+      "grid": "A1:F1",
+      "note": "Flat warm ground behind quote, lettering measured separately",
+      "codeDrawn": true
+    },
+    {
+      "id": "pending-heading-ground",
+      "kind": "chrome",
+      "grid": "A4:F4",
+      "note": "Flat background around the pending heading and lower edge of the score control; each element measured separately",
+      "codeDrawn": true
+    }
+  ]
+}

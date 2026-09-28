@@ -1,0 +1,16 @@
+{
+  "id": "avatar-a",
+  "file": "assets/plates/avatar-a.png",
+  "generatedBy": "image_gen.imagegen (native)",
+  "sourceImage": "/Users/zz-b191/.codex/generated_images/01a0c7c4-347e-7021-b2b7-aad69512762a/exec-4de93d62-627d-4435-bd79-74efe019488c.png",
+  "referenceImage": ".impeccable/build/crops/avatar-a-ref.png",
+  "promptFile": "assets/plates/avatar-a.prompt.txt",
+  "width": 1254,
+  "height": 1254,
+  "format": "PNG",
+  "alpha": false,
+  "generatedAt": "2026-09-22",
+  "visualCheck": "Composition, palette, scale, subject inspected; natural photographic material matches approved reference.",
+  "alphaCheck": null,
+  "gate": "no failure reported in latest plates gate"
+}

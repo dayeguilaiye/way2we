@@ -1,0 +1,2075 @@
+{
+  "tool": "comp-spec",
+  "version": 1,
+  "createdAt": "2026-09-22T06:18:24.102Z",
+  "comp": ".impeccable/mocks/themes/apricot-reference.png",
+  "warnings": [
+    "region status: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region my-avatar: \"bleed\": true set in the regions file (the clipped-artwork refusal is overridden: the page crops it there)",
+    "region my-label: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region space-title: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region notification: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region hero-quote: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region botanical: \"bleed\": true set in the regions file (the clipped-artwork refusal is overridden: the page crops it there)",
+    "region hero-caption: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region balances-surface: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region avatar-a: \"bleed\": true set in the regions file (the clipped-artwork refusal is overridden: the page crops it there)",
+    "region balance-a: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region avatar-b: \"bleed\": true set in the regions file (the clipped-artwork refusal is overridden: the page crops it there)",
+    "region balance-b: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region score-button: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region pending-title: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region pending-all: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region pending-row: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region pending-copy: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region complete-button: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region cancel-button: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region activity-title: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region activity-all: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region activity-surface: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region activity-surface: \"container\": true set in the regions file (the region-size refusal is overridden: one undivided element)",
+    "region activity-a: \"bleed\": true set in the regions file (the clipped-artwork refusal is overridden: the page crops it there)",
+    "region activity-copy-a: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region activity-delta-a: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region activity-b: \"bleed\": true set in the regions file (the clipped-artwork refusal is overridden: the page crops it there)",
+    "region activity-copy-b: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region activity-delta-b: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region bottom-nav: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region home-indicator: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region header-ground: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region quote-ground: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region pending-heading-ground: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)"
+  ],
+  "uncoveredInkCells": [],
+  "compSize": {
+    "width": 851,
+    "height": 1847
+  },
+  "aspect": 0.4607,
+  "orientation": "portrait",
+  "palette": [
+    {
+      "hex": "#f7f7ef",
+      "coverage": 0.8949
+    },
+    {
+      "hex": "#c87858",
+      "coverage": 0.0715
+    },
+    {
+      "hex": "#d3ccc4",
+      "coverage": 0.0149
+    },
+    {
+      "hex": "#262121",
+      "coverage": 0.0113
+    },
+    {
+      "hex": "#928e8b",
+      "coverage": 0.0075
+    }
+  ],
+  "bands": [
+    {
+      "y": 0.0216,
+      "strength": 0.2818
+    },
+    {
+      "y": 0.0683,
+      "strength": 0.2804
+    },
+    {
+      "y": 0.1871,
+      "strength": 0.3801
+    },
+    {
+      "y": 0.3777,
+      "strength": 1
+    },
+    {
+      "y": 0.4496,
+      "strength": 1
+    },
+    {
+      "y": 0.5432,
+      "strength": 0.2678
+    },
+    {
+      "y": 0.5863,
+      "strength": 0.2799
+    },
+    {
+      "y": 0.6655,
+      "strength": 0.2106
+    },
+    {
+      "y": 0.7266,
+      "strength": 0.2759
+    },
+    {
+      "y": 0.8129,
+      "strength": 0.3594
+    },
+    {
+      "y": 0.9892,
+      "strength": 0.9745
+    }
+  ],
+  "regions": [
+    {
+      "id": "status",
+      "kind": "chrome",
+      "note": "Native-style time, signal, Wi-Fi and battery icons rendered as code",
+      "grid": "A0:J0",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.0764,
+        "y": 0.0162,
+        "w": 0.8813,
+        "h": 0.0265
+      },
+      "px": {
+        "x": 65,
+        "y": 30,
+        "w": 750,
+        "h": 49
+      },
+      "aspect": 15.3061,
+      "palette": [
+        {
+          "hex": "#f8f8e9",
+          "coverage": 0.9364
+        },
+        {
+          "hex": "#0b0b0b",
+          "coverage": 0.0419
+        },
+        {
+          "hex": "#c1c1c0",
+          "coverage": 0.0104
+        },
+        {
+          "hex": "#8d8a87",
+          "coverage": 0.0097
+        },
+        {
+          "hex": "#5f5f5f",
+          "coverage": 0.0017
+        }
+      ],
+      "detail": {
+        "energy": 24.8406
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "my-avatar",
+      "kind": "image",
+      "note": "Small sunlit indoor potted plant photograph, circular avatar",
+      "grid": "A0:B0",
+      "bleed": true,
+      "snap": false,
+      "box": {
+        "x": 0.04,
+        "y": 0.059,
+        "w": 0.087,
+        "h": 0.0401
+      },
+      "px": {
+        "x": 34,
+        "y": 109,
+        "w": 74,
+        "h": 74
+      },
+      "aspect": 1,
+      "palette": [
+        {
+          "hex": "#f0eee2",
+          "coverage": 0.5053
+        },
+        {
+          "hex": "#cbbfb1",
+          "coverage": 0.193
+        },
+        {
+          "hex": "#a0896e",
+          "coverage": 0.1614
+        },
+        {
+          "hex": "#736651",
+          "coverage": 0.0789
+        },
+        {
+          "hex": "#4a3021",
+          "coverage": 0.0614
+        }
+      ],
+      "detail": {
+        "energy": 10.5046
+      },
+      "medium": "raster",
+      "plate": "assets/plates/my-avatar.png",
+      "text": null
+    },
+    {
+      "id": "my-label",
+      "kind": "text",
+      "note": "我的 label",
+      "grid": "B0:C0",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.1398,
+        "y": 0.0688,
+        "w": 0.0705,
+        "h": 0.0211
+      },
+      "px": {
+        "x": 119,
+        "y": 127,
+        "w": 60,
+        "h": 39
+      },
+      "aspect": 1.5385,
+      "palette": [
+        {
+          "hex": "#f6f6ed",
+          "coverage": 0.7817
+        },
+        {
+          "hex": "#cac7c2",
+          "coverage": 0.0794
+        },
+        {
+          "hex": "#595650",
+          "coverage": 0.0556
+        },
+        {
+          "hex": "#342c29",
+          "coverage": 0.0476
+        },
+        {
+          "hex": "#a19a96",
+          "coverage": 0.0357
+        }
+      ],
+      "detail": {
+        "energy": 20.3277
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": null,
+        "measuredAt": "2026-09-22T06:18:58.759Z",
+        "note": "no separable lettering in the crop; size by the region box"
+      }
+    },
+    {
+      "id": "space-title",
+      "kind": "text",
+      "note": "一起的小日子 with dropdown chevron",
+      "grid": "D0:G0",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.3572,
+        "y": 0.0655,
+        "w": 0.2879,
+        "h": 0.0254
+      },
+      "px": {
+        "x": 304,
+        "y": 121,
+        "w": 245,
+        "h": 47
+      },
+      "aspect": 5.2128,
+      "palette": [
+        {
+          "hex": "#f8f7ed",
+          "coverage": 0.7911
+        },
+        {
+          "hex": "#0b0b0b",
+          "coverage": 0.1076
+        },
+        {
+          "hex": "#c4c2bf",
+          "coverage": 0.0436
+        },
+        {
+          "hex": "#888785",
+          "coverage": 0.0312
+        },
+        {
+          "hex": "#393837",
+          "coverage": 0.0265
+        }
+      ],
+      "detail": {
+        "energy": 53.5713
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 10,
+          "capHeightPx": 30.5,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.6066,
+          "advTall": 0.6066,
+          "advX": null,
+          "gap": 0.1311,
+          "xRatio": 0.591,
+          "stemW": 0.1169,
+          "contrast": 1.0428,
+          "serif": null,
+          "densTall": 0.4748,
+          "densX": null,
+          "weight": 0.4748
+        },
+        "widthClass": "condensed",
+        "weightClass": "regular"
+      }
+    },
+    {
+      "id": "notification",
+      "kind": "control",
+      "note": "Outline bell button",
+      "grid": "J0:J0",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.9025,
+        "y": 0.065,
+        "w": 0.0564,
+        "h": 0.0309
+      },
+      "px": {
+        "x": 768,
+        "y": 120,
+        "w": 48,
+        "h": 57
+      },
+      "aspect": 0.8421,
+      "palette": [
+        {
+          "hex": "#f7f6ed",
+          "coverage": 0.7987
+        },
+        {
+          "hex": "#2e2b2a",
+          "coverage": 0.1386
+        },
+        {
+          "hex": "#b4b0a6",
+          "coverage": 0.0264
+        },
+        {
+          "hex": "#888381",
+          "coverage": 0.0231
+        },
+        {
+          "hex": "#605c58",
+          "coverage": 0.0132
+        }
+      ],
+      "detail": {
+        "energy": 11.1242
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "hero-quote",
+      "kind": "text",
+      "note": "Two lines of elegant Chinese serif text 平凡的日常，也是值得好好记录的生活。",
+      "grid": "A1:G1",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.0588,
+        "y": 0.1332,
+        "w": 0.564,
+        "h": 0.0558
+      },
+      "px": {
+        "x": 50,
+        "y": 246,
+        "w": 480,
+        "h": 103
+      },
+      "aspect": 4.6602,
+      "palette": [
+        {
+          "hex": "#f7f7eb",
+          "coverage": 0.8708
+        },
+        {
+          "hex": "#372d27",
+          "coverage": 0.044
+        },
+        {
+          "hex": "#60574f",
+          "coverage": 0.0376
+        },
+        {
+          "hex": "#bdb8b1",
+          "coverage": 0.0259
+        },
+        {
+          "hex": "#8e877f",
+          "coverage": 0.0216
+        }
+      ],
+      "detail": {
+        "energy": 48.7126
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 16,
+          "capHeightPx": 32.8,
+          "inkIsDark": true,
+          "allCaps": true,
+          "advance": 0.6411,
+          "advTall": 0.6411,
+          "advX": null,
+          "gap": 0.1832,
+          "xRatio": null,
+          "stemW": 0.0931,
+          "contrast": 1.8939,
+          "serif": 1.3793,
+          "densTall": 0.333,
+          "densX": null,
+          "weight": 0.333
+        },
+        "widthClass": "normal",
+        "weightClass": "light",
+        "chosen": {
+          "family": "Noto Serif SC",
+          "weight": 400,
+          "fontSizePx": 37,
+          "source": "index",
+          "fp": {
+            "lines": 1,
+            "glyphs": 25,
+            "capHeightPx": 31.9,
+            "inkIsDark": true,
+            "allCaps": true,
+            "advance": 0.6279,
+            "advTall": 0.6279,
+            "advX": null,
+            "gap": 0.0942,
+            "xRatio": null,
+            "stemW": 0.0919,
+            "contrast": 1.7734,
+            "serif": 1.4751,
+            "densTall": 0.3563,
+            "densX": null,
+            "weight": 0.3563
+          },
+          "stamp": "e1b9f773d65e"
+        }
+      }
+    },
+    {
+      "id": "botanical",
+      "kind": "plate",
+      "note": "Sparse olive-green leafy branch at right edge with warm natural light and soft botanical shadow, isolate foliage and shadow with transparent background, no text",
+      "grid": "G0:J2",
+      "bleed": true,
+      "snap": false,
+      "box": {
+        "x": 0.604,
+        "y": 0.0996,
+        "w": 0.396,
+        "h": 0.1613
+      },
+      "px": {
+        "x": 514,
+        "y": 184,
+        "w": 337,
+        "h": 298
+      },
+      "aspect": 1.1309,
+      "palette": [
+        {
+          "hex": "#f0e9e1",
+          "coverage": 0.8962
+        },
+        {
+          "hex": "#807f61",
+          "coverage": 0.0534
+        },
+        {
+          "hex": "#b7ae97",
+          "coverage": 0.0367
+        },
+        {
+          "hex": "#595c3e",
+          "coverage": 0.0074
+        },
+        {
+          "hex": "#b1a070",
+          "coverage": 0.0064
+        }
+      ],
+      "detail": {
+        "energy": 8.5732
+      },
+      "medium": "raster",
+      "plate": "assets/plates/botanical.png",
+      "text": null
+    },
+    {
+      "id": "hero-caption",
+      "kind": "text",
+      "note": "Together life gentler caption 一起，让日子更温柔一点。",
+      "grid": "H1:J2",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.7791,
+        "y": 0.1965,
+        "w": 0.1598,
+        "h": 0.0292
+      },
+      "px": {
+        "x": 663,
+        "y": 363,
+        "w": 136,
+        "h": 54
+      },
+      "aspect": 2.5185,
+      "palette": [
+        {
+          "hex": "#e7dad4",
+          "coverage": 0.8382
+        },
+        {
+          "hex": "#b7a495",
+          "coverage": 0.1534
+        },
+        {
+          "hex": "#937d6d",
+          "coverage": 0.0085
+        }
+      ],
+      "detail": {
+        "energy": 14.4617
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 3,
+          "capHeightPx": 18.4,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.9767,
+          "advTall": 0.9767,
+          "advX": null,
+          "gap": 0.1085,
+          "xRatio": 0.7817,
+          "stemW": 0.1168,
+          "contrast": 1.0997,
+          "serif": null,
+          "densTall": 0.5344,
+          "densX": null,
+          "weight": 0.5344
+        },
+        "widthClass": "wide",
+        "weightClass": "medium"
+      }
+    },
+    {
+      "id": "balances-surface",
+      "kind": "chrome",
+      "note": "Warm-white rounded balance surface",
+      "grid": "A2:J3",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.0341,
+        "y": 0.2371,
+        "w": 0.9318,
+        "h": 0.1272
+      },
+      "px": {
+        "x": 29,
+        "y": 438,
+        "w": 793,
+        "h": 235
+      },
+      "aspect": 3.3745,
+      "palette": [
+        {
+          "hex": "#f8f8f7",
+          "coverage": 0.9008
+        },
+        {
+          "hex": "#ccc5be",
+          "coverage": 0.0552
+        },
+        {
+          "hex": "#525054",
+          "coverage": 0.0151
+        },
+        {
+          "hex": "#1f1c1c",
+          "coverage": 0.0149
+        },
+        {
+          "hex": "#b19c8c",
+          "coverage": 0.0142
+        }
+      ],
+      "detail": {
+        "energy": 15.675
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "avatar-a",
+      "kind": "image",
+      "note": "Woman with dark hair viewed from side at a beach sunset, warm photo avatar",
+      "grid": "A2:C3",
+      "bleed": true,
+      "snap": false,
+      "box": {
+        "x": 0.0834,
+        "y": 0.2648,
+        "w": 0.1375,
+        "h": 0.0639
+      },
+      "px": {
+        "x": 71,
+        "y": 489,
+        "w": 117,
+        "h": 118
+      },
+      "aspect": 0.9915,
+      "palette": [
+        {
+          "hex": "#f8f7f7",
+          "coverage": 0.2724
+        },
+        {
+          "hex": "#ccc6c5",
+          "coverage": 0.2525
+        },
+        {
+          "hex": "#1d1a1a",
+          "coverage": 0.2034
+        },
+        {
+          "hex": "#504c51",
+          "coverage": 0.1604
+        },
+        {
+          "hex": "#e4be9f",
+          "coverage": 0.1113
+        }
+      ],
+      "detail": {
+        "energy": 7.4712
+      },
+      "medium": "raster",
+      "plate": "assets/plates/avatar-a.png",
+      "text": null
+    },
+    {
+      "id": "balance-a",
+      "kind": "text",
+      "note": "阿禾（我）, 10 分, 查看积分明细",
+      "grid": "C2:E3",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.2444,
+        "y": 0.2642,
+        "w": 0.2068,
+        "h": 0.0753
+      },
+      "px": {
+        "x": 208,
+        "y": 488,
+        "w": 176,
+        "h": 139
+      },
+      "aspect": 1.2662,
+      "palette": [
+        {
+          "hex": "#f7f7f7",
+          "coverage": 0.8632
+        },
+        {
+          "hex": "#7d7c7b",
+          "coverage": 0.0563
+        },
+        {
+          "hex": "#ac5545",
+          "coverage": 0.0408
+        },
+        {
+          "hex": "#bfbebb",
+          "coverage": 0.0232
+        },
+        {
+          "hex": "#292928",
+          "coverage": 0.0165
+        }
+      ],
+      "detail": {
+        "energy": 23.41
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 2,
+          "glyphs": 12,
+          "capHeightPx": 21.8,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.977,
+          "advTall": 0.977,
+          "advX": null,
+          "gap": 0.1318,
+          "xRatio": 0.6977,
+          "stemW": 0.1046,
+          "contrast": 1.1208,
+          "serif": 1.2108,
+          "densTall": 0.4751,
+          "densX": null,
+          "weight": 0.4751
+        },
+        "widthClass": "wide",
+        "weightClass": "regular"
+      }
+    },
+    {
+      "id": "avatar-b",
+      "kind": "image",
+      "note": "Ginger-and-white cat portrait with neutral pale backdrop",
+      "grid": "F2:G3",
+      "bleed": true,
+      "snap": false,
+      "box": {
+        "x": 0.5582,
+        "y": 0.2648,
+        "w": 0.1387,
+        "h": 0.0639
+      },
+      "px": {
+        "x": 475,
+        "y": 489,
+        "w": 118,
+        "h": 118
+      },
+      "aspect": 1,
+      "palette": [
+        {
+          "hex": "#d0c6bb",
+          "coverage": 0.3812
+        },
+        {
+          "hex": "#f6f6f3",
+          "coverage": 0.3311
+        },
+        {
+          "hex": "#9f866a",
+          "coverage": 0.1155
+        },
+        {
+          "hex": "#b3a392",
+          "coverage": 0.1028
+        },
+        {
+          "hex": "#4d3826",
+          "coverage": 0.0694
+        }
+      ],
+      "detail": {
+        "energy": 8.6317
+      },
+      "medium": "raster",
+      "plate": "assets/plates/avatar-b.png",
+      "text": null
+    },
+    {
+      "id": "balance-b",
+      "kind": "text",
+      "note": "小满, 0 分, 查看成员",
+      "grid": "H2:I3",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.7227,
+        "y": 0.2642,
+        "w": 0.1481,
+        "h": 0.0753
+      },
+      "px": {
+        "x": 615,
+        "y": 488,
+        "w": 126,
+        "h": 139
+      },
+      "aspect": 0.9065,
+      "palette": [
+        {
+          "hex": "#f8f7f7",
+          "coverage": 0.8704
+        },
+        {
+          "hex": "#706f6f",
+          "coverage": 0.0547
+        },
+        {
+          "hex": "#bb6b4e",
+          "coverage": 0.039
+        },
+        {
+          "hex": "#a09d9a",
+          "coverage": 0.0198
+        },
+        {
+          "hex": "#c6c4c1",
+          "coverage": 0.0161
+        }
+      ],
+      "detail": {
+        "energy": 16.2538
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 2,
+          "glyphs": 7,
+          "capHeightPx": 22.3,
+          "inkIsDark": true,
+          "allCaps": true,
+          "advance": 0.7924,
+          "advTall": 0.7924,
+          "advX": null,
+          "gap": 0.144,
+          "xRatio": null,
+          "stemW": 0.1136,
+          "contrast": 1.2535,
+          "serif": null,
+          "densTall": 0.4702,
+          "densX": null,
+          "weight": 0.4702
+        },
+        "widthClass": "wide",
+        "weightClass": "regular"
+      }
+    },
+    {
+      "id": "score-button",
+      "kind": "control",
+      "note": "Full-width warm terracotta button with plus icon and 记一笔",
+      "grid": "A3:J4",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.0341,
+        "y": 0.3779,
+        "w": 0.9318,
+        "h": 0.0704
+      },
+      "px": {
+        "x": 29,
+        "y": 698,
+        "w": 793,
+        "h": 130
+      },
+      "aspect": 6.1,
+      "palette": [
+        {
+          "hex": "#c87858",
+          "coverage": 0.9497
+        },
+        {
+          "hex": "#ead1c7",
+          "coverage": 0.0273
+        },
+        {
+          "hex": "#f8f7f3",
+          "coverage": 0.0195
+        },
+        {
+          "hex": "#dcac93",
+          "coverage": 0.0035
+        }
+      ],
+      "detail": {
+        "energy": 7.2563
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "pending-title",
+      "kind": "text",
+      "note": "Serif section title 待处理",
+      "grid": "A4:C5",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.0376,
+        "y": 0.4813,
+        "w": 0.2056,
+        "h": 0.0287
+      },
+      "px": {
+        "x": 32,
+        "y": 889,
+        "w": 175,
+        "h": 53
+      },
+      "aspect": 3.3019,
+      "palette": [
+        {
+          "hex": "#f7f6eb",
+          "coverage": 0.7628
+        },
+        {
+          "hex": "#403232",
+          "coverage": 0.1022
+        },
+        {
+          "hex": "#b6b2ac",
+          "coverage": 0.053
+        },
+        {
+          "hex": "#363626",
+          "coverage": 0.0473
+        },
+        {
+          "hex": "#7f7570",
+          "coverage": 0.0347
+        }
+      ],
+      "detail": {
+        "energy": 39.1438
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 3,
+          "capHeightPx": 43,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.907,
+          "advTall": 0.907,
+          "advX": null,
+          "gap": 0.1512,
+          "xRatio": 0.8209,
+          "stemW": 0.0994,
+          "contrast": 2.0034,
+          "serif": null,
+          "densTall": 0.3585,
+          "densX": null,
+          "weight": 0.3585
+        },
+        "widthClass": "wide",
+        "weightClass": "regular",
+        "chosen": {
+          "family": "Noto Serif SC",
+          "weight": 400,
+          "fontSizePx": 49,
+          "source": "index",
+          "fp": {
+            "lines": 1,
+            "glyphs": 3,
+            "capHeightPx": 44.3,
+            "inkIsDark": true,
+            "allCaps": false,
+            "advance": 1.0621,
+            "advTall": 1.0621,
+            "advX": null,
+            "gap": 0.0452,
+            "xRatio": 0.8187,
+            "stemW": 0.0856,
+            "contrast": 1.7295,
+            "serif": null,
+            "densTall": 0.3035,
+            "densX": null,
+            "weight": 0.3035
+          },
+          "stamp": "78fe2f0b1f60"
+        }
+      }
+    },
+    {
+      "id": "pending-all",
+      "kind": "control",
+      "note": "查看全部 chevron",
+      "grid": "I4:J5",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.8108,
+        "y": 0.4862,
+        "w": 0.1516,
+        "h": 0.0211
+      },
+      "px": {
+        "x": 690,
+        "y": 898,
+        "w": 129,
+        "h": 39
+      },
+      "aspect": 3.3077,
+      "palette": [
+        {
+          "hex": "#f8f7ed",
+          "coverage": 0.7281
+        },
+        {
+          "hex": "#c3c1be",
+          "coverage": 0.1199
+        },
+        {
+          "hex": "#898786",
+          "coverage": 0.1002
+        },
+        {
+          "hex": "#5c5b5c",
+          "coverage": 0.0519
+        }
+      ],
+      "detail": {
+        "energy": 30.8437
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "pending-row",
+      "kind": "chrome",
+      "note": "Near-white pending transaction row with small cup icon at left",
+      "grid": "A5:J6",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.0341,
+        "y": 0.5208,
+        "w": 0.9318,
+        "h": 0.0872
+      },
+      "px": {
+        "x": 29,
+        "y": 962,
+        "w": 793,
+        "h": 161
+      },
+      "aspect": 4.9255,
+      "palette": [
+        {
+          "hex": "#f8f7f5",
+          "coverage": 0.8902
+        },
+        {
+          "hex": "#c87757",
+          "coverage": 0.0636
+        },
+        {
+          "hex": "#d2cac6",
+          "coverage": 0.0198
+        },
+        {
+          "hex": "#9a938d",
+          "coverage": 0.0173
+        },
+        {
+          "hex": "#282727",
+          "coverage": 0.0092
+        }
+      ],
+      "detail": {
+        "energy": 16.7291
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "pending-copy",
+      "kind": "text",
+      "note": "准备一份早餐 × 2, 小满提供 · 我已支付 20 分",
+      "grid": "B5:F5",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.1974,
+        "y": 0.543,
+        "w": 0.376,
+        "h": 0.0428
+      },
+      "px": {
+        "x": 168,
+        "y": 1003,
+        "w": 320,
+        "h": 79
+      },
+      "aspect": 4.0506,
+      "palette": [
+        {
+          "hex": "#f7f7f6",
+          "coverage": 0.8166
+        },
+        {
+          "hex": "#948f8b",
+          "coverage": 0.0711
+        },
+        {
+          "hex": "#c9c4be",
+          "coverage": 0.0537
+        },
+        {
+          "hex": "#262222",
+          "coverage": 0.0335
+        },
+        {
+          "hex": "#454442",
+          "coverage": 0.0251
+        }
+      ],
+      "detail": {
+        "energy": 49.792
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 2,
+          "glyphs": 26,
+          "capHeightPx": 24.3,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.7199,
+          "advTall": 0.7293,
+          "advX": 0.1823,
+          "gap": 0.1367,
+          "xRatio": 0.6887,
+          "stemW": 0.0763,
+          "contrast": 0.8076,
+          "serif": 0.9974,
+          "densTall": 0.306,
+          "densX": 0.3641,
+          "weight": 0.306
+        },
+        "widthClass": "compressed",
+        "weightClass": "light"
+      }
+    },
+    {
+      "id": "complete-button",
+      "kind": "control",
+      "note": "Filled terracotta 完成 button",
+      "grid": "G5:H5",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.6251,
+        "y": 0.543,
+        "w": 0.1504,
+        "h": 0.0422
+      },
+      "px": {
+        "x": 532,
+        "y": 1003,
+        "w": 128,
+        "h": 78
+      },
+      "aspect": 1.641,
+      "palette": [
+        {
+          "hex": "#c77757",
+          "coverage": 0.8579
+        },
+        {
+          "hex": "#f8f6f5",
+          "coverage": 0.0603
+        },
+        {
+          "hex": "#d2afa8",
+          "coverage": 0.0504
+        },
+        {
+          "hex": "#c98e79",
+          "coverage": 0.0162
+        },
+        {
+          "hex": "#eeddd0",
+          "coverage": 0.0153
+        }
+      ],
+      "detail": {
+        "energy": 9.9869
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "cancel-button",
+      "kind": "control",
+      "note": "Outlined 取消 button",
+      "grid": "H5:J5",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.7955,
+        "y": 0.543,
+        "w": 0.1492,
+        "h": 0.0422
+      },
+      "px": {
+        "x": 677,
+        "y": 1003,
+        "w": 127,
+        "h": 78
+      },
+      "aspect": 1.6282,
+      "palette": [
+        {
+          "hex": "#f6f5ec",
+          "coverage": 0.9204
+        },
+        {
+          "hex": "#8d7d6d",
+          "coverage": 0.0367
+        },
+        {
+          "hex": "#cdc2ba",
+          "coverage": 0.025
+        },
+        {
+          "hex": "#735c56",
+          "coverage": 0.0143
+        },
+        {
+          "hex": "#a89898",
+          "coverage": 0.0036
+        }
+      ],
+      "detail": {
+        "energy": 10.2286
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "activity-title",
+      "kind": "text",
+      "note": "Serif section title 空间近况",
+      "grid": "A6:C6",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.0376,
+        "y": 0.641,
+        "w": 0.2609,
+        "h": 0.0298
+      },
+      "px": {
+        "x": 32,
+        "y": 1184,
+        "w": 222,
+        "h": 55
+      },
+      "aspect": 4.0364,
+      "palette": [
+        {
+          "hex": "#f7f6eb",
+          "coverage": 0.7745
+        },
+        {
+          "hex": "#322a25",
+          "coverage": 0.1074
+        },
+        {
+          "hex": "#8b817d",
+          "coverage": 0.0498
+        },
+        {
+          "hex": "#5a544e",
+          "coverage": 0.0356
+        },
+        {
+          "hex": "#b6b2aa",
+          "coverage": 0.0327
+        }
+      ],
+      "detail": {
+        "energy": 45.126
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 4,
+          "capHeightPx": 41.5,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.9279,
+          "advTall": 0.9279,
+          "advX": null,
+          "gap": 0.1928,
+          "xRatio": 0.718,
+          "stemW": 0.1029,
+          "contrast": 1.825,
+          "serif": 1.4313,
+          "densTall": 0.3505,
+          "densX": null,
+          "weight": 0.3505
+        },
+        "widthClass": "wide",
+        "weightClass": "regular"
+      }
+    },
+    {
+      "id": "activity-all",
+      "kind": "control",
+      "note": "全部记录 chevron",
+      "grid": "I6:J6",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.8108,
+        "y": 0.6465,
+        "w": 0.1528,
+        "h": 0.0211
+      },
+      "px": {
+        "x": 690,
+        "y": 1194,
+        "w": 130,
+        "h": 39
+      },
+      "aspect": 3.3333,
+      "palette": [
+        {
+          "hex": "#f6f6ec",
+          "coverage": 0.7937
+        },
+        {
+          "hex": "#666767",
+          "coverage": 0.0909
+        },
+        {
+          "hex": "#9d9a9a",
+          "coverage": 0.0682
+        },
+        {
+          "hex": "#cfc9c7",
+          "coverage": 0.0437
+        },
+        {
+          "hex": "#505060",
+          "coverage": 0.0035
+        }
+      ],
+      "detail": {
+        "energy": 28.3206
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "activity-surface",
+      "kind": "chrome",
+      "note": "Near-white activity list with thin separator",
+      "grid": "A6:J8",
+      "codeDrawn": true,
+      "container": true,
+      "snap": false,
+      "box": {
+        "x": 0.0341,
+        "y": 0.6789,
+        "w": 0.9318,
+        "h": 0.1733
+      },
+      "px": {
+        "x": 29,
+        "y": 1254,
+        "w": 793,
+        "h": 320
+      },
+      "aspect": 2.4781,
+      "palette": [
+        {
+          "hex": "#f8f8f7",
+          "coverage": 0.9378
+        },
+        {
+          "hex": "#cec8c3",
+          "coverage": 0.0256
+        },
+        {
+          "hex": "#241f1c",
+          "coverage": 0.0137
+        },
+        {
+          "hex": "#a89d95",
+          "coverage": 0.0127
+        },
+        {
+          "hex": "#4f484b",
+          "coverage": 0.0103
+        }
+      ],
+      "detail": {
+        "energy": 17.5523
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "activity-a",
+      "kind": "image",
+      "note": "Same sunset woman avatar as avatar-a",
+      "grid": "A6:B7",
+      "bleed": true,
+      "snap": false,
+      "box": {
+        "x": 0.0646,
+        "y": 0.6973,
+        "w": 0.1093,
+        "h": 0.0509
+      },
+      "px": {
+        "x": 55,
+        "y": 1288,
+        "w": 93,
+        "h": 94
+      },
+      "aspect": 0.9894,
+      "palette": [
+        {
+          "hex": "#f7f7f7",
+          "coverage": 0.3337
+        },
+        {
+          "hex": "#cfc7ca",
+          "coverage": 0.2233
+        },
+        {
+          "hex": "#181618",
+          "coverage": 0.1817
+        },
+        {
+          "hex": "#504b50",
+          "coverage": 0.158
+        },
+        {
+          "hex": "#e7c1a2",
+          "coverage": 0.1033
+        }
+      ],
+      "detail": {
+        "energy": 7.3167
+      },
+      "medium": "raster",
+      "plate": "assets/plates/activity-a.png",
+      "text": null
+    },
+    {
+      "id": "activity-copy-a",
+      "kind": "text",
+      "note": "今天 08:40 and 阿禾购买小满的早餐 × 2",
+      "grid": "C7:H7",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.2068,
+        "y": 0.7006,
+        "w": 0.5758,
+        "h": 0.0411
+      },
+      "px": {
+        "x": 176,
+        "y": 1294,
+        "w": 490,
+        "h": 76
+      },
+      "aspect": 6.4474,
+      "palette": [
+        {
+          "hex": "#f8f8f7",
+          "coverage": 0.8975
+        },
+        {
+          "hex": "#26201e",
+          "coverage": 0.0275
+        },
+        {
+          "hex": "#cac4c0",
+          "coverage": 0.0267
+        },
+        {
+          "hex": "#95908a",
+          "coverage": 0.0267
+        },
+        {
+          "hex": "#49433e",
+          "coverage": 0.0215
+        }
+      ],
+      "detail": {
+        "energy": 36.4788
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 16,
+          "capHeightPx": 25,
+          "inkIsDark": true,
+          "allCaps": true,
+          "advance": 0.6009,
+          "advTall": 0.6009,
+          "advX": null,
+          "gap": 0.1602,
+          "xRatio": null,
+          "stemW": 0.1083,
+          "contrast": 1.0735,
+          "serif": 0.9919,
+          "densTall": 0.4577,
+          "densX": null,
+          "weight": 0.4577
+        },
+        "widthClass": "condensed",
+        "weightClass": "regular"
+      }
+    },
+    {
+      "id": "activity-delta-a",
+      "kind": "text",
+      "note": "−20 分 in brick red",
+      "grid": "I7:J7",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.8132,
+        "y": 0.7093,
+        "w": 0.1257,
+        "h": 0.0244
+      },
+      "px": {
+        "x": 692,
+        "y": 1310,
+        "w": 107,
+        "h": 45
+      },
+      "aspect": 2.3778,
+      "palette": [
+        {
+          "hex": "#f8f7f6",
+          "coverage": 0.8093
+        },
+        {
+          "hex": "#a74f41",
+          "coverage": 0.1278
+        },
+        {
+          "hex": "#d6aea5",
+          "coverage": 0.0389
+        },
+        {
+          "hex": "#bf7c71",
+          "coverage": 0.0204
+        },
+        {
+          "hex": "#f0d8c8",
+          "coverage": 0.0037
+        }
+      ],
+      "detail": {
+        "energy": 15.8815
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 4,
+          "capHeightPx": 30.5,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.5899,
+          "advTall": 0.5899,
+          "advX": null,
+          "gap": 0.1311,
+          "xRatio": 0.4916,
+          "stemW": 0.1497,
+          "contrast": 1.0677,
+          "serif": null,
+          "densTall": 0.517,
+          "densX": null,
+          "weight": 0.517
+        },
+        "widthClass": "condensed",
+        "weightClass": "medium"
+      }
+    },
+    {
+      "id": "activity-b",
+      "kind": "image",
+      "note": "Same ginger-white cat avatar as avatar-b",
+      "grid": "A7:B8",
+      "bleed": true,
+      "snap": false,
+      "box": {
+        "x": 0.0646,
+        "y": 0.7829,
+        "w": 0.1093,
+        "h": 0.0509
+      },
+      "px": {
+        "x": 55,
+        "y": 1446,
+        "w": 93,
+        "h": 94
+      },
+      "aspect": 0.9894,
+      "palette": [
+        {
+          "hex": "#ccc3b8",
+          "coverage": 0.3957
+        },
+        {
+          "hex": "#f7f6f4",
+          "coverage": 0.3361
+        },
+        {
+          "hex": "#ab947f",
+          "coverage": 0.1059
+        },
+        {
+          "hex": "#816951",
+          "coverage": 0.0976
+        },
+        {
+          "hex": "#513b27",
+          "coverage": 0.0647
+        }
+      ],
+      "detail": {
+        "energy": 7.8027
+      },
+      "medium": "raster",
+      "plate": "assets/plates/activity-b.png",
+      "text": null
+    },
+    {
+      "id": "activity-copy-b",
+      "kind": "text",
+      "note": "今天 08:30 and 阿禾为自己记录「散步 30 分钟」",
+      "grid": "C7:H8",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.2068,
+        "y": 0.7867,
+        "w": 0.5758,
+        "h": 0.0411
+      },
+      "px": {
+        "x": 176,
+        "y": 1453,
+        "w": 490,
+        "h": 76
+      },
+      "aspect": 6.4474,
+      "palette": [
+        {
+          "hex": "#f7f7f7",
+          "coverage": 0.889
+        },
+        {
+          "hex": "#99928e",
+          "coverage": 0.0379
+        },
+        {
+          "hex": "#282320",
+          "coverage": 0.0282
+        },
+        {
+          "hex": "#46423c",
+          "coverage": 0.0232
+        },
+        {
+          "hex": "#ccc7c2",
+          "coverage": 0.0217
+        }
+      ],
+      "detail": {
+        "energy": 44.1137
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 17,
+          "capHeightPx": 25.6,
+          "inkIsDark": true,
+          "allCaps": true,
+          "advance": 0.8015,
+          "advTall": 0.821,
+          "advX": null,
+          "gap": 0.1564,
+          "xRatio": null,
+          "stemW": 0.1112,
+          "contrast": 1.1516,
+          "serif": 0.7377,
+          "densTall": 0.4145,
+          "densX": null,
+          "weight": 0.4145
+        },
+        "widthClass": "wide",
+        "weightClass": "regular"
+      }
+    },
+    {
+      "id": "activity-delta-b",
+      "kind": "text",
+      "note": "+10 分 in green",
+      "grid": "I7:J8",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.8132,
+        "y": 0.7953,
+        "w": 0.1257,
+        "h": 0.0244
+      },
+      "px": {
+        "x": 692,
+        "y": 1469,
+        "w": 107,
+        "h": 45
+      },
+      "aspect": 2.3778,
+      "palette": [
+        {
+          "hex": "#f7f8f7",
+          "coverage": 0.8093
+        },
+        {
+          "hex": "#577f55",
+          "coverage": 0.1167
+        },
+        {
+          "hex": "#c4d1c1",
+          "coverage": 0.0407
+        },
+        {
+          "hex": "#8daa8b",
+          "coverage": 0.0333
+        }
+      ],
+      "detail": {
+        "energy": 13.2137
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 4,
+          "capHeightPx": 30.1,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.5987,
+          "advTall": 0.3659,
+          "advX": null,
+          "gap": 0.3659,
+          "xRatio": 0.4798,
+          "stemW": 0.1496,
+          "contrast": 1.0871,
+          "serif": null,
+          "densTall": 0.7705,
+          "densX": null,
+          "weight": 0.7705
+        },
+        "widthClass": "compressed",
+        "weightClass": "black"
+      }
+    },
+    {
+      "id": "bottom-nav",
+      "kind": "chrome",
+      "note": "Four tab icons and labels 近况 约定 小卖部 记录; home selected",
+      "grid": "A8:J9",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0,
+        "y": 0.8933,
+        "w": 1,
+        "h": 0.0812
+      },
+      "px": {
+        "x": 0,
+        "y": 1650,
+        "w": 851,
+        "h": 150
+      },
+      "aspect": 5.6733,
+      "palette": [
+        {
+          "hex": "#f8f7f7",
+          "coverage": 0.9738
+        },
+        {
+          "hex": "#c6704b",
+          "coverage": 0.0107
+        },
+        {
+          "hex": "#453630",
+          "coverage": 0.0087
+        },
+        {
+          "hex": "#625b50",
+          "coverage": 0.0048
+        },
+        {
+          "hex": "#281813",
+          "coverage": 0.002
+        }
+      ],
+      "detail": {
+        "energy": 12.422
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "home-indicator",
+      "kind": "chrome",
+      "note": "Black system home indicator",
+      "grid": "D9:G9",
+      "codeDrawn": true,
+      "snap": false,
+      "box": {
+        "x": 0.322,
+        "y": 0.9827,
+        "w": 0.3572,
+        "h": 0.0076
+      },
+      "px": {
+        "x": 274,
+        "y": 1815,
+        "w": 304,
+        "h": 14
+      },
+      "aspect": 21.7143,
+      "palette": [
+        {
+          "hex": "#282828",
+          "coverage": 0.5882
+        },
+        {
+          "hex": "#f8f8f8",
+          "coverage": 0.2196
+        },
+        {
+          "hex": "#696969",
+          "coverage": 0.1922
+        }
+      ],
+      "detail": {
+        "energy": 72.9884
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "header-ground",
+      "kind": "chrome",
+      "note": "Single flat warm background of the header; all header contents individually named",
+      "grid": "A0:J0",
+      "codeDrawn": true,
+      "box": {
+        "x": 0,
+        "y": 0,
+        "w": 1,
+        "h": 0.1
+      },
+      "px": {
+        "x": 0,
+        "y": 0,
+        "w": 851,
+        "h": 185
+      },
+      "aspect": 4.6,
+      "palette": [
+        {
+          "hex": "#f8f8e9",
+          "coverage": 0.9547
+        },
+        {
+          "hex": "#101010",
+          "coverage": 0.0183
+        },
+        {
+          "hex": "#c7c0b8",
+          "coverage": 0.0151
+        },
+        {
+          "hex": "#8a8782",
+          "coverage": 0.0073
+        },
+        {
+          "hex": "#3b3932",
+          "coverage": 0.0046
+        }
+      ],
+      "detail": {
+        "energy": 17.6066
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "quote-ground",
+      "kind": "chrome",
+      "note": "Flat warm ground behind quote, lettering measured separately",
+      "grid": "A1:F1",
+      "codeDrawn": true,
+      "box": {
+        "x": 0,
+        "y": 0.1,
+        "w": 0.6,
+        "h": 0.1
+      },
+      "px": {
+        "x": 0,
+        "y": 185,
+        "w": 511,
+        "h": 185
+      },
+      "aspect": 2.7622,
+      "palette": [
+        {
+          "hex": "#f8f7e9",
+          "coverage": 0.9369
+        },
+        {
+          "hex": "#a79f98",
+          "coverage": 0.0217
+        },
+        {
+          "hex": "#3f2f2f",
+          "coverage": 0.0164
+        },
+        {
+          "hex": "#716961",
+          "coverage": 0.0143
+        },
+        {
+          "hex": "#3d3a2a",
+          "coverage": 0.0108
+        }
+      ],
+      "detail": {
+        "energy": 25.3948
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "pending-heading-ground",
+      "kind": "chrome",
+      "note": "Flat background around the pending heading and lower edge of the score control; each element measured separately",
+      "grid": "A4:F4",
+      "codeDrawn": true,
+      "box": {
+        "x": 0,
+        "y": 0.4,
+        "w": 0.6,
+        "h": 0.1
+      },
+      "px": {
+        "x": 0,
+        "y": 739,
+        "w": 511,
+        "h": 185
+      },
+      "aspect": 2.7622,
+      "palette": [
+        {
+          "hex": "#f8f8e9",
+          "coverage": 0.5458
+        },
+        {
+          "hex": "#c87858",
+          "coverage": 0.4355
+        },
+        {
+          "hex": "#38312b",
+          "coverage": 0.0092
+        },
+        {
+          "hex": "#e4c2b6",
+          "coverage": 0.0058
+        },
+        {
+          "hex": "#625952",
+          "coverage": 0.0036
+        }
+      ],
+      "detail": {
+        "energy": 13.4019
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    }
+  ]
+}

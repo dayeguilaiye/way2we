@@ -1,0 +1,12 @@
+{
+  "id": "activity-b",
+  "file": "assets/plates/activity-b.png",
+  "reusedFrom": "assets/plates/avatar-b.png",
+  "sourceImage": "/Users/zz-b191/.codex/generated_images/01a0c7c4-347e-7021-b2b7-aad69512762a/exec-0b4f2749-fbc9-4473-8a32-fcbf3295980f.png",
+  "width": 1254,
+  "height": 1254,
+  "format": "PNG",
+  "promptFile": "assets/plates/avatar-b.prompt.txt",
+  "generation": "Exact copied generated avatar; no screenshot pixels.",
+  "gate": "no failure reported in latest plates gate"
+}

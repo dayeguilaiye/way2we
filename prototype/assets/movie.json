@@ -1,0 +1,15 @@
+{
+  "id": "movie",
+  "file": "prototype/assets/movie.png",
+  "generatedBy": "image_gen.imagegen (native)",
+  "sourceImage": "/Users/zz-b191/.codex/generated_images/01a0c7c4-347e-7021-b2b7-aad69512762a/exec-10f8f494-adc2-4072-8192-53a9fe79f405.png",
+  "referenceImage": ".impeccable/build/crops/movie-ref.png",
+  "promptFile": "prototype/assets/movie.prompt.txt",
+  "width": 1254,
+  "height": 1254,
+  "format": "PNG",
+  "alpha": false,
+  "generatedAt": "2026-09-22",
+  "visualCheck": "Reference subject, composition, visual weight and palette inspected.",
+  "alphaCheck": null
+}

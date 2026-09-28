@@ -1,0 +1,12 @@
+{
+  "name": "雾玫花枝",
+  "date": "2026-09-22",
+  "tool": "native image_gen",
+  "mode": "edit",
+  "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-00efa8a1-8b44-44a6-a5f6-b338d8dba17e.png",
+  "reference": "apricot-reference.png",
+  "prompt_file": "rose.prompt.txt",
+  "file": "rose.png",
+  "approved": false,
+  "scope": "同一首页的配色与右上角装饰图变体；静态视觉示例，色值以 themes.md 的候选色表为准。"
+}

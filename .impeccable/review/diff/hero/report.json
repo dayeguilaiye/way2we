@@ -1,0 +1,1257 @@
+{
+  "tool": "comp-diff",
+  "version": 1,
+  "createdAt": "2026-09-22T07:38:01.868Z",
+  "label": "hero-repro",
+  "comp": ".impeccable/mocks/themes/apricot-reference.png",
+  "build": ".impeccable/review/hero-repro.png",
+  "spec": ".impeccable/build/spec.json",
+  "compSize": "851x1847",
+  "buildSize": "851x1847",
+  "align": "top",
+  "overall": 0.7544,
+  "verdict": "drift",
+  "scores": {
+    "overall": 0.7544,
+    "structure": 0.7048,
+    "color": 0.8543,
+    "colorIntersection": 0.7581,
+    "paletteMatch": 0.9061,
+    "detail": 0.612,
+    "detailRaw": 0.664,
+    "detailAdded": 0.1042,
+    "bands": 0.9412
+  },
+  "palette": {
+    "comp": [
+      {
+        "hex": "#f7f7ef",
+        "coverage": 0.8889
+      },
+      {
+        "hex": "#c87858",
+        "coverage": 0.071
+      },
+      {
+        "hex": "#d3ccc4",
+        "coverage": 0.0148
+      },
+      {
+        "hex": "#262121",
+        "coverage": 0.0113
+      },
+      {
+        "hex": "#928e8b",
+        "coverage": 0.0074
+      },
+      {
+        "hex": "#5c5955",
+        "coverage": 0.0067
+      }
+    ],
+    "build": [
+      {
+        "hex": "#f8f8ee",
+        "coverage": 0.8882
+      },
+      {
+        "hex": "#a85848",
+        "coverage": 0.0713
+      },
+      {
+        "hex": "#312626",
+        "coverage": 0.0163
+      },
+      {
+        "hex": "#cac2c0",
+        "coverage": 0.0138
+      },
+      {
+        "hex": "#9a928d",
+        "coverage": 0.0053
+      },
+      {
+        "hex": "#786a5d",
+        "coverage": 0.0052
+      }
+    ]
+  },
+  "regions": [
+    {
+      "id": "status",
+      "x": 0.0764,
+      "y": 0.0162,
+      "w": 0.8813,
+      "h": 0.0265,
+      "kind": "chrome",
+      "score": {
+        "overall": 0.8938,
+        "structure": 0.9243,
+        "color": 0.9387,
+        "colorIntersection": 0.885,
+        "paletteMatch": 0.9676,
+        "detail": 0.8627,
+        "detailRaw": 0.8627,
+        "detailAdded": 0,
+        "bands": 0.8
+      },
+      "verdict": "match",
+      "inkBox": {
+        "comp": {
+          "x": 12,
+          "y": 8,
+          "w": 729,
+          "h": 26
+        },
+        "build": {
+          "x": 13,
+          "y": 7,
+          "w": 714,
+          "h": 29
+        }
+      }
+    },
+    {
+      "id": "my-avatar",
+      "x": 0.04,
+      "y": 0.059,
+      "w": 0.087,
+      "h": 0.0401,
+      "kind": "image",
+      "score": {
+        "overall": 0.6952,
+        "structure": 0.654,
+        "color": 0.8023,
+        "colorIntersection": 0.6728,
+        "paletteMatch": 0.872,
+        "detail": 0.6424,
+        "detailRaw": 0.6685,
+        "detailAdded": 0.0521,
+        "bands": 1
+      },
+      "verdict": "drift",
+      "inkBox": {
+        "comp": {
+          "x": 0,
+          "y": 0,
+          "w": 74,
+          "h": 74
+        },
+        "build": {
+          "x": 2,
+          "y": 0,
+          "w": 65,
+          "h": 71
+        }
+      }
+    },
+    {
+      "id": "my-label",
+      "x": 0.1398,
+      "y": 0.0688,
+      "w": 0.0705,
+      "h": 0.0211,
+      "kind": "text",
+      "score": {
+        "overall": 0.6277,
+        "structure": 0.5219,
+        "color": 0.7786,
+        "colorIntersection": 0.5792,
+        "paletteMatch": 0.8859,
+        "detail": 0.637,
+        "detailRaw": 0.7099,
+        "detailAdded": 0.1458,
+        "bands": 0.7657
+      },
+      "verdict": "drift",
+      "inkBox": {
+        "comp": {
+          "x": 4,
+          "y": 10,
+          "w": 50,
+          "h": 24
+        },
+        "build": {
+          "x": 3,
+          "y": 8,
+          "w": 57,
+          "h": 28
+        }
+      }
+    },
+    {
+      "id": "space-title",
+      "x": 0.3572,
+      "y": 0.0655,
+      "w": 0.2879,
+      "h": 0.0254,
+      "kind": "text",
+      "score": {
+        "overall": 0.4666,
+        "structure": 0.3493,
+        "color": 0.7393,
+        "colorIntersection": 0.5688,
+        "paletteMatch": 0.8311,
+        "detail": 0.3657,
+        "detailRaw": 0.4491,
+        "detailAdded": 0.1667,
+        "bands": 0.5222
+      },
+      "verdict": "drift",
+      "inkBox": {
+        "comp": {
+          "x": 3,
+          "y": 4,
+          "w": 237,
+          "h": 33
+        },
+        "build": {
+          "x": 47,
+          "y": 9,
+          "w": 198,
+          "h": 32
+        }
+      }
+    },
+    {
+      "id": "notification",
+      "x": 0.9025,
+      "y": 0.065,
+      "w": 0.0564,
+      "h": 0.0309,
+      "kind": "control",
+      "score": {
+        "overall": 0.516,
+        "structure": 0.5717,
+        "color": 0.6865,
+        "colorIntersection": 0.444,
+        "paletteMatch": 0.8171,
+        "detail": 0.092,
+        "detailRaw": 0.1753,
+        "detailAdded": 0.1667,
+        "bands": 0
+      },
+      "verdict": "missing",
+      "inkBox": {
+        "comp": {
+          "x": 3,
+          "y": 2,
+          "w": 42,
+          "h": 51
+        },
+        "build": {
+          "x": 0,
+          "y": 6,
+          "w": 23,
+          "h": 43
+        }
+      }
+    },
+    {
+      "id": "hero-quote",
+      "x": 0.0588,
+      "y": 0.1332,
+      "w": 0.564,
+      "h": 0.0558,
+      "kind": "text",
+      "score": {
+        "overall": 0.7718,
+        "structure": 0.6606,
+        "color": 0.8506,
+        "colorIntersection": 0.7333,
+        "paletteMatch": 0.9137,
+        "detail": 0.8589,
+        "detailRaw": 0.8641,
+        "detailAdded": 0.0104,
+        "bands": 1
+      },
+      "verdict": "drift",
+      "inkBox": {
+        "comp": {
+          "x": 4,
+          "y": 9,
+          "w": 438,
+          "h": 91
+        },
+        "build": {
+          "x": 3,
+          "y": 8,
+          "w": 452,
+          "h": 95
+        }
+      }
+    },
+    {
+      "id": "botanical",
+      "x": 0.604,
+      "y": 0.0996,
+      "w": 0.396,
+      "h": 0.1613,
+      "kind": "plate",
+      "score": {
+        "overall": 0.6001,
+        "structure": 0.8099,
+        "color": 0.6825,
+        "colorIntersection": 0.4689,
+        "paletteMatch": 0.7974,
+        "detail": 0.5222,
+        "detailRaw": 0.6108,
+        "detailAdded": 0.1771,
+        "bands": 0
+      },
+      "verdict": "drift",
+      "inkBox": {
+        "comp": {
+          "x": 127,
+          "y": 12,
+          "w": 210,
+          "h": 280
+        },
+        "build": {
+          "x": 118,
+          "y": 21,
+          "w": 219,
+          "h": 277
+        }
+      }
+    },
+    {
+      "id": "hero-caption",
+      "x": 0.7791,
+      "y": 0.1965,
+      "w": 0.1598,
+      "h": 0.0292,
+      "kind": "text",
+      "score": {
+        "overall": 0.4455,
+        "structure": 0.4508,
+        "color": 0.4383,
+        "colorIntersection": 0.0752,
+        "paletteMatch": 0.6338,
+        "detail": 0.3903,
+        "detailRaw": 0.5674,
+        "detailAdded": 0.3542,
+        "bands": 0.52
+      },
+      "verdict": "contradicted",
+      "inkBox": {
+        "comp": {
+          "x": 3,
+          "y": 3,
+          "w": 118,
+          "h": 47
+        },
+        "build": {
+          "x": 2,
+          "y": 0,
+          "w": 129,
+          "h": 51
+        }
+      }
+    },
+    {
+      "id": "balances-surface",
+      "x": 0.0341,
+      "y": 0.2371,
+      "w": 0.9318,
+      "h": 0.1272,
+      "kind": "chrome",
+      "score": {
+        "overall": 0.7937,
+        "structure": 0.7762,
+        "color": 0.9563,
+        "colorIntersection": 0.931,
+        "paletteMatch": 0.9699,
+        "detail": 0.6119,
+        "detailRaw": 0.6848,
+        "detailAdded": 0.1458,
+        "bands": 0.8667
+      },
+      "verdict": "drift",
+      "inkBox": {
+        "comp": {
+          "x": 42,
+          "y": 52,
+          "w": 663,
+          "h": 136
+        },
+        "build": {
+          "x": 40,
+          "y": 50,
+          "w": 678,
+          "h": 149
+        }
+      }
+    },
+    {
+      "id": "avatar-a",
+      "x": 0.0834,
+      "y": 0.2648,
+      "w": 0.1375,
+      "h": 0.0639,
+      "kind": "image",
+      "score": {
+        "overall": 0.4742,
+        "structure": 0.6539,
+        "color": 0.735,
+        "colorIntersection": 0.5777,
+        "paletteMatch": 0.8197,
+        "detail": 0.3274,
+        "detailRaw": 0.442,
+        "detailAdded": 0.2292,
+        "bands": 0
+      },
+      "verdict": "missing",
+      "inkBox": {
+        "comp": {
+          "x": 0,
+          "y": 0,
+          "w": 117,
+          "h": 118
+        },
+        "build": {
+          "x": 0,
+          "y": 0,
+          "w": 117,
+          "h": 118
+        }
+      }
+    },
+    {
+      "id": "balance-a",
+      "x": 0.2444,
+      "y": 0.2642,
+      "w": 0.2068,
+      "h": 0.0753,
+      "kind": "text",
+      "score": {
+        "overall": 0.6813,
+        "structure": 0.5474,
+        "color": 0.9174,
+        "colorIntersection": 0.8599,
+        "paletteMatch": 0.9484,
+        "detail": 0.6012,
+        "detailRaw": 0.6585,
+        "detailAdded": 0.1146,
+        "bands": 0.8806
+      },
+      "verdict": "drift",
+      "inkBox": {
+        "comp": {
+          "x": 6,
+          "y": 5,
+          "w": 160,
+          "h": 133
+        },
+        "build": {
+          "x": 1,
+          "y": 0,
+          "w": 175,
+          "h": 139
+        }
+      }
+    },
+    {
+      "id": "avatar-b",
+      "x": 0.5582,
+      "y": 0.2648,
+      "w": 0.1387,
+      "h": 0.0639,
+      "kind": "image",
+      "score": {
+        "overall": 0.5291,
+        "structure": 0.5635,
+        "color": 0.7779,
+        "colorIntersection": 0.6421,
+        "paletteMatch": 0.851,
+        "detail": 0.3653,
+        "detailRaw": 0.4486,
+        "detailAdded": 0.1667,
+        "bands": 1
+      },
+      "verdict": "missing",
+      "inkBox": {
+        "comp": {
+          "x": 0,
+          "y": 0,
+          "w": 118,
+          "h": 118
+        },
+        "build": {
+          "x": 0,
+          "y": 0,
+          "w": 118,
+          "h": 118
+        }
+      }
+    },
+    {
+      "id": "balance-b",
+      "x": 0.7227,
+      "y": 0.2642,
+      "w": 0.1481,
+      "h": 0.0753,
+      "kind": "text",
+      "score": {
+        "overall": 0.7301,
+        "structure": 0.6714,
+        "color": 0.909,
+        "colorIntersection": 0.8408,
+        "paletteMatch": 0.9457,
+        "detail": 0.586,
+        "detailRaw": 0.6329,
+        "detailAdded": 0.0938,
+        "bands": 0.7929
+      },
+      "verdict": "drift",
+      "inkBox": {
+        "comp": {
+          "x": 3,
+          "y": 5,
+          "w": 116,
+          "h": 133
+        },
+        "build": {
+          "x": 4,
+          "y": 1,
+          "w": 122,
+          "h": 138
+        }
+      }
+    },
+    {
+      "id": "score-button",
+      "x": 0.0341,
+      "y": 0.3779,
+      "w": 0.9318,
+      "h": 0.0704,
+      "kind": "control",
+      "score": {
+        "overall": 0.5458,
+        "structure": 0.8174,
+        "color": 0.3011,
+        "colorIntersection": 0.0208,
+        "paletteMatch": 0.452,
+        "detail": 0.363,
+        "detailRaw": 0.4984,
+        "detailAdded": 0.2708,
+        "bands": 0
+      },
+      "verdict": "contradicted",
+      "inkBox": {
+        "comp": {
+          "x": 0,
+          "y": 0,
+          "w": 793,
+          "h": 130
+        },
+        "build": {
+          "x": 0,
+          "y": 0,
+          "w": 793,
+          "h": 130
+        }
+      }
+    },
+    {
+      "id": "pending-title",
+      "x": 0.0376,
+      "y": 0.4813,
+      "w": 0.2056,
+      "h": 0.0287,
+      "kind": "text",
+      "score": {
+        "overall": 0.423,
+        "structure": 0.3673,
+        "color": 0.7507,
+        "colorIntersection": 0.5602,
+        "paletteMatch": 0.8533,
+        "detail": 0.0942,
+        "detailRaw": 0.1619,
+        "detailAdded": 0.1354,
+        "bands": 0.3758
+      },
+      "verdict": "missing",
+      "inkBox": {
+        "comp": {
+          "x": 2,
+          "y": 4,
+          "w": 132,
+          "h": 45
+        },
+        "build": {
+          "x": 4,
+          "y": 35,
+          "w": 142,
+          "h": 18
+        }
+      }
+    },
+    {
+      "id": "pending-all",
+      "x": 0.8108,
+      "y": 0.4862,
+      "w": 0.1516,
+      "h": 0.0211,
+      "kind": "control",
+      "score": {
+        "overall": 0.4783,
+        "structure": 0.4829,
+        "color": 0.7457,
+        "colorIntersection": 0.5769,
+        "paletteMatch": 0.8366,
+        "detail": 0,
+        "detailRaw": 0.0111,
+        "detailAdded": 0.1563,
+        "bands": 0
+      },
+      "verdict": "missing",
+      "inkBox": {
+        "comp": {
+          "x": 3,
+          "y": 12,
+          "w": 122,
+          "h": 25
+        },
+        "build": {
+          "x": 0,
+          "y": 40,
+          "w": 113,
+          "h": 8
+        }
+      }
+    },
+    {
+      "id": "pending-row",
+      "x": 0.0341,
+      "y": 0.5208,
+      "w": 0.9318,
+      "h": 0.0872,
+      "kind": "chrome",
+      "score": {
+        "overall": 0.3908,
+        "structure": 0.5566,
+        "color": 0.7841,
+        "colorIntersection": 0.6316,
+        "paletteMatch": 0.8663,
+        "detail": 0,
+        "detailRaw": 0.126,
+        "detailAdded": 0.3125,
+        "bands": 0
+      },
+      "verdict": "missing",
+      "inkBox": {
+        "comp": {
+          "x": 54,
+          "y": 41,
+          "w": 720,
+          "h": 77
+        },
+        "build": {
+          "x": 13,
+          "y": 0,
+          "w": 752,
+          "h": 161
+        }
+      }
+    },
+    {
+      "id": "pending-copy",
+      "x": 0.1974,
+      "y": 0.543,
+      "w": 0.376,
+      "h": 0.0428,
+      "kind": "text",
+      "score": {
+        "overall": 0.4903,
+        "structure": 0.4581,
+        "color": 0.8824,
+        "colorIntersection": 0.8162,
+        "paletteMatch": 0.918,
+        "detail": 0.0931,
+        "detailRaw": 0.1452,
+        "detailAdded": 0.1042,
+        "bands": 0.2667
+      },
+      "verdict": "missing",
+      "inkBox": {
+        "comp": {
+          "x": 1,
+          "y": 6,
+          "w": 292,
+          "h": 70
+        },
+        "build": {
+          "x": 3,
+          "y": 59,
+          "w": 248,
+          "h": 20
+        }
+      }
+    },
+    {
+      "id": "complete-button",
+      "x": 0.6251,
+      "y": 0.543,
+      "w": 0.1504,
+      "h": 0.0422,
+      "kind": "control",
+      "score": {
+        "overall": 0.4153,
+        "structure": 0.6582,
+        "color": 0.3141,
+        "colorIntersection": 0.0545,
+        "paletteMatch": 0.4539,
+        "detail": 0.0457,
+        "detailRaw": 0.0666,
+        "detailAdded": 0.0417,
+        "bands": 0
+      },
+      "verdict": "missing",
+      "inkBox": {
+        "comp": {
+          "x": 0,
+          "y": 0,
+          "w": 128,
+          "h": 78
+        },
+        "build": {
+          "x": 44,
+          "y": 56,
+          "w": 84,
+          "h": 22
+        }
+      }
+    },
+    {
+      "id": "cancel-button",
+      "x": 0.7955,
+      "y": 0.543,
+      "w": 0.1492,
+      "h": 0.0422,
+      "kind": "control",
+      "score": {
+        "overall": 0.5874,
+        "structure": 0.7237,
+        "color": 0.7167,
+        "colorIntersection": 0.4912,
+        "paletteMatch": 0.8381,
+        "detail": 0.0543,
+        "detailRaw": 0.096,
+        "detailAdded": 0.0833,
+        "bands": 0
+      },
+      "verdict": "missing",
+      "inkBox": {
+        "comp": {
+          "x": 37,
+          "y": 16,
+          "w": 89,
+          "h": 36
+        },
+        "build": {
+          "x": 17,
+          "y": 56,
+          "w": 100,
+          "h": 22
+        }
+      }
+    },
+    {
+      "id": "activity-title",
+      "x": 0.0376,
+      "y": 0.641,
+      "w": 0.2609,
+      "h": 0.0298,
+      "kind": "text",
+      "score": {
+        "overall": 0.3974,
+        "structure": 0.4029,
+        "color": 0.6239,
+        "colorIntersection": 0.5006,
+        "paletteMatch": 0.6902,
+        "detail": 0.0002,
+        "detailRaw": 0.0002,
+        "detailAdded": 0,
+        "bands": 0.4
+      },
+      "verdict": "missing",
+      "inkBox": {
+        "comp": {
+          "x": 2,
+          "y": 2,
+          "w": 177,
+          "h": 45
+        },
+        "build": null
+      }
+    },
+    {
+      "id": "activity-all",
+      "x": 0.8108,
+      "y": 0.6465,
+      "w": 0.1528,
+      "h": 0.0211,
+      "kind": "control",
+      "score": {
+        "overall": 0.5047,
+        "structure": 0.5775,
+        "color": 0.6994,
+        "colorIntersection": 0.5814,
+        "paletteMatch": 0.763,
+        "detail": 0,
+        "detailRaw": 0,
+        "detailAdded": 0,
+        "bands": 0.4
+      },
+      "verdict": "missing",
+      "inkBox": {
+        "comp": {
+          "x": 2,
+          "y": 11,
+          "w": 124,
+          "h": 24
+        },
+        "build": null
+      }
+    },
+    {
+      "id": "activity-surface",
+      "x": 0.0341,
+      "y": 0.6789,
+      "w": 0.9318,
+      "h": 0.1733,
+      "kind": "chrome",
+      "score": {
+        "overall": 0.4057,
+        "structure": 0.5685,
+        "color": 0.8263,
+        "colorIntersection": 0.696,
+        "paletteMatch": 0.8965,
+        "detail": 0.0004,
+        "detailRaw": 0.115,
+        "detailAdded": 0.2292,
+        "bands": 0
+      },
+      "verdict": "missing",
+      "inkBox": {
+        "comp": {
+          "x": 27,
+          "y": 36,
+          "w": 739,
+          "h": 249
+        },
+        "build": {
+          "x": 6,
+          "y": 6,
+          "w": 774,
+          "h": 314
+        }
+      }
+    },
+    {
+      "id": "activity-a",
+      "x": 0.0646,
+      "y": 0.6973,
+      "w": 0.1093,
+      "h": 0.0509,
+      "kind": "image",
+      "score": {
+        "overall": 0.2236,
+        "structure": 0.5201,
+        "color": 0.4676,
+        "colorIntersection": 0.2847,
+        "paletteMatch": 0.5661,
+        "detail": 0,
+        "detailRaw": 0.048,
+        "detailAdded": 0.1875,
+        "bands": 0
+      },
+      "verdict": "missing",
+      "inkBox": {
+        "comp": {
+          "x": 0,
+          "y": 0,
+          "w": 93,
+          "h": 94
+        },
+        "build": {
+          "x": 0,
+          "y": 0,
+          "w": 93,
+          "h": 18
+        }
+      }
+    },
+    {
+      "id": "activity-copy-a",
+      "x": 0.2068,
+      "y": 0.7006,
+      "w": 0.5758,
+      "h": 0.0411,
+      "kind": "text",
+      "score": {
+        "overall": 0.5557,
+        "structure": 0.7496,
+        "color": 0.5542,
+        "colorIntersection": 0.2527,
+        "paletteMatch": 0.7166,
+        "detail": 0.0152,
+        "detailRaw": 0.0204,
+        "detailAdded": 0.0104,
+        "bands": 0.4
+      },
+      "verdict": "missing",
+      "inkBox": {
+        "comp": {
+          "x": 1,
+          "y": 6,
+          "w": 314,
+          "h": 66
+        },
+        "build": {
+          "x": 0,
+          "y": 0,
+          "w": 52,
+          "h": 12
+        }
+      }
+    },
+    {
+      "id": "activity-delta-a",
+      "x": 0.8132,
+      "y": 0.7093,
+      "w": 0.1257,
+      "h": 0.0244,
+      "kind": "text",
+      "score": {
+        "overall": 0.4555,
+        "structure": 0.6222,
+        "color": 0.4176,
+        "colorIntersection": 0.1142,
+        "paletteMatch": 0.5809,
+        "detail": 0,
+        "detailRaw": 0,
+        "detailAdded": 0,
+        "bands": 0.4
+      },
+      "verdict": "missing",
+      "inkBox": {
+        "comp": {
+          "x": 5,
+          "y": 9,
+          "w": 98,
+          "h": 32
+        },
+        "build": null
+      }
+    },
+    {
+      "id": "activity-b",
+      "x": 0.0646,
+      "y": 0.7829,
+      "w": 0.1093,
+      "h": 0.0509,
+      "kind": "image",
+      "score": {
+        "overall": 0.3286,
+        "structure": 0.5084,
+        "color": 0.4869,
+        "colorIntersection": 0.3386,
+        "paletteMatch": 0.5667,
+        "detail": 0.1483,
+        "detailRaw": 0.2316,
+        "detailAdded": 0.1667,
+        "bands": 0.6
+      },
+      "verdict": "missing",
+      "inkBox": {
+        "comp": {
+          "x": 0,
+          "y": 0,
+          "w": 93,
+          "h": 94
+        },
+        "build": {
+          "x": 3,
+          "y": 0,
+          "w": 90,
+          "h": 39
+        }
+      }
+    },
+    {
+      "id": "activity-copy-b",
+      "x": 0.2068,
+      "y": 0.7867,
+      "w": 0.5758,
+      "h": 0.0411,
+      "kind": "text",
+      "score": {
+        "overall": 0.566,
+        "structure": 0.6754,
+        "color": 0.913,
+        "colorIntersection": 0.8565,
+        "paletteMatch": 0.9434,
+        "detail": 0,
+        "detailRaw": 0.0713,
+        "detailAdded": 0.2083,
+        "bands": 0
+      },
+      "verdict": "missing",
+      "inkBox": {
+        "comp": {
+          "x": 1,
+          "y": 7,
+          "w": 398,
+          "h": 67
+        },
+        "build": {
+          "x": 7,
+          "y": 0,
+          "w": 305,
+          "h": 20
+        }
+      }
+    },
+    {
+      "id": "activity-delta-b",
+      "x": 0.8132,
+      "y": 0.7953,
+      "w": 0.1257,
+      "h": 0.0244,
+      "kind": "text",
+      "score": {
+        "overall": 0.5736,
+        "structure": 0.6706,
+        "color": 0.7932,
+        "colorIntersection": 0.7616,
+        "paletteMatch": 0.8102,
+        "detail": 0,
+        "detailRaw": 0,
+        "detailAdded": 0,
+        "bands": 0.4
+      },
+      "verdict": "missing",
+      "inkBox": {
+        "comp": {
+          "x": 7,
+          "y": 8,
+          "w": 96,
+          "h": 31
+        },
+        "build": null
+      }
+    },
+    {
+      "id": "bottom-nav",
+      "x": 0,
+      "y": 0.8933,
+      "w": 1,
+      "h": 0.0812,
+      "kind": "chrome",
+      "score": {
+        "overall": 0.61,
+        "structure": 0.8601,
+        "color": 0.4602,
+        "colorIntersection": 0.0452,
+        "paletteMatch": 0.6836,
+        "detail": 0.5956,
+        "detailRaw": 0.6424,
+        "detailAdded": 0.0938,
+        "bands": 0.3
+      },
+      "verdict": "drift",
+      "inkBox": {
+        "comp": {
+          "x": 82,
+          "y": 23,
+          "w": 687,
+          "h": 103
+        },
+        "build": {
+          "x": 93,
+          "y": 18,
+          "w": 668,
+          "h": 116
+        }
+      }
+    },
+    {
+      "id": "home-indicator",
+      "x": 0.322,
+      "y": 0.9827,
+      "w": 0.3572,
+      "h": 0.0076,
+      "kind": "chrome",
+      "score": {
+        "overall": 0.4897,
+        "structure": 0.7764,
+        "color": 0.5474,
+        "colorIntersection": 0.1834,
+        "paletteMatch": 0.7434,
+        "detail": 0.3246,
+        "detailRaw": 0.3871,
+        "detailAdded": 0.125,
+        "bands": 0
+      },
+      "verdict": "drift",
+      "inkBox": {
+        "comp": {
+          "x": 1,
+          "y": 18,
+          "w": 302,
+          "h": 12
+        },
+        "build": {
+          "x": 1,
+          "y": 26,
+          "w": 301,
+          "h": 11
+        }
+      }
+    },
+    {
+      "id": "header-ground",
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 0.1,
+      "kind": "chrome",
+      "score": {
+        "overall": 0.8514,
+        "structure": 0.8872,
+        "color": 0.9496,
+        "colorIntersection": 0.9118,
+        "paletteMatch": 0.9699,
+        "detail": 0.6739,
+        "detailRaw": 0.7,
+        "detailAdded": 0.0521,
+        "bands": 0.9
+      },
+      "verdict": "match",
+      "inkBox": {
+        "comp": {
+          "x": 35,
+          "y": 38,
+          "w": 778,
+          "h": 143
+        },
+        "build": {
+          "x": 31,
+          "y": 37,
+          "w": 761,
+          "h": 145
+        }
+      }
+    },
+    {
+      "id": "quote-ground",
+      "x": 0,
+      "y": 0.1,
+      "w": 0.6,
+      "h": 0.1,
+      "kind": "chrome",
+      "score": {
+        "overall": 0.8598,
+        "structure": 0.7924,
+        "color": 0.9198,
+        "colorIntersection": 0.8587,
+        "paletteMatch": 0.9526,
+        "detail": 0.81,
+        "detailRaw": 0.8777,
+        "detailAdded": 0.1354,
+        "bands": 1
+      },
+      "verdict": "match",
+      "inkBox": {
+        "comp": {
+          "x": 54,
+          "y": 70,
+          "w": 438,
+          "h": 91
+        },
+        "build": {
+          "x": 53,
+          "y": 69,
+          "w": 452,
+          "h": 95
+        }
+      }
+    },
+    {
+      "id": "pending-heading-ground",
+      "x": 0,
+      "y": 0.4,
+      "w": 0.6,
+      "h": 0.1,
+      "kind": "chrome",
+      "score": {
+        "overall": 0.4883,
+        "structure": 0.8337,
+        "color": 0.6517,
+        "colorIntersection": 0.495,
+        "paletteMatch": 0.7361,
+        "detail": 0.1344,
+        "detailRaw": 0.2282,
+        "detailAdded": 0.1875,
+        "bands": 0
+      },
+      "verdict": "drift",
+      "inkBox": {
+        "comp": {
+          "x": 30,
+          "y": 0,
+          "w": 481,
+          "h": 185
+        },
+        "build": {
+          "x": 0,
+          "y": 0,
+          "w": 511,
+          "h": 185
+        }
+      }
+    }
+  ],
+  "files": {
+    "sideBySide": "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/side-by-side.png",
+    "heatmap": "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/heatmap.png",
+    "regionFiles": [
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/status.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/my-avatar.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/my-label.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/space-title.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/notification.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/hero-quote.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/botanical.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/hero-caption.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/balances-surface.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/avatar-a.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/balance-a.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/avatar-b.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/balance-b.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/score-button.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/pending-title.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/pending-all.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/pending-row.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/pending-copy.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/complete-button.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/cancel-button.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/activity-title.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/activity-all.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/activity-surface.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/activity-a.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/activity-copy-a.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/activity-delta-a.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/activity-b.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/activity-copy-b.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/activity-delta-b.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/bottom-nav.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/home-indicator.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/header-ground.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/quote-ground.png",
+      "/Users/zz-b191/code/way2we/.impeccable/review/diff/hero/regions/pending-heading-ground.png"
+    ]
+  }
+}

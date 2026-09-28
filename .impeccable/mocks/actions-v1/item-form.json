@@ -1,0 +1,18 @@
+{
+  "id": "item-form",
+  "name": "添加／编辑商品",
+  "source": "/Users/zz-b191/.codex/generated_images/01a0b26b-16f7-7ef1-afe0-ddb2125a7676/exec-5ca0a89b-447b-4342-97ec-18a4c2b8cf58.png",
+  "file": "item-form.png",
+  "prompt_file": "item-form.prompt.txt",
+  "references": [
+    "agreement-form.png",
+    "../core-v1/shop-v2.png"
+  ],
+  "approved": false,
+  "status": "过程稿",
+  "tool": "native image_gen",
+  "theme": "apricot",
+  "current_version": "item-form-v2.png",
+  "date": "2026-09-22",
+  "scope": "操作界面静态视觉稿；业务规则已确认，新页面视觉待评审。实际交互和设备适配在原型及实现阶段验证。"
+}

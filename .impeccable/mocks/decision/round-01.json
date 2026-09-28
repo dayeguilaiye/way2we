@@ -1,0 +1,194 @@
+{
+  "round": "visual-direction-01",
+  "seed": "80c12f2d",
+  "surface": "home",
+  "mode": "operate",
+  "confirmedPreferences": [
+    "精致",
+    "清爽",
+    "配色温馨",
+    "不俗气",
+    "多给一些提案"
+  ],
+  "note": "用户明确希望较多提案，本轮展示六个适合既定偏好的方向及一个基础方向，保留原首页结构。",
+  "candidates": [
+    {
+      "id": "apricot",
+      "label": "A · 杏桃信笺",
+      "lineage": "现代信笺与小型文具的排版",
+      "thesis": "奶油底色、杏陶色操作与细线排版，让日常记录像一封轻盈的便笺。",
+      "palette": [
+        "#FAF5ED",
+        "#C8795D",
+        "#352D29",
+        "#E9D6C6"
+      ],
+      "materials": [
+        "暖白纸面",
+        "细线与杏陶色"
+      ],
+      "viewport": "页面是一张干净的信笺，信息靠留白和细线组织，操作色集中在记一笔。",
+      "risk": "温馨感较明显，细节过多时容易显得文艺。",
+      "direction": "Modern refined letter-stationery visual grammar, mature and warm. Smooth warm cream #FAF5ED background, terracotta-apricot #C8795D primary, deep warm charcoal #352D29 typography, pale parchment #E9D6C6 secondary surfaces. Elegantly calibrated fine dividing rules, subtle editorial rhythm. Section titles can use a restrained contemporary Chinese serif; all functional labels and body use beautifully readable modern Chinese sans. Slightly squarer, softly rounded compact controls, mainly flat continuous surface, restrained 1px outlines. Quiet, precise, lovely correspondence feeling, absolutely no literal envelopes, stamps, torn paper or handwritten text. One warm full-width primary action; transactional controls subordinate and clear.",
+      "prompt": "Generate ONE exquisitely crafted high-fidelity mobile app HOME SCREEN design proposal. Use case ui-mockup. This is a functional Chinese-language iOS/Android app for partners and family sharing agreements, reward points and personal shops. User preference: refined, fresh, warm, tasteful; welcoming grown-up warmth. Portrait aspect ratio approximately 9:19.5, one screen only, high resolution, full-bleed screenshot with small OS status bar and home indicator; no phone hardware frame, no scene behind device, no proposal captions outside the app. This is a single visual-direction proposal, not a collage.\nPreserve exactly this established app information architecture, top to bottom:\n1. Quiet status bar 9:41.\n2. Header: small circular personal avatar with visible label 我的 on the LEFT; centered/current space selector 一起的小日子 with small chevron; bell icon on RIGHT. Balanced spacing, clear touch areas.\n3. Restrained, beautifully aligned member-balance summary: 阿禾（我） 10 分 and 小满 0 分; small links 查看积分明细 and 查看成员. Points should read as usable balance, not giant dashboard statistics. Simple circular avatars or initial avatars are appropriate.\n4. A clear primary action labeled 记一笔, with a consistent small drawn plus/pen icon.\n5. Section heading 待处理 and modest 查看全部 on right. ONE clean transaction row: 准备一份早餐 × 2, subline 小满提供 · 我已支付 20 分. On its RIGHT, two always-visible easy-to-tap buttons 完成 and 取消. Keep row content and these buttons neatly aligned and comfortably readable.\n6. Section 空间近况 with 全部记录 on right. TWO activity rows, precise hierarchy and thin separators as suitable: 今天 08:40 / 阿禾购买小满的早餐 × 2 / −20 分; 今天 08:30 / 阿禾为自己记录「散步 30 分钟」 / +10 分. Small understated avatars. One row can wrap naturally. No extra invented events.\n7. Four-item bottom navigation: 近况, 约定, 小卖部, 记录, each with a consistent finely drawn icon. 近况 selected. Native proportions, generous safe area, no fifth nav item.\nThe frame contains real app UI, readable Chinese text, convincing professional typography, comfortable body size, deliberate whitespace and aligned labels. Restrict decorative material to subtle details; functional text and controls dominate. Maintain strong text contrast and calm hierarchy. No hearts, couple silhouettes, childish mascots, pink gradient washes, glossy 3D ornaments, stickers, gold luxury ornaments, nested card piles, charts, progress rings, ranking, streaks, coins or gamification badges. No lorem ipsum, fake testimonials or invented brand logo. Every element should feel designed by an excellent mobile product designer. All numerical values above are synthetic demonstration data and must stay exactly as specified.\nVISUAL DIRECTION:\nModern refined letter-stationery visual grammar, mature and warm. Smooth warm cream #FAF5ED background, terracotta-apricot #C8795D primary, deep warm charcoal #352D29 typography, pale parchment #E9D6C6 secondary surfaces. Elegantly calibrated fine dividing rules, subtle editorial rhythm. Section titles can use a restrained contemporary Chinese serif; all functional labels and body use beautifully readable modern Chinese sans. Slightly squarer, softly rounded compact controls, mainly flat continuous surface, restrained 1px outlines. Quiet, precise, lovely correspondence feeling, absolutely no literal envelopes, stamps, torn paper or handwritten text. One warm full-width primary action; transactional controls subordinate and clear.",
+      "path": ".impeccable/mocks/decision/apricot.png"
+    },
+    {
+      "id": "celadon",
+      "label": "B · 青瓷奶油",
+      "lineage": "青瓷餐具与现代陶器的温润表面",
+      "thesis": "青瓷绿与奶油白搭配，圆润而利落，最适合长期日常使用。",
+      "palette": [
+        "#F8F7F0",
+        "#688879",
+        "#293D34",
+        "#E2E9E1"
+      ],
+      "materials": [
+        "温润奶油白",
+        "淡青瓷色面"
+      ],
+      "viewport": "余额区域轻轻聚合，主要操作使用青瓷绿，其余内容保持白净。",
+      "risk": "亲和且稳妥，品牌识别需要依靠比例与细节建立。",
+      "direction": "Modern celadon ceramic and warm porcelain visual grammar translated into a FLAT NATIVE APP. Warm porcelain ivory #F8F7F0 and quiet celadon #688879, deep forest-charcoal #293D34 text, misty pale sage #E2E9E1 surfaces. Pure gently curved silhouette vocabulary, immaculate spacing, subtly friendly clean Chinese sans typography, confident medium weights. A calm pale-celadon member balance panel can group the two people; keep the rest as airy continuous list rows rather than card stacks. A dark celadon primary action, crisp outlined transaction secondary controls. Very soft tactile warmth, ceramic quietness, no literal ceramics or illustrations. Premium family product, exceptionally legible and orderly.",
+      "prompt": "Generate ONE exquisitely crafted high-fidelity mobile app HOME SCREEN design proposal. Use case ui-mockup. This is a functional Chinese-language iOS/Android app for partners and family sharing agreements, reward points and personal shops. User preference: refined, fresh, warm, tasteful; welcoming grown-up warmth. Portrait aspect ratio approximately 9:19.5, one screen only, high resolution, full-bleed screenshot with small OS status bar and home indicator; no phone hardware frame, no scene behind device, no proposal captions outside the app. This is a single visual-direction proposal, not a collage.\nPreserve exactly this established app information architecture, top to bottom:\n1. Quiet status bar 9:41.\n2. Header: small circular personal avatar with visible label 我的 on the LEFT; centered/current space selector 一起的小日子 with small chevron; bell icon on RIGHT. Balanced spacing, clear touch areas.\n3. Restrained, beautifully aligned member-balance summary: 阿禾（我） 10 分 and 小满 0 分; small links 查看积分明细 and 查看成员. Points should read as usable balance, not giant dashboard statistics. Simple circular avatars or initial avatars are appropriate.\n4. A clear primary action labeled 记一笔, with a consistent small drawn plus/pen icon.\n5. Section heading 待处理 and modest 查看全部 on right. ONE clean transaction row: 准备一份早餐 × 2, subline 小满提供 · 我已支付 20 分. On its RIGHT, two always-visible easy-to-tap buttons 完成 and 取消. Keep row content and these buttons neatly aligned and comfortably readable.\n6. Section 空间近况 with 全部记录 on right. TWO activity rows, precise hierarchy and thin separators as suitable: 今天 08:40 / 阿禾购买小满的早餐 × 2 / −20 分; 今天 08:30 / 阿禾为自己记录「散步 30 分钟」 / +10 分. Small understated avatars. One row can wrap naturally. No extra invented events.\n7. Four-item bottom navigation: 近况, 约定, 小卖部, 记录, each with a consistent finely drawn icon. 近况 selected. Native proportions, generous safe area, no fifth nav item.\nThe frame contains real app UI, readable Chinese text, convincing professional typography, comfortable body size, deliberate whitespace and aligned labels. Restrict decorative material to subtle details; functional text and controls dominate. Maintain strong text contrast and calm hierarchy. No hearts, couple silhouettes, childish mascots, pink gradient washes, glossy 3D ornaments, stickers, gold luxury ornaments, nested card piles, charts, progress rings, ranking, streaks, coins or gamification badges. No lorem ipsum, fake testimonials or invented brand logo. Every element should feel designed by an excellent mobile product designer. All numerical values above are synthetic demonstration data and must stay exactly as specified.\nVISUAL DIRECTION:\nModern celadon ceramic and warm porcelain visual grammar translated into a FLAT NATIVE APP. Warm porcelain ivory #F8F7F0 and quiet celadon #688879, deep forest-charcoal #293D34 text, misty pale sage #E2E9E1 surfaces. Pure gently curved silhouette vocabulary, immaculate spacing, subtly friendly clean Chinese sans typography, confident medium weights. A calm pale-celadon member balance panel can group the two people; keep the rest as airy continuous list rows rather than card stacks. A dark celadon primary action, crisp outlined transaction secondary controls. Very soft tactile warmth, ceramic quietness, no literal ceramics or illustrations. Premium family product, exceptionally legible and orderly.",
+      "path": ".impeccable/mocks/decision/celadon.png"
+    },
+    {
+      "id": "editorial",
+      "label": "C · 暖白画册",
+      "lineage": "独立生活杂志与当代画册",
+      "thesis": "暖白、墨色和少量琥珀，把精致感放在文字层级与留白上。",
+      "palette": [
+        "#FCFAF5",
+        "#B28242",
+        "#282724",
+        "#EAE5DB"
+      ],
+      "materials": [
+        "清透暖白",
+        "编辑式留白"
+      ],
+      "viewport": "以清楚的文字层级构成首页，近况像排版克制的生活栏目。",
+      "risk": "最清爽，但温馨感较含蓄。",
+      "direction": "Contemporary independent lifestyle editorial translated into a highly usable Chinese mobile app. Luminous warm white #FCFAF5, rich soft ink #282724, sparing muted amber #B28242 accents, light warm-gray rules #EAE5DB. Almost entirely flat, no panel clutter, generous but efficient whitespace, exquisitely aligned text. Sophisticated Chinese sans body, discreet refined serif ONLY for two section titles if it improves finesse. Balanced small typography scale, no huge headlines. Primary action has dark warm-ink fill; amber marks selected nav and subtle highlights. Crisp 10-12px control radii, delicate line icons, strongest typographic precision of all directions. Feels premium, light and humane, not a financial app, not an editorial poster.",
+      "prompt": "Generate ONE exquisitely crafted high-fidelity mobile app HOME SCREEN design proposal. Use case ui-mockup. This is a functional Chinese-language iOS/Android app for partners and family sharing agreements, reward points and personal shops. User preference: refined, fresh, warm, tasteful; welcoming grown-up warmth. Portrait aspect ratio approximately 9:19.5, one screen only, high resolution, full-bleed screenshot with small OS status bar and home indicator; no phone hardware frame, no scene behind device, no proposal captions outside the app. This is a single visual-direction proposal, not a collage.\nPreserve exactly this established app information architecture, top to bottom:\n1. Quiet status bar 9:41.\n2. Header: small circular personal avatar with visible label 我的 on the LEFT; centered/current space selector 一起的小日子 with small chevron; bell icon on RIGHT. Balanced spacing, clear touch areas.\n3. Restrained, beautifully aligned member-balance summary: 阿禾（我） 10 分 and 小满 0 分; small links 查看积分明细 and 查看成员. Points should read as usable balance, not giant dashboard statistics. Simple circular avatars or initial avatars are appropriate.\n4. A clear primary action labeled 记一笔, with a consistent small drawn plus/pen icon.\n5. Section heading 待处理 and modest 查看全部 on right. ONE clean transaction row: 准备一份早餐 × 2, subline 小满提供 · 我已支付 20 分. On its RIGHT, two always-visible easy-to-tap buttons 完成 and 取消. Keep row content and these buttons neatly aligned and comfortably readable.\n6. Section 空间近况 with 全部记录 on right. TWO activity rows, precise hierarchy and thin separators as suitable: 今天 08:40 / 阿禾购买小满的早餐 × 2 / −20 分; 今天 08:30 / 阿禾为自己记录「散步 30 分钟」 / +10 分. Small understated avatars. One row can wrap naturally. No extra invented events.\n7. Four-item bottom navigation: 近况, 约定, 小卖部, 记录, each with a consistent finely drawn icon. 近况 selected. Native proportions, generous safe area, no fifth nav item.\nThe frame contains real app UI, readable Chinese text, convincing professional typography, comfortable body size, deliberate whitespace and aligned labels. Restrict decorative material to subtle details; functional text and controls dominate. Maintain strong text contrast and calm hierarchy. No hearts, couple silhouettes, childish mascots, pink gradient washes, glossy 3D ornaments, stickers, gold luxury ornaments, nested card piles, charts, progress rings, ranking, streaks, coins or gamification badges. No lorem ipsum, fake testimonials or invented brand logo. Every element should feel designed by an excellent mobile product designer. All numerical values above are synthetic demonstration data and must stay exactly as specified.\nVISUAL DIRECTION:\nContemporary independent lifestyle editorial translated into a highly usable Chinese mobile app. Luminous warm white #FCFAF5, rich soft ink #282724, sparing muted amber #B28242 accents, light warm-gray rules #EAE5DB. Almost entirely flat, no panel clutter, generous but efficient whitespace, exquisitely aligned text. Sophisticated Chinese sans body, discreet refined serif ONLY for two section titles if it improves finesse. Balanced small typography scale, no huge headlines. Primary action has dark warm-ink fill; amber marks selected nav and subtle highlights. Crisp 10-12px control radii, delicate line icons, strongest typographic precision of all directions. Feels premium, light and humane, not a financial app, not an editorial poster.",
+      "path": ".impeccable/mocks/decision/editorial.png"
+    },
+    {
+      "id": "linen",
+      "label": "D · 亚麻可可",
+      "lineage": "亚麻织物与温暖木质家居",
+      "thesis": "亚麻白和可可棕营造安静的居家感，靠低调材质与柔和对比显得精致。",
+      "palette": [
+        "#F4EFE7",
+        "#786253",
+        "#342D29",
+        "#DFD6CA"
+      ],
+      "materials": [
+        "极轻亚麻底色",
+        "可可棕控件"
+      ],
+      "viewport": "紧密相关的信息靠柔和底色分组，列表保持清晰，主按钮像小巧的暖棕标记。",
+      "risk": "颜色较安静，需要足够深的正文保持清爽。",
+      "direction": "Refined contemporary linen-and-cocoa home-living visual grammar, never rustic or antique. Smooth linen white #F4EFE7, medium cocoa #786253 primary, espresso #342D29 text, faint oat #DFD6CA grouping. Optional extraordinarily subtle natural linen grain only in a narrow header/balance surface; all text areas clean and smooth. Humanist Chinese sans, 16px-equivalent readable labels, quiet soft rounded geometry, compact warm brown primary control with generous touch area. Restrained tactile softness, layered white/linen surfaces with very subtle low elevation, no heavy shadows, no actual fabric photos or wooden objects. Calm intimate home feeling with excellent functional hierarchy.",
+      "prompt": "Generate ONE exquisitely crafted high-fidelity mobile app HOME SCREEN design proposal. Use case ui-mockup. This is a functional Chinese-language iOS/Android app for partners and family sharing agreements, reward points and personal shops. User preference: refined, fresh, warm, tasteful; welcoming grown-up warmth. Portrait aspect ratio approximately 9:19.5, one screen only, high resolution, full-bleed screenshot with small OS status bar and home indicator; no phone hardware frame, no scene behind device, no proposal captions outside the app. This is a single visual-direction proposal, not a collage.\nPreserve exactly this established app information architecture, top to bottom:\n1. Quiet status bar 9:41.\n2. Header: small circular personal avatar with visible label 我的 on the LEFT; centered/current space selector 一起的小日子 with small chevron; bell icon on RIGHT. Balanced spacing, clear touch areas.\n3. Restrained, beautifully aligned member-balance summary: 阿禾（我） 10 分 and 小满 0 分; small links 查看积分明细 and 查看成员. Points should read as usable balance, not giant dashboard statistics. Simple circular avatars or initial avatars are appropriate.\n4. A clear primary action labeled 记一笔, with a consistent small drawn plus/pen icon.\n5. Section heading 待处理 and modest 查看全部 on right. ONE clean transaction row: 准备一份早餐 × 2, subline 小满提供 · 我已支付 20 分. On its RIGHT, two always-visible easy-to-tap buttons 完成 and 取消. Keep row content and these buttons neatly aligned and comfortably readable.\n6. Section 空间近况 with 全部记录 on right. TWO activity rows, precise hierarchy and thin separators as suitable: 今天 08:40 / 阿禾购买小满的早餐 × 2 / −20 分; 今天 08:30 / 阿禾为自己记录「散步 30 分钟」 / +10 分. Small understated avatars. One row can wrap naturally. No extra invented events.\n7. Four-item bottom navigation: 近况, 约定, 小卖部, 记录, each with a consistent finely drawn icon. 近况 selected. Native proportions, generous safe area, no fifth nav item.\nThe frame contains real app UI, readable Chinese text, convincing professional typography, comfortable body size, deliberate whitespace and aligned labels. Restrict decorative material to subtle details; functional text and controls dominate. Maintain strong text contrast and calm hierarchy. No hearts, couple silhouettes, childish mascots, pink gradient washes, glossy 3D ornaments, stickers, gold luxury ornaments, nested card piles, charts, progress rings, ranking, streaks, coins or gamification badges. No lorem ipsum, fake testimonials or invented brand logo. Every element should feel designed by an excellent mobile product designer. All numerical values above are synthetic demonstration data and must stay exactly as specified.\nVISUAL DIRECTION:\nRefined contemporary linen-and-cocoa home-living visual grammar, never rustic or antique. Smooth linen white #F4EFE7, medium cocoa #786253 primary, espresso #342D29 text, faint oat #DFD6CA grouping. Optional extraordinarily subtle natural linen grain only in a narrow header/balance surface; all text areas clean and smooth. Humanist Chinese sans, 16px-equivalent readable labels, quiet soft rounded geometry, compact warm brown primary control with generous touch area. Restrained tactile softness, layered white/linen surfaces with very subtle low elevation, no heavy shadows, no actual fabric photos or wooden objects. Calm intimate home feeling with excellent functional hierarchy.",
+      "path": ".impeccable/mocks/decision/linen.png"
+    },
+    {
+      "id": "rose",
+      "label": "E · 雾玫瑰",
+      "lineage": "当代生活品牌与克制的柔色设计",
+      "thesis": "用雾玫瑰和温灰表达亲密感，颜色轻，文字与操作保持清楚。",
+      "palette": [
+        "#FBF7F5",
+        "#9B707A",
+        "#403238",
+        "#EFE3E3"
+      ],
+      "materials": [
+        "暖白",
+        "低饱和雾玫瑰"
+      ],
+      "viewport": "少量玫瑰色用于主操作和选中状态，信息区保持大面积暖白。",
+      "risk": "柔和感更强，必须控制粉色面积和装饰。",
+      "direction": "Mature refined dusty-rose contemporary lifestyle APP, gender-neutral intimacy, never wedding or beauty commerce. Nearly white warm ground #FBF7F5, muted dusty mauve-rose #9B707A, deep plum-charcoal #403238 body, faint blush-gray #EFE3E3 supporting surfaces. Very low saturation. Predominantly WHITE screen, one rose main CTA and tiny selected accents, all information highly readable. Softly rounded precise controls and airy breathing room, clean elegant Chinese sans with subtle weight hierarchy, no script fonts. Warm and gentle relationship feeling through proportions and color only: absolutely no hearts, petals, blush gradients, romance illustrations or decorative badges.",
+      "prompt": "Generate ONE exquisitely crafted high-fidelity mobile app HOME SCREEN design proposal. Use case ui-mockup. This is a functional Chinese-language iOS/Android app for partners and family sharing agreements, reward points and personal shops. User preference: refined, fresh, warm, tasteful; welcoming grown-up warmth. Portrait aspect ratio approximately 9:19.5, one screen only, high resolution, full-bleed screenshot with small OS status bar and home indicator; no phone hardware frame, no scene behind device, no proposal captions outside the app. This is a single visual-direction proposal, not a collage.\nPreserve exactly this established app information architecture, top to bottom:\n1. Quiet status bar 9:41.\n2. Header: small circular personal avatar with visible label 我的 on the LEFT; centered/current space selector 一起的小日子 with small chevron; bell icon on RIGHT. Balanced spacing, clear touch areas.\n3. Restrained, beautifully aligned member-balance summary: 阿禾（我） 10 分 and 小满 0 分; small links 查看积分明细 and 查看成员. Points should read as usable balance, not giant dashboard statistics. Simple circular avatars or initial avatars are appropriate.\n4. A clear primary action labeled 记一笔, with a consistent small drawn plus/pen icon.\n5. Section heading 待处理 and modest 查看全部 on right. ONE clean transaction row: 准备一份早餐 × 2, subline 小满提供 · 我已支付 20 分. On its RIGHT, two always-visible easy-to-tap buttons 完成 and 取消. Keep row content and these buttons neatly aligned and comfortably readable.\n6. Section 空间近况 with 全部记录 on right. TWO activity rows, precise hierarchy and thin separators as suitable: 今天 08:40 / 阿禾购买小满的早餐 × 2 / −20 分; 今天 08:30 / 阿禾为自己记录「散步 30 分钟」 / +10 分. Small understated avatars. One row can wrap naturally. No extra invented events.\n7. Four-item bottom navigation: 近况, 约定, 小卖部, 记录, each with a consistent finely drawn icon. 近况 selected. Native proportions, generous safe area, no fifth nav item.\nThe frame contains real app UI, readable Chinese text, convincing professional typography, comfortable body size, deliberate whitespace and aligned labels. Restrict decorative material to subtle details; functional text and controls dominate. Maintain strong text contrast and calm hierarchy. No hearts, couple silhouettes, childish mascots, pink gradient washes, glossy 3D ornaments, stickers, gold luxury ornaments, nested card piles, charts, progress rings, ranking, streaks, coins or gamification badges. No lorem ipsum, fake testimonials or invented brand logo. Every element should feel designed by an excellent mobile product designer. All numerical values above are synthetic demonstration data and must stay exactly as specified.\nVISUAL DIRECTION:\nMature refined dusty-rose contemporary lifestyle APP, gender-neutral intimacy, never wedding or beauty commerce. Nearly white warm ground #FBF7F5, muted dusty mauve-rose #9B707A, deep plum-charcoal #403238 body, faint blush-gray #EFE3E3 supporting surfaces. Very low saturation. Predominantly WHITE screen, one rose main CTA and tiny selected accents, all information highly readable. Softly rounded precise controls and airy breathing room, clean elegant Chinese sans with subtle weight hierarchy, no script fonts. Warm and gentle relationship feeling through proportions and color only: absolutely no hearts, petals, blush gradients, romance illustrations or decorative badges.",
+      "path": ".impeccable/mocks/decision/rose.png"
+    },
+    {
+      "id": "seaglass",
+      "label": "F · 海盐杏色",
+      "lineage": "磨砂海玻璃与明亮的生活用品配色",
+      "thesis": "海盐蓝灰带来清爽，少量杏色补充温度，轻快而有辨识度。",
+      "palette": [
+        "#F8FAF7",
+        "#73969D",
+        "#2E4045",
+        "#D8AC8F"
+      ],
+      "materials": [
+        "干净盐白",
+        "海玻璃色与淡杏色"
+      ],
+      "viewport": "蓝灰承担导航和文字节奏，杏色只强调记分等关键行动。",
+      "risk": "清爽感较强，要避免蓝灰用量过大显冷。",
+      "direction": "Sea-glass and apricot contemporary daily-life product grammar, bright sophisticated and gently warm. Salt-white #F8FAF7, muted blue-gray sea-glass #73969D, deep teal charcoal #2E4045, muted apricot #D8AC8F. Two accent roles disciplined: muted teal for selected navigation and structural hints, warm apricot only for main action, dark text on warm button for contrast. Crisp readable Chinese sans, light visual weight with strong spacing, mostly unboxed rows with finely separated information, 12px rounded controls, tiny consistent line icons. Fresh airy coastal daylight feeling translated into UI only, no waves, shells, beach illustrations, translucency/glass effects or gradient backgrounds.",
+      "prompt": "Generate ONE exquisitely crafted high-fidelity mobile app HOME SCREEN design proposal. Use case ui-mockup. This is a functional Chinese-language iOS/Android app for partners and family sharing agreements, reward points and personal shops. User preference: refined, fresh, warm, tasteful; welcoming grown-up warmth. Portrait aspect ratio approximately 9:19.5, one screen only, high resolution, full-bleed screenshot with small OS status bar and home indicator; no phone hardware frame, no scene behind device, no proposal captions outside the app. This is a single visual-direction proposal, not a collage.\nPreserve exactly this established app information architecture, top to bottom:\n1. Quiet status bar 9:41.\n2. Header: small circular personal avatar with visible label 我的 on the LEFT; centered/current space selector 一起的小日子 with small chevron; bell icon on RIGHT. Balanced spacing, clear touch areas.\n3. Restrained, beautifully aligned member-balance summary: 阿禾（我） 10 分 and 小满 0 分; small links 查看积分明细 and 查看成员. Points should read as usable balance, not giant dashboard statistics. Simple circular avatars or initial avatars are appropriate.\n4. A clear primary action labeled 记一笔, with a consistent small drawn plus/pen icon.\n5. Section heading 待处理 and modest 查看全部 on right. ONE clean transaction row: 准备一份早餐 × 2, subline 小满提供 · 我已支付 20 分. On its RIGHT, two always-visible easy-to-tap buttons 完成 and 取消. Keep row content and these buttons neatly aligned and comfortably readable.\n6. Section 空间近况 with 全部记录 on right. TWO activity rows, precise hierarchy and thin separators as suitable: 今天 08:40 / 阿禾购买小满的早餐 × 2 / −20 分; 今天 08:30 / 阿禾为自己记录「散步 30 分钟」 / +10 分. Small understated avatars. One row can wrap naturally. No extra invented events.\n7. Four-item bottom navigation: 近况, 约定, 小卖部, 记录, each with a consistent finely drawn icon. 近况 selected. Native proportions, generous safe area, no fifth nav item.\nThe frame contains real app UI, readable Chinese text, convincing professional typography, comfortable body size, deliberate whitespace and aligned labels. Restrict decorative material to subtle details; functional text and controls dominate. Maintain strong text contrast and calm hierarchy. No hearts, couple silhouettes, childish mascots, pink gradient washes, glossy 3D ornaments, stickers, gold luxury ornaments, nested card piles, charts, progress rings, ranking, streaks, coins or gamification badges. No lorem ipsum, fake testimonials or invented brand logo. Every element should feel designed by an excellent mobile product designer. All numerical values above are synthetic demonstration data and must stay exactly as specified.\nVISUAL DIRECTION:\nSea-glass and apricot contemporary daily-life product grammar, bright sophisticated and gently warm. Salt-white #F8FAF7, muted blue-gray sea-glass #73969D, deep teal charcoal #2E4045, muted apricot #D8AC8F. Two accent roles disciplined: muted teal for selected navigation and structural hints, warm apricot only for main action, dark text on warm button for contrast. Crisp readable Chinese sans, light visual weight with strong spacing, mostly unboxed rows with finely separated information, 12px rounded controls, tiny consistent line icons. Fresh airy coastal daylight feeling translated into UI only, no waves, shells, beach illustrations, translucency/glass effects or gradient backgrounds.",
+      "path": ".impeccable/mocks/decision/seaglass.png"
+    }
+  ],
+  "canon": {
+    "id": "canon",
+    "label": "G · 温暖基础款",
+    "direction": "A beautifully executed familiar native mobile interface. Warm off-white #FCFAF7, warm soft brown #A27750 tint, deep neutral charcoal #292724, standard tasteful platform sans typography, conventional grouped native rows and very restrained warm surfaces. Very clear, clean and comfortable, premium precision of native product UI. Avoid decorative world metaphors. Keep all same app content, navigation, and actions. Calm and plain in a deliberate high-quality way.",
+    "prompt": "Generate ONE exquisitely crafted high-fidelity mobile app HOME SCREEN design proposal. Use case ui-mockup. This is a functional Chinese-language iOS/Android app for partners and family sharing agreements, reward points and personal shops. User preference: refined, fresh, warm, tasteful; welcoming grown-up warmth. Portrait aspect ratio approximately 9:19.5, one screen only, high resolution, full-bleed screenshot with small OS status bar and home indicator; no phone hardware frame, no scene behind device, no proposal captions outside the app. This is a single visual-direction proposal, not a collage.\nPreserve exactly this established app information architecture, top to bottom:\n1. Quiet status bar 9:41.\n2. Header: small circular personal avatar with visible label 我的 on the LEFT; centered/current space selector 一起的小日子 with small chevron; bell icon on RIGHT. Balanced spacing, clear touch areas.\n3. Restrained, beautifully aligned member-balance summary: 阿禾（我） 10 分 and 小满 0 分; small links 查看积分明细 and 查看成员. Points should read as usable balance, not giant dashboard statistics. Simple circular avatars or initial avatars are appropriate.\n4. A clear primary action labeled 记一笔, with a consistent small drawn plus/pen icon.\n5. Section heading 待处理 and modest 查看全部 on right. ONE clean transaction row: 准备一份早餐 × 2, subline 小满提供 · 我已支付 20 分. On its RIGHT, two always-visible easy-to-tap buttons 完成 and 取消. Keep row content and these buttons neatly aligned and comfortably readable.\n6. Section 空间近况 with 全部记录 on right. TWO activity rows, precise hierarchy and thin separators as suitable: 今天 08:40 / 阿禾购买小满的早餐 × 2 / −20 分; 今天 08:30 / 阿禾为自己记录「散步 30 分钟」 / +10 分. Small understated avatars. One row can wrap naturally. No extra invented events.\n7. Four-item bottom navigation: 近况, 约定, 小卖部, 记录, each with a consistent finely drawn icon. 近况 selected. Native proportions, generous safe area, no fifth nav item.\nThe frame contains real app UI, readable Chinese text, convincing professional typography, comfortable body size, deliberate whitespace and aligned labels. Restrict decorative material to subtle details; functional text and controls dominate. Maintain strong text contrast and calm hierarchy. No hearts, couple silhouettes, childish mascots, pink gradient washes, glossy 3D ornaments, stickers, gold luxury ornaments, nested card piles, charts, progress rings, ranking, streaks, coins or gamification badges. No lorem ipsum, fake testimonials or invented brand logo. Every element should feel designed by an excellent mobile product designer. All numerical values above are synthetic demonstration data and must stay exactly as specified.\nVISUAL DIRECTION:\nA beautifully executed familiar native mobile interface. Warm off-white #FCFAF7, warm soft brown #A27750 tint, deep neutral charcoal #292724, standard tasteful platform sans typography, conventional grouped native rows and very restrained warm surfaces. Very clear, clean and comfortable, premium precision of native product UI. Avoid decorative world metaphors. Keep all same app content, navigation, and actions. Calm and plain in a deliberate high-quality way.",
+    "path": ".impeccable/mocks/decision/canon.png"
+  },
+  "challengerAssessment": [
+    {
+      "id": "character-goods",
+      "label": "角色目录",
+      "verdict": "declined",
+      "kept": "逐个成员的信息必须辨认清楚。",
+      "reason": "成员角色可映射为头像，但排名与吉祥物会削弱平等和精致感。"
+    },
+    {
+      "id": "leather",
+      "label": "皮革书架",
+      "verdict": "declined",
+      "kept": "界面材质保持一致并让位于正文。",
+      "reason": "温暖材质可承载记录，但仿真书架和翻页会增加阅读与操作负担。"
+    },
+    {
+      "id": "shoebox",
+      "label": "鞋盒档案",
+      "verdict": "declined",
+      "kept": "每笔交易使用稳定、清楚的信息位置。",
+      "reason": "标签适合商品识别，但盒体和开启隐喻不利于直接完成交易。"
+    },
+    {
+      "id": "dive",
+      "label": "纵向深潜",
+      "verdict": "declined",
+      "kept": "每个状态都有明确文字位置。",
+      "reason": "时间轴可表达近况，深色环境与深度隐喻不符合清爽温馨的目标。"
+    },
+    {
+      "id": "rail",
+      "label": "光谱标尺",
+      "verdict": "declined",
+      "kept": "正负分与交易状态同时使用文字。",
+      "reason": "统一基线有助于对齐，但技术仪表感降低生活场景的亲和力。"
+    },
+    {
+      "id": "nixie",
+      "label": "辉光计数器",
+      "verdict": "declined",
+      "kept": "积分变化保持清楚而安静。",
+      "reason": "数字适合积分展示，但发光和大数字容易盖过人与日常操作。"
+    }
+  ],
+  "approval": null
+}

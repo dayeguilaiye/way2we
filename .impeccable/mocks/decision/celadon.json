@@ -1,0 +1,23 @@
+{
+  "prompt": "Generate ONE exquisitely crafted high-fidelity mobile app HOME SCREEN design proposal. Use case ui-mockup. This is a functional Chinese-language iOS/Android app for partners and family sharing agreements, reward points and personal shops. User preference: refined, fresh, warm, tasteful; welcoming grown-up warmth. Portrait aspect ratio approximately 9:19.5, one screen only, high resolution, full-bleed screenshot with small OS status bar and home indicator; no phone hardware frame, no scene behind device, no proposal captions outside the app. This is a single visual-direction proposal, not a collage.\nPreserve exactly this established app information architecture, top to bottom:\n1. Quiet status bar 9:41.\n2. Header: small circular personal avatar with visible label 我的 on the LEFT; centered/current space selector 一起的小日子 with small chevron; bell icon on RIGHT. Balanced spacing, clear touch areas.\n3. Restrained, beautifully aligned member-balance summary: 阿禾（我） 10 分 and 小满 0 分; small links 查看积分明细 and 查看成员. Points should read as usable balance, not giant dashboard statistics. Simple circular avatars or initial avatars are appropriate.\n4. A clear primary action labeled 记一笔, with a consistent small drawn plus/pen icon.\n5. Section heading 待处理 and modest 查看全部 on right. ONE clean transaction row: 准备一份早餐 × 2, subline 小满提供 · 我已支付 20 分. On its RIGHT, two always-visible easy-to-tap buttons 完成 and 取消. Keep row content and these buttons neatly aligned and comfortably readable.\n6. Section 空间近况 with 全部记录 on right. TWO activity rows, precise hierarchy and thin separators as suitable: 今天 08:40 / 阿禾购买小满的早餐 × 2 / −20 分; 今天 08:30 / 阿禾为自己记录「散步 30 分钟」 / +10 分. Small understated avatars. One row can wrap naturally. No extra invented events.\n7. Four-item bottom navigation: 近况, 约定, 小卖部, 记录, each with a consistent finely drawn icon. 近况 selected. Native proportions, generous safe area, no fifth nav item.\nThe frame contains real app UI, readable Chinese text, convincing professional typography, comfortable body size, deliberate whitespace and aligned labels. Restrict decorative material to subtle details; functional text and controls dominate. Maintain strong text contrast and calm hierarchy. No hearts, couple silhouettes, childish mascots, pink gradient washes, glossy 3D ornaments, stickers, gold luxury ornaments, nested card piles, charts, progress rings, ranking, streaks, coins or gamification badges. No lorem ipsum, fake testimonials or invented brand logo. Every element should feel designed by an excellent mobile product designer. All numerical values above are synthetic demonstration data and must stay exactly as specified.\nVISUAL DIRECTION:\nModern celadon ceramic and warm porcelain visual grammar translated into a FLAT NATIVE APP. Warm porcelain ivory #F8F7F0 and quiet celadon #688879, deep forest-charcoal #293D34 text, misty pale sage #E2E9E1 surfaces. Pure gently curved silhouette vocabulary, immaculate spacing, subtly friendly clean Chinese sans typography, confident medium weights. A calm pale-celadon member balance panel can group the two people; keep the rest as airy continuous list rows rather than card stacks. A dark celadon primary action, crisp outlined transaction secondary controls. Very soft tactile warmth, ceramic quietness, no literal ceramics or illustrations. Premium family product, exceptionally legible and orderly.\n",
+  "native_tool": "image_gen__imagegen",
+  "mode": "built-in native",
+  "approved": false,
+  "source_path": "/Users/zz-b191/.codex/generated_images/01a0b330-a4c1-75d2-9721-f1803d0ef6d4/exec-bab97aa4-eec8-4dba-987f-bdd991a4bec7.png",
+  "output_path": "/Users/zz-b191/code/way2we/.impeccable/mocks/decision/celadon.png",
+  "kind": "ui-mockup",
+  "review": {
+    "full_portrait_ui": true,
+    "bottom_navigation": [
+      "近况",
+      "约定",
+      "小卖部",
+      "记录"
+    ],
+    "transaction_buttons": [
+      "完成",
+      "取消"
+    ],
+    "material_rendering_limitations": []
+  }
+}

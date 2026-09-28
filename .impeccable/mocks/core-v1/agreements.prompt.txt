@@ -1,0 +1,15 @@
+Use case: ui-mockup.
+Asset type: one complete mobile app screen, high-fidelity visual design proposal, portrait 851 x 1847 proportion.
+Image 1 is the USER-APPROVED HOME SCREEN STYLE REFERENCE. Inherit its quietly refined warm-white paper surface, restrained apricot/terracotta accents, airy spacing, elegant Chinese Song-style serif section headings, clean sans-serif body/control text, gentle corners, thin warm-ink icons and native mobile proportions. This is another screen of exactly the same app, not a redesign of its visual identity. Do not reproduce the home screen quote or botanical hero on these task screens; inherit the color, typography and component character. Business content below defines the new screen.
+Keep sharp, comfortably readable Chinese type. Exact content and numbers matter. Large body text, clear hierarchy, comfortable touch areas, restrained surfaces, no nested card grid. Portrait edge-to-edge screenshot, no device frame, no presentation canvas, no multiple screens, no watermark or external annotations. Include 9:41 native status bar and bottom home indicator, both positioned like reference.
+Palette candidate: background #F8F4EE, surface #FFFCF8, dark ink #352D29, secondary text #71685F, primary control color #A65A40 with white text (deeper apricot for readability), light apricot #F0DBCE, quiet decorative apricot #C98262, divider #E4D9CF. Rewards #4F754D and penalties #AF493B with +/− symbols. Very subtle warm paper feel only, no heavy texture behind content, no colored glows or thick shadows.
+Use the same reference avatars whenever visible: 阿禾 woman at sunset, 小满 ginger-white cat, small plant photo at 我的. All names are fictional demo data.
+Screen: 约定列表 (active agreements), current account 阿禾, space 一起的小日子.
+Structure top to bottom:
+1. Same compact root navigation row as reference: left plant avatar and 我的, centered 一起的小日子 with down chevron, right bell.
+2. Page heading 约定 in the reference's elegant serif; right compact outlined/quiet primary action plus icon 新建. No marketing slogan.
+3. Two-option segmented control 生效中 (selected) / 已停用, then a clear compact filter 适用成员：全部 with down chevron.
+4. Two generously spaced agreement rows on near-white surfaces with calm thin separation, title/body left and fixed score plus action right. First: 散步 30 分钟; supporting 适用于 阿禾、小满; score +10 分 in subdued green; right clearly tappable terracotta 记一笔 button. Second: 乱放鞋子; supporting 适用于 阿禾、小满; score −5 分 in brick red; right same 记一笔 button. Both entire row content areas have subtle chevrons for details, and the direct action button is distinct. Do not add checkboxes, daily streaks, progress rings, reminders, completion flags or frequency limits.
+5. Below list a single quiet readable note: 约定可重复记分，修改会保留记录。 Leave natural breathing room below; no filler rows or oversized panels.
+6. Exactly four fixed bottom navigation entries, same icons/spacing as home: 近况 / 约定 / 小卖部 / 记录. 约定 selected in terracotta with short underline. Do not mark any other tab selected.
+This is an everyday list interface, content-first, open and precise. Preserve the reference's warmth without copying its home-only composition.
